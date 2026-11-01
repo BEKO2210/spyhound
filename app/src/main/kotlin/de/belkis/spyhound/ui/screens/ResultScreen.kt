@@ -264,7 +264,7 @@ private fun GapRow(gap: Gap, onFix: (GapFix) -> Unit, onBugreport: () -> Unit) {
 private fun gapFixLabel(fix: GapFix): String? = when (fix) {
     GapFix.PERMISSION_SMS -> "SMS-Berechtigung erteilen"
     GapFix.PERMISSION_FILES -> "Voller Dateizugriff"
-    GapFix.SHIZUKU -> "Shizuku verbinden"
+    GapFix.SHIZUKU -> "Tiefere Prüfung einrichten"
     GapFix.ROOT -> "Root anfragen"
     GapFix.UPDATE_INDICATORS -> "Quellen laden"
     GapFix.NONE -> null
