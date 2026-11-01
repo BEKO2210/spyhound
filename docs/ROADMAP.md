@@ -40,6 +40,12 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [ ] UI/UX-Durchgang (Cloud-Sitzung): übersichtlicher, animierter, selbsterklärend in DE+EN; u. a. weiche Ausblendung
       an der Scroll-Kante unter dem festen Kopfbereich (Abschnitte wirken dort „abgeschnitten“). Abnahme: Belkis testet
       auf dem Pixel.
+      - Klar sichtbar, **was genutzt wird**: Prüftiefe (Basis/Shizuku/Root) und welche Quellen/Rechte aktiv waren (SMS,
+        Dateien, Indikator-Quellen x/29, DNS-Wächter) – auf Start und im Ergebnis als übersichtliche Statusleiste mit
+        Symbolen statt Fließtext. (Belkis 2026-11-01)
+- [ ] Shell-Probe schlägt fehl → einmal automatisch trennen und neu verbinden (Shizuku-Dienst), erst dann Lücke melden.
+      Fund: Pixel 2026-11-01, veralteter Dienst nach App-Update; App-Neustart behob es. Abnahme: Update der App bei
+      laufendem Shizuku → Tiefenprüfung läuft ohne Neustart.
 
 ## Stufe 2 – Tiefe ohne Root
 - [x] Fehlerbericht-Import, Analyse-Schicht: `bugreport/` liest bugreport-*.zip (Prozesse, Pakete inkl.
