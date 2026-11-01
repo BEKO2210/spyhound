@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -42,7 +41,6 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,7 +59,7 @@ import kotlin.math.sin
 private const val SWEEP_DEG = 60f
 private const val SWEEP_FRAC = SWEEP_DEG / 360f
 private val LegendSlotHeight = 28.dp
-private val LegendCountWidth = 44.dp
+private val LegendItemSpacing = 20.dp
 
 private data class DrawBlip(
     val key: Long,
@@ -150,7 +148,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorGrid(
             }
             drawPath(
                 wedge,
-                color = SpyColors.Amber.copy(alpha = if (locked) 0.04f else 0.09f),
+                color = SpyColors.Amber.copy(alpha = 0.06f),
             )
         }
         val lineRad = Math.toRadians(start.toDouble())
@@ -179,7 +177,11 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorLabels(
         val rad = Math.toRadians(mid.toDouble())
         val x = center.x + cos(rad).toFloat() * labelR
         val y = center.y + sin(rad).toFloat() * labelR
-        val label = if (locked) "🔒" else sector.label.uppercase()
+        val label = if (locked) {
+            "🔒 ${sector.label.uppercase()}"
+        } else {
+            sector.label.uppercase()
+        }
         drawContext.canvas.nativeCanvas.apply {
             val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
                 color = android.graphics.Color.argb(
@@ -188,7 +190,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorLabels(
                     176,
                     166,
                 )
-                textSize = 9.sp.toPx()
+                textSize = (if (locked) 7.5f else 9f).sp.toPx()
                 textAlign = android.graphics.Paint.Align.CENTER
             }
             drawText(label, x, y + paint.textSize * 0.35f, paint)
@@ -304,12 +306,12 @@ fun RadarLegend(
         modifier
             .fillMaxWidth()
             .height(LegendSlotHeight),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(LegendItemSpacing, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LegendItem("geprüft", SpyColors.IvoryMuted, legend.clean, countStyle)
-        LegendItem("Hinweis", SpyColors.Amber, legend.lead, countStyle)
-        LegendItem("Fund", SpyColors.Danger, legend.finding, countStyle)
+        LegendItem("Hinweise", SpyColors.Amber, legend.lead, countStyle)
+        LegendItem("Funde", SpyColors.Danger, legend.finding, countStyle)
     }
 }
 
@@ -323,25 +325,20 @@ private fun LegendItem(
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text("●", color = dotColor, style = MaterialTheme.typography.labelLarge)
         Text(
+            count.toString().padStart(4),
+            style = countStyle,
+            color = dotColor,
+            maxLines = 1,
+            modifier = Modifier.padding(start = 4.dp),
+        )
+        Text(
             label,
             style = MaterialTheme.typography.labelSmall,
             color = SpyColors.IvoryMuted,
-            modifier = Modifier.padding(start = 4.dp, end = 6.dp),
+            modifier = Modifier.padding(start = 4.dp),
             maxLines = 1,
             overflow = TextOverflow.Clip,
         )
-        Box(
-            modifier = Modifier.width(LegendCountWidth),
-            contentAlignment = Alignment.CenterEnd,
-        ) {
-            Text(
-                count.toString().padStart(4),
-                style = countStyle,
-                color = dotColor,
-                maxLines = 1,
-                textAlign = TextAlign.End,
-            )
-        }
     }
 }
 
