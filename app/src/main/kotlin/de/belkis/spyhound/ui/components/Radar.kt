@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -176,18 +178,35 @@ fun RadarScanButton(
 ) {
     val motion = LocalMotionEnabled.current
     val infinite = rememberInfiniteTransition(label = "btn")
+    // The pulse is a halo drawn outside a fixed-size box: animating the button's own size
+    // re-measured the whole column every frame and made the screen bob up and down.
     val pulse by infinite.animateFloat(
-        initialValue = 0.96f,
-        targetValue = 1.04f,
-        animationSpec = infiniteRepeatable(tween(2200, easing = LinearEasing), RepeatMode.Reverse),
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(2600, easing = LinearEasing), RepeatMode.Restart),
         label = "pulse",
     )
-    val outer = if (motion && enabled) diameter * pulse else diameter
+    val halo = diameter * 0.1f
+    Box(
+        modifier = modifier
+            .size(diameter + halo * 2)
+            .drawBehind {
+                if (motion && enabled) {
+                    val base = diameter.toPx() / 2
+                    drawCircle(
+                        color = SpyColors.Amber.copy(alpha = 0.35f * (1f - pulse)),
+                        radius = base + halo.toPx() * pulse,
+                        style = Stroke(width = 1.5.dp.toPx()),
+                    )
+                }
+            },
+        contentAlignment = Alignment.Center,
+    ) {
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier
-            .size(outer)
+        modifier = Modifier
+            .size(diameter)
             .semantics { contentDescription = label },
         shape = CircleShape,
         color = SpyColors.SurfaceRaised,
@@ -199,12 +218,13 @@ fun RadarScanButton(
         ) {
             RadarCanvas(
                 fraction = 0.15f,
-                modifier = Modifier.size(outer * 0.92f),
+                modifier = Modifier.size(diameter * 0.92f),
                 blipCount = 3,
                 blipSeed = 7,
                 sweepLeadAlpha = 0.25f,
             )
             Text(label, style = MaterialTheme.typography.titleMedium, color = SpyColors.Amber)
         }
+    }
     }
 }
