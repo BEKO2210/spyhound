@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        vm.refreshPermissions()
+        vm.onAppVisible()
     }
 
     private fun dispatchBugreportIntent(intent: Intent?) {

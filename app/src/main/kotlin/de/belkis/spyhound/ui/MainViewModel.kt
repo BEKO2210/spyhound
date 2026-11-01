@@ -20,7 +20,10 @@ import de.belkis.spyhound.scan.Progress
 import de.belkis.spyhound.scan.Report
 import de.belkis.spyhound.scan.ScanEngine
 import de.belkis.spyhound.shell.RootShell
+import de.belkis.spyhound.shell.SHIZUKU_STOPPED_BANNER
+import de.belkis.spyhound.shell.ScanGatedShellChanges
 import de.belkis.spyhound.shell.Shell
+import de.belkis.spyhound.shell.ShellPreferences
 import de.belkis.spyhound.shell.ShizukuShell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,6 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import rikka.shizuku.Shizuku
 
 data class UiState(
     val iocs: LoadedIocs? = null,
@@ -52,18 +56,33 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
     private var shell: Shell? = null
+    private var pendingShell: Shell? = null
+    private val shellGate = ScanGatedShellChanges()
     private var scanJob: Job? = null
     private var pendingBugreportChecks: List<CheckResult>? = null
+    private var shellRestoreJob: Job? = null
+
+    private val binderReceivedListener = Shizuku.OnBinderReceivedListener { scheduleShellRestore() }
+    private val binderDeadListener = Shizuku.OnBinderDeadListener { onShizukuBinderDead() }
 
     init {
+        Shizuku.addBinderReceivedListenerSticky(binderReceivedListener)
+        Shizuku.addBinderDeadListener(binderDeadListener)
         reloadIocs()
         refreshPermissions()
         refreshDnsGuard()
+        scheduleShellRestore()
     }
 
     private fun reloadIocs() = viewModelScope.launch {
         val loaded = store.load()
         _state.update { it.copy(iocs = loaded) }
+    }
+
+    /** Called on cold start and from [MainActivity.onResume]. */
+    fun onAppVisible() {
+        refreshPermissions()
+        scheduleShellRestore()
     }
 
     fun refreshPermissions() {
@@ -104,37 +123,108 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun connectShizuku() {
         when (ShizukuShell.status()) {
             ShizukuShell.Status.NEEDS_PERMISSION -> ShizukuShell.requestPermission { granted ->
-                if (granted) bindShizuku() else refreshPermissions()
+                if (granted) bindShizuku(showBusy = true) else refreshPermissions()
             }
-            ShizukuShell.Status.READY -> bindShizuku()
+            ShizukuShell.Status.READY -> bindShizuku(showBusy = true)
             else -> refreshPermissions()
         }
     }
 
-    private fun bindShizuku() = viewModelScope.launch {
-        _state.update { it.copy(busy = "Verbinde mit Shizuku …") }
+    private fun bindShizuku(showBusy: Boolean) = viewModelScope.launch {
+        if (showBusy) _state.update { it.copy(busy = "Verbinde mit Shizuku …") }
         val sh = ShizukuShell.connect()
-        if (sh != null) { shell?.close(); shell = sh }
-        _state.update { it.copy(busy = null) }
+        if (sh != null) adoptShell(sh) else if (showBusy) _state.update { it.copy(busy = null) }
+        if (showBusy) _state.update { it.copy(busy = null) }
         refreshPermissions()
     }
 
     fun requestRoot() = viewModelScope.launch {
         _state.update { it.copy(busy = "Frage Root-Zugriff an … (Root-Manager bestätigen)") }
         val sh = withContext(Dispatchers.IO) { RootShell.probe() }
-        if (sh != null) { shell?.close(); shell = sh }
+        if (sh != null) {
+            ShellPreferences.setRootGranted(getApplication(), true)
+            adoptShell(sh)
+        }
         _state.update { it.copy(busy = null, rootDenied = sh == null) }
+        refreshPermissions()
+    }
+
+    private fun scheduleShellRestore() {
+        shellRestoreJob?.cancel()
+        shellRestoreJob = viewModelScope.launch {
+            restoreShellsQuietly()
+        }
+    }
+
+    private suspend fun restoreShellsQuietly() {
+        val ctx = getApplication<Application>()
+        if (ShellPreferences.wasRootGranted(ctx)) {
+            val root = withContext(Dispatchers.IO) { RootShell.probe() }
+            if (root != null) {
+                adoptShell(root)
+                refreshPermissions()
+                return
+            }
+        }
+        if (ShizukuShell.status() == ShizukuShell.Status.READY) {
+            val sh = ShizukuShell.connect()
+            if (sh != null) adoptShell(sh)
+            refreshPermissions()
+        }
+    }
+
+    private fun onShizukuBinderDead() {
+        if (!shellGate.deferClearShell(SHIZUKU_STOPPED_BANNER)) {
+            pendingShell = null
+            return
+        }
+        shell?.close()
+        shell = null
+        _state.update { it.copy(bannerMessage = SHIZUKU_STOPPED_BANNER) }
+        refreshPermissions()
+    }
+
+    private fun adoptShell(newShell: Shell) {
+        if (!shellGate.deferAdoptNewShell()) {
+            pendingShell?.close()
+            pendingShell = newShell
+            return
+        }
+        shell?.close()
+        shell = newShell
+        refreshPermissions()
+    }
+
+    private fun applyDeferredShellWork() {
+        val work = shellGate.scanFinished() ?: return
+        if (work.clearShell) {
+            shell?.close()
+            shell = null
+            pendingShell = null
+        } else if (work.applyPendingShell) {
+            pendingShell?.let { next ->
+                shell?.close()
+                shell = next
+                pendingShell = null
+            }
+        }
+        work.bannerMessage?.let { msg -> _state.update { it.copy(bannerMessage = msg) } }
         refreshPermissions()
     }
 
     fun startScan() {
         val iocs = _state.value.iocs ?: return
         scanJob = viewModelScope.launch {
+            shellGate.scanStarted()
             _state.update { it.copy(progress = Progress("Start", "", 0f), report = null) }
-            val report = runCatching {
-                ScanEngine(getApplication(), iocs, shell).run { p -> _state.update { s -> s.copy(progress = p) } }
-            }.getOrNull()
-            val merged = report?.let { mergePendingBugreport(it) }
+            val merged = try {
+                val report = runCatching {
+                    ScanEngine(getApplication(), iocs, shell).run { p -> _state.update { s -> s.copy(progress = p) } }
+                }.getOrNull()
+                report?.let { mergePendingBugreport(it) }
+            } finally {
+                applyDeferredShellWork()
+            }
             _state.update { it.copy(progress = null, report = merged) }
         }
     }
@@ -232,6 +322,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     override fun onCleared() {
+        Shizuku.removeBinderReceivedListener(binderReceivedListener)
+        Shizuku.removeBinderDeadListener(binderDeadListener)
         shell?.close()
+        pendingShell?.close()
     }
 }
