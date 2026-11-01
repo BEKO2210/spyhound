@@ -7,6 +7,9 @@ import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 
 /** State of the local indicator collection, shown on the start screen. */
@@ -71,8 +74,7 @@ class IocStore(private val context: Context) {
                 val got = sha256(bytes)
                 if (got != s.sha256) throw IOException("Prüfsumme stimmt nicht (${got.take(12)} statt ${s.sha256.take(12)})")
                 val tmp = File(dir, s.fileName + ".part")
-                tmp.writeBytes(bytes)
-                if (!tmp.renameTo(target)) throw IOException("konnte nicht gespeichert werden")
+                replaceAtomically(tmp, target, bytes)
             }.onSuccess { ok++ }.onFailure { failed += "${s.name}: ${it.message}" }
         }
         ok to failed
@@ -107,6 +109,21 @@ class IocStore(private val context: Context) {
     companion object {
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
         private const val MAX_DOWNLOAD = 64 shl 20
+
+        /** Writes [bytes] next to [target] and moves them over it in one step; a failure leaves the old file intact. */
+        internal fun replaceAtomically(tmp: File, target: File, bytes: ByteArray) {
+            try {
+                tmp.writeBytes(bytes)
+                try {
+                    Files.move(tmp.toPath(), target.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
+                } catch (_: AtomicMoveNotSupportedException) {
+                    Files.move(tmp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                }
+            } catch (e: IOException) {
+                tmp.delete()
+                throw IOException("konnte nicht gespeichert werden", e)
+            }
+        }
 
         fun sha256(bytes: ByteArray): String =
             MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
