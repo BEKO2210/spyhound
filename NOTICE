@@ -1,0 +1,58 @@
+Spyhound
+Copyright 2026 Belkis Aslani
+Licensed under the Apache License, Version 2.0.
+
+== Origin of the logic ==
+
+Spyhound is a Kotlin reimplementation of the detection logic of the
+Zero Breach Toolkit (Apache License 2.0):
+https://github.com/interplains/Zero-Breach-Toolkit
+
+== Indicator sources ==
+
+The indicators are listed in app/src/main/assets/iocs/sources.json. Each
+source is pinned to a fixed commit and verified by SHA-256 before use.
+
+Bundled with the app:
+
+1. MVT project, mvt-indicators (MIT License)
+   https://github.com/mvt-project/mvt-indicators
+   Indicators credited to: Meta, Amnesty International, Citizen Lab, Cisco,
+   Inside Story, iVerify (Intellexa Predator); Google, Lookout (RCS Lab);
+   Citizen Lab, Microsoft (QuaDream KingSpawn); Kaspersky Lab (Operation
+   Triangulation); Lookout (WyrmSpy and DragonEgg; EagleMsgSpy); Microsoft,
+   Recorded Future (Candiru); Reporters Without Borders, RESIDENT.NGO
+   (ResidentBat); Citizen Lab (Cellebrite); Google Threat Intelligence
+   Group, iVerify, Lookout (DarkSword); Google Threat Intelligence Group,
+   iVerify (Coruna); Osservatorio Nessuno (Morpheus, Spyrtacus); ESET,
+   Cyble Research, Zimperium (BTMOB).
+
+2. ECHAP stalkerware-indicators (Creative Commons Attribution 4.0)
+   https://github.com/AssoEchap/stalkerware-indicators
+   Cite: ECHAP
+   License: https://creativecommons.org/licenses/by/4.0/
+
+3. Zero Breach Toolkit, curated lists (CC0 1.0)
+   https://github.com/interplains/Zero-Breach-Toolkit
+
+Not bundled, loaded onto the device only when the user updates indicators:
+
+4. Amnesty International, AmnestyTech/investigations
+   https://github.com/AmnestyTech/investigations
+   Cites: Amnesty International (2021); Amnesty International, Google
+   (Android campaign 2023); Amnesty International (Wintego Helios, 2024;
+   NoviSpy, 2024); Amnesty International (2018-08-01), NSO Group
+   infrastructure; Amnesty International (2019-10-10), Morocco; Meta,
+   Citizen Lab, Amnesty International (2021-12-16); Amnesty International
+   (2020-09-25), FinSpy for Windows, Android and Linux.
+
+5. The Citizen Lab, citizenlab/malware-indicators
+   https://github.com/citizenlab/malware-indicators
+   Cites: The Citizen Lab, 'The Million Dollar Dissident' (2016-08);
+   'Champing at the Cyberbit' (2017-12); 'The Kingdom Came to Canada'
+   (2018-10); 'Reckless Exploit' (2017-06), Mexico; 'Reckless Redux'
+   (2017-06), Mexico; 'Insider Information' (2017-07), Mexico.
+
+These two repositories carry no license that permits redistribution, so
+Spyhound does not ship their data. The app downloads it directly from the
+original repositories at the pinned commits.
