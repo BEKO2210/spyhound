@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -39,12 +38,13 @@ import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.R
 import androidx.compose.ui.res.stringResource
 import de.belkis.spyhound.dns.DnsHit
-import de.belkis.spyhound.AppLanguage
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.components.AccessLevelBar
+import de.belkis.spyhound.ui.components.InfoCircleButton
 import de.belkis.spyhound.ui.components.RadarScanButton
 import de.belkis.spyhound.ui.components.SectionLabel
+import de.belkis.spyhound.ui.components.SectionWithHint
 import de.belkis.spyhound.ui.components.SpyButton
 import de.belkis.spyhound.ui.components.SpyDivider
 import de.belkis.spyhound.ui.components.TextActionLink
@@ -65,6 +65,7 @@ fun StartScreen(
     onDismissBanner: () -> Unit,
     onDemoReport: () -> Unit = {},
     onDeepCheckSetup: () -> Unit,
+    onOpenInfo: () -> Unit,
 ) {
     var showBugreportSteps by remember { mutableStateOf(false) }
     val scroll = rememberScrollState()
@@ -73,30 +74,40 @@ fun StartScreen(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .combinedClickable(
-                        onClick = {},
-                        onLongClick = onDemoReport,
-                    )
-                    .padding(vertical = 4.dp),
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.hound_mark),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(28.dp),
-                )
-                Text(
-                    "Spyhound",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = SpyColors.IvoryMuted,
-                    modifier = Modifier.padding(start = 8.dp),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .combinedClickable(
+                            onClick = {},
+                            onLongClick = onDemoReport,
+                        )
+                        .padding(vertical = 4.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.hound_mark),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(28.dp),
+                    )
+                    Text(
+                        "Spyhound",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = SpyColors.IvoryMuted,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
+                InfoCircleButton(
+                    onClick = onOpenInfo,
+                    modifier = Modifier.align(Alignment.CenterEnd),
                 )
             }
-            LanguagePicker()
             Spacer(Modifier.height(12.dp))
             RadarScanButton(
                 onClick = onScan,
@@ -142,31 +153,32 @@ fun StartScreen(
                 modifier = Modifier.padding(bottom = 8.dp),
             )
             state.iocs?.let { loaded ->
-                SectionLabel(stringResource(R.string.t_062))
-                Text(
-                    stringResource(R.string.indicators_summary, loaded.set.size, loaded.status.available, loaded.status.sources),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                if (loaded.status.missing.isNotEmpty()) {
+                SectionWithHint(stringResource(R.string.t_062), stringResource(R.string.start_help_indicators)) {
                     Text(
-                        stringResource(R.string.sources_missing, loaded.status.missing.size),
-                        style = MaterialTheme.typography.bodyMedium,
+                        stringResource(R.string.indicators_summary, loaded.set.size, loaded.status.available, loaded.status.sources),
+                        style = MaterialTheme.typography.bodyLarge,
                     )
-                }
-                Spacer(Modifier.height(8.dp))
-                SpyButton(
-                    text = if (state.updating != null) state.updating else stringResource(R.string.t_063),
-                    onClick = onUpdateIndicators,
-                    enabled = state.updating == null,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                state.updateMessage?.let {
-                    Spacer(Modifier.height(6.dp))
-                    Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Clear)
+                    if (loaded.status.missing.isNotEmpty()) {
+                        Text(
+                            stringResource(R.string.sources_missing, loaded.status.missing.size),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    SpyButton(
+                        text = if (state.updating != null) state.updating else stringResource(R.string.t_063),
+                        onClick = onUpdateIndicators,
+                        enabled = state.updating == null,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    state.updateMessage?.let {
+                        Spacer(Modifier.height(6.dp))
+                        Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Clear)
+                    }
                 }
                 SpyDivider(Modifier.padding(vertical = 16.dp))
             }
-            SectionLabel(stringResource(R.string.t_064))
+            SectionWithHint(stringResource(R.string.t_064), stringResource(R.string.start_help_dns)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -201,39 +213,41 @@ fun StartScreen(
                 val fmt = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 state.dnsHits.take(5).forEach { hit -> DnsHitLine(hit, fmt) }
             }
+            }
             SpyDivider(Modifier.padding(vertical = 16.dp))
-            SectionLabel(stringResource(R.string.t_067))
-            Text(
-                stringResource(R.string.t_068),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Spacer(Modifier.height(8.dp))
-            SpyButton(
-                text = stringResource(R.string.t_069),
-                onClick = onPickBugreport,
-                enabled = state.iocs != null && state.busy == null,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            TextActionLink(
-                text = if (showBugreportSteps) stringResource(R.string.t_070) else stringResource(R.string.t_071),
-                onClick = { showBugreportSteps = !showBugreportSteps },
-            )
-            AnimatedVisibility(showBugreportSteps) {
-                Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(
-                        stringResource(R.string.t_072),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        stringResource(R.string.t_073),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(stringResource(R.string.t_074), style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        stringResource(R.string.t_075) +
-                            stringResource(R.string.t_076),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+            SectionWithHint(stringResource(R.string.t_067), stringResource(R.string.start_help_bugreport)) {
+                Text(
+                    stringResource(R.string.t_068),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(8.dp))
+                SpyButton(
+                    text = stringResource(R.string.t_069),
+                    onClick = onPickBugreport,
+                    enabled = state.iocs != null && state.busy == null,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                TextActionLink(
+                    text = if (showBugreportSteps) stringResource(R.string.t_070) else stringResource(R.string.t_071),
+                    onClick = { showBugreportSteps = !showBugreportSteps },
+                )
+                AnimatedVisibility(showBugreportSteps) {
+                    Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            stringResource(R.string.t_072),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(
+                            stringResource(R.string.t_073),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(stringResource(R.string.t_074), style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            stringResource(R.string.t_075) +
+                                stringResource(R.string.t_076),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
                 }
             }
             SpyDivider(Modifier.padding(vertical = 16.dp))
@@ -241,6 +255,7 @@ fun StartScreen(
                 current = state.access,
                 onDeepCheckSetup = onDeepCheckSetup,
                 onRequestRoot = onRequestRoot,
+                accessHint = stringResource(R.string.start_help_access),
             )
             if (state.rootDenied) {
                 Spacer(Modifier.height(6.dp))
@@ -296,32 +311,3 @@ private fun DnsHitLine(hit: DnsHit, fmt: DateFormat) {
     )
 }
 
-@Composable
-private fun LanguagePicker() {
-    val context = LocalContext.current
-    var open by remember { mutableStateOf(false) }
-    val current = AppLanguage.selected(context).substringBefore(',').substringBefore('-')
-    val label = when (current) {
-        "de" -> stringResource(R.string.language_german)
-        "en" -> stringResource(R.string.language_english)
-        else -> stringResource(R.string.language_system)
-    }
-    androidx.compose.foundation.layout.Box {
-        TextActionLink(text = stringResource(R.string.language_label, label), onClick = { open = true })
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            listOf(
-                "" to R.string.language_system,
-                "de" to R.string.language_german,
-                "en" to R.string.language_english,
-            ).forEach { (tag, title) ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(title)) },
-                    onClick = {
-                        open = false
-                        AppLanguage.select(context, tag)
-                    },
-                )
-            }
-        }
-    }
-}

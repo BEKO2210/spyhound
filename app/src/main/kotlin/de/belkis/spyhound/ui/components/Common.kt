@@ -267,6 +267,7 @@ fun AccessLevelBar(
     current: AccessLevel,
     onDeepCheckSetup: () -> Unit,
     onRequestRoot: () -> Unit,
+    accessHint: String,
     modifier: Modifier = Modifier,
 ) {
     val stages = listOf(
@@ -275,7 +276,7 @@ fun AccessLevelBar(
         AccessLevel.ROOT to "Root",
     )
     Column(modifier) {
-        SectionLabel(stringResource(R.string.t_003))
+        SectionWithHint(label = stringResource(R.string.t_003), hint = accessHint) {
         Row(
             Modifier
                 .fillMaxWidth()
@@ -356,6 +357,7 @@ fun AccessLevelBar(
                     color = SpyColors.Clear,
                 )
             }
+        }
         }
     }
 }

@@ -37,12 +37,16 @@ import de.belkis.spyhound.scan.ReportText
 import de.belkis.spyhound.scan.TextsDe
 import de.belkis.spyhound.scan.TextsEn
 import de.belkis.spyhound.scan.localized
+import androidx.compose.ui.platform.LocalContext
+import de.belkis.spyhound.ui.IntroPreferences
 import de.belkis.spyhound.ui.MainViewModel
 import de.belkis.spyhound.ui.SpyhoundScaffold
 import de.belkis.spyhound.ui.SpyhoundTheme
 import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.screens.ResultScreen
 import de.belkis.spyhound.ui.screens.ScanScreen
+import de.belkis.spyhound.ui.screens.InfoScreen
+import de.belkis.spyhound.ui.screens.IntroScreen
 import de.belkis.spyhound.ui.screens.StartScreen
 
 class MainActivity : AppCompatActivity() {
@@ -68,6 +72,35 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (BuildConfig.DEBUG && intent.getBooleanExtra(EXTRA_INTRO_SCREENSHOT, false)) {
+            val page = intent.getIntExtra(EXTRA_INTRO_PAGE, 0)
+            setContent {
+                SpyhoundTheme {
+                    SpyhoundScaffold {
+                        IntroScreen(
+                            initialPage = page,
+                            onFinished = { finish() },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
+            }
+            return
+        }
+        if (BuildConfig.DEBUG && intent.getBooleanExtra(EXTRA_INFO_SCREENSHOT, false)) {
+            setContent {
+                SpyhoundTheme {
+                    SpyhoundScaffold {
+                        InfoScreen(
+                            onBack = { finish() },
+                            onReplayIntro = { finish() },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
+            }
+            return
+        }
         if (BuildConfig.DEBUG && intent.getBooleanExtra(EXTRA_SCAN_SCREENSHOT, false)) {
             setContent {
                 SpyhoundTheme {
@@ -101,6 +134,18 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     null
                 }
+                val context = LocalContext.current
+                var showIntro by remember {
+                    mutableStateOf(
+                        !IntroPreferences.hasCompleted(context) ||
+                            (BuildConfig.DEBUG && intent.getBooleanExtra(EXTRA_INTRO_FORCE, false)),
+                    )
+                }
+                var showInfo by remember { mutableStateOf(false) }
+                val finishIntro = {
+                    IntroPreferences.markCompleted(context)
+                    showIntro = false
+                }
                 var showDeepCheckSetup by remember {
                     mutableStateOf(screenshotKey != null || intent.getBooleanExtra(EXTRA_OPEN_DEEP_CHECK, false))
                 }
@@ -112,6 +157,29 @@ class MainActivity : AppCompatActivity() {
                             SpyhoundNav(
                                 state = state,
                                 onOpenDeepCheckSetup = { showDeepCheckSetup = true },
+                                onOpenInfo = { showInfo = true },
+                            )
+                        }
+                    }
+                    if (showIntro && !showDeepCheckSetup) {
+                        BackHandler { finishIntro() }
+                        SpyhoundScaffold {
+                            IntroScreen(
+                                onFinished = finishIntro,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
+                    }
+                    if (showInfo && !showDeepCheckSetup) {
+                        BackHandler { showInfo = false }
+                        SpyhoundScaffold {
+                            InfoScreen(
+                                onBack = { showInfo = false },
+                                onReplayIntro = {
+                                    showInfo = false
+                                    showIntro = true
+                                },
+                                modifier = Modifier.fillMaxSize(),
                             )
                         }
                     }
@@ -164,6 +232,7 @@ class MainActivity : AppCompatActivity() {
     private fun SpyhoundNav(
         state: UiState,
         onOpenDeepCheckSetup: () -> Unit,
+        onOpenInfo: () -> Unit,
     ) {
         when {
             state.report != null -> {
@@ -206,6 +275,7 @@ class MainActivity : AppCompatActivity() {
                     if (BuildConfig.DEBUG) vm.showDemoReport()
                 },
                 onDeepCheckSetup = onOpenDeepCheckSetup,
+                onOpenInfo = onOpenInfo,
             )
         }
     }
@@ -257,6 +327,10 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_SCAN_SCREENSHOT = "scan_screenshot"
+        const val EXTRA_INTRO_SCREENSHOT = "intro_screenshot"
+        const val EXTRA_INTRO_PAGE = "intro_page"
+        const val EXTRA_INFO_SCREENSHOT = "info_screenshot"
+        const val EXTRA_INTRO_FORCE = "intro_force"
         const val EXTRA_OPEN_DEEP_CHECK = "open_deep_check"
         const val EXTRA_DEEP_CHECK_SCREENSHOT = "deep_check_screenshot"
     }

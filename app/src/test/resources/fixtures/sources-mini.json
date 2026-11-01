@@ -1,0 +1,26 @@
+[
+  {
+    "id": "mvt-test",
+    "name": "Test MVT",
+    "repo": "mvt-project/mvt-indicators",
+    "commit": "b22ddf05e1a31e7732b8895676987c5c3482ef65",
+    "path": "intellexa_predator/predator.stix2",
+    "format": "stix2",
+    "cite": "Meta",
+    "category": "mercenary",
+    "family": "",
+    "sha256": "99938ba179216f73e54513c4c537e3951ae860bcc6eaa5a93055f4afbb689879"
+  },
+  {
+    "id": "amnesty-test",
+    "name": "Test Amnesty",
+    "repo": "AmnestyTech/investigations",
+    "commit": "3d8f248a0d015f183724ae7d096a5c46a8bb5fc7",
+    "path": "2021-07-18_nso/pegasus.stix2",
+    "format": "stix2",
+    "cite": "Amnesty International (2021)",
+    "category": "mercenary",
+    "family": "",
+    "sha256": "df1bcaa78abc7b85781b1ebc2daa3cc225371e2024d9ef96e84f80f927256586"
+  }
+]
