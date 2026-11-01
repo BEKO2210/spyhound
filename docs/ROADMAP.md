@@ -1,7 +1,13 @@
 # Spyhound – Roadmap
 
+## Vision
+Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien verständlich, für Profis tief. Start mit
+Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
+
 ## Kompass (aktuelle Schwerpunkte)
-1. Erste lauffähige APK mit starker Optik → auf S23 / Tab S9 testen.
+1. Radar-Feinschliff, dann englische Oberfläche.
+2. Emulator-Testmatrix nacheinander (kein Samsung-Gerät vorhanden): API 29/31/34/37, Tablet, Root (Magisk im Emulator),
+   Shizuku im Emulator.
 2. Fehlerbericht in der Oberfläche (Teilen-Intent) und Abnahme mit echtem S23-Bericht.
 3. Unabhängiges Sicherheits-Review der Shell- und Download-Schicht.
 
@@ -41,11 +47,31 @@
       Abnahme: gemergt. Beleg lokal: 1959 Tests grün, build --check grün.
 - [ ] Issue: Spyhound als Begleit-App vorschlagen – erst nach öffentlichem, signiertem Release.
 
+## Testmatrix (Emulatoren, strikt nacheinander – RAM 15 GB)
+- [x] Pixel 11 Pro XL, Android 17, echt: Basis + Shizuku. Beleg: siehe Stufe 1.
+- [ ] API 29 (minSdk): Start, Scan Basis, Bericht. Abnahme: keine Abstürze, Screenshots.
+- [ ] API 31, API 34, API 37: dito + Shizuku (APK per adb, Start per libshizuku.so).
+- [ ] Tablet-Profil (Pixel Tablet, ~Tab-S9-Format): Layout zentriert ≤ 640 dp.
+- [ ] Root: Emulator mit Magisk (rootAVD), Stufe ROOT inkl. /data/data-, Tombstone-, packages.xml-Prüfung.
+- [ ] Testfund: Emulator mit installierter harmloser Test-APK, deren Paketname/Zertifikat als Test-Indikator geladen
+      ist → Fund erscheint rot (Ende-zu-Ende-Beweis, nur Debug-Build).
+- Lücke: Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – Anleitungstexte bleiben
+  ungetestet, bis ein Samsung-Gerät verfügbar ist.
+
 ## Stufe 3 – Qualität und Reichweite
 - [ ] Englische Oberfläche (values-en).
 - [ ] „Zeitreichweite“ wie im Toolkit: wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
 - [ ] Signierte Release-APK + Reproduzierbarkeit + SHA256SUMS.
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
+
+## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
+- [ ] Antivirus offline: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
+      YARA-Regeln prüfen; Lizenz jeder Quelle prüfen. Abnahme: EICAR-ähnliche Test-APK wird erkannt, 0 Falschtreffer
+      auf Pixel.
+- [ ] Rechte-Prüfer: welche App darf was (Kamera, Mikro, Standort, Bedienungshilfe), mit Verlauf über Zeit.
+- [ ] Netzwerk-Wächter ausbauen (DNS-Wächter → auch Tracker/Phishing-Listen, optional blockieren).
+- [ ] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
+- [ ] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
 - Unter `sudo` zeigt `~` auf /root: Das Desktop-Toolkit verlor so Browser, Home und Indikator-Cache. Rechte-Erhöhung
