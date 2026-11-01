@@ -32,8 +32,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] Scan-Bildschirm ohne Springen. Beleg: Pixel, 6 Aufnahmen à 300 ms unterhalb der Detailzeile pixelgleich (f528096).
 - [x] Logo v2 (runder Spürhund, Witterungsbögen), Belkis-Wahl „A“. Beleg: Pixel-Kopfzeile, Launcher im Emulator (b3a36af).
 
-- [ ] Einführung beim ersten Start + Info-Knopf „Über Spyhound“ (was/was nicht, Datenschutz, Quellen, Hilfe). Abnahme:
-      Screenshots de/en, Belkis-Abnahme. (Wunsch Belkis 2026-11-01)
+- [x] Einführung beim ersten Start + Info-Knopf „Über Spyhound“ (was/was nicht, Datenschutz, Quellen, Hilfe). Abnahme:
+      Screenshots de/en, Belkis-Abnahme. (Wunsch Belkis 2026-11-01) Beleg: 29feeaa, docs/shots/intro-*, info-*.
+- [ ] Spot-Illustrationen (illu_*.xml) im Stil von Logo v2 neu zeichnen – Einführung zeigt noch den kantigen v1-Hund.
+- [x] Englische Oberfläche + Sprachwahl. Beleg: Cherry-Pick der i18n-Commits, 58 Tests, docs/shots/en-*.
 
 ## Stufe 2 – Tiefe ohne Root
 - [x] Fehlerbericht-Import, Analyse-Schicht: `bugreport/` liest bugreport-*.zip (Prozesse, Pakete inkl.
@@ -64,7 +66,6 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
   ungetestet, bis ein Samsung-Gerät verfügbar ist.
 
 ## Stufe 3 – Qualität und Reichweite
-- [ ] Englische Oberfläche (values-en).
 - [ ] „Zeitreichweite“ wie im Toolkit: wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
 - [ ] Signierte Release-APK + Reproduzierbarkeit + SHA256SUMS.
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
