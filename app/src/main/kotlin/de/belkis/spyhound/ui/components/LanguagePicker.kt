@@ -13,6 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import de.belkis.spyhound.AppLanguage
+import de.belkis.spyhound.ui.SpyColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.clickable
 import de.belkis.spyhound.R
 
 @Composable
@@ -42,5 +49,28 @@ fun LanguagePicker(modifier: Modifier = Modifier) {
                 )
             }
         }
+    }
+}
+
+/** Always-visible DE | EN switch for the start screen header: one tap, no menu to find. */
+@Composable
+fun LanguageToggle(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val chosen = AppLanguage.selected(context).substringBefore(',').substringBefore('-')
+    val effective = chosen.ifEmpty { context.resources.configuration.locales[0].language }
+    val isGerman = effective == "de"
+    androidx.compose.foundation.layout.Row(
+        modifier = modifier
+            .height(48.dp)
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
+            .clickable(onClickLabel = stringResource(R.string.language_label, if (isGerman) "English" else "Deutsch")) {
+                AppLanguage.select(context, if (isGerman) "en" else "de")
+            }
+            .padding(horizontal = 10.dp),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+    ) {
+        Text("DE", style = MaterialTheme.typography.labelLarge, color = if (isGerman) SpyColors.Amber else SpyColors.IvoryMuted)
+        Text("  |  ", style = MaterialTheme.typography.labelLarge, color = SpyColors.IvoryMuted.copy(alpha = 0.5f))
+        Text("EN", style = MaterialTheme.typography.labelLarge, color = if (!isGerman) SpyColors.Amber else SpyColors.IvoryMuted)
     }
 }

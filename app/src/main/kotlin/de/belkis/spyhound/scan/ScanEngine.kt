@@ -70,8 +70,16 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
         emit("SMS", if (messages == null) "SMS nicht lesbar" else "${smsCheck.examined} Nachrichten", 0.52f, RadarSector.SMS)
         coroutineContext.ensureActive()
 
-        if (shell != null) {
+        // A shell can be connected but dead (Shizuku restarted, stale service): then every
+        // command comes back empty. Probe once and report one clear gap instead of fifteen.
+        val shellAlive = shell != null && shell.read("echo spyhound-ok", 64, 15)?.contains("spyhound-ok") == true
+        if (shell != null && shellAlive) {
             checks += shellChecks(shell, apps.map { it.packageName }.toSet(), tracker, ::emit)
+        } else if (shell != null) {
+            checks += storageCheck(tracker, ::emit)
+            checks += CheckResult("Tiefenprüfung").apply {
+                gap(SHELL_DEAD, if (shell.level == AccessLevel.ROOT) GapFix.ROOT else GapFix.SHIZUKU)
+            }
         } else {
             checks += storageCheck(tracker, ::emit)
             checks += CheckResult("Tiefenprüfung").apply {
@@ -210,6 +218,9 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
     }
 
     companion object {
+        const val SHELL_DEAD = "Die Tiefenprüfung lief nicht: Shizuku bzw. Root ist verbunden, antwortet aber nicht. " +
+            "Shizuku neu starten (oder Root erneut erlauben) und noch einmal prüfen."
+
         val LOG_COMMANDS = listOf(
             "logcat" to "logcat -d -b all -v brief",
             "dumpsys package" to "dumpsys package",

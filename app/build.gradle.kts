@@ -27,6 +27,11 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
+        // Shizuku reuses a running user service while this number stays the same. Derive it from the
+        // service's interface and code, so a changed service is always restarted after an update.
+        val shellSources = listOf("src/main/aidl/de/belkis/spyhound/shell/IShellService.aidl", "src/main/kotlin/de/belkis/spyhound/shell/Shell.kt")
+            .joinToString("") { file(it).readText() }
+        buildConfigField("int", "SHELL_SERVICE_VERSION", (shellSources.hashCode() and 0x7fffffff).toString())
     }
 
     signingConfigs {

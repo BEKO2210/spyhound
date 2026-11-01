@@ -38,6 +38,8 @@ object TextsEn : Texts {
         "Ein entsperrter Bootloader, Root oder abgeschaltetes SELinux schwächen den Schutz des Systems. Wenn Sie das nicht selbst eingerichtet haben, ist das ein deutliches Warnzeichen." to
             "An unlocked bootloader, root or disabled SELinux weakens system protection. If you did not set this up, look into it.",
         "WLAN-Debugging ist eingeschaltet." to "Wireless debugging is on.",
+        ScanEngine.SHELL_DEAD to "The deep check did not run: Shizuku or root is connected but does not respond. " +
+            "Restart Shizuku (or allow root again) and scan once more.",
         "USB-Debugging ist eingeschaltet." to "USB debugging is on.",
         "Der Bootloader ist entsperrt (verifiedbootstate=orange)." to "Bootloader is unlocked (verifiedbootstate=orange).",
         "Der Bootloader ist entsperrt (flash.locked=0)." to "Bootloader is unlocked (flash.locked=0).",

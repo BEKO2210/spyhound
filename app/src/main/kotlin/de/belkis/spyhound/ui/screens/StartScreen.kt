@@ -103,6 +103,9 @@ fun StartScreen(
                         modifier = Modifier.padding(start = 8.dp),
                     )
                 }
+                de.belkis.spyhound.ui.components.LanguageToggle(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                )
                 InfoCircleButton(
                     onClick = onOpenInfo,
                     modifier = Modifier.align(Alignment.CenterEnd),

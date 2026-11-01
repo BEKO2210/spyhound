@@ -87,7 +87,7 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
                 .daemon(false)
                 .processNameSuffix("shell")
                 .debuggable(BuildConfig.DEBUG)
-                .version(BuildConfig.VERSION_CODE)
+                .version(BuildConfig.SHELL_SERVICE_VERSION)
         }
 
         fun status(): Status {
