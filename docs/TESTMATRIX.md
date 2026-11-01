@@ -15,6 +15,13 @@ Stand 2026-11-01. Belege: Screenshots unter `docs/shots/matrix/`, Gerätetests a
 | Emulator pixel_6 | 14 (34) | Debug | Shizuku | ❌ Verbindung im Emulator nicht hergestellt, Scan lief als Basis | `api34-shizuku-*.png` |
 | Emulator pixel_6 | 14 (34) | Debug | Root (Magisk v31.1 via rootAVD @613caa4) | ✅ „Full (root)“, 22 s, 5.764 geprüft, Testspy rot. Hinweis: Magisk zeigte keinen Freigabe-Dialog (`su: request rejected`), Freigabe für den Test direkt als Magisk-Policy gesetzt (= „Grant“). Magisk-`su` liegt unter `/system_ext/bin/su` | `api34-root-*.png` |
 
+## Echte Geräte (2026-11-02)
+| Gerät | Android | Build | Tiefe | Ergebnis |
+|---|---|---|---|---|
+| Pixel 9 | 17 (API 37) | Debug | Tief (eingebaut, ohne PC) | Scan 73 s, 0 Funde, 4 Hinweise, 0 Abstürze |
+| Pixel 9 | 17 (API 37) | **Release (R8, signiert)** | Tief (eingebaut) | Frisch installiert, Kopplung per Benachrichtigung, Scan 58 s, 0 Abstürze; nach Update sofort wieder Tief |
+| Pixel 11 Pro XL | 17 | Debug | Tief (Shizuku, später eingebaut) | Abnahme Belkis: Kopplung + Scan, UI „läuft alles“ |
+
 ## Fremd-Dateien (nur für Tests, nicht im Repo)
 - Magisk v31.1 `Magisk-v31.1.apk` SHA-256 `89cefac0a318afa39fb3880c45c87b036c05bc1ebf02a7a715b7f8d7c26ac6e7` (= GitHub-Digest)
 - rootAVD Commit `613caa44371f`

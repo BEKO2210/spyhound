@@ -5,13 +5,19 @@ Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
 ## Kompass (aktuelle Schwerpunkte)
-1. **Eingebauter Prüf-Dienst** (kein PC, keine Shizuku-App): Kopplung über WLAN-Debugging komplett in Spyhound, Code per
-   Benachrichtigung eingeben. Grund: „Niemand, den ich kenne, kann das am PC“ (Belkis, 2026-11-01).
-   **Stand:** Kern fertig auf Branch `builtin-adb` (AdbShell, Zustandsmaschine, Gap „Tiefe Prüfung wieder starten“, Tests
-   grün). Offen, Abnahme: Pixel-Test nach `docs/handoff-builtin-adb.md` (Kopplung, Scan, Neustart ohne neuen Code); R8-Release
-   baut und verbindet; Chip-Label „Shizuku“ für eingebaute ADB im UI-Umbau korrigieren.
-2. **UI/UX-Durchgang**: übersichtlich, animiert, selbsterklärend (DE+EN), klar sichtbar, was genutzt wird.
-3. Abnahme jeder Runde auf dem Pixel 11 Pro XL (End-Testgerät).
+1. **Release 0.1.0** (öffentlich): signierte APK, SHA256SUMS, README DE/EN mit Pixel-Bildern, danach Repo öffentlich.
+   Abnahme: Release-APK auf Pixel 9 und Pixel 11 Pro XL installiert, Scan läuft, Signatur `2A:E3:…:BD:4A`.
+2. **Tablet/Querformat** in allen Bildschirmen zwei Spalten (Ergebnis hat es schon), Übergänge Start → Scan → Ergebnis.
+3. **Ohne-PC-Einrichtung als geführter 3-Schritte-Assistent** mit Splitscreen-Hilfe (Code und Eingabe nebeneinander).
+
+## Erledigt 2026-11-02 (Release-Runde)
+- [x] Eingebauter Prüf-Dienst ohne PC und ohne Shizuku. Beleg: 8cc3f73; Pixel 9 (Android 17): Kopplung per
+      Benachrichtigung, Tiefen-Scan 73 s (Debug) / 58 s (Release, R8), 0 Abstürze; Pixel 11 Pro XL: Kopplung und Scan durch
+      Belkis abgenommen; nach App-Update sofort wieder „Tief“ ohne neue Kopplung.
+- [x] UI/UX-Durchgang: Statuspanel, Karten, Scan- und Ergebnisbildschirm, Einführung. Beleg: 1532fe2, f7a1d2c; Abnahme
+      Belkis auf Pixel 11 Pro XL („Läuft alles“).
+- [x] DNS-Wächter legte DNS lahm und ließ sich nicht abschalten – behoben, gemessen auf Pixel 9. Beleg: f71bb84.
+- [x] Release nur ARM (15 MB statt 20 MB). 16-KB-Seiten: alle `.so` mit `LOAD 0x4000`; RELRO-Warnung nur bei Debug-Builds.
 
 ## Stufe 1 – Fundament
 - [x] Indikator-Engine: STIX 2, MISP-CSV, Domainlisten, Toolkit-TSV; Host-Suffix-Matching; Shared-Services ausgenommen.
