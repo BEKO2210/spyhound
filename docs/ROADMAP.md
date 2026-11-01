@@ -5,11 +5,10 @@ Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
 ## Kompass (aktuelle Schwerpunkte)
-1. Radar-Feinschliff, dann englische Oberfläche.
-2. Emulator-Testmatrix nacheinander (kein Samsung-Gerät vorhanden): API 29/31/34/37, Tablet, Root (Magisk im Emulator),
-   Shizuku im Emulator.
-2. Fehlerbericht in der Oberfläche (Teilen-Intent) und Abnahme mit echtem S23-Bericht.
-3. Unabhängiges Sicherheits-Review der Shell- und Download-Schicht.
+1. **Eingebauter Prüf-Dienst** (kein PC, keine Shizuku-App): Kopplung über WLAN-Debugging komplett in Spyhound, Code per
+   Benachrichtigung eingeben. Grund: „Niemand, den ich kenne, kann das am PC“ (Belkis, 2026-11-01).
+2. **UI/UX-Durchgang**: übersichtlich, animiert, selbsterklärend (DE+EN), klar sichtbar, was genutzt wird.
+3. Abnahme jeder Runde auf dem Pixel 11 Pro XL (End-Testgerät).
 
 ## Stufe 1 – Fundament
 - [x] Indikator-Engine: STIX 2, MISP-CSV, Domainlisten, Toolkit-TSV; Host-Suffix-Matching; Shared-Services ausgenommen.
