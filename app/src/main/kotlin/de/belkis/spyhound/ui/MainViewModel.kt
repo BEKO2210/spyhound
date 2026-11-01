@@ -138,6 +138,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun closeReport() = _state.update { it.copy(report = null) }
 
+    fun showDemoReport() {
+        _state.update { it.copy(report = DemoReport.withFinding(), progress = null) }
+    }
+
     override fun onCleared() {
         shell?.close()
     }
