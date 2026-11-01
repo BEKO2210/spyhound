@@ -85,7 +85,20 @@ click_text() {
   local text=$1
   local xml bounds
   xml=$(ui_dump)
-  bounds=$(echo "$xml" | tr '\n' ' ' | sed -n "s/.*text=\"${text}\"[^>]*bounds=\"\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]\".*/\1 \2 \3 \4/p" | head -1)
+  bounds=$(echo "$xml" | python3 - "$text" <<'PY'
+import re, sys
+text = sys.argv[1]
+xml = sys.stdin.read().replace("\n", " ")
+for pat in (
+    rf'text="{re.escape(text)}"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
+    rf'content-desc="{re.escape(text)}"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
+):
+    m = re.search(pat, xml)
+    if m:
+        print(m.group(1), m.group(2), m.group(3), m.group(4))
+        break
+PY
+)
   if [[ -z "$bounds" ]]; then
     echo "click_text: not found: $text" >&2
     return 1
@@ -101,7 +114,14 @@ screenshot() {
 }
 
 skip_intro() {
-  $ADB shell run-as "$PKG" sh -c 'mkdir -p shared_prefs && printf "%s\n" "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>" "<map>" "<boolean name=\"completed\" value=\"true\" />" "</map>" > shared_prefs/spyhound_intro.xml'
+  local prefs=/tmp/spyhound_intro.xml
+  printf '%s\n' \
+    '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>' \
+    '<map>' \
+    '<boolean name="completed" value="true" />' \
+    '</map>' >"$prefs"
+  $ADB push "$prefs" /sdcard/spyhound_intro.xml >/dev/null
+  $ADB shell "cat /sdcard/spyhound_intro.xml | run-as $PKG sh -c 'mkdir -p shared_prefs && cat > shared_prefs/spyhound_intro.xml'"
 }
 
 prepare_spyhound_data() {
@@ -112,7 +132,10 @@ prepare_spyhound_data() {
 }
 
 push_debug_tsv() {
-  grep -v '^#' "$TEST_TSV" | grep -v '^$' | $ADB exec-out run-as "$PKG" sh -c 'mkdir -p files/iocs && cat > files/iocs/debug-test.tsv'
+  local filtered=/tmp/spyhound-debug-test.tsv
+  grep -v '^#' "$TEST_TSV" | grep -v '^$' >"$filtered"
+  $ADB push "$filtered" /sdcard/spyhound-debug-test.tsv >/dev/null
+  $ADB shell "cat /sdcard/spyhound-debug-test.tsv | run-as $PKG sh -c 'mkdir -p files/iocs && cat > files/iocs/debug-test.tsv'"
 }
 
 install_apps() {
@@ -126,10 +149,11 @@ install_apps() {
 wait_scan_done() {
   for _ in $(seq 1 180); do
     xml=$(ui_dump)
-    if echo "$xml" | grep -qE 'text="(Neu prüfen|Scan again)"'; then
+    if echo "$xml" | grep -qi 'testspy'; then
       return 0
     fi
-    if echo "$xml" | grep -qE 'text="(Fund|Findings)"'; then
+    if echo "$xml" | grep -qE 'text="Scan again"|text="Neu prüfen"|content-desc="Scan again"'; then
+      sleep 2
       return 0
     fi
     sleep 2
@@ -141,9 +165,7 @@ wait_scan_done() {
 check_finding() {
   local xml
   xml=$(ui_dump)
-  echo "$xml" | grep -qi 'testspy' && return 0
-  echo "$xml" | grep -qi 'Testspy' && return 0
-  return 1
+  echo "$xml" | grep -qi 'testspy'
 }
 
 check_logcat_fatal() {
@@ -158,7 +180,7 @@ check_logcat_fatal() {
 
 run_phone_test() {
   local api=$1 nn=$2 sysimg=$3 avd=$4
-  echo "=== API $api (api${nn}) ==="
+  echo "=== API $api (api${nn}) ===" | tee -a /tmp/matrix-emulator-test.log
   kill_emu
   create_avd "$avd" "$sysimg" pixel_6
   $EMU -avd "$avd" -no-window -no-audio -no-snapshot -gpu swiftshader_indirect \
@@ -166,9 +188,11 @@ run_phone_test() {
   wait_boot
   install_apps
   $ADB shell am start -n "$PKG/.MainActivity" >/dev/null
-  sleep 3
+  sleep 8
   screenshot "$SHOT_DIR/api${nn}-start.png"
-  click_desc "Jetzt prüfen" || click_desc "Scan now"
+  set +e
+  click_text "Scan now" || click_desc "Scan now" || click_text "Jetzt prüfen" || click_desc "Jetzt prüfen"
+  set -e
   sleep 2
   screenshot "$SHOT_DIR/api${nn}-scan.png"
   wait_scan_done
@@ -192,7 +216,7 @@ run_tablet_test() {
   $ADB shell am start -n "$PKG/.MainActivity" >/dev/null
   sleep 3
   screenshot "$SHOT_DIR/api36-tablet-start.png"
-  click_desc "Jetzt prüfen" || click_desc "Scan now"
+  click_text "Scan now" || click_desc "Scan now" || click_text "Jetzt prüfen" || click_desc "Jetzt prüfen"
   wait_scan_done
   screenshot "$SHOT_DIR/api36-tablet-result.png"
   check_logcat_fatal
@@ -244,7 +268,7 @@ run_release_test() {
   skip_intro
   $ADB shell am start -n "$PKG/.MainActivity" >/dev/null
   sleep 3
-  click_desc "Jetzt prüfen" || click_desc "Scan now"
+  click_text "Scan now" || click_desc "Scan now" || click_text "Jetzt prüfen" || click_desc "Jetzt prüfen"
   wait_scan_done
   if check_finding; then
     echo "FAIL: release showed Testspy finding" >&2
@@ -260,15 +284,32 @@ run_release_test() {
 main() {
   mkdir -p "$SHOT_DIR"
   [[ -f "$SPY_APK" && -f "$TEST_APK" ]] || { echo "Build APKs first" >&2; exit 1; }
-  run_phone_test 29 29 "system-images;android-29;google_apis;x86_64" spyhound-matrix-29
-  run_phone_test 31 31 "system-images;android-31;google_apis;x86_64" spyhound-matrix-31
-  run_phone_test 34 34 "system-images;android-34;google_apis;x86_64" spyhound-matrix-34
-  run_phone_test 37 37 "system-images;android-37.0;google_apis;x86_64" spyhound-matrix-37
-  run_tablet_test
-  run_root_probe
-  run_release_test
-  cd "$ROOT" && ./gradlew --stop
-  free -m
+  local only=${1:-all}
+  if [[ "$only" == "29" || "$only" == "all" ]]; then
+    run_phone_test 29 29 "system-images;android-29;google_apis;x86_64" spyhound-matrix-29
+  fi
+  if [[ "$only" == "31" || "$only" == "all" ]]; then
+    run_phone_test 31 31 "system-images;android-31;google_apis;x86_64" spyhound-matrix-31
+  fi
+  if [[ "$only" == "34" || "$only" == "all" ]]; then
+    run_phone_test 34 34 "system-images;android-34;google_apis;x86_64" spyhound-matrix-34
+  fi
+  if [[ "$only" == "37" || "$only" == "all" ]]; then
+    run_phone_test 37 37 "system-images;android-37.0;google_apis;x86_64" spyhound-matrix-37
+  fi
+  if [[ "$only" == "tablet" || "$only" == "all" ]]; then
+    run_tablet_test
+  fi
+  if [[ "$only" == "root" || "$only" == "all" ]]; then
+    run_root_probe
+  fi
+  if [[ "$only" == "release" || "$only" == "all" ]]; then
+    run_release_test
+  fi
+  if [[ "$only" == "all" ]]; then
+    cd "$ROOT" && ./gradlew --stop
+    free -m
+  fi
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

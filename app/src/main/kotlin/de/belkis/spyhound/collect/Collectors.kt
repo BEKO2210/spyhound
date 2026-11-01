@@ -180,7 +180,8 @@ class SmsCollector(private val context: Context) {
 class StorageCollector {
     data class Result(val listing: String, val hashes: String, val skippedLarge: Int, val unreadable: Int)
 
-    fun canRead(): Boolean = Environment.isExternalStorageManager()
+    fun canRead(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
 
     fun collect(onProgress: (String) -> Unit): Result {
         val root = Environment.getExternalStorageDirectory()

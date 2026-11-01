@@ -101,7 +101,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update {
             it.copy(
                 smsGranted = ctx.checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED,
-                filesGranted = Environment.isExternalStorageManager(),
+                filesGranted = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+                    Environment.isExternalStorageManager(),
                 shizuku = ShizukuShell.status(),
                 shizukuInstalled = isShizukuInstalled(ctx.packageManager),
                 devOptionsEnabled = isDeveloperOptionsEnabled(ctx),
