@@ -21,9 +21,9 @@
 - [x] Erster echter Scan (Basis). Beleg: Pixel 11 Pro XL, 16 s, 15.208 Elemente, 0 Funde, 5 plausible Hinweise, 2 Lücken.
 - [x] Shizuku-Tiefenprüfung auf echtem Gerät. Beleg: Pixel 11 Pro XL, 43 s, 18.228 Elemente, 0 Funde nach Fix eines
       Falschtreffers (com.microsoft.familysafety aus `queriesPackages`).
-- [ ] Shizuku nach Neustart/Update der App automatisch neu verbinden, wenn Freigabe besteht. Abnahme: nach `adb install -r`
-      steht die Stufe ohne Tippen auf Shizuku.
-- [ ] Scan-Bildschirm ohne Springen (Detailzeile fest, gedrosselt). Abnahme: Pixel-Vergleich unterhalb der Detailzeile.
+- [x] Shizuku nach Neustart/Update der App automatisch neu verbinden, wenn Freigabe besteht. Abnahme: nach `adb install -r`
+      steht die Stufe ohne Tippen auf Shizuku. Beleg: Pixel, e3bfe51.
+- [x] Scan-Bildschirm ohne Springen. Beleg: Pixel, 6 Aufnahmen à 300 ms unterhalb der Detailzeile pixelgleich (f528096).
 - [ ] Logo verfeinern (v1 kantig, Auge wirkt wie Sonnenbrille). Abnahme: Belkis-Abnahme bei 24 dp und 512 px.
 
 ## Stufe 2 – Tiefe ohne Root
@@ -33,7 +33,8 @@
 - [ ] Fehlerbericht in der Oberfläche (Teilen-Intent) und Abnahme mit echtem S23-Bericht.
 - [ ] DNS-Wächter (lokales VpnService, kein Server): meldet Verbindungen zu Indikator-Domains live. Abnahme: Test-Domain
       löst Warnung aus, kein Datenabfluss.
-- [ ] Anleitung „Shizuku ohne PC einrichten“ in der App (WLAN-Debugging, Schritt für Schritt mit Bildern).
+- [x] Geführter Assistent „Tiefere Prüfung einrichten“ (Checkliste hakt sich selbst ab, Direkt-Knöpfe). Beleg: 6764331, e62c904.
+- [ ] Assistent mit echtem Laien testen (ohne Hilfe bis „bereit“). Abnahme: eine Person ohne Technikwissen schafft es allein.
 
 ## Upstream (Zero Breach Toolkit)
 - [ ] PR #31 „Android: package names in <queries> declarations are not install traces“ – offen seit 2026-11-01.
