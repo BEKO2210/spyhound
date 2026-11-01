@@ -35,6 +35,11 @@
       löst Warnung aus, kein Datenabfluss.
 - [ ] Anleitung „Shizuku ohne PC einrichten“ in der App (WLAN-Debugging, Schritt für Schritt mit Bildern).
 
+## Upstream (Zero Breach Toolkit)
+- [ ] PR #31 „Android: package names in <queries> declarations are not install traces“ – offen seit 2026-11-01.
+      Abnahme: gemergt. Beleg lokal: 1959 Tests grün, build --check grün.
+- [ ] Issue: Spyhound als Begleit-App vorschlagen – erst nach öffentlichem, signiertem Release.
+
 ## Stufe 3 – Qualität und Reichweite
 - [ ] Englische Oberfläche (values-en).
 - [ ] „Zeitreichweite“ wie im Toolkit: wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
