@@ -196,4 +196,7 @@
     <string name="start_help_dns">Watches DNS while active and warns if a known indicator domain is requested.</string>
     <string name="start_help_bugreport">Imports an Android bug report ZIP for extra offline checks — no upload.</string>
     <string name="start_help_access">Basic needs no extras; Shizuku and root unlock deeper checks step by step.</string>
+    <string name="info_section_support">Support Spyhound</string>
+    <string name="info_support_body">Spyhound is free and stays free – every scan, for everyone, without accounts or ads. If it helped you, you can support its development.</string>
+    <string name="info_support_link">Become a sponsor on GitHub</string>
 </resources>

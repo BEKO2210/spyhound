@@ -92,10 +92,15 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [ ] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [ ] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund.
 
-- [ ] Finanzierung ohne Bezahlschranke (Entscheidung offen, Vorschlag 2026-11-01): Prüfung immer kostenlos; Spenden
+- [x] Finanzierung ohne Bezahlschranke – entschieden von Belkis 2026-11-01: Spenden über GitHub Sponsors (FUNDING.yml,
+      README, Info-Bildschirm). Später optional „Pro“. Ursprünglicher Vorschlag: Prüfung immer kostenlos; Spenden
       (GitHub Sponsors/Ko-fi); optional „Pro“ mit Komfortfunktionen (Hintergrundprüfung, Verlauf, PDF) per Offline-Lizenz-
       schlüssel, kein Server. Kein Bezahlen pro Scan (bricht „offline“, schreckt gefährdete Menschen ab, bei Apache-2.0
       leicht zu umgehen).
+
+- [ ] Rechtstexte vor öffentlichem Release fachlich prüfen lassen (Liste aus 33939df: § 18 MStV, DPF-Status GitHub,
+      Rolle als Verantwortlicher, § 25 TDDDG, Haftung/Apache-2.0, Aufsichtsbehörde-Adresse, § 202a StGB-Hinweis, Art. 13
+      Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
 - Unter `sudo` zeigt `~` auf /root: Das Desktop-Toolkit verlor so Browser, Home und Indikator-Cache. Rechte-Erhöhung

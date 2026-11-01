@@ -196,4 +196,7 @@
     <string name="start_help_dns">Beobachtet DNS solange aktiv und warnt bei Anfragen zu bekannten Indikator-Domains.</string>
     <string name="start_help_bugreport">Importiert eine Android-Fehlerbericht-ZIP für zusätzliche Offline-Prüfungen — kein Upload.</string>
     <string name="start_help_access">Basis braucht nichts Extra; Shizuku und Root schalten schrittweise tiefere Prüfungen frei.</string>
+    <string name="info_section_support">Spyhound unterstützen</string>
+    <string name="info_support_body">Spyhound ist kostenlos und bleibt es – jede Prüfung, für alle, ohne Konto und ohne Werbung. Wenn es dir geholfen hat, kannst du die Weiterentwicklung unterstützen.</string>
+    <string name="info_support_link">Auf GitHub Sponsor werden</string>
 </resources>

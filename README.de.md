@@ -103,3 +103,8 @@ Die Debug-APK liegt danach in `app/build/outputs/apk/debug/`.
 Apache License 2.0, siehe [LICENSE](LICENSE). Spyhound ist ein Kotlin-Nachbau der Logik des
 [Zero Breach Toolkit](https://github.com/interplains/Zero-Breach-Toolkit). Herkunft und Indikatorquellen stehen in
 [NOTICE](NOTICE).
+
+## Unterstützen
+
+Spyhound ist kostenlos und bleibt es – jede Prüfung, für alle, ohne Konto, Werbung oder Bezahlschranke.
+Wenn es dir geholfen hat, kannst du die Weiterentwicklung unterstützen: **[Auf GitHub Sponsor werden](https://github.com/sponsors/BEKO2210)**.

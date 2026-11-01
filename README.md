@@ -100,3 +100,8 @@ The debug APK is written to `app/build/outputs/apk/debug/`.
 Apache License 2.0, see [LICENSE](LICENSE). Spyhound reimplements the logic of the
 [Zero Breach Toolkit](https://github.com/interplains/Zero-Breach-Toolkit) in Kotlin. Origin and indicator sources are
 credited in [NOTICE](NOTICE).
+
+## Support
+
+Spyhound is free and stays free – every scan, for everyone, without accounts, ads or a paywall.
+If it helped you, you can support its development: **[Become a sponsor on GitHub](https://github.com/sponsors/BEKO2210)**.
