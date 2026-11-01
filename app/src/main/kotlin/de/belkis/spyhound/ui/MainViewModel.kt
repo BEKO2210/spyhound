@@ -24,6 +24,8 @@ import de.belkis.spyhound.shell.SHIZUKU_STOPPED_BANNER
 import de.belkis.spyhound.shell.ScanGatedShellChanges
 import de.belkis.spyhound.shell.Shell
 import de.belkis.spyhound.shell.ShellPreferences
+import de.belkis.spyhound.setup.isDeveloperOptionsEnabled
+import de.belkis.spyhound.setup.isShizukuInstalled
 import de.belkis.spyhound.shell.ShizukuShell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,6 +40,8 @@ data class UiState(
     val iocs: LoadedIocs? = null,
     val access: AccessLevel = AccessLevel.APP,
     val shizuku: ShizukuShell.Status = ShizukuShell.Status.NOT_RUNNING,
+    val shizukuInstalled: Boolean = false,
+    val devOptionsEnabled: Boolean = false,
     val rootDenied: Boolean = false,
     val smsGranted: Boolean = false,
     val filesGranted: Boolean = false,
@@ -92,6 +96,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 smsGranted = ctx.checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED,
                 filesGranted = Environment.isExternalStorageManager(),
                 shizuku = ShizukuShell.status(),
+                shizukuInstalled = isShizukuInstalled(ctx.packageManager),
+                devOptionsEnabled = isDeveloperOptionsEnabled(ctx),
                 access = shell?.level ?: AccessLevel.APP,
             )
         }

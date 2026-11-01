@@ -40,7 +40,6 @@ import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.components.AccessLevelBar
 import de.belkis.spyhound.ui.components.RadarScanButton
 import de.belkis.spyhound.ui.components.SectionLabel
-import de.belkis.spyhound.ui.components.ShizukuGuideSheet
 import de.belkis.spyhound.ui.components.SpyButton
 import de.belkis.spyhound.ui.components.SpyDivider
 import de.belkis.spyhound.ui.components.TextActionLink
@@ -53,7 +52,6 @@ fun StartScreen(
     state: UiState,
     onScan: () -> Unit,
     onUpdateIndicators: () -> Unit,
-    onConnectShizuku: () -> Unit,
     onRequestRoot: () -> Unit,
     onRequestSms: () -> Unit,
     onRequestFiles: () -> Unit,
@@ -61,8 +59,8 @@ fun StartScreen(
     onPickBugreport: () -> Unit,
     onDismissBanner: () -> Unit,
     onDemoReport: () -> Unit = {},
+    onDeepCheckSetup: () -> Unit,
 ) {
-    var showShizukuGuide by remember { mutableStateOf(false) }
     var showBugreportSteps by remember { mutableStateOf(false) }
     val scroll = rememberScrollState()
     Column(Modifier.fillMaxSize()) {
@@ -232,10 +230,8 @@ fun StartScreen(
             SpyDivider(Modifier.padding(vertical = 16.dp))
             AccessLevelBar(
                 current = state.access,
-                shizuku = state.shizuku,
-                onConnectShizuku = onConnectShizuku,
+                onDeepCheckSetup = onDeepCheckSetup,
                 onRequestRoot = onRequestRoot,
-                onShizukuGuide = { showShizukuGuide = true },
             )
             if (state.rootDenied) {
                 Spacer(Modifier.height(6.dp))
@@ -248,7 +244,6 @@ fun StartScreen(
             PermissionRow("Alle Dateien", state.filesGranted, "Verdächtige Dateien auf dem Speicher", onRequestFiles)
         }
     }
-    ShizukuGuideSheet(visible = showShizukuGuide, onDismiss = { showShizukuGuide = false })
 }
 
 @Composable

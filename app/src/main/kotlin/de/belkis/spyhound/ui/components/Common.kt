@@ -1,7 +1,5 @@
 package de.belkis.spyhound.ui.components
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -41,14 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.scan.AccessLevel
-import de.belkis.spyhound.shell.ShizukuShell
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
@@ -230,13 +226,10 @@ fun AnimatedCount(value: Int, modifier: Modifier = Modifier, style: androidx.com
 @Composable
 fun AccessLevelBar(
     current: AccessLevel,
-    shizuku: ShizukuShell.Status,
-    onConnectShizuku: () -> Unit,
+    onDeepCheckSetup: () -> Unit,
     onRequestRoot: () -> Unit,
-    onShizukuGuide: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val stages = listOf(
         AccessLevel.APP to "Basis",
         AccessLevel.SHELL to "Shizuku",
@@ -280,66 +273,48 @@ fun AccessLevelBar(
         when (current) {
             AccessLevel.APP -> {
                 Text(
-                    "Shizuku schaltet tiefere Prüfungen frei — Prozesse, Logs und mehr Dateien, ohne Root.",
+                    "Die tiefere Prüfung findet mehr — zum Beispiel laufende Hintergrundprozesse. " +
+                        "Dafür richtest du einmal Shizuku ein, ohne Root.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(8.dp))
-                ShizukuAction(shizuku, onConnectShizuku, onShizukuGuide)
+                SpyButton(
+                    text = "Tiefere Prüfung einrichten",
+                    onClick = onDeepCheckSetup,
+                    accent = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Root? Dann einfach ‚Root anfragen‘ tippen.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SpyColors.IvoryMuted,
+                )
+                SpyButton(
+                    text = "Root anfragen",
+                    onClick = onRequestRoot,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
             AccessLevel.SHELL -> {
                 Text(
-                    "Root erlaubt die gleichen Shell-Befehle wie am PC — die tiefste Spurensuche.",
+                    "Tiefere Prüfung ist aktiv. Root geht noch einen Schritt weiter.",
                     style = MaterialTheme.typography.bodyMedium,
+                    color = SpyColors.Clear,
                 )
                 Spacer(Modifier.height(8.dp))
-                SpyButton(text = "Root-Zugriff anfragen", onClick = onRequestRoot, modifier = Modifier.fillMaxWidth())
+                Text(
+                    "Root? Dann einfach ‚Root anfragen‘ tippen.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SpyColors.IvoryMuted,
+                )
+                SpyButton(text = "Root anfragen", onClick = onRequestRoot, modifier = Modifier.fillMaxWidth())
             }
             AccessLevel.ROOT -> {
                 Text(
                     "Höchste Stufe aktiv — alle verfügbaren Prüfungen laufen.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.Clear,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShizukuAction(
-    status: ShizukuShell.Status,
-    onConnect: () -> Unit,
-    onGuide: () -> Unit,
-) {
-    val context = LocalContext.current
-    when (status) {
-        ShizukuShell.Status.NOT_RUNNING, ShizukuShell.Status.TOO_OLD -> {
-            SpyButton(
-                text = "Shizuku installieren",
-                onClick = {
-                    context.startActivity(
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://shizuku.rikka.app/download/")),
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            TextActionLink(
-                text = "Anleitung: Shizuku ohne PC",
-                onClick = onGuide,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-        }
-        ShizukuShell.Status.NEEDS_PERMISSION, ShizukuShell.Status.READY -> {
-            SpyButton(
-                text = if (status == ShizukuShell.Status.READY) "Shizuku verbinden" else "Shizuku-Freigabe erteilen",
-                onClick = onConnect,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            if (status != ShizukuShell.Status.READY) {
-                TextActionLink(
-                    text = "Anleitung: Shizuku ohne PC",
-                    onClick = onGuide,
-                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }

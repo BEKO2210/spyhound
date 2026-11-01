@@ -11,19 +11,27 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.belkis.spyhound.BuildConfig
+import de.belkis.spyhound.setup.debugDeepCheckSnapshot
+import de.belkis.spyhound.ui.components.DeepCheckSetupWizard
+import de.belkis.spyhound.ui.deepCheckSnapshot
 import de.belkis.spyhound.bugreport.BugreportImport
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.ReportText
 import de.belkis.spyhound.ui.MainViewModel
+import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyhoundScaffold
 import de.belkis.spyhound.ui.SpyhoundTheme
 import de.belkis.spyhound.ui.UiState
@@ -60,10 +68,38 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpyhoundTheme {
                 val state by vm.state.collectAsStateWithLifecycle()
+                val screenshotKey = if (BuildConfig.DEBUG) {
+                    intent.getStringExtra(EXTRA_DEEP_CHECK_SCREENSHOT)
+                } else {
+                    null
+                }
+                var showDeepCheckSetup by remember {
+                    mutableStateOf(screenshotKey != null || intent.getBooleanExtra(EXTRA_OPEN_DEEP_CHECK, false))
+                }
+                val setupSnapshot = screenshotKey?.let { debugDeepCheckSnapshot(it) } ?: state.deepCheckSnapshot()
                 LaunchedEffect(Unit) { vm.refreshDnsGuard() }
-                SpyhoundScaffold {
-                    Box(Modifier.fillMaxSize()) {
-                        SpyhoundNav(state)
+                Box(Modifier.fillMaxSize()) {
+                    SpyhoundScaffold {
+                        Box(Modifier.fillMaxSize()) {
+                            SpyhoundNav(
+                                state = state,
+                                onOpenDeepCheckSetup = { showDeepCheckSetup = true },
+                            )
+                        }
+                    }
+                    if (showDeepCheckSetup) {
+                        DeepCheckSetupWizard(
+                            snapshot = setupSnapshot,
+                            onDismiss = { showDeepCheckSetup = false },
+                            onAllowSpyhound = { vm.connectShizuku() },
+                            onScanNow = {
+                                showDeepCheckSetup = false
+                                vm.startScan()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(SpyColors.Ink),
+                        )
                     }
                 }
             }
@@ -97,7 +133,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun SpyhoundNav(state: UiState) {
+    private fun SpyhoundNav(
+        state: UiState,
+        onOpenDeepCheckSetup: () -> Unit,
+    ) {
         when {
             state.report != null -> ResultScreen(
                 report = state.report,
@@ -106,7 +145,7 @@ class MainActivity : ComponentActivity() {
                     vm.closeReport()
                     vm.startScan()
                 },
-                onGapFix = { fix -> handleGapFix(fix) },
+                onGapFix = { fix -> handleGapFix(fix, onOpenDeepCheckSetup) },
                 onBugreport = { openBugreportPicker() },
                 onHelp = {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
@@ -120,7 +159,6 @@ class MainActivity : ComponentActivity() {
                 state = state,
                 onScan = { vm.startScan() },
                 onUpdateIndicators = { vm.updateIndicators() },
-                onConnectShizuku = { vm.connectShizuku() },
                 onRequestRoot = { vm.requestRoot() },
                 onRequestSms = {
                     smsPermission.launch(Manifest.permission.READ_SMS)
@@ -132,6 +170,7 @@ class MainActivity : ComponentActivity() {
                 onDemoReport = {
                     if (BuildConfig.DEBUG) vm.showDemoReport()
                 },
+                onDeepCheckSetup = onOpenDeepCheckSetup,
             )
         }
     }
@@ -168,14 +207,19 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun handleGapFix(fix: GapFix) {
+    private fun handleGapFix(fix: GapFix, onDeepCheckSetup: () -> Unit) {
         when (fix) {
             GapFix.PERMISSION_SMS -> smsPermission.launch(Manifest.permission.READ_SMS)
             GapFix.PERMISSION_FILES -> openAllFilesAccess()
-            GapFix.SHIZUKU -> vm.connectShizuku()
+            GapFix.SHIZUKU -> onDeepCheckSetup()
             GapFix.ROOT -> vm.requestRoot()
             GapFix.UPDATE_INDICATORS -> vm.updateIndicators()
             GapFix.NONE -> Unit
         }
+    }
+
+    companion object {
+        const val EXTRA_OPEN_DEEP_CHECK = "open_deep_check"
+        const val EXTRA_DEEP_CHECK_SCREENSHOT = "deep_check_screenshot"
     }
 }
