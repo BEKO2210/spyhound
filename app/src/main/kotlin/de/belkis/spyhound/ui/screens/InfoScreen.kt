@@ -23,6 +23,7 @@ import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.R
 import de.belkis.spyhound.ioc.FeedCatalog
 import de.belkis.spyhound.ui.SpyColors
+import de.belkis.spyhound.ui.components.CollapsibleSection
 import de.belkis.spyhound.ui.components.LanguagePicker
 import de.belkis.spyhound.ui.components.SectionLabel
 import de.belkis.spyhound.ui.components.SpyButton
@@ -60,6 +61,12 @@ fun InfoScreen(
         InfoSection(R.string.info_section_limits, R.string.info_limits_body)
         InfoSection(R.string.info_section_depths, R.string.info_depths_body)
         InfoSection(R.string.info_section_privacy, R.string.info_privacy_body)
+        SpyDivider(Modifier.padding(vertical = 8.dp))
+        LegalSection(R.string.legal_imprint_title, R.string.legal_imprint_body)
+        SpyDivider()
+        LegalSection(R.string.legal_privacy_title, R.string.legal_privacy_body)
+        SpyDivider()
+        LegalSection(R.string.legal_disclaimer_title, R.string.legal_disclaimer_body)
         SpyDivider(Modifier.padding(vertical = 16.dp))
         SectionLabel(stringResource(R.string.info_section_sources))
         sourceGroups.forEach { group ->
@@ -96,6 +103,24 @@ fun InfoScreen(
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(12.dp))
+    }
+}
+
+@Composable
+private fun LegalSection(title: Int, body: Int) {
+    val context = LocalContext.current
+    val email = stringResource(R.string.legal_email)
+    CollapsibleSection(title = stringResource(title)) {
+        Text(stringResource(body), style = MaterialTheme.typography.bodyMedium)
+        TextActionLink(
+            text = email,
+            onClick = {
+                runCatching {
+                    context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$email")))
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

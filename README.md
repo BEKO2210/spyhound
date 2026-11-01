@@ -61,6 +61,11 @@ install.
 - **Network use is limited to indicator updates.** Updates are fetched only from a fixed list of sources, at fixed
   commits, and every file must match its SHA-256 checksum or it is rejected. Redirects are not followed.
 - Results and reports stay on your device. You decide whether to share them.
+- Technically, the connection to `raw.githubusercontent.com` (GitHub, USA) transmits your IP address.
+
+Legal notice, full privacy policy and disclaimer: [docs/LEGAL.md](docs/LEGAL.md) (German version authoritative; also in
+the app under "About Spyhound"). Spyhound only detects published traces; no result is a guarantee. Controller:
+Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, Germany, belkis.aslani@gmail.com.
 
 ## Getting help
 

@@ -64,6 +64,11 @@ sicher sein möchten, was Sie installieren.
   festgelegten Commits, und jede Datei muss ihrer SHA-256-Prüfsumme entsprechen, sonst wird sie abgelehnt.
   Weiterleitungen werden nicht verfolgt.
 - Ergebnisse und Berichte bleiben auf Ihrem Gerät. Ob Sie sie teilen, entscheiden Sie.
+- Die Verbindung zu `raw.githubusercontent.com` (GitHub, USA) übermittelt dabei technisch Ihre IP-Adresse.
+
+Impressum, vollständige Datenschutzerklärung und Haftungshinweise: [docs/LEGAL.md](docs/LEGAL.md) (auch in der App unter
+„Über Spyhound“). Spyhound erkennt nur veröffentlichte Spuren; kein Ergebnis ist eine Garantie. Verantwortliche:
+Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, belkis.aslani@gmail.com.
 
 ## Hilfe
 
