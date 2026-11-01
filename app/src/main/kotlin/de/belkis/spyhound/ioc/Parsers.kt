@@ -130,6 +130,23 @@ object Parsers {
             Indicator(value, inferType(value), ctx.category, family, cols.getOrNull(3)?.trim().orEmpty().ifEmpty { ctx.sourceId })
         }.toList()
 
+    private val APP_ID_RE = Regex("""^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]+)+$""")
+
+    /** Debug-only test list: package names become APP_ID; SHA-256 stays SHA256 (Toolkit TSV columns). */
+    fun debugTestTsv(text: String, ctx: SourceContext): List<Indicator> =
+        text.lineSequence().filter { it.isNotBlank() && !it.startsWith("#") }.mapNotNull { line ->
+            val cols = line.split('\t')
+            val value = cols[0].trim()
+            if (value.isEmpty() || cols.size < 3) return@mapNotNull null
+            val family = cols.getOrNull(4)?.trim().orEmpty().ifEmpty { ctx.family }
+            val type = when {
+                SHA256_RE.matches(value) -> IocType.SHA256
+                APP_ID_RE.matches(value) -> IocType.APP_ID
+                else -> inferType(value)
+            }
+            Indicator(value, type, ctx.category, family, cols.getOrNull(3)?.trim().orEmpty().ifEmpty { ctx.sourceId })
+        }.toList()
+
     private val SHA256_RE = Regex("(?i)[0-9a-f]{64}")
     private val IPV4_RE = Regex("""\d{1,3}(\.\d{1,3}){3}""")
 

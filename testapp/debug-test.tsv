@@ -1,0 +1,5 @@
+# Spyhound emulator E2E test indicators (Toolkit TSV). Deploy to device only:
+#   adb exec-out run-as de.belkis.spyhound sh -c 'mkdir -p files/iocs && cat > files/iocs/debug-test.tsv' < debug-test.tsv
+# Debug builds only; release ignores this file.
+de.belkis.spyhound.testspy	sample-app	primary	debug-test	Testspy
+ecfcc7835734871747618d4df6207e0889b428e8f508c3b4526cf5b7f3cbe557	sample-cert	primary	debug-test	Testspy

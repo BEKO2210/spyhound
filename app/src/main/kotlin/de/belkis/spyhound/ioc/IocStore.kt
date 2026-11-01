@@ -1,6 +1,7 @@
 package de.belkis.spyhound.ioc
 
 import android.content.Context
+import de.belkis.spyhound.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -51,6 +52,7 @@ class IocStore(private val context: Context) {
                 Parsers.parse(s.format, bytes.toString(Charsets.UTF_8), SourceContext(s.id, s.category, s.family, s.androidArtifacts))
             }.onSuccess { all += it }.onFailure { corrupt += s }
         }
+        IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
         LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - corrupt.size, missing, corrupt))
     }
 
@@ -109,6 +111,17 @@ class IocStore(private val context: Context) {
     companion object {
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
         private const val MAX_DOWNLOAD = 64 shl 20
+        internal const val DEBUG_TEST_FILE = "debug-test.tsv"
+
+        internal fun appendDebugTestIndicators(all: MutableList<Indicator>, iocDir: File, debugBuild: Boolean) {
+            if (!debugBuild) return
+            val file = File(iocDir, DEBUG_TEST_FILE)
+            if (!file.isFile) return
+            val ctx = SourceContext("debug-test", Category.MERCENARY, "Testspy")
+            runCatching {
+                all += Parsers.debugTestTsv(file.readText(), ctx)
+            }
+        }
 
         /** Writes [bytes] next to [target] and moves them over it in one step; a failure leaves the old file intact. */
         internal fun replaceAtomically(tmp: File, target: File, bytes: ByteArray) {

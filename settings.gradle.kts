@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Spyhound"
 include(":app")
+include(":testapp")
