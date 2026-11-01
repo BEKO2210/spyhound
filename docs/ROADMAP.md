@@ -17,7 +17,9 @@
       Beleg: `hound_mark`, Adaptive Icon (Grund, Vordergrund, Monochrom), Spot-Bilder, `docs/brand`, `:app:assembleDebug`.
 - [ ] Elfenbein vereinheitlichen: die Oberfläche nutzt `#F2EBE0`, die Marke `#F3EEE3`.
       Abnahme: eine Elfenbeinfarbe in Theme und Vektoren.
-- [ ] Indikator-Update auf dem Gerät. Abnahme: 29/29 Quellen geladen, SHA-geprüft, auf echtem Gerät.
+- [x] Indikator-Update auf dem Gerät. Beleg: Pixel 11 Pro XL (Android 17), 29/29 Quellen, 12.566 Indikatoren, 2026-11-01.
+- [x] Erster echter Scan (Basis). Beleg: Pixel 11 Pro XL, 16 s, 15.208 Elemente, 0 Funde, 5 plausible Hinweise, 2 Lücken.
+- [ ] Logo verfeinern (v1 kantig, Auge wirkt wie Sonnenbrille). Abnahme: Belkis-Abnahme bei 24 dp und 512 px.
 
 ## Stufe 2 – Tiefe ohne Root
 - [x] Fehlerbericht-Import, Analyse-Schicht: `bugreport/` liest bugreport-*.zip (Prozesse, Pakete inkl.
@@ -39,6 +41,8 @@
   darf nie den Prüfgegenstand wechseln. (2026-11-01)
 - Android-Sandbox: Ohne Shell sieht eine App keine fremden App-Daten, Logs oder Prozesse. Das muss als Lücke sichtbar
   sein, sonst wiegt „nichts gefunden“ Laien in falscher Sicherheit.
+- Animierte Größe (`Modifier.size(animiert)`) misst die ganze Spalte jedes Frame neu: der Bildschirm wippt. Puls immer als
+  Zeichnung (drawBehind/graphicsLayer) in fester Box. (2026-11-01, Pixel)
 - Binder-Transaktionen sind auf ~1 MB begrenzt: Shell-Ausgaben (logcat, dumpsys) über Pipe streamen, nie als String.
 - Dumpstate-Abschnitte enden an der nächsten `------ TITLE`-Zeile bzw. `DUMP OF SERVICE`; Zeilen mit
   „was the duration of“ sind Zeitmessung, keine Grenze. (2026-11-01)
