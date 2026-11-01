@@ -1,7 +1,19 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
+
+// Release key lives outside the checkout (~/.config/spyhound), never in git.
+val releasePropertiesFile = providers.gradleProperty("spyhound.keystoreProperties")
+    .map { rootProject.file(it) }
+    .getOrElse(file("${System.getProperty("user.home")}/.config/spyhound/keystore.properties"))
+val releaseProperties = Properties().apply {
+    if (releasePropertiesFile.isFile) releasePropertiesFile.inputStream().use { load(it) }
+}
+val signingKeys = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+val hasReleaseSigning = signingKeys.all { !releaseProperties.getProperty(it).isNullOrBlank() }
 
 android {
     namespace = "de.belkis.spyhound"
@@ -17,8 +29,17 @@ android {
         versionName = "0.1.0"
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) create("release") {
+            storeFile = releasePropertiesFile.parentFile.resolve(releaseProperties.getProperty("storeFile"))
+            storePassword = releaseProperties.getProperty("storePassword")
+            keyAlias = releaseProperties.getProperty("keyAlias")
+            keyPassword = releaseProperties.getProperty("keyPassword")
+        }
+    }
     buildTypes {
         release {
+            if (hasReleaseSigning) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
