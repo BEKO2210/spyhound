@@ -135,7 +135,7 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
         }
         val files = ShellAnalyzer.files(res.listing, iocs.set)
         val hashes = ShellAnalyzer.hashes(res.hashes, iocs.set)
-        if (res.skippedLarge > 0) hashes.gap("${res.skippedLarge} Datei(en) über 120 MB wurden nicht mit den Fingerabdrücken verglichen.")
+        if (res.skippedLarge > 0) hashes.gap("${res.skippedLarge} Datei(en) über 120 MB wurden nicht mit den Fingerabdrücken verglichen.", kind = GapKind.LARGE_FILES)
         if (res.unreadable > 0) hashes.gap("${res.unreadable} Datei(en) oder Ordner waren nicht lesbar (z. B. Android/data).", GapFix.SHIZUKU)
         val listingPaths = res.listing.lineSequence().filter { it.startsWith("/") }.toList()
         tracker.replaceSector(RadarSector.FILES, RadarMath.filePathStatuses(listingPaths, files, hashes))

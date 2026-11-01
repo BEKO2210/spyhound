@@ -47,37 +47,38 @@ object DeviceAnalyzer {
         runCatching { LocalDate.parse(state.securityPatch) }.getOrNull()?.let { patch ->
             val days = ChronoUnit.DAYS.between(patch, today)
             if (days > 120) {
-                r.lead("Sicherheitspatch ${state.securityPatch}", "Der Sicherheitspatch ist $days Tage alt.", WHY_SECURITY)
+                r.lead("Sicherheitspatch ${state.securityPatch}", "Der Sicherheitspatch ist $days Tage alt.", WHY_SECURITY, LeadKind.OLD_PATCH)
             }
         }
         if (state.adbWifiEnabled == true) {
-            r.lead("WLAN-Debugging", "WLAN-Debugging ist eingeschaltet." + if (shellExpected) " (wird für Shizuku gebraucht)" else "", WHY_DEBUG)
+            r.lead("WLAN-Debugging", "WLAN-Debugging ist eingeschaltet." + if (shellExpected) " (wird für Shizuku gebraucht)" else "", WHY_DEBUG, LeadKind.DEBUGGING)
         } else if (state.adbEnabled == true && !shellExpected) {
-            r.lead("USB-Debugging", "USB-Debugging ist eingeschaltet.", WHY_DEBUG)
+            r.lead("USB-Debugging", "USB-Debugging ist eingeschaltet.", WHY_DEBUG, LeadKind.DEBUGGING)
         }
 
         val p = state.props
         when (p["ro.boot.verifiedbootstate"]) {
-            "orange" -> r.lead("Bootloader", "Der Bootloader ist entsperrt (verifiedbootstate=orange).", WHY_INTEGRITY)
-            "yellow", "red" -> r.lead("Bootloader", "Verified Boot meldet „${p["ro.boot.verifiedbootstate"]}“.", WHY_INTEGRITY)
+            "orange" -> r.lead("Bootloader", "Der Bootloader ist entsperrt (verifiedbootstate=orange).", WHY_INTEGRITY, LeadKind.BOOTLOADER)
+            "yellow", "red" -> r.lead("Bootloader", "Verified Boot meldet „${p["ro.boot.verifiedbootstate"]}“.", WHY_INTEGRITY, LeadKind.BOOTLOADER)
         }
         if (p["ro.boot.flash.locked"] == "0" && p["ro.boot.verifiedbootstate"] != "orange") {
-            r.lead("Bootloader", "Der Bootloader ist entsperrt (flash.locked=0).", WHY_INTEGRITY)
+            r.lead("Bootloader", "Der Bootloader ist entsperrt (flash.locked=0).", WHY_INTEGRITY, LeadKind.BOOTLOADER)
         }
         if (p["ro.debuggable"] == "1" || p["ro.build.tags"]?.contains("test-keys") == true) {
-            r.lead("System-Build", "Das System ist ein Debug- oder Test-Build (ro.debuggable/test-keys).", WHY_INTEGRITY)
+            r.lead("System-Build", "Das System ist ein Debug- oder Test-Build (ro.debuggable/test-keys).", WHY_INTEGRITY, LeadKind.SYSTEM_BUILD)
         }
         if (state.selinux?.lowercase() == "permissive") {
-            r.lead("SELinux", "SELinux ist abgeschaltet (permissive).", WHY_INTEGRITY)
+            r.lead("SELinux", "SELinux ist abgeschaltet (permissive).", WHY_INTEGRITY, LeadKind.SELINUX)
         }
         if (state.rootTraces.isNotEmpty()) {
-            r.lead("Root", "Spuren von Root-Werkzeugen: " + state.rootTraces.joinToString(", "), WHY_INTEGRITY)
+            r.lead("Root", "Spuren von Root-Werkzeugen: " + state.rootTraces.joinToString(", "), WHY_INTEGRITY, LeadKind.ROOT)
         }
         if (state.installSources.isNotEmpty()) {
             r.lead(
                 "Unbekannte Quellen",
                 "Diese Apps dürfen andere Apps installieren: " + state.installSources.joinToString(", "),
                 "Damit lassen sich Apps am Store vorbei installieren. Bei Browsern und Dateimanagern ist das oft gewollt.",
+            LeadKind.UNKNOWN_SOURCES,
             )
         }
         r.ran = true

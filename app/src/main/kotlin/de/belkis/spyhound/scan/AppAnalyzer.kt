@@ -101,17 +101,17 @@ object AppAnalyzer {
                 if (powers.isNotEmpty()) text += ". Darf: " + powers.joinToString(", ")
                 if (app.hiddenFromLauncher) text += ". Hat kein Symbol im App-Menü"
                 // Like the desktop toolkit: a sideloaded app is only worth a look together with powers.
-                if (powers.isNotEmpty() || app.hiddenFromLauncher) r.lead(where, text, WHY_SIDELOAD)
+                if (powers.isNotEmpty() || app.hiddenFromLauncher) r.lead(where, text, WHY_SIDELOAD, LeadKind.SIDELOADED_APP)
             } else if (app.accessibility || app.deviceAdmin) {
                 val what = listOfNotNull(
                     "Bedienungshilfe (kann den Bildschirm lesen)".takeIf { app.accessibility },
                     "Geräteadministrator (erschwert Deinstallation)".takeIf { app.deviceAdmin },
                 )
-                r.lead(where, "Hat " + what.joinToString(" und ") + ".", WHY_POWER)
+                r.lead(where, "Hat " + what.joinToString(" und ") + ".", WHY_POWER, LeadKind.APP_POWERS)
             }
         }
-        if (unhashed > 0) r.gap("$unhashed App-Datei(en) konnten nicht gelesen und daher nicht mit den Fingerabdrücken verglichen werden.")
-        if (noCert > 0) r.gap("Bei $noCert App(s) war das Signatur-Zertifikat nicht lesbar.")
+        if (unhashed > 0) r.gap("$unhashed App-Datei(en) konnten nicht gelesen und daher nicht mit den Fingerabdrücken verglichen werden.", kind = GapKind.APP_FILES)
+        if (noCert > 0) r.gap("Bei $noCert App(s) war das Signatur-Zertifikat nicht lesbar.", kind = GapKind.CERTIFICATES)
         r.ran = true
         return r
     }

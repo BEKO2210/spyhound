@@ -22,6 +22,8 @@ data class Lead(
     val where: String,
     val detail: String,
     val why: String,
+    /** Language-independent type, used to pick the explanation. */
+    val kind: LeadKind = LeadKind.OTHER,
 )
 
 /** A check that could not run (fully). A gap is never a clean result. */
@@ -30,7 +32,16 @@ data class Gap(
     val detail: String,
     /** What would close it: a permission, Shizuku or root. */
     val fix: GapFix = GapFix.NONE,
+    /** Language-independent type for gaps without a [fix]. */
+    val kind: GapKind = GapKind.OTHER,
 )
+
+enum class LeadKind {
+    OTHER, SIDELOADED_APP, APP_POWERS, OLD_PATCH, DEBUGGING, BOOTLOADER, SYSTEM_BUILD, SELINUX, ROOT,
+    UNKNOWN_SOURCES, OLD_BUGREPORT,
+}
+
+enum class GapKind { OTHER, APP_FILES, CERTIFICATES, READ_FAILED, BUGREPORT_PART, LARGE_FILES }
 
 enum class GapFix { NONE, PERMISSION_SMS, PERMISSION_FILES, SHIZUKU, ROOT, UPDATE_INDICATORS }
 
@@ -48,12 +59,12 @@ class CheckResult(sourceName: String, private val texts: Texts = TextsDe) {
         findings += Finding(name, texts.text(where), texts.text(detail), ind)
     }
 
-    fun lead(where: String, detail: String, why: String) {
-        leads += Lead(name, texts.text(where), texts.text(detail), texts.text(why))
+    fun lead(where: String, detail: String, why: String, kind: LeadKind = LeadKind.OTHER) {
+        leads += Lead(name, texts.text(where), texts.text(detail), texts.text(why), kind)
     }
 
-    fun gap(detail: String, fix: GapFix = GapFix.NONE) {
-        gaps += Gap(name, texts.text(detail), fix)
+    fun gap(detail: String, fix: GapFix = GapFix.NONE, kind: GapKind = GapKind.OTHER) {
+        gaps += Gap(name, texts.text(detail), fix, kind)
     }
 }
 

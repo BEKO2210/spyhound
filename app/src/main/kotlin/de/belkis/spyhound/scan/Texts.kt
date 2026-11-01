@@ -231,8 +231,8 @@ fun Report.localized(texts: Texts): Report = copy(
             out.examined = check.examined
             out.ran = check.ran
             check.findings.forEach { out.hit(texts.text(it.where), texts.text(it.detail), it.indicator) }
-            check.leads.forEach { out.lead(texts.text(it.where), texts.text(it.detail), texts.text(it.why)) }
-            check.gaps.forEach { out.gap(texts.text(it.detail), it.fix) }
+            check.leads.forEach { out.lead(texts.text(it.where), texts.text(it.detail), texts.text(it.why), it.kind) }
+            check.gaps.forEach { out.gap(texts.text(it.detail), it.fix, it.kind) }
         }
     },
 )

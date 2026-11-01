@@ -28,7 +28,7 @@ object ShellAnalyzer {
             if (ind != null) r.hit("Prozess $name", "Ein Prozess mit einem Namen, den Forscher einer Spyware zuordnen, läuft gerade.", ind)
         }
         r.ran = r.examined > 0
-        if (!r.ran) r.gap("Die Prozessliste war leer oder nicht lesbar.")
+        if (!r.ran) r.gap("Die Prozessliste war leer oder nicht lesbar.", kind = GapKind.READ_FAILED)
         return r
     }
 
@@ -49,7 +49,7 @@ object ShellAnalyzer {
             }
         }
         r.ran = r.examined > 0
-        if (!r.ran) r.gap("Die Paketliste war leer oder nicht lesbar.")
+        if (!r.ran) r.gap("Die Paketliste war leer oder nicht lesbar.", kind = GapKind.READ_FAILED)
         return r
     }
 
@@ -91,9 +91,9 @@ object ShellAnalyzer {
                     r.hit(label, "Die Systemaufzeichnung nennt $kind, die Forscher einer Spyware zuordnen. Eine Nennung beweist keinen Kontakt, ist aber ein starker Hinweis.", m.indicator)
                 }
             }
-            if (lines == 0) { r.gap("$label konnte nicht gelesen werden."); continue }
+            if (lines == 0) { r.gap("$label konnte nicht gelesen werden.", kind = GapKind.READ_FAILED); continue }
             r.examined++
-            if (!ok) r.gap("$label wurde nur teilweise gelesen (Zeitüberschreitung oder Abbruch).")
+            if (!ok) r.gap("$label wurde nur teilweise gelesen (Zeitüberschreitung oder Abbruch).", kind = GapKind.READ_FAILED)
         }
         r.ran = r.examined > 0
         return r
@@ -146,7 +146,7 @@ object ShellAnalyzer {
     /** A check counts as run only if it examined something; a failed or empty command is a gap. */
     private fun CheckResult.finish(ok: Boolean, what: String) {
         ran = examined > 0
-        if (!ran) gap("$what war leer oder der Befehl ist fehlgeschlagen. Es wurde nichts geprüft.")
-        else if (!ok) gap("$what wurde nur teilweise gelesen (Zeitüberschreitung oder Abbruch).")
+        if (!ran) gap("$what war leer oder der Befehl ist fehlgeschlagen. Es wurde nichts geprüft.", kind = GapKind.READ_FAILED)
+        else if (!ok) gap("$what wurde nur teilweise gelesen (Zeitüberschreitung oder Abbruch).", kind = GapKind.READ_FAILED)
     }
 }
