@@ -1,5 +1,7 @@
 package de.belkis.spyhound.ui
 
+import de.belkis.spyhound.R
+import de.belkis.spyhound.AppLanguage
 import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
@@ -60,6 +62,7 @@ data class UiState(
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
+    private fun s(id: Int, vararg args: Any): String = AppLanguage.localizedContext(getApplication()).getString(id, *args)
     private val store = IocStore(app)
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
@@ -119,13 +122,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun updateIndicators() = viewModelScope.launch {
-        _state.update { it.copy(updating = "Verbinde …", updateMessage = null) }
+        _state.update { it.copy(updating = s(R.string.vm_connecting), updateMessage = null) }
         val (ok, failed) = store.update { name -> _state.update { s -> s.copy(updating = name) } }
         val loaded = store.load()
         _state.update {
             it.copy(
                 iocs = loaded, updating = null,
-                updateMessage = if (failed.isEmpty()) "$ok Quellen geladen und geprüft." else "$ok geladen, ${failed.size} fehlgeschlagen: ${failed.first()}",
+                updateMessage = if (failed.isEmpty()) s(R.string.vm_sources_loaded, ok) else s(R.string.vm_sources_failed, ok, failed.size, failed.first()),
             )
         }
     }
@@ -141,7 +144,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun bindShizuku(showBusy: Boolean) = viewModelScope.launch {
-        if (showBusy) _state.update { it.copy(busy = "Verbinde mit Shizuku …") }
+        if (showBusy) _state.update { it.copy(busy = s(R.string.vm_connecting_shizuku)) }
         val sh = ShizukuShell.connect()
         if (sh != null) adoptShell(sh) else if (showBusy) _state.update { it.copy(busy = null) }
         if (showBusy) _state.update { it.copy(busy = null) }
@@ -149,7 +152,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun requestRoot() = viewModelScope.launch {
-        _state.update { it.copy(busy = "Frage Root-Zugriff an … (Root-Manager bestätigen)") }
+        _state.update { it.copy(busy = s(R.string.vm_requesting_root)) }
         val sh = withContext(Dispatchers.IO) { RootShell.probe() }
         if (sh != null) {
             ShellPreferences.setRootGranted(getApplication(), true)
@@ -226,7 +229,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val iocs = _state.value.iocs ?: return
         scanJob = viewModelScope.launch {
             shellGate.scanStarted()
-            _state.update { it.copy(progress = Progress("Start", "", 0f), report = null) }
+            _state.update { it.copy(progress = Progress(s(R.string.vm_start), "", 0f), report = null) }
             var lastRadar: RadarProgress? = null
             val merged = try {
                 val report = runCatching {
@@ -250,7 +253,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun handleIncomingBugreportIntent(uri: Uri, mimeHint: String?) {
         val ctx = getApplication<Application>()
         if (!BugreportImport.acceptsUri(ctx, uri, mimeHint)) {
-            _state.update { it.copy(bannerMessage = "Geteilte Datei ist kein Fehlerbericht (bugreport….zip).") }
+            _state.update { it.copy(bannerMessage = s(R.string.vm_shared_invalid)) }
             return
         }
         viewModelScope.launch {
@@ -266,18 +269,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val ctx = getApplication<Application>()
         val loaded = _state.value.iocs
         if (loaded == null) {
-            _state.update { it.copy(bannerMessage = "Indikatoren werden noch geladen — bitte kurz warten.") }
+            _state.update { it.copy(bannerMessage = s(R.string.vm_indicators_loading)) }
             return
         }
         if (!BugreportImport.acceptsUri(ctx, uri)) {
             _state.update {
                 it.copy(
-                    bannerMessage = "Keine gültige Fehlerbericht-ZIP (bugreport….zip).",
+                    bannerMessage = s(R.string.vm_zip_invalid),
                 )
             }
             return
         }
-        _state.update { it.copy(busy = "Fehlerbericht wird ausgewertet …", bannerMessage = null) }
+        _state.update { it.copy(busy = s(R.string.vm_checking_bugreport), bannerMessage = null) }
         val checks = withContext(Dispatchers.IO) {
             runCatching {
                 ctx.contentResolver.openInputStream(uri)?.use { stream ->
@@ -287,12 +290,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
         _state.update { it.copy(busy = null) }
         if (checks.isNullOrEmpty()) {
-            _state.update { it.copy(bannerMessage = "Fehlerbericht konnte nicht gelesen werden.") }
+            _state.update { it.copy(bannerMessage = s(R.string.vm_bugreport_unreadable)) }
             return
         }
         if (_state.value.progress != null) {
             pendingBugreportChecks = (pendingBugreportChecks.orEmpty() + checks)
-            _state.update { it.copy(bannerMessage = "Fehlerbericht wird nach der laufenden Prüfung ergänzt.") }
+            _state.update { it.copy(bannerMessage = s(R.string.vm_bugreport_queued)) }
         } else {
             _state.update { it.copy(report = bugreportReport(checks, loaded)) }
         }
@@ -316,7 +319,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             checks = checks,
             device = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE} " +
                 "(Patch ${Build.VERSION.SECURITY_PATCH})",
-            title = "Fehlerbericht-Prüfung",
+            title = s(R.string.vm_bugreport_title),
         )
     }
 
@@ -334,7 +337,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun closeReport() = _state.update { it.copy(report = null) }
 
     fun showDemoReport() {
-        val report = DemoReport.withFinding()
+        val report = DemoReport.withFinding(getApplication())
         _state.update {
             it.copy(report = report, progress = null, lastRadar = RadarMath.fromReport(report))
         }

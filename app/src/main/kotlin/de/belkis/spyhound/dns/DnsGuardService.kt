@@ -1,5 +1,7 @@
 package de.belkis.spyhound.dns
 
+import de.belkis.spyhound.R
+import de.belkis.spyhound.AppLanguage
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -164,7 +166,7 @@ class DnsGuardService : VpnService() {
 
     private fun openTunnel(): ParcelFileDescriptor? {
         return Builder()
-            .setSession("Spyhound DNS-Wächter")
+            .setSession(localizedString(R.string.dns_session))
             .setMtu(1500)
             .addAddress(VIRTUAL_DNS_V4, 32)
             .addAddress(VIRTUAL_DNS_V6, 128)
@@ -177,22 +179,24 @@ class DnsGuardService : VpnService() {
             .establish()
     }
 
+    private fun localizedString(id: Int) = AppLanguage.localizedContext(this).getString(id)
+
     private fun ensureChannels() {
         val nm = getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nm.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_ALERTS,
-                    "Warnungen",
+                    localizedString(R.string.dns_alert_channel),
                     NotificationManager.IMPORTANCE_HIGH,
-                ).apply { description = "DNS-Treffer auf bekannte Spionage-Domains" },
+                ).apply { description = localizedString(R.string.dns_alert_description) },
             )
             nm.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_SERVICE,
-                    "DNS-Wächter",
+                    localizedString(R.string.dns_watch),
                     NotificationManager.IMPORTANCE_LOW,
-                ).apply { description = "Läuft im Hintergrund und leitet DNS weiter" },
+                ).apply { description = localizedString(R.string.dns_service_description) },
             )
         }
     }
@@ -205,8 +209,8 @@ class DnsGuardService : VpnService() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         return Notification.Builder(this, CHANNEL_SERVICE)
-            .setContentTitle("DNS-Wächter aktiv")
-            .setContentText("Beobachtet DNS-Anfragen auf Indikator-Domains")
+            .setContentTitle(localizedString(R.string.dns_active))
+            .setContentText(localizedString(R.string.dns_active_description))
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pending)
             .setOngoing(true)
@@ -216,8 +220,8 @@ class DnsGuardService : VpnService() {
     private fun postWarningNotification(hit: DnsHit) {
         val nm = getSystemService(NotificationManager::class.java)
         val title = when (hit.category) {
-            Category.MERCENARY -> "Verdächtige Spyware-Domain"
-            Category.STALKERWARE -> "Verdächtige Stalkerware-Domain"
+            Category.MERCENARY -> localizedString(R.string.dns_spyware_match)
+            Category.STALKERWARE -> localizedString(R.string.dns_stalkerware_match)
         }
         val text = "${hit.domain} · ${hit.family}"
         val id = (hit.domain.hashCode() xor hit.family.hashCode()) and 0x7fffffff

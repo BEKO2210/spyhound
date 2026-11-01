@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,7 +29,14 @@ import de.belkis.spyhound.ui.deepCheckSnapshot
 import de.belkis.spyhound.bugreport.BugreportImport
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.scan.GapFix
+import de.belkis.spyhound.scan.Progress
+import de.belkis.spyhound.scan.RadarLegendCounts
+import de.belkis.spyhound.scan.RadarProgress
+import de.belkis.spyhound.scan.RadarSector
 import de.belkis.spyhound.scan.ReportText
+import de.belkis.spyhound.scan.TextsDe
+import de.belkis.spyhound.scan.TextsEn
+import de.belkis.spyhound.scan.localized
 import de.belkis.spyhound.ui.MainViewModel
 import de.belkis.spyhound.ui.SpyhoundScaffold
 import de.belkis.spyhound.ui.SpyhoundTheme
@@ -38,7 +45,7 @@ import de.belkis.spyhound.ui.screens.ResultScreen
 import de.belkis.spyhound.ui.screens.ScanScreen
 import de.belkis.spyhound.ui.screens.StartScreen
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private val vm: MainViewModel by viewModels()
 
     private val smsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -61,6 +68,28 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (BuildConfig.DEBUG && intent.getBooleanExtra(EXTRA_SCAN_SCREENSHOT, false)) {
+            setContent {
+                SpyhoundTheme {
+                    SpyhoundScaffold {
+                        ScanScreen(
+                            progress = Progress(
+                                step = getString(R.string.scan_step_device),
+                                detail = getString(R.string.scan_demo_detail),
+                                fraction = 0.48f,
+                                radar = RadarProgress(
+                                    activeSector = RadarSector.DEVICE,
+                                    deepLocked = true,
+                                    legend = RadarLegendCounts(clean = 128, lead = 1),
+                                ),
+                            ),
+                            onCancel = { finish() },
+                        )
+                    }
+                }
+            }
+            return
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationsPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -114,7 +143,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        vm.onAppVisible()
+        if (!intent.getBooleanExtra(EXTRA_SCAN_SCREENSHOT, false)) vm.onAppVisible()
     }
 
     private fun dispatchBugreportIntent(intent: Intent?) {
@@ -140,7 +169,7 @@ class MainActivity : ComponentActivity() {
             state.report != null -> {
                 BackHandler { vm.closeReport() }
                 ResultScreen(
-                report = state.report,
+                report = state.report.localized(currentTexts()),
                 onShare = { shareReport(state.report) },
                 onRescan = {
                     vm.closeReport()
@@ -158,7 +187,11 @@ class MainActivity : ComponentActivity() {
                 onCancel = { vm.cancelScan() },
             )
             else -> StartScreen(
-                state = state,
+                state = state.copy(
+                    busy = state.busy?.let(currentTexts()::text),
+                    bannerMessage = state.bannerMessage?.let(currentTexts()::text),
+                    updateMessage = state.updateMessage?.let(currentTexts()::text),
+                ),
                 onScan = { vm.startScan() },
                 onUpdateIndicators = { vm.updateIndicators() },
                 onRequestRoot = { vm.requestRoot() },
@@ -199,15 +232,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun shareReport(report: de.belkis.spyhound.scan.Report) {
-        val text = ReportText.render(report, BuildConfig.VERSION_NAME)
+        val text = ReportText.render(report, BuildConfig.VERSION_NAME, currentTexts())
         startActivity(
             Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_SUBJECT, "Spyhound Prüfbericht")
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.report_subject))
                 putExtra(Intent.EXTRA_TEXT, text)
             },
         )
     }
+
+    private fun currentTexts() = if (resources.configuration.locales[0].language == "de") TextsDe else TextsEn
 
     private fun handleGapFix(fix: GapFix, onDeepCheckSetup: () -> Unit) {
         when (fix) {
@@ -221,6 +256,7 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
+        const val EXTRA_SCAN_SCREENSHOT = "scan_screenshot"
         const val EXTRA_OPEN_DEEP_CHECK = "open_deep_check"
         const val EXTRA_DEEP_CHECK_SCREENSHOT = "deep_check_screenshot"
     }

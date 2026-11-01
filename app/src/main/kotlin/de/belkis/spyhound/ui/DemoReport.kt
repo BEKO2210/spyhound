@@ -1,5 +1,7 @@
 package de.belkis.spyhound.ui
 
+import android.content.Context
+import de.belkis.spyhound.R
 import de.belkis.spyhound.ioc.Category
 import de.belkis.spyhound.ioc.IocType
 import de.belkis.spyhound.ioc.Indicator
@@ -13,7 +15,8 @@ import de.belkis.spyhound.scan.Report
 
 /** Fixed demo report for debug UI screenshots (no real device data). */
 object DemoReport {
-    fun withFinding(): Report {
+    fun withFinding(context: Context): Report {
+        fun text(id: Int) = context.getString(id)
         val now = System.currentTimeMillis()
         val ind = Indicator(
             value = "evil.example",
@@ -27,29 +30,29 @@ object DemoReport {
             examined = 142
             findings += Finding(
                 check = name,
-                where = "DNS-Wächter / System",
-                detail = "Anfrage zu bekannter Indikator-Domain (nur Demo).",
+                where = text(R.string.demo_where),
+                detail = text(R.string.demo_finding),
                 indicator = ind,
             )
         }
-        val device = CheckResult("Gerät").apply {
+        val device = CheckResult(text(R.string.demo_device_check)).apply {
             ran = true
             examined = 38
             leads += Lead(
                 check = name,
                 where = "Bootloader",
-                detail = "Bootloader-Status konnte nicht ausgelesen werden.",
-                why = "Ein offener Bootloader erleichtert persistente Spyware — hier nur ein Demo-Hinweis.",
+                detail = text(R.string.demo_lead),
+                why = text(R.string.demo_why),
             )
         }
         val sms = CheckResult("SMS").apply {
             ran = false
-            gap("SMS-Berechtigung fehlt — Links in Nachrichten wurden nicht gelesen.", GapFix.PERMISSION_SMS)
+            gap(text(R.string.demo_sms_gap), GapFix.PERMISSION_SMS)
         }
-        val files = CheckResult("Dateien").apply { ran = true; examined = 1204 }
-        val deep = CheckResult("Tiefenprüfung").apply {
+        val files = CheckResult(text(R.string.demo_files)).apply { ran = true; examined = 1204 }
+        val deep = CheckResult(text(R.string.demo_deep)).apply {
             gap(
-                "Prozesse und Systemprotokolle ohne Shizuku nicht geprüft (Demo-Lücke).",
+                text(R.string.demo_deep_gap),
                 GapFix.SHIZUKU,
             )
         }
@@ -61,7 +64,7 @@ object DemoReport {
             indicatorSources = 26,
             indicatorSourcesMissing = 3,
             checks = listOf(apps, device, sms, files, deep),
-            device = "Demo-Gerät, Android 14 (Patch 2024-09-05)",
+            device = text(R.string.demo_device),
         )
     }
 }
