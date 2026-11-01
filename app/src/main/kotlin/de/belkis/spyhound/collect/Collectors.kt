@@ -135,7 +135,7 @@ class DeviceCollector(private val context: Context) {
             .filter { app ->
                 val uid = runCatching { context.packageManager.getApplicationInfo(app.packageName, 0).uid }.getOrNull() ?: return@filter false
                 runCatching {
-                    ops.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_REQUEST_INSTALL_PACKAGES, uid, app.packageName) == AppOpsManager.MODE_ALLOWED
+                    ops.unsafeCheckOpNoThrow("android:request_install_packages", uid, app.packageName) == AppOpsManager.MODE_ALLOWED
                 }.getOrDefault(false)
             }.map { it.label }
     }
