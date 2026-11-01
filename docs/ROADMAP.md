@@ -75,6 +75,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - Lücke: Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – Anleitungstexte bleiben
   ungetestet, bis ein Samsung-Gerät verfügbar ist.
 
+- [ ] Eingebauter Prüf-Dienst statt separater Shizuku-App: Kopplung per WLAN-Debugging direkt in Spyhound (libadb-android,
+      Apache-2.0/GPL-3.0 dual; Shizuku Apache-2.0, API MIT → NOTICE), eigener Dienst per app_process mit ADB-Rechten.
+      Abnahme: Pixel ohne installierte Shizuku-App erreicht Stufe „Tief“; nach Neustart ein Tipp zum Neustarten.
+
 ## Stufe 3 – Qualität und Reichweite
 - [ ] „Zeitreichweite“ wie im Toolkit: wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
 - [ ] Signierte Release-APK + Reproduzierbarkeit + SHA256SUMS.
@@ -88,6 +92,11 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [ ] Netzwerk-Wächter ausbauen (DNS-Wächter → auch Tracker/Phishing-Listen, optional blockieren).
 - [ ] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [ ] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund.
+
+- [ ] Finanzierung ohne Bezahlschranke (Entscheidung offen, Vorschlag 2026-11-01): Prüfung immer kostenlos; Spenden
+      (GitHub Sponsors/Ko-fi); optional „Pro“ mit Komfortfunktionen (Hintergrundprüfung, Verlauf, PDF) per Offline-Lizenz-
+      schlüssel, kein Server. Kein Bezahlen pro Scan (bricht „offline“, schreckt gefährdete Menschen ab, bei Apache-2.0
+      leicht zu umgehen).
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
 - Unter `sudo` zeigt `~` auf /root: Das Desktop-Toolkit verlor so Browser, Home und Indikator-Cache. Rechte-Erhöhung
