@@ -32,6 +32,9 @@ interface Shell {
     fun readLines(command: String, maxBytes: Int = 48 shl 20, timeoutSec: Long = 180, onLine: (String) -> Unit): Boolean =
         read(command, maxBytes, timeoutSec)?.let { text -> text.lineSequence().forEach(onLine); true } ?: false
 
+    /** Drops a possibly stale connection and opens a fresh one. Returns false if that did not work. */
+    suspend fun reconnect(): Boolean = false
+
     fun close() {}
 }
 
@@ -45,6 +48,9 @@ class RootShell : Shell {
     override fun readLines(command: String, maxBytes: Int, timeoutSec: Long, onLine: (String) -> Unit): Boolean =
         streamLines(onLine) { sink -> streamProcess(listOf("su", "-c", command), timeoutSec) { it.forEachLineCapped(maxBytes, sink::accept) } }
 
+    // Every command already starts its own su process; a fresh uid check is the new session.
+    override suspend fun reconnect(): Boolean = withContext(Dispatchers.IO) { probe() != null }
+
     companion object {
         /** Asks su for uid 0. A root manager may show its consent prompt here. */
         fun probe(): RootShell? {
@@ -56,8 +62,10 @@ class RootShell : Shell {
 }
 
 /** ADB-shell rights (or root, if Shizuku itself runs as root) without a computer, through Shizuku. */
-class ShizukuShell private constructor(private val service: IShellService, uid: Int) : Shell {
+class ShizukuShell private constructor(service: IShellService, uid: Int) : Shell {
     override val level = if (uid == 0) AccessLevel.ROOT else AccessLevel.SHELL
+
+    @Volatile private var service: IShellService = service
 
     private fun <T> stream(command: String, timeoutSec: Long, use: (InputStream) -> T): T? = runCatching {
         val pfd = service.exec(command, timeoutSec)
@@ -73,6 +81,14 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
     override fun readLines(command: String, maxBytes: Int, timeoutSec: Long, onLine: (String) -> Unit): Boolean =
         streamLines(onLine) { sink -> stream(command, timeoutSec) { it.forEachLineCapped(maxBytes, sink::accept) } }
 
+    /** Unbinds the stale service (removing it) and binds a new one; this shell keeps working through it. */
+    override suspend fun reconnect(): Boolean = withContext(Dispatchers.Main) {
+        runCatching { Shizuku.unbindUserService(args, null, true) }
+        val fresh = bind(RECONNECT_TIMEOUT_MS)?.service ?: return@withContext false
+        service = fresh
+        true
+    }
+
     override fun close() {
         runCatching { Shizuku.unbindUserService(args, null, true) }
     }
@@ -81,6 +97,8 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
 
     companion object {
         private const val REQUEST_CODE = 4711
+        private const val CONNECT_TIMEOUT_MS = 15_000L
+        private const val RECONNECT_TIMEOUT_MS = 5_000L
 
         private val args by lazy {
             Shizuku.UserServiceArgs(ComponentName(BuildConfig.APPLICATION_ID, ShellUserService::class.java.name))
@@ -111,7 +129,11 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
 
         suspend fun connect(): ShizukuShell? = withContext(Dispatchers.Main) {
             if (status() != Status.READY) return@withContext null
-            withTimeoutOrNull(15_000) {
+            bind(CONNECT_TIMEOUT_MS)
+        }
+
+        private suspend fun bind(timeoutMs: Long): ShizukuShell? =
+            withTimeoutOrNull(timeoutMs) {
                 suspendCancellableCoroutine { cont ->
                     val conn = object : ServiceConnection {
                         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -126,7 +148,6 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
                     runCatching { Shizuku.bindUserService(args, conn) }.onFailure { if (cont.isActive) cont.resume(null) }
                 }
             }
-        }
     }
 }
 

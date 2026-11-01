@@ -7,7 +7,9 @@ import de.belkis.spyhound.collect.DeviceCollector
 import de.belkis.spyhound.collect.SmsCollector
 import de.belkis.spyhound.collect.StorageCollector
 import de.belkis.spyhound.ioc.LoadedIocs
+import de.belkis.spyhound.shell.ProbeOutcome
 import de.belkis.spyhound.shell.Shell
+import de.belkis.spyhound.shell.probeWithReconnect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -72,7 +74,11 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
 
         // A shell can be connected but dead (Shizuku restarted, stale service): then every
         // command comes back empty. Probe once and report one clear gap instead of fifteen.
-        val shellAlive = shell != null && shell.read("echo spyhound-ok", 64, 15)?.contains("spyhound-ok") == true
+        // A stale connection gets one automatic reconnect before it counts as a gap.
+        val shellAlive = shell != null && probeWithReconnect(
+            probe = { shell.read("echo spyhound-ok", 64, 15)?.contains("spyhound-ok") == true },
+            reconnect = { shell.reconnect() },
+        ) != ProbeOutcome.DEAD
         if (shell != null && shellAlive) {
             checks += shellChecks(shell, apps.map { it.packageName }.toSet(), tracker, ::emit)
         } else if (shell != null) {
