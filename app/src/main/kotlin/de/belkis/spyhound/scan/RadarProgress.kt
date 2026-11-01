@@ -1,7 +1,10 @@
 package de.belkis.spyhound.scan
 
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.hypot
 import kotlin.math.min
+import kotlin.math.sin
 
 enum class RadarSector(val label: String) {
     APPS("Apps"),
@@ -45,6 +48,40 @@ data class BlipLayout(
 object RadarMath {
     const val MAX_BLIPS = 24
     const val SECTOR_COUNT = 5
+    const val BLIP_RADIUS_MIN = 0.25f
+    const val BLIP_RADIUS_MAX = 0.92f
+    /** Min center distance as fraction of radar radius (~1.5× blip diameter on scan canvas). */
+    const val BLIP_MIN_SEPARATION = 0.078f
+
+    private fun halton(base: Int, index: Int): Float {
+        var i = index
+        var f = 1f
+        var r = 0f
+        while (i > 0) {
+            f /= base.toFloat()
+            r += f * (i % base)
+            i /= base
+        }
+        return r
+    }
+
+    private fun polarDistance(r1: Float, a1Deg: Float, r2: Float, a2Deg: Float): Float {
+        val a1 = Math.toRadians(a1Deg.toDouble())
+        val a2 = Math.toRadians(a2Deg.toDouble())
+        val x1 = r1 * cos(a1)
+        val y1 = r1 * sin(a1)
+        val x2 = r2 * cos(a2)
+        val y2 = r2 * sin(a2)
+        return hypot(x1 - x2, y1 - y2).toFloat()
+    }
+
+    private fun wrapAngle(deg: Float, min: Float, max: Float): Float {
+        val span = max - min
+        var x = deg
+        while (x >= max) x -= span
+        while (x < min) x += span
+        return x
+    }
 
     fun mergeStatus(a: ElementStatus, b: ElementStatus): ElementStatus = when {
         a == ElementStatus.FINDING || b == ElementStatus.FINDING -> ElementStatus.FINDING
@@ -61,22 +98,77 @@ object RadarMath {
         }
     }
 
+    fun layoutBlipsInSector(
+        sectorIndex: Int,
+        blipCountInSector: Int,
+        sectorCount: Int = SECTOR_COUNT,
+    ): List<BlipLayout> {
+        val n = blipCountInSector
+        if (n <= 0) return emptyList()
+        if (n == 1) {
+            return listOf(
+                BlipLayout(
+                    angleDeg = sectorMidAngle(sectorIndex, sectorCount),
+                    radiusFraction = (BLIP_RADIUS_MIN + BLIP_RADIUS_MAX) / 2f,
+                ),
+            )
+        }
+        val span = 360f / sectorCount
+        val start = -90f + sectorIndex * span
+        val anglePad = span * 0.06f
+        val angleMin = start + anglePad
+        val angleMax = start + span - anglePad
+        val seed = sectorIndex * 7919 + 17
+
+        val scattered = List(n) { i ->
+            val key = i + seed
+            var u = halton(2, key)
+            val v = halton(3, key + 4099)
+            val golden = (137.507764f * (i + 1 + sectorIndex * 13)) % 360f / 360f
+            u = (u * 0.82f + golden * 0.18f).coerceIn(0f, 1f)
+            BlipLayout(
+                angleDeg = angleMin + u * (angleMax - angleMin),
+                radiusFraction = BLIP_RADIUS_MIN + v * (BLIP_RADIUS_MAX - BLIP_RADIUS_MIN),
+            )
+        }.sortedBy { it.radiusFraction }
+
+        val placed = ArrayList<BlipLayout>(n)
+        for (layout in scattered) {
+            var angleDeg = layout.angleDeg
+            var radiusFraction = layout.radiusFraction
+            var attempt = 0
+            while (attempt < 32) {
+                val clash = placed.any {
+                    polarDistance(radiusFraction, angleDeg, it.radiusFraction, it.angleDeg) < BLIP_MIN_SEPARATION
+                }
+                if (!clash) break
+                val nudge = halton(5, seed + placed.size * 31 + attempt) * (angleMax - angleMin) * 0.22f
+                angleDeg = wrapAngle(angleDeg + nudge, angleMin, angleMax)
+                val rNudge = (halton(7, seed + attempt + placed.size) - 0.5f) * 0.04f
+                radiusFraction = (radiusFraction + rNudge).coerceIn(BLIP_RADIUS_MIN, BLIP_RADIUS_MAX)
+                attempt++
+            }
+            placed += BlipLayout(angleDeg, radiusFraction)
+        }
+        return placed
+    }
+
+    private fun sectorMidAngle(sectorIndex: Int, sectorCount: Int): Float {
+        val span = 360f / sectorCount
+        return -90f + sectorIndex * span + span * 0.5f
+    }
+
     fun layoutBlipInSector(
         sectorIndex: Int,
         blipIndex: Int,
         blipCountInSector: Int,
         sectorCount: Int = SECTOR_COUNT,
     ): BlipLayout {
-        val span = 360f / sectorCount
-        val start = -90f + sectorIndex * span
-        val n = blipCountInSector.coerceAtLeast(1)
-        val angleDeg = start + span * ((blipIndex + 0.5f) / n)
-        val radiusFraction = if (n == 1) {
-            0.55f
-        } else {
-            0.28f + 0.62f * (blipIndex.toFloat() / (n - 1))
+        val layouts = layoutBlipsInSector(sectorIndex, blipCountInSector, sectorCount)
+        if (layouts.isEmpty()) {
+            return BlipLayout(sectorMidAngle(sectorIndex, sectorCount), (BLIP_RADIUS_MIN + BLIP_RADIUS_MAX) / 2f)
         }
-        return BlipLayout(angleDeg, radiusFraction)
+        return layouts[blipIndex.coerceIn(0, layouts.lastIndex)]
     }
 
     fun legendFromElements(elements: List<List<ElementStatus>>): RadarLegendCounts {
