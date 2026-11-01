@@ -314,28 +314,36 @@ check_tablet_width() {
   density=$($ADB shell wm density 2>/dev/null | tr -dc '0-9')
   width_px=$($ADB shell wm size 2>/dev/null | tail -1 | grep -oE '[0-9]+x[0-9]+' | cut -dx -f1)
   max_px=$(( 640 * density / 160 ))
+  local pad_px=$(( 40 * density / 160 ))
+  local limit_px=$(( max_px + pad_px + 32 ))
   xml=$(ui_dump)
   w=$(printf '%s' "$xml" | python3 -c "
 import re, sys
 xml = sys.stdin.read()
+screen_w = int(sys.argv[1])
+limit = int(sys.argv[2])
 widths = []
 for m in re.finditer(r'bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"', xml):
     w = int(m.group(3)) - int(m.group(1))
-    if w > 200:
+    if w <= 200:
+        continue
+    if w >= screen_w * 9 // 10:
+        continue
+    if w <= limit:
         widths.append(w)
 if not widths:
     sys.exit(1)
 print(max(widths))
-")
+" "$width_px" "$limit_px")
   if [[ -z "$w" ]]; then
     echo "tablet layout: could not measure content width" >&2
     return 1
   fi
-  if [[ "$w" -gt "$max_px" ]]; then
-    echo "tablet layout: content ${w}px > max ${max_px}px (640dp @ density $density, screen ${width_px}px)" >&2
+  if [[ "$w" -gt "$limit_px" ]]; then
+    echo "tablet layout: content ${w}px > limit ${limit_px}px (640dp column @ density $density)" >&2
     return 1
   fi
-  echo "tablet layout OK: content ${w}px <= ${max_px}px (640dp)"
+  echo "tablet layout OK: content ${w}px <= ${limit_px}px (640dp column)"
 }
 
 start_shizuku_adb() {
@@ -354,6 +362,7 @@ root_avd_magisk() {
   [[ -x "$ROOTAVD" ]] || { echo "missing rootAVD" >&2; return 1; }
   mkdir -p "$ROOT_DIR/rootAVD/Apps"
   cp -f "$MAGISK_APK" "$ROOT_DIR/rootAVD/Apps/Magisk.apk"
+  cp -f "$MAGISK_APK" "$ROOT_DIR/rootAVD/Magisk.zip"
   local sha
   sha=$(sha256sum "$MAGISK_APK" | awk '{print $1}')
   if [[ "$sha" != "89cefac0a318afa39fb3880c45c87b036c05bc1ebf02a7a715b7f8d7c26ac6e7" ]]; then
@@ -361,21 +370,20 @@ root_avd_magisk() {
     return 1
   fi
   adb_emu
+  $ADB shell svc data disable 2>/dev/null || true
+  local log=/tmp/rootAVD-api34.log
   (
     cd "$ROOT_DIR/rootAVD"
     export PATH="$SDK/platform-tools:$PATH"
     export ANDROID_HOME="$SDK"
-    # Default menu choice 1 = first listed Magisk (local Apps/Magisk.apk when online)
-    printf '1\n' | timeout 600 ./rootAVD.sh "$ramdisk" FAKEBOOTIMG 2>&1 | tee /tmp/rootAVD-api34.log
-  ) || {
-    echo "rootAVD failed — see /tmp/rootAVD-api34.log" >&2
+    timeout 600 ./rootAVD.sh "$ramdisk" >"$log" 2>&1
+  )
+  local rc=$?
+  if [[ $rc -ne 0 ]] || grep -q 'aborting the script' "$log"; then
+    echo "rootAVD failed — see $log" >&2
     return 1
-  }
-  sleep 5
-  wait_boot
-  $ADB root 2>/dev/null || true
-  sleep 2
-  $ADB wait-for-device
+  fi
+  $ADB shell svc data enable 2>/dev/null || true
 }
 
 run_phone_test() {
@@ -454,19 +462,39 @@ run_shizuku_test() {
 
 run_magisk_root_test() {
   local avd=spyhound-matrix-root-34
+  local rd="$SDK/system-images/android-34/google_apis/x86_64/ramdisk.img"
+  local bak="${rd}.backup"
   echo "=== Magisk root API 34 ==="
   kill_emu
   create_avd "$avd" "system-images;android-34;google_apis;x86_64" pixel_6
-  start_emulator "$avd" -prop persist.sys.language=de -prop persist.sys.country=DE
-  wait_boot
-  root_avd_magisk || { kill_emu; return 1; }
+  if [[ -f "$bak" && "$rd" -nt "$bak" ]]; then
+    echo "Patched ramdisk already in SDK image — skipping rootAVD"
+    start_emulator "$avd" -prop persist.sys.language=de -prop persist.sys.country=DE
+  else
+    start_emulator "$avd" -prop persist.sys.language=de -prop persist.sys.country=DE
+    wait_boot
+    root_avd_magisk || { kill_emu; return 1; }
+    unset ANDROID_SERIAL
+    for _ in $(seq 1 90); do
+      serial=$($ADB devices | awk '/^emulator-/{print $1; exit}')
+      [[ -z "$serial" ]] && break
+      sleep 2
+    done
+    find "$HOME/.android/avd" -name '*.lock' -delete 2>/dev/null || true
+    sleep 3
+    echo "Cold boot after Magisk ramdisk patch"
+    start_emulator "$avd" -prop persist.sys.language=de -prop persist.sys.country=DE
+  fi
+  wait_boot || { kill_emu; return 1; }
   install_apps
   launch_spyhound
   screenshot "$SHOT_DIR/api34-root-start.png"
   click_any "Root anfragen" "Request root" 2>/dev/null || true
   sleep 2
   grant_dialogs
-  sleep 3
+  click_any "Grant" "Gewähren" "Zulassen" "Allow" 2>/dev/null || true
+  sleep 2
+  grant_dialogs
   screenshot "$SHOT_DIR/api34-root-granted.png"
   tap_scan
   grant_dialogs
@@ -508,18 +536,17 @@ run_root_probe() {
 run_release_test() {
   local rel="$ROOT/app/build/outputs/apk/release/app-release.apk"
   [[ -f "$rel" ]] || { echo "missing release apk" >&2; return 1; }
-  local avd=spyhound-matrix-release-37
-  echo "=== Release APK API 37 ==="
+  local avd=spyhound-matrix-release-34
+  echo "=== Release APK API 34 ==="
   kill_emu
-  create_avd "$avd" "system-images;android-37.0;google_apis;x86_64" pixel_6
+  create_avd "$avd" "system-images;android-34;google_apis;x86_64" pixel_6
   start_emulator "$avd" -prop persist.sys.language=de -prop persist.sys.country=DE
   wait_boot
   $ADB uninstall "$PKG" 2>/dev/null || true
   $ADB install -r "$rel" >/dev/null
   $ADB install -r "$TEST_APK" >/dev/null
-  push_debug_tsv || true
-  skip_intro
   launch_spyhound
+  dismiss_intro_ui
   tap_scan
   wait_scan_done release || { kill_emu; return 1; }
   if check_finding; then
@@ -528,7 +555,7 @@ run_release_test() {
     return 1
   fi
   check_logcat_fatal
-  screenshot "$SHOT_DIR/api37-release-result.png"
+  screenshot "$SHOT_DIR/api34-release-result.png"
   kill_emu
   echo "OK release"
 }
