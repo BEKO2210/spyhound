@@ -16,6 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.foundation.background
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -143,10 +150,33 @@ fun StartScreen(
                 TextActionLink(text = stringResource(R.string.t_060), onClick = onDismissBanner, modifier = Modifier.padding(top = 2.dp))
             }
         }
-        Spacer(Modifier.height(20.dp))
+        // Fixed header vs. scrolling list: once the list moves, a hairline and a soft fade mark the edge.
+        val scrolled by remember { derivedStateOf { scroll.value > 0 } }
+        val edge by animateFloatAsState(if (scrolled) 1f else 0f, tween(180), label = "edge")
+        Spacer(Modifier.height(14.dp))
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .graphicsLayer { alpha = edge }
+                .background(SpyColors.Amber.copy(alpha = 0.35f)),
+        )
+        Spacer(Modifier.height(5.dp))
         Column(
             Modifier
                 .weight(1f)
+                .drawWithContent {
+                    drawContent()
+                    if (edge > 0f) {
+                        drawRect(
+                            Brush.verticalGradient(
+                                listOf(SpyColors.Ink.copy(alpha = edge), SpyColors.Ink.copy(alpha = 0f)),
+                                endY = 28.dp.toPx(),
+                            ),
+                            size = androidx.compose.ui.geometry.Size(size.width, 28.dp.toPx()),
+                        )
+                    }
+                }
                 .verticalScroll(scroll),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
