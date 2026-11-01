@@ -95,6 +95,7 @@ fun StartScreen(
             RadarScanButton(
                 onClick = onScan,
                 enabled = state.iocs != null && state.progress == null,
+                lastRadar = state.lastRadar,
             )
             Spacer(Modifier.height(12.dp))
             val status = buildString {
