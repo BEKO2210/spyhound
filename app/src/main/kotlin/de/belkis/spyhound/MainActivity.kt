@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -31,7 +30,6 @@ import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.ReportText
 import de.belkis.spyhound.ui.MainViewModel
-import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyhoundScaffold
 import de.belkis.spyhound.ui.SpyhoundTheme
 import de.belkis.spyhound.ui.UiState
@@ -88,18 +86,18 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     if (showDeepCheckSetup) {
-                        DeepCheckSetupWizard(
-                            snapshot = setupSnapshot,
-                            onDismiss = { showDeepCheckSetup = false },
-                            onAllowSpyhound = { vm.connectShizuku() },
-                            onScanNow = {
-                                showDeepCheckSetup = false
-                                vm.startScan()
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(SpyColors.Ink),
-                        )
+                        SpyhoundScaffold {
+                            DeepCheckSetupWizard(
+                                snapshot = setupSnapshot,
+                                onDismiss = { showDeepCheckSetup = false },
+                                onAllowSpyhound = { vm.connectShizuku() },
+                                onScanNow = {
+                                    showDeepCheckSetup = false
+                                    vm.startScan()
+                                },
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
                 }
             }

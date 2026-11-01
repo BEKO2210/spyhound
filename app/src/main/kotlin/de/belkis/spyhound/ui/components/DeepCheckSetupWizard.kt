@@ -1,6 +1,6 @@
 package de.belkis.spyhound.ui.components
 
-import androidx.compose.foundation.background
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,14 +47,13 @@ fun DeepCheckSetupWizard(
 ) {
     val context = LocalContext.current
     val active = activeDeepCheckStep(snapshot)
+    BackHandler(onBack = onDismiss)
     Column(
         modifier
             .fillMaxSize()
-            .background(SpyColors.Ink)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 4.dp, vertical = 8.dp),
+            .verticalScroll(rememberScrollState()),
     ) {
-        TextActionLink(text = "Zurück", onClick = onDismiss, modifier = Modifier.padding(bottom = 8.dp))
+        SpyNavigateBack(onClick = onDismiss)
         if (snapshot.allDone) {
             DonePanel(onScanNow = onScanNow)
             return@Column
