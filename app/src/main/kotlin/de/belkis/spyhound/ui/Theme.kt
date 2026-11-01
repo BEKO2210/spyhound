@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -95,7 +98,43 @@ private val SpyTypography = Typography(
         letterSpacing = 0.1.sp,
         color = SpyColors.Ivory,
     ),
+    headlineSmall = TextStyle(
+        fontFamily = Display,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        lineHeight = 22.sp,
+        letterSpacing = (-0.15).sp,
+        color = SpyColors.Ivory,
+    ),
 )
+
+object SpyTypographyExtras {
+    val sectionLabel = TextStyle(
+        fontFamily = Body,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 1.2.sp,
+        color = SpyColors.IvoryMuted,
+    )
+    val tabularHeadline = TextStyle(
+        fontFamily = Display,
+        fontWeight = FontWeight.Bold,
+        fontSize = 36.sp,
+        lineHeight = 40.sp,
+        letterSpacing = (-0.3).sp,
+        color = SpyColors.Ivory,
+        fontFeatureSettings = "tnum",
+    )
+    val tabularMedium = TextStyle(
+        fontFamily = Body,
+        fontWeight = FontWeight.Medium,
+        fontSize = 28.sp,
+        lineHeight = 32.sp,
+        color = SpyColors.Ivory,
+        fontFeatureSettings = "tnum",
+    )
+}
 
 private val SpyColorScheme = darkColorScheme(
     primary = SpyColors.Amber,
@@ -139,14 +178,15 @@ fun SpyhoundScaffold(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(SpyColors.Ink),
+            .background(SpyColors.Ink)
+            .windowInsetsPadding(WindowInsets.safeDrawing),
         contentAlignment = Alignment.TopCenter,
     ) {
         Box(
             modifier = Modifier
                 .widthIn(max = 640.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             content = { content() },
         )
     }

@@ -1,38 +1,69 @@
 package de.belkis.spyhound.ui.components
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.scan.AccessLevel
+import de.belkis.spyhound.shell.ShizukuShell
+import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
+import de.belkis.spyhound.ui.SpyTypographyExtras
 
 @Composable
-fun SpyCard(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        color = SpyColors.Surface,
-        border = BorderStroke(1.dp, SpyColors.Border),
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
-        content = { Column(Modifier.padding(16.dp), content = content) },
+fun SectionLabel(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text.uppercase(),
+        style = SpyTypographyExtras.sectionLabel,
+        modifier = modifier.padding(top = 8.dp, bottom = 4.dp),
     )
+}
+
+@Composable
+fun SpyDivider(modifier: Modifier = Modifier) {
+    HorizontalDivider(modifier = modifier, color = SpyColors.Border, thickness = 1.dp)
 }
 
 @Composable
@@ -58,53 +89,276 @@ fun SpyButton(
     ) {
         Text(
             text = text,
-            style = androidx.compose.material3.MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
         )
     }
 }
 
 @Composable
-fun AccessLevelBar(current: AccessLevel, modifier: Modifier = Modifier) {
+fun TextActionLink(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    color: Color = SpyColors.Amber,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge.copy(
+            color = color,
+            textDecoration = TextDecoration.Underline,
+        ),
+        modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            )
+            .padding(vertical = 8.dp),
+    )
+}
+
+@Composable
+fun WhyLink(expanded: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
+            .clickable(onClick = onToggle)
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text("Warum?", style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
+        Icon(
+            Icons.Default.ExpandMore,
+            contentDescription = null,
+            tint = SpyColors.Amber,
+            modifier = Modifier
+                .size(20.dp)
+                .rotate(if (expanded) 180f else 0f),
+        )
+    }
+}
+
+@Composable
+fun CollapsibleSection(
+    title: String,
+    count: Int? = null,
+    modifier: Modifier = Modifier,
+    initiallyExpanded: Boolean = false,
+    titleColor: Color = SpyColors.Ivory,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    var open by remember { mutableStateOf(initiallyExpanded) }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .animateContentSize(tween(220))
+            .clickable { open = !open },
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp)
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                if (count != null) "$title ($count)" else title,
+                style = MaterialTheme.typography.titleMedium,
+                color = titleColor,
+            )
+            Icon(
+                Icons.Default.ExpandMore,
+                contentDescription = null,
+                tint = SpyColors.IvoryMuted,
+                modifier = Modifier.rotate(if (open) 180f else 0f),
+            )
+        }
+        if (open) {
+            Column(Modifier.padding(bottom = 12.dp), content = content)
+        }
+    }
+}
+
+@Composable
+fun InfoChip(text: String, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(6.dp),
+        color = SpyColors.SurfaceRaised,
+        border = BorderStroke(1.dp, SpyColors.Border),
+    ) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge,
+            color = SpyColors.IvoryMuted,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+        )
+    }
+}
+
+@Composable
+fun AnimatedCount(value: Int, modifier: Modifier = Modifier, style: androidx.compose.ui.text.TextStyle) {
+    val motion = LocalMotionEnabled.current
+    val animated by animateIntAsState(
+        targetValue = value,
+        animationSpec = if (motion) tween(700) else tween(0),
+        label = "count",
+    )
+    Text(
+        animated.toString(),
+        style = style,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun AccessLevelBar(
+    current: AccessLevel,
+    shizuku: ShizukuShell.Status,
+    onConnectShizuku: () -> Unit,
+    onRequestRoot: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
     val stages = listOf(
-        Triple(AccessLevel.APP, "Basis", "Apps, Gerät, mitgelieferte Indikatoren"),
-        Triple(AccessLevel.SHELL, "Shizuku", "Prozesse, alle Pakete, Logs, Dateien"),
-        Triple(AccessLevel.ROOT, "Root", "Volle Shell wie am PC, tiefste Spuren"),
+        AccessLevel.APP to "Basis",
+        AccessLevel.SHELL to "Shizuku",
+        AccessLevel.ROOT to "Root",
     )
     Column(modifier) {
-        Text(
-            "Zugriffsstufe",
-            style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-            color = SpyColors.Ivory,
-        )
-        androidx.compose.foundation.layout.Spacer(Modifier.padding(top = 8.dp))
-        stages.forEach { (level, title, hint) ->
-            val active = current.ordinal >= level.ordinal
-            val isCurrent = current == level
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                shape = RoundedCornerShape(8.dp),
-                color = if (isCurrent) SpyColors.SurfaceRaised else SpyColors.Surface,
-                border = BorderStroke(
-                    1.dp,
-                    when {
-                        isCurrent -> SpyColors.Amber
-                        active -> SpyColors.Clear.copy(alpha = 0.5f)
-                        else -> SpyColors.Border
-                    },
-                ),
-            ) {
-                Column(Modifier.padding(12.dp)) {
-                    Text(
-                        "$title${if (isCurrent) " · aktiv" else if (active) " · freigeschaltet" else ""}",
-                        style = androidx.compose.material3.MaterialTheme.typography.labelLarge,
-                        color = if (active) SpyColors.Ivory else SpyColors.IvoryMuted,
-                    )
-                    Text(hint, style = androidx.compose.material3.MaterialTheme.typography.bodyMedium)
+        SectionLabel("Zugriffsstufe")
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            stages.forEachIndexed { index, (level, label) ->
+                val filled = current.ordinal >= level.ordinal
+                val shape = when (index) {
+                    0 -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
+                    stages.lastIndex -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
+                    else -> RoundedCornerShape(0.dp)
+                }
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    shape = shape,
+                    color = if (filled) SpyColors.Amber else SpyColors.SurfaceRaised,
+                    border = BorderStroke(1.dp, if (filled) SpyColors.Amber else SpyColors.Border),
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            label,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = if (filled) SpyColors.Ink else SpyColors.IvoryMuted,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
             }
+        }
+        Spacer(Modifier.height(12.dp))
+        when (current) {
+            AccessLevel.APP -> {
+                Text(
+                    "Shizuku schaltet tiefere Prüfungen frei — Prozesse, Logs und mehr Dateien, ohne Root.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(8.dp))
+                ShizukuAction(shizuku, onConnectShizuku)
+            }
+            AccessLevel.SHELL -> {
+                Text(
+                    "Root erlaubt die gleichen Shell-Befehle wie am PC — die tiefste Spurensuche.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(8.dp))
+                SpyButton(text = "Root-Zugriff anfragen", onClick = onRequestRoot, modifier = Modifier.fillMaxWidth())
+            }
+            AccessLevel.ROOT -> {
+                Text(
+                    "Höchste Stufe aktiv — alle verfügbaren Prüfungen laufen.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SpyColors.Clear,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShizukuAction(status: ShizukuShell.Status, onConnect: () -> Unit) {
+    val context = LocalContext.current
+    when (status) {
+        ShizukuShell.Status.NOT_RUNNING, ShizukuShell.Status.TOO_OLD -> {
+            SpyButton(
+                text = "Shizuku installieren",
+                onClick = {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://shizuku.rikka.app/download/")),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        ShizukuShell.Status.NEEDS_PERMISSION, ShizukuShell.Status.READY -> {
+            SpyButton(
+                text = if (status == ShizukuShell.Status.READY) "Shizuku verbinden" else "Shizuku-Freigabe erteilen",
+                onClick = onConnect,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Composable
+fun ScanStepRow(label: String, done: Boolean, active: Boolean) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 44.dp)
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(
+            imageVector = if (done) Icons.Default.Check else Icons.Outlined.RadioButtonUnchecked,
+            contentDescription = null,
+            tint = when {
+                done -> SpyColors.Clear
+                active -> SpyColors.Amber
+                else -> SpyColors.Border
+            },
+            modifier = Modifier.size(22.dp),
+        )
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = when {
+                done -> SpyColors.IvoryMuted
+                active -> SpyColors.Ivory
+                else -> SpyColors.IvoryMuted.copy(alpha = 0.7f)
+            },
+        )
+    }
+}
+
+@Composable
+fun ThinProgressLine(fraction: Float, modifier: Modifier = Modifier) {
+    val f = fraction.coerceIn(0f, 1f)
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(2.dp),
+    ) {
+        drawRect(color = SpyColors.Border, size = size)
+        if (f > 0f) {
+            drawRect(color = SpyColors.Amber, size = size.copy(width = size.width * f))
         }
     }
 }

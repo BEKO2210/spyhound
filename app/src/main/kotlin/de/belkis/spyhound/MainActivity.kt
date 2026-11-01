@@ -13,13 +13,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.ReportText
@@ -58,11 +57,7 @@ class MainActivity : ComponentActivity() {
                 val state by vm.state.collectAsStateWithLifecycle()
                 LaunchedEffect(Unit) { vm.refreshDnsGuard() }
                 SpyhoundScaffold {
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                    ) {
+                    Box(Modifier.fillMaxSize()) {
                         SpyhoundNav(state)
                     }
                 }
@@ -105,6 +100,9 @@ class MainActivity : ComponentActivity() {
                 },
                 onRequestFiles = { openAllFilesAccess() },
                 onDnsToggle = { on -> toggleDns(on) },
+                onDemoReport = {
+                    if (BuildConfig.DEBUG) vm.showDemoReport()
+                },
             )
         }
     }

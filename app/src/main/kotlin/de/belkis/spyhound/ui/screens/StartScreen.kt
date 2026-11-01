@@ -1,14 +1,20 @@
 package de.belkis.spyhound.ui.screens
 
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -16,19 +22,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.belkis.spyhound.R
 import de.belkis.spyhound.dns.DnsHit
-import de.belkis.spyhound.shell.ShizukuShell
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.components.AccessLevelBar
+import de.belkis.spyhound.ui.components.RadarScanButton
+import de.belkis.spyhound.ui.components.SectionLabel
 import de.belkis.spyhound.ui.components.SpyButton
-import de.belkis.spyhound.ui.components.SpyCard
+import de.belkis.spyhound.ui.components.SpyDivider
 import java.text.DateFormat
 import java.util.Date
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StartScreen(
     state: UiState,
@@ -39,30 +49,86 @@ fun StartScreen(
     onRequestSms: () -> Unit,
     onRequestFiles: () -> Unit,
     onDnsToggle: (Boolean) -> Unit,
+    onDemoReport: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text("Spyhound", style = MaterialTheme.typography.displayLarge)
-        Text(
-            "Spuren bekannter Spyware und Stalkerware aufspüren — ruhig, offline, ohne Telemetrie.",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        state.iocs?.let { loaded ->
-            SpyCard {
-                Text("Indikatoren", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
+    val scroll = rememberScrollState()
+    Column(Modifier.fillMaxSize()) {
+        Column(
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .combinedClickable(
+                        onClick = {},
+                        onLongClick = onDemoReport,
+                    )
+                    .padding(vertical = 4.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.hound_mark),
+                    contentDescription = null,
+                    tint = SpyColors.Amber,
+                    modifier = Modifier.size(28.dp),
+                )
+                Text(
+                    "Spyhound",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = SpyColors.IvoryMuted,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            RadarScanButton(
+                onClick = onScan,
+                enabled = state.iocs != null && state.progress == null,
+            )
+            Spacer(Modifier.height(12.dp))
+            val status = buildString {
+                state.iocs?.let { append("${it.set.size} Indikatoren") }
+                    ?: append("Indikatoren werden geladen …")
+                append(" · Stufe ")
+                append(
+                    when (state.access) {
+                        de.belkis.spyhound.scan.AccessLevel.APP -> "Basis"
+                        de.belkis.spyhound.scan.AccessLevel.SHELL -> "Shizuku"
+                        de.belkis.spyhound.scan.AccessLevel.ROOT -> "Root"
+                    },
+                )
+            }
+            Text(status, style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
+            state.busy?.let {
+                Spacer(Modifier.height(6.dp))
+                Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
+            }
+        }
+        Spacer(Modifier.height(20.dp))
+        Column(
+            Modifier
+                .weight(1f)
+                .verticalScroll(scroll),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                "Spuren bekannter Spyware und Stalkerware — offline, ohne Telemetrie.",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            state.iocs?.let { loaded ->
+                SectionLabel("Indikatoren")
                 Text(
                     "${loaded.set.size} Einträge aus ${loaded.status.available} von ${loaded.status.sources} Quellen",
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (loaded.status.missing.isNotEmpty()) {
-                    Spacer(Modifier.height(6.dp))
                     Text(
                         "${loaded.status.missing.size} Quellen fehlen — optional nachladen.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(8.dp))
                 SpyButton(
                     text = if (state.updating != null) state.updating else "Weitere Quellen laden",
                     onClick = onUpdateIndicators,
@@ -70,27 +136,27 @@ fun StartScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 state.updateMessage?.let {
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(6.dp))
                     Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Clear)
                 }
+                SpyDivider(Modifier.padding(vertical = 16.dp))
             }
-        }
-        SpyCard {
+            SectionLabel("DNS-Wächter")
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(Modifier.weight(1f)) {
-                    Text("DNS-Wächter", style = MaterialTheme.typography.titleMedium)
+                Column(Modifier.weight(1f).padding(end = 12.dp)) {
                     Text(
-                        "Warnt bei DNS-Anfragen zu bekannten Indikator-Domains. Kein Server, kein Blockieren.",
+                        "Warnt bei DNS-Anfragen zu bekannten Indikator-Domains.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 Switch(
                     checked = state.dnsRunning,
                     onCheckedChange = onDnsToggle,
+                    modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = SpyColors.Ink,
                         checkedTrackColor = SpyColors.Amber,
@@ -100,30 +166,27 @@ fun StartScreen(
                 )
             }
             if (state.dnsHits.isNotEmpty()) {
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(8.dp))
                 Text("Letzte Treffer", style = MaterialTheme.typography.labelLarge)
-                Spacer(Modifier.height(6.dp))
                 val fmt = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 state.dnsHits.take(5).forEach { hit -> DnsHitLine(hit, fmt) }
             }
-        }
-        SpyCard {
-            AccessLevelBar(current = state.access)
-            Spacer(Modifier.height(12.dp))
-            PermissionRow("SMS lesen", state.smsGranted, "Links in Nachrichten prüfen", onRequestSms)
-            PermissionRow("Alle Dateien", state.filesGranted, "Verdächtige Dateien auf dem Speicher", onRequestFiles)
-            Spacer(Modifier.height(8.dp))
-            ShizukuRow(state.shizuku, onConnectShizuku)
-            Spacer(Modifier.height(8.dp))
-            SpyButton(text = "Root-Zugriff anfragen", onClick = onRequestRoot, modifier = Modifier.fillMaxWidth())
+            SpyDivider(Modifier.padding(vertical = 16.dp))
+            AccessLevelBar(
+                current = state.access,
+                shizuku = state.shizuku,
+                onConnectShizuku = onConnectShizuku,
+                onRequestRoot = onRequestRoot,
+            )
             if (state.rootDenied) {
                 Spacer(Modifier.height(6.dp))
                 Text("Root wurde abgelehnt oder ist nicht verfügbar.", style = MaterialTheme.typography.bodyMedium)
             }
-        }
-        state.busy?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber) }
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            RadarScanButton(onClick = onScan, enabled = state.iocs != null && state.progress == null)
+            SpyDivider(Modifier.padding(vertical = 16.dp))
+            SectionLabel("Berechtigungen")
+            PermissionRow("SMS lesen", state.smsGranted, "Links in Nachrichten prüfen", onRequestSms)
+            SpyDivider()
+            PermissionRow("Alle Dateien", state.filesGranted, "Verdächtige Dateien auf dem Speicher", onRequestFiles)
         }
     }
 }
@@ -133,48 +196,18 @@ private fun PermissionRow(label: String, granted: Boolean, hint: String, onReque
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(Modifier.weight(1f)) {
+        Column(Modifier.weight(1f).padding(end = 8.dp)) {
             Text(label, style = MaterialTheme.typography.labelLarge, color = if (granted) SpyColors.Clear else SpyColors.Ivory)
             Text(hint, style = MaterialTheme.typography.bodyMedium)
         }
         if (!granted) {
             SpyButton(text = "Erlauben", onClick = onRequest)
         } else {
-            Text("OK", style = MaterialTheme.typography.labelLarge, color = SpyColors.Clear)
-        }
-    }
-}
-
-@Composable
-private fun ShizukuRow(status: ShizukuShell.Status, onConnect: () -> Unit) {
-    val context = LocalContext.current
-    when (status) {
-        ShizukuShell.Status.NOT_RUNNING, ShizukuShell.Status.TOO_OLD -> {
-            Text(
-                "Shizuku ist nicht aktiv. Damit lassen sich tiefere Prüfungen ohne PC freischalten.",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Spacer(Modifier.height(8.dp))
-            SpyButton(
-                text = "Shizuku installieren",
-                onClick = {
-                    context.startActivity(
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://shizuku.rikka.app/download/")),
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-        ShizukuShell.Status.NEEDS_PERMISSION, ShizukuShell.Status.READY -> {
-            SpyButton(
-                text = if (status == ShizukuShell.Status.READY) "Mit Shizuku verbinden" else "Shizuku-Freigabe erteilen",
-                onClick = onConnect,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Text("OK", style = MaterialTheme.typography.labelLarge, color = SpyColors.Clear, modifier = Modifier.padding(8.dp))
         }
     }
 }
