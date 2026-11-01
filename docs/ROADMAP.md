@@ -13,7 +13,10 @@
 - [x] Zugriffsstufen APP / SHELL (Shizuku) / ROOT mit Lücken-Meldung je fehlender Stufe. Beleg: 8ac9fff.
 - [ ] Oberfläche (Start, Scan, Ergebnis) – eigenständige, hochwertige Optik. Abnahme: Screenshots aller Zustände, kein
       Material-Standardlook, Belkis-Abnahme.
-- [ ] App-Icon + Spürhund-Maskottchen (Vektor). Abnahme: adaptive Icon, hell/dunkel.
+- [x] App-Icon + Spürhund-Maskottchen (Vektor). Abnahme: adaptive Icon, hell/dunkel.
+      Beleg: `hound_mark`, Adaptive Icon (Grund, Vordergrund, Monochrom), Spot-Bilder, `docs/brand`, `:app:assembleDebug`.
+- [ ] Elfenbein vereinheitlichen: die Oberfläche nutzt `#F2EBE0`, die Marke `#F3EEE3`.
+      Abnahme: eine Elfenbeinfarbe in Theme und Vektoren.
 - [ ] Indikator-Update auf dem Gerät. Abnahme: 29/29 Quellen geladen, SHA-geprüft, auf echtem Gerät.
 
 ## Stufe 2 – Tiefe ohne Root
