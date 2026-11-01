@@ -3,6 +3,7 @@ package de.belkis.spyhound.ui.components
 import de.belkis.spyhound.R
 import androidx.compose.ui.res.stringResource
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -27,8 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,10 +67,16 @@ import androidx.compose.ui.platform.LocalContext
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
+import de.belkis.spyhound.scan.sweepGlow
+import de.belkis.spyhound.scan.sweepPassAge
 import de.belkis.spyhound.ui.design.SpyHaptics
+import de.belkis.spyhound.ui.design.SpyMotion
 import androidx.compose.ui.platform.LocalView
 import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.sin
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 private const val SWEEP_DEG = 60f
 private const val SWEEP_FRAC = SWEEP_DEG / 360f
@@ -103,35 +112,63 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawRadarSweep(
     center: Offset,
     radius: Float,
     leadAlpha: Float,
+    trail: Boolean = false,
 ) {
     val bounds = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius)
-    val wedge = Path().apply {
-        moveTo(center.x, center.y)
-        arcTo(bounds, 0f, SWEEP_DEG, false)
-        close()
-    }
-    clipPath(wedge) {
-        drawCircle(
-            brush = Brush.sweepGradient(
-                0f to Color.Transparent,
-                (SWEEP_FRAC * 0.2f) to SpyColors.Amber.copy(alpha = leadAlpha * 0.08f),
-                (SWEEP_FRAC * 0.55f) to SpyColors.Amber.copy(alpha = leadAlpha * 0.45f),
-                SWEEP_FRAC to SpyColors.Amber.copy(alpha = leadAlpha),
-                1f to Color.Transparent,
+    if (trail) {
+        // Longer falloff behind the beam while scanning. The gradient's 0°/360° seam lies inside the
+        // transparent gap of the tail, so it never shows as a line.
+        val tailDeg = 80f
+        val tailStart = (360f - tailDeg) / 360f
+        val wide = Path().apply {
+            moveTo(center.x, center.y)
+            arcTo(bounds, -tailDeg, tailDeg + SWEEP_DEG, false)
+            close()
+        }
+        clipPath(wide) {
+            drawCircle(
+                brush = Brush.sweepGradient(
+                    0f to SpyColors.Amber.copy(alpha = leadAlpha * 0.20f),
+                    (SWEEP_FRAC * 0.35f) to SpyColors.Amber.copy(alpha = leadAlpha * 0.5f),
+                    SWEEP_FRAC to SpyColors.Amber.copy(alpha = leadAlpha),
+                    tailStart to Color.Transparent,
+                    (tailStart + (1f - tailStart) * 0.5f) to SpyColors.Amber.copy(alpha = leadAlpha * 0.08f),
+                    1f to SpyColors.Amber.copy(alpha = leadAlpha * 0.20f),
+                    center = center,
+                ),
+                radius = radius,
                 center = center,
+            )
+        }
+    } else {
+        // A sweep gradient clipped to the wedge showed its seam as a dotted line; a linear fill does not.
+        val wedge = Path().apply {
+            moveTo(center.x, center.y)
+            arcTo(bounds, 0f, SWEEP_DEG, false)
+            close()
+        }
+        val edgeRad = Math.toRadians(SWEEP_DEG.toDouble())
+        val beamEnd = Offset(
+            center.x + cos(edgeRad).toFloat() * radius,
+            center.y + sin(edgeRad).toFloat() * radius,
+        )
+        drawPath(
+            wedge,
+            brush = Brush.linearGradient(
+                0f to Color.Transparent,
+                0.35f to SpyColors.Amber.copy(alpha = leadAlpha * 0.12f),
+                0.72f to SpyColors.Amber.copy(alpha = leadAlpha * 0.5f),
+                1f to SpyColors.Amber.copy(alpha = leadAlpha),
+                start = center,
+                end = beamEnd,
             ),
-            radius = radius,
-            center = center,
         )
     }
     val edgeRad = Math.toRadians(SWEEP_DEG.toDouble())
     drawLine(
         color = SpyColors.Amber.copy(alpha = (leadAlpha + 0.35f).coerceAtMost(1f)),
         start = center,
-        end = Offset(
-            center.x + cos(edgeRad).toFloat() * radius,
-            center.y + sin(edgeRad).toFloat() * radius,
-        ),
+        end = Offset(center.x + cos(edgeRad).toFloat() * radius, center.y + sin(edgeRad).toFloat() * radius),
         strokeWidth = 2.dp.toPx(),
         cap = StrokeCap.Round,
     )
@@ -218,6 +255,65 @@ private fun statusColor(status: ElementStatus, alpha: Float): Color = when (stat
     ElementStatus.FINDING -> SpyColors.Danger.copy(alpha = alpha)
 }
 
+private class BlipFx(var status: ElementStatus, motion: Boolean) {
+    val scale = Animatable(if (motion) 0.7f else 1f)
+    val flash = Animatable(if (motion) 1f else 0f)
+}
+
+private suspend fun pulseBlip(fx: BlipFx) {
+    fx.scale.snapTo(0.7f)
+    fx.flash.snapTo(1f)
+    val half = SpyMotion.Element / 2
+    coroutineScope {
+        launch {
+            fx.scale.animateTo(1.22f, tween(half, easing = SpyMotion.Enter))
+            fx.scale.animateTo(1f, tween(half, easing = SpyMotion.Exit))
+        }
+        launch {
+            fx.flash.animateTo(0f, tween(SpyMotion.Element, easing = SpyMotion.Exit))
+        }
+    }
+}
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawLiveBlip(
+    blip: DrawBlip,
+    center: Offset,
+    radius: Float,
+    scale: Float,
+    flash: Float,
+    sweep: Float,
+) {
+    val rad = Math.toRadians(blip.angleDeg.toDouble())
+    val p = Offset(
+        center.x + cos(rad).toFloat() * radius * blip.radiusFraction,
+        center.y + sin(rad).toFloat() * radius * blip.radiusFraction,
+    )
+    val core = 3.2.dp.toPx()
+    when (blip.status) {
+        ElementStatus.FINDING -> {
+            drawCircle(color = SpyColors.Danger.copy(alpha = 0.18f), radius = 16.dp.toPx(), center = p)
+            drawCircle(color = SpyColors.Danger.copy(alpha = 0.34f), radius = 7.dp.toPx(), center = p)
+            if (flash > 0.01f) {
+                drawCircle(
+                    color = SpyColors.Danger.copy(alpha = 0.40f * flash),
+                    radius = core * 2.2f * scale,
+                    center = p,
+                )
+            }
+            drawCircle(color = SpyColors.Danger, radius = core * scale, center = p)
+        }
+        ElementStatus.LEAD -> {
+            val lit = (0.62f + 0.38f * max(sweep, flash)).coerceIn(0f, 1f)
+            drawCircle(color = SpyColors.Amber.copy(alpha = 0.28f * lit), radius = 7.dp.toPx() * scale, center = p)
+            drawCircle(color = SpyColors.Amber.copy(alpha = lit), radius = core * scale, center = p)
+        }
+        ElementStatus.CLEAN -> {
+            val lit = (0.55f + 0.45f * max(sweep, flash)).coerceIn(0f, 1f)
+            drawCircle(color = SpyColors.IvoryMuted.copy(alpha = lit), radius = core * scale, center = p)
+        }
+    }
+}
+
 @Composable
 fun RadarCanvas(
     modifier: Modifier = Modifier,
@@ -225,6 +321,8 @@ fun RadarCanvas(
     showSweep: Boolean = true,
     showLabels: Boolean = true,
     sweepLeadAlpha: Float = 0.55f,
+    sweepTrail: Boolean = false,
+    blipFlash: Boolean = false,
 ) {
     val english = LocalContext.current.resources.configuration.locales[0].language != "de"
     val sectorLabels = RadarSector.entries.map { if (english) TextsEn.text(it.label) else it.label }
@@ -245,6 +343,33 @@ fun RadarCanvas(
     )
     val angle = if (motion && showSweep) sweep else 0f
     var revealed by remember { mutableStateOf(setOf<Long>()) }
+    val scope = rememberCoroutineScope()
+    val flashes = remember { mutableStateMapOf<Long, BlipFx>() }
+    LaunchedEffect(blips, blipFlash, motion) {
+        if (!blipFlash) return@LaunchedEffect
+        blips.forEach { b ->
+            val existing = flashes[b.key]
+            if (existing == null) {
+                val fx = BlipFx(b.status, motion)
+                flashes[b.key] = fx
+                if (motion) scope.launch { pulseBlip(fx) }
+            } else if (b.status == ElementStatus.FINDING && existing.status != ElementStatus.FINDING) {
+                existing.status = b.status
+                if (motion) scope.launch { pulseBlip(existing) }
+            } else {
+                existing.status = b.status
+            }
+        }
+    }
+    val flashScale = FloatArray(blips.size)
+    val flashAlpha = FloatArray(blips.size)
+    if (blipFlash) {
+        blips.forEachIndexed { index, b ->
+            val fx = flashes[b.key]
+            flashScale[index] = fx?.scale?.value ?: if (motion) 0.7f else 1f
+            flashAlpha[index] = fx?.flash?.value ?: if (motion) 1f else 0f
+        }
+    }
     LaunchedEffect(motion) {
         if (!motion) {
             revealed = blips.map { it.key }.toSet()
@@ -281,26 +406,38 @@ fun RadarCanvas(
         }
         if (showSweep && motion) {
             rotate(angle, pivot = c) {
-                drawRadarSweep(c, r, sweepLeadAlpha)
+                drawRadarSweep(c, r, sweepLeadAlpha, trail = sweepTrail)
             }
         }
-        blips.forEach { b ->
-            if (b.key !in revealed) return@forEach
-            val rad = Math.toRadians(b.angleDeg.toDouble())
-            val p = Offset(
-                c.x + cos(rad).toFloat() * r * b.radiusFraction,
-                c.y + sin(rad).toFloat() * r * b.radiusFraction,
-            )
-            val pulseScale = if (motion && b.status != ElementStatus.CLEAN) pulse else 1f
-            val core = 3.2.dp.toPx() * pulseScale
-            val alpha = if (b.status == ElementStatus.CLEAN) 0.9f else 1f
-            drawCircle(color = statusColor(b.status, alpha), radius = core, center = p)
-            if (b.status != ElementStatus.CLEAN) {
-                drawCircle(
-                    color = statusColor(b.status, 0.28f * pulseScale),
-                    radius = 7.dp.toPx() * pulseScale,
-                    center = p,
+        blips.forEachIndexed { index, b ->
+            if (b.key !in revealed) return@forEachIndexed
+            if (blipFlash) {
+                val sweepLit = if (motion && showSweep) sweepGlow(sweepPassAge(b.angleDeg, angle, SWEEP_DEG)) else 1f
+                drawLiveBlip(
+                    blip = b,
+                    center = c,
+                    radius = r,
+                    scale = flashScale.getOrElse(index) { _ -> 1f },
+                    flash = flashAlpha.getOrElse(index) { _ -> 0f },
+                    sweep = sweepLit,
                 )
+            } else {
+                val rad = Math.toRadians(b.angleDeg.toDouble())
+                val p = Offset(
+                    c.x + cos(rad).toFloat() * r * b.radiusFraction,
+                    c.y + sin(rad).toFloat() * r * b.radiusFraction,
+                )
+                val pulseScale = if (motion && b.status != ElementStatus.CLEAN) pulse else 1f
+                val core = 3.2.dp.toPx() * pulseScale
+                val alpha = if (b.status == ElementStatus.CLEAN) 0.9f else 1f
+                drawCircle(color = statusColor(b.status, alpha), radius = core, center = p)
+                if (b.status != ElementStatus.CLEAN) {
+                    drawCircle(
+                        color = statusColor(b.status, 0.28f * pulseScale),
+                        radius = 7.dp.toPx() * pulseScale,
+                        center = p,
+                    )
+                }
             }
         }
         if (showLabels && size.minDimension >= 120.dp.toPx()) {

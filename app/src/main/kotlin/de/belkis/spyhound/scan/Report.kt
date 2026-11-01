@@ -48,6 +48,8 @@ enum class GapFix { NONE, PERMISSION_SMS, PERMISSION_FILES, SHIZUKU, ROOT, UPDAT
 data class CheckSummary(val name: String, val examined: Int, val ran: Boolean)
 
 class CheckResult(sourceName: String, private val texts: Texts = TextsDe) {
+    /** Untranslated check id, for comparisons that must not depend on the UI language. */
+    val id = sourceName
     val name = texts.text(sourceName)
     val findings = ArrayList<Finding>()
     val leads = ArrayList<Lead>()

@@ -57,4 +57,17 @@ class LanguageTest {
         checks = listOf(check),
         device = "Test device",
     )
+
+    @Test
+    fun checkIdStaysUntranslated() {
+        // The result screen matches checks by id; a translated name broke the SMS chip in English.
+        val r = de.belkis.spyhound.scan.CheckResult(MessageAnalyzer.NAME, TextsEn)
+        assertEquals(MessageAnalyzer.NAME, r.id)
+        assertEquals("SMS links", r.name)
+        // The English report rebuilds every check; the id must survive that too.
+        val report = Report(0, 0, AccessLevel.APP, 0, 0, 0, listOf(r.apply { ran = true }), "Pixel")
+        val en = report.localized(TextsEn).checks.single()
+        assertEquals(MessageAnalyzer.NAME, en.id)
+        assertEquals("SMS links", en.name)
+    }
 }

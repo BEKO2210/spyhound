@@ -256,7 +256,7 @@ object RadarMath {
 
     fun fromReport(report: Report): RadarProgress {
         val deepLocked = report.access == AccessLevel.APP &&
-            report.checks.any { it.name == "Tiefenprüfung" && it.gaps.isNotEmpty() }
+            report.checks.any { it.id == "Tiefenprüfung" && it.gaps.isNotEmpty() }
         val map = linkedMapOf<RadarSector, MutableList<ElementStatus>>()
         RadarSector.entries.forEach { map[it] = mutableListOf() }
         for (check in report.checks) {

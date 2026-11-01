@@ -46,6 +46,9 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
         grün (2026-11-01). Offen: DE-/Chip-Screenshots und Pixelvergleich unter dem Radar. Auf pop-os fehlt `/dev/kvm`;
         beide x86_64-AVDs zeigen bei Software-Emulation wiederholt System-UI-ANR. Abnahme: DE/EN/Chip-Aufnahmen
         ohne Systemdialog, drei Aufnahmen im Abstand 300 ms unter dem Radar pixelgleich.
+      - Scan-Bildschirm (§3/§4): Sweep-Nachleuchten, Punkt-Aufleuchten, monotone Prozentzahl, Häkchen-Pfad, Shimmer,
+        Haptik, Abbrechen fest, zwei Spalten ab 600 dp. Abnahme: Pixel DE/EN, drei Aufnahmen im Abstand 300 ms
+        pixelgleich (nichts wandert), Querformat mit Radar links.
 - [ ] Shell-Probe schlägt fehl → einmal automatisch trennen und neu verbinden (Shizuku-Dienst), erst dann Lücke melden.
       Fund: Pixel 2026-11-01, veralteter Dienst nach App-Update; App-Neustart behob es. Abnahme: Update der App bei
       laufendem Shizuku → Tiefenprüfung läuft ohne Neustart.

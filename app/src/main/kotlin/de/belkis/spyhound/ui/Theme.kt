@@ -127,6 +127,23 @@ object SpyTypographyExtras {
         color = SpyColors.Ivory,
         fontFeatureSettings = "tnum",
     )
+    /** Reading of one cell in the status panel: short, tabular, instrument-like. */
+    val statusValue = TextStyle(
+        fontFamily = Display,
+        fontWeight = FontWeight.Bold,
+        fontSize = 15.sp,
+        lineHeight = 18.sp,
+        letterSpacing = (-0.15).sp,
+        fontFeatureSettings = "tnum",
+    )
+    val statusName = TextStyle(
+        fontFamily = Body,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.5.sp,
+        color = SpyColors.IvoryMuted,
+    )
     val tabularMedium = TextStyle(
         fontFamily = Body,
         fontWeight = FontWeight.Medium,

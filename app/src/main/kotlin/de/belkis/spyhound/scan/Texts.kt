@@ -227,7 +227,7 @@ fun Report.localized(texts: Texts): Report = copy(
     title = title?.let(texts::text),
     device = texts.text(device),
     checks = checks.map { check ->
-        CheckResult(texts.text(check.name)).also { out ->
+        CheckResult(check.id, texts).also { out ->
             out.examined = check.examined
             out.ran = check.ran
             check.findings.forEach { out.hit(texts.text(it.where), texts.text(it.detail), it.indicator) }

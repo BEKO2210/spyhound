@@ -1,18 +1,39 @@
 package de.belkis.spyhound.ui.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import de.belkis.spyhound.R
+import de.belkis.spyhound.ui.design.SpyMotion
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,11 +54,107 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.ui.SpyColors
+import de.belkis.spyhound.ui.design.SpyTypeScale
 import de.belkis.spyhound.ui.SpyTypographyExtras
 import de.belkis.spyhound.ui.design.SpyRadii
+import de.belkis.spyhound.ui.design.SpySpacing
+
+/** Card surface matching [StatusStrip]: 20 dp radius, border, soft top light, 20 dp inner padding. */
+@Composable
+fun SpyCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val shape = RoundedCornerShape(20.dp)
+    Column(
+        modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(SpyColors.Surface)
+            .drawWithContent {
+                drawContent()
+                drawLine(
+                    SpyColors.Ivory.copy(alpha = 0.06f),
+                    Offset(20.dp.toPx(), 1.dp.toPx()),
+                    Offset(size.width - 20.dp.toPx(), 1.dp.toPx()),
+                    1.dp.toPx(),
+                )
+            }
+            .border(1.dp, SpyColors.Border, shape)
+            .padding(SpySpacing.PhoneEdge),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        content = content,
+    )
+}
+
+/** One-line feedback under a card action; omitted entirely when there is nothing to show. */
+@Composable
+fun CardFeedbackLine(
+    message: String?,
+    isError: Boolean,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    if (message == null) return
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(20.dp),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.semantics {
+                if (contentDescription != null) this.contentDescription = contentDescription
+            },
+        ) {
+            Icon(
+                painter = painterResource(if (isError) R.drawable.ic_feedback_error else R.drawable.ic_feedback_ok),
+                contentDescription = null,
+                tint = if (isError) SpyColors.Danger else SpyColors.Clear,
+                modifier = Modifier.size(16.dp),
+            )
+            Text(
+                message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (isError) SpyColors.IvoryMuted else SpyColors.Clear,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+/** 22 dp icon in a 40 dp raised circle for card rows (permissions, DNS, etc.). */
+@Composable
+fun CardRowIconBadge(
+    iconRes: Int,
+    active: Boolean,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    val tint = if (active) SpyColors.Clear else SpyColors.IvoryMuted
+    Box(
+        modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(SpyColors.SurfaceRaised)
+            .border(1.dp, SpyColors.Border, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = Modifier.size(22.dp),
+        )
+    }
+}
 
 @Composable
 fun SpySurface(modifier: Modifier = Modifier, raised: Boolean = false, content: @Composable () -> Unit) {
@@ -54,45 +171,110 @@ fun SpySurface(modifier: Modifier = Modifier, raised: Boolean = false, content: 
     )
 }
 
-enum class StatusTone { GOOD, OFF, ATTENTION }
+enum class StatusKind { DEPTH, SMS, FILES, SOURCES, DNS }
+
+enum class StatusState { ACTIVE, OFF, PARTIAL }
 
 data class StatusItem(
-    val symbol: String,
+    val kind: StatusKind,
     val label: String,
     val explanation: String,
-    val tone: StatusTone,
+    val state: StatusState,
+    val depthLevel: Int = 1,
     val actionLabel: String? = null,
     val action: (() -> Unit)? = null,
 )
 
+private fun StatusKind.iconRes(): Int = when (this) {
+    StatusKind.DEPTH -> R.drawable.ic_status_depth
+    StatusKind.SMS -> R.drawable.ic_status_sms
+    StatusKind.FILES -> R.drawable.ic_status_files
+    StatusKind.SOURCES -> R.drawable.ic_status_sources
+    StatusKind.DNS -> R.drawable.ic_status_dns
+}
+
+/**
+ * One reading of the status panel: icon, value, name - on fixed baselines so all five line up exactly.
+ * SMS, files and DNS read "on/off"; depth and sources show their own value.
+ */
 @Composable
-fun StatusChip(item: StatusItem, modifier: Modifier = Modifier) {
+private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier) {
     var open by remember { mutableStateOf(false) }
-    val tint = when (item.tone) {
-        StatusTone.GOOD -> SpyColors.Clear
-        StatusTone.OFF -> SpyColors.IvoryMuted
-        StatusTone.ATTENTION -> SpyColors.Amber
+    val tint by animateColorAsState(
+        when (item.state) {
+            StatusState.ACTIVE -> SpyColors.Clear
+            StatusState.PARTIAL -> SpyColors.Amber
+            StatusState.OFF -> SpyColors.Ivory.copy(alpha = 0.38f)
+        },
+        tween(SpyMotion.Element, easing = SpyMotion.Enter),
+        label = "status tint",
+    )
+    val glow by animateFloatAsState(
+        if (item.state == StatusState.OFF) 0f else 1f,
+        tween(SpyMotion.Element, easing = SpyMotion.Enter),
+        label = "status glow",
+    )
+    val name = when (item.kind) {
+        StatusKind.DEPTH -> stringResource(R.string.status_name_depth)
+        StatusKind.SOURCES -> stringResource(R.string.status_sources_name)
+        StatusKind.SMS, StatusKind.FILES -> item.label
+        StatusKind.DNS -> stringResource(R.string.status_name_dns)
     }
-    Surface(
-        onClick = { open = true },
-        modifier = modifier.defaultMinSize(minHeight = 48.dp).semantics { contentDescription = "${item.label}. ${item.explanation}" },
-        shape = RoundedCornerShape(SpyRadii.Pill),
-        color = SpyColors.Surface,
-        border = BorderStroke(1.dp, SpyColors.Border),
+    val value = when (item.kind) {
+        StatusKind.DEPTH -> stringResource(
+            when (item.depthLevel.coerceIn(1, 3)) { 1 -> R.string.depth_basic; 2 -> R.string.depth_deep; else -> R.string.depth_root },
+        )
+        StatusKind.SOURCES -> item.label
+        else -> stringResource(if (item.state == StatusState.OFF) R.string.status_value_off else R.string.status_value_on)
+    }
+    Column(
+        modifier = modifier
+            .clickable { open = true }
+            .semantics { contentDescription = "$name: $value. ${item.explanation}" }
+            .padding(top = 14.dp, bottom = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(Modifier.padding(horizontal = 11.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(item.symbol, color = tint, style = MaterialTheme.typography.labelLarge)
-            Text(item.label, color = SpyColors.Ivory, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Box(
+            Modifier
+                .size(28.dp)
+                .drawBehind {
+                    // A lit reading: soft halo in its own color, drawn so nothing moves.
+                    if (glow > 0f) drawCircle(
+                        Brush.radialGradient(listOf(tint.copy(alpha = 0.22f * glow), Color.Transparent)),
+                        radius = size.minDimension * 0.75f,
+                    )
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(painterResource(item.kind.iconRes()), contentDescription = null, tint = tint, modifier = Modifier.size(22.dp))
         }
+        Text(
+            value,
+            style = SpyTypographyExtras.statusValue,
+            color = if (item.state == StatusState.OFF) SpyColors.IvoryMuted else tint,
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.padding(top = 10.dp),
+        )
+        Text(
+            name,
+            style = SpyTypographyExtras.statusName,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Clip,
+            modifier = Modifier.padding(top = 2.dp),
+        )
     }
     if (open) AlertDialog(
         onDismissRequest = { open = false },
-        title = { Text(item.label) },
+        title = { Text(name) },
         text = { Text(item.explanation) },
         confirmButton = {
-            if (item.action != null && item.actionLabel != null) SpyButton(item.actionLabel, onClick = { open = false; item.action.invoke() }, accent = true, fillWidth = false)
+            if (item.action != null && item.actionLabel != null) {
+                SpyButton(item.actionLabel, onClick = { open = false; item.action.invoke() }, accent = true, fillWidth = false)
+            }
         },
-        dismissButton = { TextActionLink(text = androidx.compose.ui.res.stringResource(de.belkis.spyhound.R.string.t_060), onClick = { open = false }) },
+        dismissButton = { TextActionLink(text = stringResource(R.string.t_060), onClick = { open = false }) },
         containerColor = SpyColors.SurfaceRaised,
         shape = RoundedCornerShape(SpyRadii.Card),
         tonalElevation = 0.dp,
@@ -101,15 +283,32 @@ fun StatusChip(item: StatusItem, modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * What this scan can use, as one instrument panel: equal columns, hairline dividers, one surface.
+ * Separate pills read as five buttons of different sizes; a panel reads as one calm status.
+ */
 @Composable
 fun StatusStrip(items: List<StatusItem>, modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            items.take(3).forEach { StatusChip(it, Modifier.weight(1f)) }
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            items.drop(3).take(2).forEach { StatusChip(it, Modifier.weight(1f)) }
-        }
+    val shape = RoundedCornerShape(20.dp)
+    Row(
+        modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .clip(shape)
+            .background(SpyColors.Surface)
+            .drawWithContent {
+                drawContent()
+                val inset = 14.dp.toPx()
+                val step = size.width / items.size
+                for (i in 1 until items.size) {
+                    drawLine(SpyColors.Border, Offset(step * i, inset), Offset(step * i, size.height - inset), 1.dp.toPx())
+                }
+                // Soft top light, like the other surfaces.
+                drawLine(SpyColors.Ivory.copy(alpha = 0.06f), Offset(20.dp.toPx(), 1.dp.toPx()), Offset(size.width - 20.dp.toPx(), 1.dp.toPx()), 1.dp.toPx())
+            }
+            .border(1.dp, SpyColors.Border, shape),
+    ) {
+        items.forEach { StatusCell(it, Modifier.weight(1f).fillMaxHeight()) }
     }
 }
 
@@ -118,7 +317,11 @@ fun SectionHeader(label: String, hint: String, modifier: Modifier = Modifier) {
     var open by remember { mutableStateOf(false) }
     Row(modifier.fillMaxWidth().defaultMinSize(minHeight = 48.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(label.uppercase(), style = SpyTypographyExtras.sectionLabel, modifier = Modifier.weight(1f))
-        Text("?", color = SpyColors.Amber, modifier = Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).clickable { open = true }.semantics { contentDescription = "$label: $hint" }.wrapContentHeight(Alignment.CenterVertically), style = MaterialTheme.typography.titleMedium)
+        SectionHintButton(
+            expanded = open,
+            onToggle = { open = !open },
+            modifier = Modifier.semantics { contentDescription = "$label: $hint" },
+        )
     }
     if (open) AlertDialog(
         onDismissRequest = { open = false },

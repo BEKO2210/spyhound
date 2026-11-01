@@ -48,6 +48,8 @@ data class UiState(
     val shizukuInstalled: Boolean = false,
     val devOptionsEnabled: Boolean = false,
     val rootDenied: Boolean = false,
+    /** A root request is waiting for the root manager; shown inside the card, not as a global busy line. */
+    val rootAsking: Boolean = false,
     val smsGranted: Boolean = false,
     val filesGranted: Boolean = false,
     val updating: String? = null,
@@ -154,13 +156,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun requestRoot() = viewModelScope.launch {
-        _state.update { it.copy(busy = s(R.string.vm_requesting_root)) }
+        _state.update { it.copy(rootAsking = true, rootDenied = false) }
         val sh = withContext(Dispatchers.IO) { RootShell.probe() }
         if (sh != null) {
             ShellPreferences.setRootGranted(getApplication(), true)
             adoptShell(sh)
         }
-        _state.update { it.copy(busy = null, rootDenied = sh == null) }
+        _state.update { it.copy(rootAsking = false, rootDenied = sh == null) }
         refreshPermissions()
     }
 

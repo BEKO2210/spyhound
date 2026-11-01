@@ -7,6 +7,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -53,6 +56,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.ui.LocalMotionEnabled
@@ -272,6 +276,65 @@ fun AnimatedCount(value: Int, modifier: Modifier = Modifier, style: androidx.com
         style = style,
         modifier = modifier,
     )
+}
+
+@Composable
+fun DepthProgressBar(
+    current: AccessLevel,
+    modifier: Modifier = Modifier,
+) {
+    val stageLabels = listOf(
+        stringResource(R.string.depth_basic),
+        stringResource(R.string.depth_deep),
+        stringResource(R.string.depth_root),
+    )
+    val filledStages = when (current) {
+        AccessLevel.APP -> 1
+        AccessLevel.SHELL -> 2
+        AccessLevel.ROOT -> 3
+    }
+    Column(modifier.fillMaxWidth()) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            repeat(3) { index ->
+                val filled = index < filledStages
+                val shape = when (index) {
+                    0 -> RoundedCornerShape(topStart = 6.dp, bottomStart = 6.dp)
+                    2 -> RoundedCornerShape(topEnd = 6.dp, bottomEnd = 6.dp)
+                    else -> RoundedCornerShape(0.dp)
+                }
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .height(10.dp)
+                        .clip(shape)
+                        .background(if (filled) SpyColors.Amber else SpyColors.SurfaceRaised)
+                        .then(
+                            if (filled) Modifier else Modifier.border(1.dp, SpyColors.Border, shape),
+                        ),
+                )
+            }
+        }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+        ) {
+            stageLabels.forEach { label ->
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = SpyColors.IvoryMuted,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+    }
 }
 
 @Composable
