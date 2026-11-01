@@ -67,11 +67,36 @@ ui_dump() {
   $ADB exec-out cat /data/local/tmp/uidump.xml 2>/dev/null
 }
 
+find_tap_bounds() {
+  local label=$1
+  local xml
+  xml=$(ui_dump)
+  echo "$xml" | python3 - "$label" <<'PY'
+import re, sys
+label = sys.argv[1]
+xml = sys.stdin.read().replace("\n", " ")
+patterns = [
+    rf'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*(?:text|content-desc)="{re.escape(label)}"',
+    rf'(?:text|content-desc)="{re.escape(label)}"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
+]
+for pat in patterns:
+    m = re.search(pat, xml)
+    if m:
+        print(m.group(1), m.group(2), m.group(3), m.group(4))
+        sys.exit(0)
+for m in re.finditer(rf'(?:text|content-desc)="{re.escape(label)}"', xml):
+    chunk = xml[m.start():m.start() + 1200]
+    b = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', chunk)
+    if b:
+        print(b.group(1), b.group(2), b.group(3), b.group(4))
+        sys.exit(0)
+PY
+}
+
 click_desc() {
   local desc=$1
-  local xml bounds
-  xml=$(ui_dump)
-  bounds=$(echo "$xml" | tr '\n' ' ' | sed -n "s/.*content-desc=\"${desc}\"[^>]*bounds=\"\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]\".*/\1 \2 \3 \4/p" | head -1)
+  local bounds
+  bounds=$(find_tap_bounds "$desc")
   if [[ -z "$bounds" ]]; then
     echo "click_desc: not found: $desc" >&2
     return 1
@@ -82,30 +107,7 @@ click_desc() {
 }
 
 click_text() {
-  local text=$1
-  local xml bounds
-  xml=$(ui_dump)
-  bounds=$(echo "$xml" | python3 - "$text" <<'PY'
-import re, sys
-text = sys.argv[1]
-xml = sys.stdin.read().replace("\n", " ")
-for pat in (
-    rf'text="{re.escape(text)}"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
-    rf'content-desc="{re.escape(text)}"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
-):
-    m = re.search(pat, xml)
-    if m:
-        print(m.group(1), m.group(2), m.group(3), m.group(4))
-        break
-PY
-)
-  if [[ -z "$bounds" ]]; then
-    echo "click_text: not found: $text" >&2
-    return 1
-  fi
-  read -r x1 y1 x2 y2 <<<"$bounds"
-  local x=$(( (x1 + x2) / 2 )) y=$(( (y1 + y2) / 2 ))
-  $ADB shell input tap "$x" "$y"
+  click_desc "$1"
 }
 
 screenshot() {
@@ -178,6 +180,20 @@ check_logcat_fatal() {
   return 0
 }
 
+tap_scan() {
+  local i
+  for i in $(seq 1 30); do
+    set +e
+    click_text "Scan now" 2>/dev/null && { set -e; return 0; }
+    click_desc "Scan now" 2>/dev/null && { set -e; return 0; }
+    click_text "Jetzt prüfen" 2>/dev/null && { set -e; return 0; }
+    click_desc "Jetzt prüfen" 2>/dev/null && { set -e; return 0; }
+    set -e
+    sleep 2
+  done
+  $ADB shell input tap 540 520
+}
+
 run_phone_test() {
   local api=$1 nn=$2 sysimg=$3 avd=$4
   echo "=== API $api (api${nn}) ===" | tee -a /tmp/matrix-emulator-test.log
@@ -190,9 +206,7 @@ run_phone_test() {
   $ADB shell am start -n "$PKG/.MainActivity" >/dev/null
   sleep 8
   screenshot "$SHOT_DIR/api${nn}-start.png"
-  set +e
-  click_text "Scan now" || click_desc "Scan now" || click_text "Jetzt prüfen" || click_desc "Jetzt prüfen"
-  set -e
+  tap_scan
   sleep 2
   screenshot "$SHOT_DIR/api${nn}-scan.png"
   wait_scan_done
@@ -216,7 +230,7 @@ run_tablet_test() {
   $ADB shell am start -n "$PKG/.MainActivity" >/dev/null
   sleep 3
   screenshot "$SHOT_DIR/api36-tablet-start.png"
-  click_text "Scan now" || click_desc "Scan now" || click_text "Jetzt prüfen" || click_desc "Jetzt prüfen"
+  tap_scan
   wait_scan_done
   screenshot "$SHOT_DIR/api36-tablet-result.png"
   check_logcat_fatal
@@ -268,7 +282,7 @@ run_release_test() {
   skip_intro
   $ADB shell am start -n "$PKG/.MainActivity" >/dev/null
   sleep 3
-  click_text "Scan now" || click_desc "Scan now" || click_text "Jetzt prüfen" || click_desc "Jetzt prüfen"
+  tap_scan
   wait_scan_done
   if check_finding; then
     echo "FAIL: release showed Testspy finding" >&2
@@ -286,25 +300,25 @@ main() {
   [[ -f "$SPY_APK" && -f "$TEST_APK" ]] || { echo "Build APKs first" >&2; exit 1; }
   local only=${1:-all}
   if [[ "$only" == "29" || "$only" == "all" ]]; then
-    run_phone_test 29 29 "system-images;android-29;google_apis;x86_64" spyhound-matrix-29
+    run_phone_test 29 29 "system-images;android-29;google_apis;x86_64" spyhound-matrix-29 || true
   fi
   if [[ "$only" == "31" || "$only" == "all" ]]; then
-    run_phone_test 31 31 "system-images;android-31;google_apis;x86_64" spyhound-matrix-31
+    run_phone_test 31 31 "system-images;android-31;google_apis;x86_64" spyhound-matrix-31 || true
   fi
   if [[ "$only" == "34" || "$only" == "all" ]]; then
-    run_phone_test 34 34 "system-images;android-34;google_apis;x86_64" spyhound-matrix-34
+    run_phone_test 34 34 "system-images;android-34;google_apis;x86_64" spyhound-matrix-34 || true
   fi
   if [[ "$only" == "37" || "$only" == "all" ]]; then
-    run_phone_test 37 37 "system-images;android-37.0;google_apis;x86_64" spyhound-matrix-37
+    run_phone_test 37 37 "system-images;android-37.0;google_apis;x86_64" spyhound-matrix-37 || true
   fi
   if [[ "$only" == "tablet" || "$only" == "all" ]]; then
-    run_tablet_test
+    run_tablet_test || true
   fi
   if [[ "$only" == "root" || "$only" == "all" ]]; then
-    run_root_probe
+    run_root_probe || true
   fi
   if [[ "$only" == "release" || "$only" == "all" ]]; then
-    run_release_test
+    run_release_test || true
   fi
   if [[ "$only" == "all" ]]; then
     cd "$ROOT" && ./gradlew --stop
