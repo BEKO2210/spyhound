@@ -58,28 +58,31 @@ fun SectionHintButton(
     modifier: Modifier = Modifier,
 ) {
     val label = stringResource(R.string.section_hint_open)
-    Surface(
-        shape = CircleShape,
-        color = SpyColors.SurfaceRaised,
-        border = BorderStroke(1.dp, SpyColors.Border),
+    // 48 dp touch target, 28 dp visible circle: the circle must never reach past the header row.
+    Box(
         modifier = modifier
-            .defaultMinSize(minWidth = 32.dp, minHeight = 32.dp)
+            .size(48.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onToggle,
             )
             .semantics { contentDescription = label },
+        contentAlignment = Alignment.Center,
     ) {
-        Box(
-            Modifier.defaultMinSize(minWidth = 32.dp, minHeight = 32.dp),
-            contentAlignment = Alignment.Center,
+        Surface(
+            shape = CircleShape,
+            color = if (expanded) SpyColors.Amber.copy(alpha = 0.12f) else SpyColors.SurfaceRaised,
+            border = BorderStroke(1.dp, if (expanded) SpyColors.Amber.copy(alpha = 0.6f) else SpyColors.Border),
+            modifier = Modifier.size(28.dp),
         ) {
-            androidx.compose.material3.Text(
-                "?",
-                style = androidx.compose.material3.MaterialTheme.typography.labelLarge,
-                color = SpyColors.Amber,
-            )
+            Box(contentAlignment = Alignment.Center) {
+                androidx.compose.material3.Text(
+                    "?",
+                    style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+                    color = SpyColors.Amber,
+                )
+            }
         }
     }
 }

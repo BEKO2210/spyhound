@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,11 +36,14 @@ fun SectionWithHint(
             .animateContentSize(tween(220)),
     ) {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .heightIn(min = 48.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SectionLabel(label, modifier = Modifier.padding(top = 0.dp))
+            SectionLabel(label, modifier = Modifier.weight(1f))
             SectionHintButton(expanded = showHint, onToggle = { showHint = !showHint })
         }
         AnimatedVisibility(showHint) {
