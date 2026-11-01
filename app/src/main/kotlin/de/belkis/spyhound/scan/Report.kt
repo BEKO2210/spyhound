@@ -77,6 +77,8 @@ data class Report(
     val checks: List<CheckResult>,
     val device: String,
     val oldestEvidence: Map<String, Long> = emptyMap(),
+    /** When set, shown as report kind (e.g. Fehlerbericht-only run). */
+    val title: String? = null,
 ) {
     val findings get() = checks.flatMap { it.findings }
     val leads get() = checks.flatMap { it.leads }

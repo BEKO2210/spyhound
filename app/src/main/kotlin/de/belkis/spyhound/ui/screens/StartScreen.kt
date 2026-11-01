@@ -1,5 +1,6 @@
 package de.belkis.spyhound.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,8 +38,10 @@ import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.components.AccessLevelBar
 import de.belkis.spyhound.ui.components.RadarScanButton
 import de.belkis.spyhound.ui.components.SectionLabel
+import de.belkis.spyhound.ui.components.ShizukuGuideSheet
 import de.belkis.spyhound.ui.components.SpyButton
 import de.belkis.spyhound.ui.components.SpyDivider
+import de.belkis.spyhound.ui.components.TextActionLink
 import java.text.DateFormat
 import java.util.Date
 
@@ -49,8 +56,12 @@ fun StartScreen(
     onRequestSms: () -> Unit,
     onRequestFiles: () -> Unit,
     onDnsToggle: (Boolean) -> Unit,
+    onPickBugreport: () -> Unit,
+    onDismissBanner: () -> Unit,
     onDemoReport: () -> Unit = {},
 ) {
+    var showShizukuGuide by remember { mutableStateOf(false) }
+    var showBugreportSteps by remember { mutableStateOf(false) }
     val scroll = rememberScrollState()
     Column(Modifier.fillMaxSize()) {
         Column(
@@ -102,6 +113,11 @@ fun StartScreen(
             state.busy?.let {
                 Spacer(Modifier.height(6.dp))
                 Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
+            }
+            state.bannerMessage?.let { msg ->
+                Spacer(Modifier.height(6.dp))
+                Text(msg, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Danger, textAlign = TextAlign.Center)
+                TextActionLink(text = "Schließen", onClick = onDismissBanner, modifier = Modifier.padding(top = 2.dp))
             }
         }
         Spacer(Modifier.height(20.dp))
@@ -172,11 +188,47 @@ fun StartScreen(
                 state.dnsHits.take(5).forEach { hit -> DnsHitLine(hit, fmt) }
             }
             SpyDivider(Modifier.padding(vertical = 16.dp))
+            SectionLabel("Fehlerbericht")
+            Text(
+                "Enthält Protokolle und Paketlisten — Spyhound wertet die ZIP nur auf dem Gerät aus, ohne Upload.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Spacer(Modifier.height(8.dp))
+            SpyButton(
+                text = "Fehlerbericht auswählen",
+                onClick = onPickBugreport,
+                enabled = state.iocs != null && state.busy == null,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            TextActionLink(
+                text = if (showBugreportSteps) "So erstellst du einen ▲" else "So erstellst du einen",
+                onClick = { showBugreportSteps = !showBugreportSteps },
+            )
+            AnimatedVisibility(showBugreportSteps) {
+                Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        "1. Entwickleroptionen aktivieren (Build-Nummer siebenmal tippen).",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text(
+                        "2. Einstellungen → Entwickleroptionen → Fehlerbericht erstellen.",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text("3. Vollständigen Bericht wählen (nicht „interaktiv“).", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        "4. Nach der Benachrichtigung teilen oder hier die ZIP auswählen. Enthält private Daten — " +
+                            "danach löschen.",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+            SpyDivider(Modifier.padding(vertical = 16.dp))
             AccessLevelBar(
                 current = state.access,
                 shizuku = state.shizuku,
                 onConnectShizuku = onConnectShizuku,
                 onRequestRoot = onRequestRoot,
+                onShizukuGuide = { showShizukuGuide = true },
             )
             if (state.rootDenied) {
                 Spacer(Modifier.height(6.dp))
@@ -189,6 +241,7 @@ fun StartScreen(
             PermissionRow("Alle Dateien", state.filesGranted, "Verdächtige Dateien auf dem Speicher", onRequestFiles)
         }
     }
+    ShizukuGuideSheet(visible = showShizukuGuide, onDismiss = { showShizukuGuide = false })
 }
 
 @Composable

@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -87,11 +88,20 @@ fun SpyButton(
         border = BorderStroke(1.dp, if (accent) SpyColors.Amber else SpyColors.Border),
         contentColor = fg,
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelLarge,
+                color = fg,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            )
+        }
     }
 }
 
@@ -220,6 +230,7 @@ fun AccessLevelBar(
     shizuku: ShizukuShell.Status,
     onConnectShizuku: () -> Unit,
     onRequestRoot: () -> Unit,
+    onShizukuGuide: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -270,7 +281,7 @@ fun AccessLevelBar(
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(8.dp))
-                ShizukuAction(shizuku, onConnectShizuku)
+                ShizukuAction(shizuku, onConnectShizuku, onShizukuGuide)
             }
             AccessLevel.SHELL -> {
                 Text(
@@ -292,7 +303,11 @@ fun AccessLevelBar(
 }
 
 @Composable
-private fun ShizukuAction(status: ShizukuShell.Status, onConnect: () -> Unit) {
+private fun ShizukuAction(
+    status: ShizukuShell.Status,
+    onConnect: () -> Unit,
+    onGuide: () -> Unit,
+) {
     val context = LocalContext.current
     when (status) {
         ShizukuShell.Status.NOT_RUNNING, ShizukuShell.Status.TOO_OLD -> {
@@ -305,6 +320,8 @@ private fun ShizukuAction(status: ShizukuShell.Status, onConnect: () -> Unit) {
                 },
                 modifier = Modifier.fillMaxWidth(),
             )
+            Spacer(Modifier.height(8.dp))
+            SpyButton(text = "Anleitung", onClick = onGuide, modifier = Modifier.fillMaxWidth())
         }
         ShizukuShell.Status.NEEDS_PERMISSION, ShizukuShell.Status.READY -> {
             SpyButton(
@@ -312,6 +329,10 @@ private fun ShizukuAction(status: ShizukuShell.Status, onConnect: () -> Unit) {
                 onClick = onConnect,
                 modifier = Modifier.fillMaxWidth(),
             )
+            if (status != ShizukuShell.Status.READY) {
+                Spacer(Modifier.height(8.dp))
+                SpyButton(text = "Anleitung", onClick = onGuide, modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }

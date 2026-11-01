@@ -3,14 +3,19 @@ package de.belkis.spyhound.ui
 import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import de.belkis.spyhound.bugreport.BugreportImport
+import de.belkis.spyhound.bugreport.analyzeBugreport
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.ioc.IocStore
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.scan.AccessLevel
+import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.scan.Progress
 import de.belkis.spyhound.scan.Report
 import de.belkis.spyhound.scan.ScanEngine
@@ -37,6 +42,7 @@ data class UiState(
     val progress: Progress? = null,
     val report: Report? = null,
     val busy: String? = null,
+    val bannerMessage: String? = null,
     val dnsRunning: Boolean = false,
     val dnsHits: List<DnsHit> = emptyList(),
 )
@@ -47,6 +53,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     val state: StateFlow<UiState> = _state
     private var shell: Shell? = null
     private var scanJob: Job? = null
+    private var pendingBugreportChecks: List<CheckResult>? = null
 
     init {
         reloadIocs()
@@ -127,8 +134,90 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             val report = runCatching {
                 ScanEngine(getApplication(), iocs, shell).run { p -> _state.update { s -> s.copy(progress = p) } }
             }.getOrNull()
-            _state.update { it.copy(progress = null, report = report) }
+            val merged = report?.let { mergePendingBugreport(it) }
+            _state.update { it.copy(progress = null, report = merged) }
         }
+    }
+
+    fun clearBanner() = _state.update { it.copy(bannerMessage = null) }
+
+    fun handleIncomingBugreportIntent(uri: Uri, mimeHint: String?) {
+        val ctx = getApplication<Application>()
+        if (!BugreportImport.acceptsUri(ctx, uri, mimeHint)) {
+            _state.update { it.copy(bannerMessage = "Geteilte Datei ist kein Fehlerbericht (bugreport….zip).") }
+            return
+        }
+        viewModelScope.launch {
+            importBugreportInternal(uri)
+        }
+    }
+
+    fun importBugreport(uri: Uri) = viewModelScope.launch {
+        importBugreportInternal(uri)
+    }
+
+    private suspend fun importBugreportInternal(uri: Uri) {
+        val ctx = getApplication<Application>()
+        val loaded = _state.value.iocs
+        if (loaded == null) {
+            _state.update { it.copy(bannerMessage = "Indikatoren werden noch geladen — bitte kurz warten.") }
+            return
+        }
+        if (!BugreportImport.acceptsUri(ctx, uri)) {
+            _state.update {
+                it.copy(
+                    bannerMessage = "Keine gültige Fehlerbericht-ZIP (bugreport….zip).",
+                )
+            }
+            return
+        }
+        _state.update { it.copy(busy = "Fehlerbericht wird ausgewertet …", bannerMessage = null) }
+        val checks = withContext(Dispatchers.IO) {
+            runCatching {
+                ctx.contentResolver.openInputStream(uri)?.use { stream ->
+                    analyzeBugreport(stream, loaded.set, installedPackageNames())
+                }
+            }.getOrNull()
+        }
+        _state.update { it.copy(busy = null) }
+        if (checks.isNullOrEmpty()) {
+            _state.update { it.copy(bannerMessage = "Fehlerbericht konnte nicht gelesen werden.") }
+            return
+        }
+        if (_state.value.progress != null) {
+            pendingBugreportChecks = (pendingBugreportChecks.orEmpty() + checks)
+            _state.update { it.copy(bannerMessage = "Fehlerbericht wird nach der laufenden Prüfung ergänzt.") }
+        } else {
+            _state.update { it.copy(report = bugreportReport(checks, loaded)) }
+        }
+    }
+
+    private fun mergePendingBugreport(report: Report): Report {
+        val extra = pendingBugreportChecks ?: return report
+        pendingBugreportChecks = null
+        return report.copy(checks = report.checks + extra)
+    }
+
+    private fun bugreportReport(checks: List<CheckResult>, iocs: LoadedIocs): Report {
+        val now = System.currentTimeMillis()
+        return Report(
+            startedAt = now,
+            finishedAt = now,
+            access = _state.value.access,
+            indicatorCount = iocs.set.size,
+            indicatorSources = iocs.status.available,
+            indicatorSourcesMissing = iocs.status.missing.size + iocs.status.corrupt.size,
+            checks = checks,
+            device = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE} " +
+                "(Patch ${Build.VERSION.SECURITY_PATCH})",
+            title = "Fehlerbericht-Prüfung",
+        )
+    }
+
+    private fun installedPackageNames(): Set<String> {
+        val pm = getApplication<Application>().packageManager
+        val flags = PackageManager.MATCH_UNINSTALLED_PACKAGES
+        return pm.getInstalledApplications(flags).map { it.packageName }.toSet()
     }
 
     fun cancelScan() {

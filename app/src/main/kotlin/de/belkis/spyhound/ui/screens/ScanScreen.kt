@@ -64,7 +64,7 @@ fun ScanScreen(
         val pct = (progress.fraction.coerceIn(0f, 1f) * 100).toInt()
         Text(
             "$pct %",
-            style = SpyTypographyExtras.tabularHeadline.copy(fontSize = MaterialTheme.typography.headlineLarge.fontSize),
+            style = SpyTypographyExtras.tabularHeadline,
             color = SpyColors.Amber,
         )
         Spacer(Modifier.height(8.dp))

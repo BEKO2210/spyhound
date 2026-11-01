@@ -57,6 +57,7 @@ fun ResultScreen(
     onShare: () -> Unit,
     onRescan: () -> Unit,
     onGapFix: (GapFix) -> Unit,
+    onBugreport: () -> Unit,
     onHelp: () -> Unit,
 ) {
     val motion = LocalMotionEnabled.current
@@ -91,6 +92,7 @@ fun ResultScreen(
             if (stage >= 0) {
                 AnimatedVisibility(visible = true, enter = enter) {
                     VerdictHero(
+                        title = report.title,
                         verdict = report.verdict,
                         subtitle = "${ReportText.levelName(report.access)} · ${durationSec} s · $examined geprüft",
                     )
@@ -146,7 +148,7 @@ fun ResultScreen(
                             "Was fehlt, ist keine Entwarnung.",
                             style = MaterialTheme.typography.bodyMedium,
                         )
-                        report.gaps.forEach { gap -> GapRow(gap, onGapFix) }
+                        report.gaps.forEach { gap -> GapRow(gap, onGapFix, onBugreport) }
                     }
                 }
             }
@@ -174,7 +176,7 @@ fun ResultScreen(
 }
 
 @Composable
-private fun VerdictHero(verdict: Verdict, subtitle: String) {
+private fun VerdictHero(title: String?, verdict: Verdict, subtitle: String) {
     val (icon, tint) = when (verdict) {
         Verdict.SPYWARE_INDICATOR -> Icons.Outlined.Report to SpyColors.Danger
         Verdict.STALKERWARE -> Icons.Outlined.Visibility to SpyColors.Danger
@@ -185,6 +187,10 @@ private fun VerdictHero(verdict: Verdict, subtitle: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        title?.let {
+            Text(it, style = MaterialTheme.typography.titleMedium, color = SpyColors.IvoryMuted)
+            Spacer(Modifier.height(4.dp))
+        }
         Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(64.dp))
         Spacer(Modifier.height(8.dp))
         Text(
@@ -243,12 +249,15 @@ private fun LeadRow(lead: Lead) {
 }
 
 @Composable
-private fun GapRow(gap: Gap, onFix: (GapFix) -> Unit) {
+private fun GapRow(gap: Gap, onFix: (GapFix) -> Unit, onBugreport: () -> Unit) {
     Spacer(Modifier.height(12.dp))
     Text(gap.check, style = MaterialTheme.typography.labelLarge)
     Text(gap.detail, style = MaterialTheme.typography.bodyMedium)
     gapFixLabel(gap.fix)?.let { label ->
         TextActionLink(text = label, onClick = { onFix(gap.fix) }, modifier = Modifier.padding(top = 4.dp))
+    }
+    if (gap.fix == GapFix.SHIZUKU) {
+        TextActionLink(text = "Fehlerbericht nutzen", onClick = onBugreport, modifier = Modifier.padding(top = 4.dp))
     }
 }
 

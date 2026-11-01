@@ -7,7 +7,8 @@ import java.util.Date
 object ReportText {
     fun render(r: Report, version: String): String = buildString {
         val fmt = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-        appendLine("Spyhound $version – Prüfbericht")
+        val kind = r.title?.let { "$it" } ?: "Prüfbericht"
+        appendLine("Spyhound $version – $kind")
         appendLine("Zeit: ${fmt.format(Date(r.startedAt))} (${(r.finishedAt - r.startedAt) / 1000} s)")
         appendLine("Gerät: ${r.device}")
         appendLine("Prüftiefe: ${levelName(r.access)}")

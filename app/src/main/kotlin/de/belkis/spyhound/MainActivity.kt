@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.belkis.spyhound.BuildConfig
+import de.belkis.spyhound.bugreport.BugreportImport
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.ReportText
@@ -46,6 +47,10 @@ class MainActivity : ComponentActivity() {
         vm.refreshDnsGuard()
     }
 
+    private val pickBugreport = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { vm.importBugreport(it) }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -63,11 +68,32 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        dispatchBugreportIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        dispatchBugreportIntent(intent)
     }
 
     override fun onResume() {
         super.onResume()
         vm.refreshPermissions()
+    }
+
+    private fun dispatchBugreportIntent(intent: Intent?) {
+        if (intent == null) return
+        when (intent.action) {
+            Intent.ACTION_SEND -> {
+                val uri = BugreportImport.streamUri(intent) ?: return
+                vm.handleIncomingBugreportIntent(uri, intent.type)
+            }
+            Intent.ACTION_VIEW -> {
+                val uri = intent.data ?: return
+                vm.handleIncomingBugreportIntent(uri, intent.type)
+            }
+        }
     }
 
     @Composable
@@ -81,6 +107,7 @@ class MainActivity : ComponentActivity() {
                     vm.startScan()
                 },
                 onGapFix = { fix -> handleGapFix(fix) },
+                onBugreport = { openBugreportPicker() },
                 onHelp = {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
                 },
@@ -100,11 +127,17 @@ class MainActivity : ComponentActivity() {
                 },
                 onRequestFiles = { openAllFilesAccess() },
                 onDnsToggle = { on -> toggleDns(on) },
+                onPickBugreport = { openBugreportPicker() },
+                onDismissBanner = { vm.clearBanner() },
                 onDemoReport = {
                     if (BuildConfig.DEBUG) vm.showDemoReport()
                 },
             )
         }
+    }
+
+    private fun openBugreportPicker() {
+        pickBugreport.launch(arrayOf("application/zip"))
     }
 
     private fun toggleDns(enable: Boolean) {
