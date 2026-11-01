@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import de.belkis.spyhound.dns.DnsGuard
+import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.ioc.IocStore
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.scan.AccessLevel
@@ -35,6 +37,8 @@ data class UiState(
     val progress: Progress? = null,
     val report: Report? = null,
     val busy: String? = null,
+    val dnsRunning: Boolean = false,
+    val dnsHits: List<DnsHit> = emptyList(),
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -47,6 +51,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     init {
         reloadIocs()
         refreshPermissions()
+        refreshDnsGuard()
     }
 
     private fun reloadIocs() = viewModelScope.launch {
@@ -62,6 +67,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 filesGranted = Environment.isExternalStorageManager(),
                 shizuku = ShizukuShell.status(),
                 access = shell?.level ?: AccessLevel.APP,
+            )
+        }
+        refreshDnsGuard()
+    }
+
+    fun refreshDnsGuard() {
+        val ctx = getApplication<Application>()
+        _state.update {
+            it.copy(
+                dnsRunning = DnsGuard.isRunning,
+                dnsHits = DnsGuard.recentHits(ctx),
             )
         }
     }
