@@ -1,5 +1,8 @@
 package de.belkis.spyhound.ui.screens
 
+import de.belkis.spyhound.R
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -31,6 +34,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.scan.Gap
@@ -38,6 +43,8 @@ import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.Lead
 import de.belkis.spyhound.scan.Report
 import de.belkis.spyhound.scan.ReportText
+import de.belkis.spyhound.scan.TextsEn
+import de.belkis.spyhound.scan.TextsDe
 import de.belkis.spyhound.scan.Verdict
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
@@ -60,6 +67,7 @@ fun ResultScreen(
     onBugreport: () -> Unit,
     onHelp: () -> Unit,
 ) {
+    val texts = if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
     val motion = LocalMotionEnabled.current
     var stage by remember(report) { mutableIntStateOf(if (motion) 0 else 4) }
     LaunchedEffect(report, motion) {
@@ -94,7 +102,8 @@ fun ResultScreen(
                     VerdictHero(
                         title = report.title,
                         verdict = report.verdict,
-                        subtitle = "${ReportText.levelName(report.access)} · ${durationSec} s · $examined geprüft",
+                        english = texts === TextsEn,
+                        subtitle = stringResource(R.string.result_subtitle, ReportText.levelName(report.access, texts), durationSec, examined),
                     )
                 }
             }
@@ -111,7 +120,7 @@ fun ResultScreen(
             if (stage >= 2 && report.findings.isNotEmpty()) {
                 AnimatedVisibility(visible = true, enter = enter) {
                     CollapsibleSection(
-                        title = "Funde",
+                        title = pluralStringResource(R.plurals.findings, report.findings.size),
                         count = report.findings.size,
                         titleColor = SpyColors.Danger,
                         initiallyExpanded = true,
@@ -126,11 +135,11 @@ fun ResultScreen(
             if (stage >= 2 && report.leads.isNotEmpty()) {
                 AnimatedVisibility(visible = true, enter = enter) {
                     CollapsibleSection(
-                        title = "Zum Anschauen",
+                        title = pluralStringResource(R.plurals.leads, report.leads.size),
                         count = report.leads.size,
                     ) {
                         Text(
-                            "Keine Funde — aber prüfenswerte Hinweise.",
+                            stringResource(R.string.t_047),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         report.leads.forEach { lead -> LeadRow(lead) }
@@ -141,11 +150,11 @@ fun ResultScreen(
             if (stage >= 3 && report.gaps.isNotEmpty()) {
                 AnimatedVisibility(visible = true, enter = enter) {
                     CollapsibleSection(
-                        title = "Nicht geprüft",
+                        title = pluralStringResource(R.plurals.gaps, report.gaps.size),
                         count = report.gaps.size,
                     ) {
                         Text(
-                            "Was fehlt, ist keine Entwarnung.",
+                            stringResource(R.string.t_049),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         report.gaps.forEach { gap -> GapRow(gap, onGapFix, onBugreport) }
@@ -153,7 +162,7 @@ fun ResultScreen(
                 }
             }
             if (stage >= 3) {
-                TextActionLink(text = "Hilfe (Access Now)", onClick = onHelp, color = SpyColors.IvoryMuted)
+                TextActionLink(text = stringResource(R.string.t_050), onClick = onHelp, color = SpyColors.IvoryMuted)
             }
         }
         Row(
@@ -161,12 +170,12 @@ fun ResultScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SpyButton(
-                text = "Neu prüfen",
+                text = stringResource(R.string.t_051),
                 onClick = onRescan,
                 modifier = Modifier.weight(1f),
             )
             SpyButton(
-                text = "Bericht teilen",
+                text = stringResource(R.string.t_052),
                 onClick = onShare,
                 accent = true,
                 modifier = Modifier.weight(1f),
@@ -176,7 +185,7 @@ fun ResultScreen(
 }
 
 @Composable
-private fun VerdictHero(title: String?, verdict: Verdict, subtitle: String) {
+private fun VerdictHero(title: String?, verdict: Verdict, subtitle: String, english: Boolean) {
     val (icon, tint) = when (verdict) {
         Verdict.SPYWARE_INDICATOR -> Icons.Outlined.Report to SpyColors.Danger
         Verdict.STALKERWARE -> Icons.Outlined.Visibility to SpyColors.Danger
@@ -194,7 +203,7 @@ private fun VerdictHero(title: String?, verdict: Verdict, subtitle: String) {
         Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(64.dp))
         Spacer(Modifier.height(8.dp))
         Text(
-            ReportText.verdictText(verdict),
+            ReportText.verdictText(verdict, if (english) TextsEn else TextsDe),
             style = MaterialTheme.typography.headlineMedium,
             color = tint,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -210,9 +219,9 @@ private fun CountBar(findings: Int, leads: Int, gaps: Int) {
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        CountCell("Funde", findings, SpyColors.Danger)
-        CountCell("Hinweise", leads, SpyColors.Amber)
-        CountCell("Lücken", gaps, SpyColors.IvoryMuted)
+        CountCell(pluralStringResource(R.plurals.findings, findings), findings, SpyColors.Danger)
+        CountCell(pluralStringResource(R.plurals.leads, leads), leads, SpyColors.Amber)
+        CountCell(pluralStringResource(R.plurals.gaps, gaps), gaps, SpyColors.IvoryMuted)
     }
 }
 
@@ -220,7 +229,7 @@ private fun CountBar(findings: Int, leads: Int, gaps: Int) {
 private fun CountCell(label: String, value: Int, color: androidx.compose.ui.graphics.Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         AnimatedCount(value, style = SpyTypographyExtras.tabularMedium.copy(color = color))
-        Text(label, style = MaterialTheme.typography.labelLarge, color = SpyColors.IvoryMuted)
+        Text(label, style = MaterialTheme.typography.labelLarge, color = SpyColors.IvoryMuted, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
     }
 }
 
@@ -232,7 +241,7 @@ private fun FindingBlock(where: String, detail: String, family: String, source: 
     Spacer(Modifier.height(6.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         if (family.isNotBlank()) InfoChip(family)
-        InfoChip(if (source.isNotBlank()) "Quelle $source" else "Quelle unbekannt")
+        InfoChip(if (source.isNotBlank()) stringResource(R.string.source_named, source) else stringResource(R.string.t_053))
     }
 }
 
@@ -257,15 +266,16 @@ private fun GapRow(gap: Gap, onFix: (GapFix) -> Unit, onBugreport: () -> Unit) {
         TextActionLink(text = label, onClick = { onFix(gap.fix) }, modifier = Modifier.padding(top = 4.dp))
     }
     if (gap.fix == GapFix.SHIZUKU) {
-        TextActionLink(text = "Fehlerbericht nutzen", onClick = onBugreport, modifier = Modifier.padding(top = 4.dp))
+        TextActionLink(text = stringResource(R.string.t_054), onClick = onBugreport, modifier = Modifier.padding(top = 4.dp))
     }
 }
 
+@Composable
 private fun gapFixLabel(fix: GapFix): String? = when (fix) {
-    GapFix.PERMISSION_SMS -> "SMS-Berechtigung erteilen"
-    GapFix.PERMISSION_FILES -> "Voller Dateizugriff"
-    GapFix.SHIZUKU -> "Tiefere Prüfung einrichten"
-    GapFix.ROOT -> "Root anfragen"
-    GapFix.UPDATE_INDICATORS -> "Quellen laden"
+    GapFix.PERMISSION_SMS -> stringResource(R.string.t_055)
+    GapFix.PERMISSION_FILES -> stringResource(R.string.t_056)
+    GapFix.SHIZUKU -> stringResource(R.string.t_042)
+    GapFix.ROOT -> stringResource(R.string.t_043)
+    GapFix.UPDATE_INDICATORS -> stringResource(R.string.t_057)
     GapFix.NONE -> null
 }

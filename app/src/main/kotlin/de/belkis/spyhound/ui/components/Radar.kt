@@ -1,5 +1,8 @@
 package de.belkis.spyhound.ui.components
 
+import de.belkis.spyhound.R
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -10,6 +13,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +54,8 @@ import de.belkis.spyhound.scan.RadarLegendCounts
 import de.belkis.spyhound.scan.RadarMath
 import de.belkis.spyhound.scan.RadarProgress
 import de.belkis.spyhound.scan.RadarSector
+import de.belkis.spyhound.scan.TextsEn
+import androidx.compose.ui.platform.LocalContext
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
@@ -168,6 +174,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorLabels(
     center: Offset,
     radius: Float,
     radar: RadarProgress?,
+    labels: List<String>,
 ) {
     val span = 360f / RadarMath.SECTOR_COUNT
     val labelR = radius * 1.02f
@@ -178,9 +185,9 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorLabels(
         val x = center.x + cos(rad).toFloat() * labelR
         val y = center.y + sin(rad).toFloat() * labelR
         val label = if (locked) {
-            "🔒 ${sector.label.uppercase()}"
+            "🔒 ${labels[i].uppercase()}"
         } else {
-            sector.label.uppercase()
+            labels[i].uppercase()
         }
         drawContext.canvas.nativeCanvas.apply {
             val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
@@ -212,6 +219,8 @@ fun RadarCanvas(
     showLabels: Boolean = true,
     sweepLeadAlpha: Float = 0.55f,
 ) {
+    val english = LocalContext.current.resources.configuration.locales[0].language != "de"
+    val sectorLabels = RadarSector.entries.map { if (english) TextsEn.text(it.label) else it.label }
     val motion = LocalMotionEnabled.current
     val blips = remember(radar) { blipsForDraw(radar) }
     val infinite = rememberInfiniteTransition(label = "radar")
@@ -288,7 +297,7 @@ fun RadarCanvas(
             }
         }
         if (showLabels && size.minDimension >= 120.dp.toPx()) {
-            drawSectorLabels(c, r, radar)
+            drawSectorLabels(c, r, radar, sectorLabels)
         }
     }
 }
@@ -298,20 +307,14 @@ fun RadarLegend(
     legend: RadarLegendCounts,
     modifier: Modifier = Modifier,
 ) {
-    val countStyle = SpyTypographyExtras.tabularMedium.copy(
-        fontSize = 15.sp,
-        lineHeight = 18.sp,
-    )
+    val countStyle = SpyTypographyExtras.tabularMedium.copy(fontSize = 15.sp, lineHeight = 18.sp)
     Row(
-        modifier
-            .fillMaxWidth()
-            .height(LegendSlotHeight),
-        horizontalArrangement = Arrangement.spacedBy(LegendItemSpacing, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier.fillMaxWidth().height(40.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        LegendItem("geprüft", SpyColors.IvoryMuted, legend.clean, countStyle)
-        LegendItem("Hinweise", SpyColors.Amber, legend.lead, countStyle)
-        LegendItem("Funde", SpyColors.Danger, legend.finding, countStyle)
+        LegendItem(stringResource(R.string.t_039), SpyColors.IvoryMuted, legend.clean, countStyle, Modifier.weight(1f))
+        LegendItem(stringResource(R.string.t_040), SpyColors.Amber, legend.lead, countStyle, Modifier.weight(1f))
+        LegendItem(stringResource(R.string.t_041), SpyColors.Danger, legend.finding, countStyle, Modifier.weight(1f))
     }
 }
 
@@ -321,23 +324,25 @@ private fun LegendItem(
     dotColor: Color,
     count: Int,
     countStyle: androidx.compose.ui.text.TextStyle,
+    modifier: Modifier = Modifier,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("●", color = dotColor, style = MaterialTheme.typography.labelLarge)
-        Text(
-            count.toString().padStart(4),
-            style = countStyle,
-            color = dotColor,
-            maxLines = 1,
-            modifier = Modifier.padding(start = 4.dp),
-        )
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("●", color = dotColor, style = MaterialTheme.typography.labelLarge)
+            Text(
+                count.toString().padStart(4),
+                style = countStyle,
+                color = dotColor,
+                maxLines = 1,
+                modifier = Modifier.padding(start = 4.dp),
+            )
+        }
         Text(
             label,
             style = MaterialTheme.typography.labelSmall,
             color = SpyColors.IvoryMuted,
-            modifier = Modifier.padding(start = 4.dp),
             maxLines = 1,
-            overflow = TextOverflow.Clip,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -347,7 +352,7 @@ fun RadarScanButton(
     onClick: () -> Unit,
     enabled: Boolean,
     modifier: Modifier = Modifier,
-    label: String = "Jetzt prüfen",
+    label: String = stringResource(R.string.t_038),
     diameter: Dp = 176.dp,
     lastRadar: RadarProgress? = null,
 ) {

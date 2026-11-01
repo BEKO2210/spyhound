@@ -1,5 +1,8 @@
 package de.belkis.spyhound.ui.components
 
+import de.belkis.spyhound.R
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -110,8 +113,9 @@ fun SpyButton(
 fun SpyNavigateBack(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Zurück",
+    label: String? = null,
 ) {
+    val backLabel = label ?: stringResource(R.string.back)
     Row(
         modifier = modifier
             .defaultMinSize(minHeight = 48.dp)
@@ -120,7 +124,7 @@ fun SpyNavigateBack(
                 indication = null,
                 onClick = onClick,
             )
-            .semantics { contentDescription = label }
+            .semantics { contentDescription = backLabel }
             .padding(end = 8.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -132,7 +136,7 @@ fun SpyNavigateBack(
         )
         Spacer(Modifier.width(6.dp))
         Text(
-            text = label,
+            text = backLabel,
             style = MaterialTheme.typography.labelLarge,
             color = SpyColors.Amber,
         )
@@ -172,7 +176,7 @@ fun WhyLink(expanded: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifi
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text("Warum?", style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
+        Text(stringResource(R.string.t_001), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
         Icon(
             Icons.Default.ExpandMore,
             contentDescription = null,
@@ -209,7 +213,7 @@ fun CollapsibleSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                if (count != null) "$title ($count)" else title,
+                if (count != null) stringResource(R.string.section_count, title, count) else title,
                 style = MaterialTheme.typography.titleMedium,
                 color = titleColor,
             )
@@ -266,12 +270,12 @@ fun AccessLevelBar(
     modifier: Modifier = Modifier,
 ) {
     val stages = listOf(
-        AccessLevel.APP to "Basis",
+        AccessLevel.APP to stringResource(R.string.t_002),
         AccessLevel.SHELL to "Shizuku",
         AccessLevel.ROOT to "Root",
     )
     Column(modifier) {
-        SectionLabel("Zugriffsstufe")
+        SectionLabel(stringResource(R.string.t_003))
         Row(
             Modifier
                 .fillMaxWidth()
@@ -308,46 +312,46 @@ fun AccessLevelBar(
         when (current) {
             AccessLevel.APP -> {
                 Text(
-                    "Die tiefere Prüfung findet mehr — zum Beispiel laufende Hintergrundprozesse. " +
-                        "Dafür richtest du einmal Shizuku ein, ohne Root.",
+                    stringResource(R.string.t_009) +
+                        stringResource(R.string.t_010),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(8.dp))
                 SpyButton(
-                    text = "Tiefere Prüfung einrichten",
+                    text = stringResource(R.string.t_004),
                     onClick = onDeepCheckSetup,
                     accent = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Root? Dann einfach ‚Root anfragen‘ tippen.",
+                    stringResource(R.string.t_005),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.IvoryMuted,
                 )
                 SpyButton(
-                    text = "Root anfragen",
+                    text = stringResource(R.string.t_006),
                     onClick = onRequestRoot,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
             AccessLevel.SHELL -> {
                 Text(
-                    "Tiefere Prüfung ist aktiv. Root geht noch einen Schritt weiter.",
+                    stringResource(R.string.t_007),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.Clear,
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Root? Dann einfach ‚Root anfragen‘ tippen.",
+                    stringResource(R.string.t_005),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.IvoryMuted,
                 )
-                SpyButton(text = "Root anfragen", onClick = onRequestRoot, modifier = Modifier.fillMaxWidth())
+                SpyButton(text = stringResource(R.string.t_006), onClick = onRequestRoot, modifier = Modifier.fillMaxWidth())
             }
             AccessLevel.ROOT -> {
                 Text(
-                    "Höchste Stufe aktiv — alle verfügbaren Prüfungen laufen.",
+                    stringResource(R.string.t_008),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.Clear,
                 )

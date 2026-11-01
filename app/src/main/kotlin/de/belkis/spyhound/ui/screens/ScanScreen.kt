@@ -33,8 +33,14 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.belkis.spyhound.R
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import de.belkis.spyhound.scan.TextsEn
+import de.belkis.spyhound.scan.TextsDe
 import de.belkis.spyhound.scan.Progress
 import de.belkis.spyhound.scan.RadarLegendCounts
+import de.belkis.spyhound.scan.RadarSector
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
@@ -46,24 +52,27 @@ import de.belkis.spyhound.ui.components.ThinProgressLine
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.sample
 
-private val SCAN_STEPS = listOf("Apps", "Gerät", "SMS", "Dateien", "Tiefenprüfung")
+private val SCAN_STEPS = listOf(
+    R.string.scan_step_apps, R.string.scan_step_device, R.string.scan_step_sms,
+    R.string.scan_step_files, R.string.scan_step_deep,
+)
 
 private val ScanPercentSlotHeight = 40.dp
 private val ScanPercentSlotWidth = 120.dp
 private val ScanStepSlotHeight = 22.dp
 private val ScanDetailSlotHeight = 24.dp
 
-private fun stepIndex(step: String): Int = when (step) {
-    "Start" -> -1
-    "Apps" -> 0
-    "Gerät" -> 1
-    "SMS" -> 2
-    "Dateien", "Prozesse", "Pakete", "Systemprotokolle", "Fingerabdrücke" -> 3
-    "Fertig" -> SCAN_STEPS.size
-    else -> if (step.contains("Tiefen") || step == "Tiefenprüfung") 4 else 3
+private fun stepIndex(progress: Progress): Int = if (progress.fraction >= 1f) SCAN_STEPS.size else when (progress.radar?.activeSector) {
+    RadarSector.APPS -> 0
+    RadarSector.DEVICE -> 1
+    RadarSector.SMS -> 2
+    RadarSector.FILES -> 3
+    RadarSector.DEEP -> 4
+    null -> 0
 }
 
-private val ScanRadarBlockHeight = 280.dp + 28.dp
+private val ScanRadarSize = 260.dp
+private val ScanRadarBlockHeight = ScanRadarSize + 40.dp
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -71,8 +80,9 @@ fun ScanScreen(
     progress: Progress,
     onCancel: () -> Unit,
 ) {
+    val texts = if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
     val motion = LocalMotionEnabled.current
-    val current = stepIndex(progress.step)
+    val current = stepIndex(progress)
     val radar = progress.radar
 
     val liveDetail by rememberUpdatedState(progress.detail)
@@ -87,23 +97,23 @@ fun ScanScreen(
         Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Witterung", style = MaterialTheme.typography.headlineLarge)
+        Text(stringResource(R.string.scan_title), style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(6.dp))
         Text(
-            "Der Spürhund folgt Spuren — offline, ohne Datenabfluss.",
+            stringResource(R.string.scan_intro),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
         Column(
             modifier = Modifier.height(ScanRadarBlockHeight),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             RadarCanvas(
                 radar = radar,
-                modifier = Modifier.size(280.dp),
+                modifier = Modifier.size(ScanRadarSize),
             )
             RadarLegend(
                 legend = radar?.legend ?: RadarLegendCounts(),
@@ -137,7 +147,7 @@ fun ScanScreen(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                progress.step,
+                texts.text(progress.step),
                 style = MaterialTheme.typography.titleMedium,
                 color = SpyColors.Amber,
                 maxLines = 1,
@@ -167,7 +177,7 @@ fun ScanScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    detail,
+                    texts.text(detail),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -175,7 +185,7 @@ fun ScanScreen(
                 )
             }
         }
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(8.dp))
         Column(Modifier.fillMaxWidth()) {
             SCAN_STEPS.forEachIndexed { index, label ->
                 val done = progress.fraction >= 1f || current > index
@@ -183,11 +193,11 @@ fun ScanScreen(
                     4 -> progress.fraction in 0.72f..0.99f
                     else -> current == index && progress.fraction < 1f
                 }
-                ScanStepRow(label = label, done = done, active = active)
+                ScanStepRow(label = stringResource(label), done = done, active = active)
             }
         }
         Spacer(Modifier.weight(1f))
-        SpyButton(text = "Abbrechen", onClick = onCancel, modifier = Modifier.fillMaxWidth())
+        SpyButton(text = stringResource(R.string.scan_cancel), onClick = onCancel, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(8.dp))
     }
 }

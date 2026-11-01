@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -29,12 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.R
+import androidx.compose.ui.res.stringResource
 import de.belkis.spyhound.dns.DnsHit
+import de.belkis.spyhound.AppLanguage
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.components.AccessLevelBar
@@ -91,6 +96,7 @@ fun StartScreen(
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
+            LanguagePicker()
             Spacer(Modifier.height(12.dp))
             RadarScanButton(
                 onClick = onScan,
@@ -99,12 +105,14 @@ fun StartScreen(
             )
             Spacer(Modifier.height(12.dp))
             val status = buildString {
-                state.iocs?.let { append("${it.set.size} Indikatoren") }
-                    ?: append("Indikatoren werden geladen …")
-                append(" · Stufe ")
+                state.iocs?.let { append(stringResource(R.string.status_indicators, it.set.size)) }
+                    ?: append(stringResource(R.string.t_059))
+                append(" · ")
+                append(stringResource(R.string.access_level_short))
+                append(" ")
                 append(
                     when (state.access) {
-                        de.belkis.spyhound.scan.AccessLevel.APP -> "Basis"
+                        de.belkis.spyhound.scan.AccessLevel.APP -> stringResource(R.string.t_058)
                         de.belkis.spyhound.scan.AccessLevel.SHELL -> "Shizuku"
                         de.belkis.spyhound.scan.AccessLevel.ROOT -> "Root"
                     },
@@ -118,7 +126,7 @@ fun StartScreen(
             state.bannerMessage?.let { msg ->
                 Spacer(Modifier.height(6.dp))
                 Text(msg, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Danger, textAlign = TextAlign.Center)
-                TextActionLink(text = "Schließen", onClick = onDismissBanner, modifier = Modifier.padding(top = 2.dp))
+                TextActionLink(text = stringResource(R.string.t_060), onClick = onDismissBanner, modifier = Modifier.padding(top = 2.dp))
             }
         }
         Spacer(Modifier.height(20.dp))
@@ -129,25 +137,25 @@ fun StartScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                "Spuren bekannter Spyware und Stalkerware — offline, ohne Telemetrie.",
+                stringResource(R.string.t_061),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 8.dp),
             )
             state.iocs?.let { loaded ->
-                SectionLabel("Indikatoren")
+                SectionLabel(stringResource(R.string.t_062))
                 Text(
-                    "${loaded.set.size} Einträge aus ${loaded.status.available} von ${loaded.status.sources} Quellen",
+                    stringResource(R.string.indicators_summary, loaded.set.size, loaded.status.available, loaded.status.sources),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (loaded.status.missing.isNotEmpty()) {
                     Text(
-                        "${loaded.status.missing.size} Quellen fehlen — optional nachladen.",
+                        stringResource(R.string.sources_missing, loaded.status.missing.size),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 Spacer(Modifier.height(8.dp))
                 SpyButton(
-                    text = if (state.updating != null) state.updating else "Weitere Quellen laden",
+                    text = if (state.updating != null) state.updating else stringResource(R.string.t_063),
                     onClick = onUpdateIndicators,
                     enabled = state.updating == null,
                     modifier = Modifier.fillMaxWidth(),
@@ -158,7 +166,7 @@ fun StartScreen(
                 }
                 SpyDivider(Modifier.padding(vertical = 16.dp))
             }
-            SectionLabel("DNS-Wächter")
+            SectionLabel(stringResource(R.string.t_064))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -170,7 +178,7 @@ fun StartScreen(
                         .padding(end = 12.dp),
                 ) {
                     Text(
-                        "Warnt bei DNS-Anfragen zu bekannten Indikator-Domains.",
+                        stringResource(R.string.t_065),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -189,41 +197,41 @@ fun StartScreen(
             }
             if (state.dnsHits.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
-                Text("Letzte Treffer", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.t_066), style = MaterialTheme.typography.labelLarge)
                 val fmt = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 state.dnsHits.take(5).forEach { hit -> DnsHitLine(hit, fmt) }
             }
             SpyDivider(Modifier.padding(vertical = 16.dp))
-            SectionLabel("Fehlerbericht")
+            SectionLabel(stringResource(R.string.t_067))
             Text(
-                "Enthält Protokolle und Paketlisten — Spyhound wertet die ZIP nur auf dem Gerät aus, ohne Upload.",
+                stringResource(R.string.t_068),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(Modifier.height(8.dp))
             SpyButton(
-                text = "Fehlerbericht auswählen",
+                text = stringResource(R.string.t_069),
                 onClick = onPickBugreport,
                 enabled = state.iocs != null && state.busy == null,
                 modifier = Modifier.fillMaxWidth(),
             )
             TextActionLink(
-                text = if (showBugreportSteps) "So erstellst du einen ▲" else "So erstellst du einen",
+                text = if (showBugreportSteps) stringResource(R.string.t_070) else stringResource(R.string.t_071),
                 onClick = { showBugreportSteps = !showBugreportSteps },
             )
             AnimatedVisibility(showBugreportSteps) {
                 Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        "1. Entwickleroptionen aktivieren (Build-Nummer siebenmal tippen).",
+                        stringResource(R.string.t_072),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
-                        "2. Einstellungen → Entwickleroptionen → Fehlerbericht erstellen.",
+                        stringResource(R.string.t_073),
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    Text("3. Vollständigen Bericht wählen (nicht „interaktiv“).", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.t_074), style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        "4. Nach der Benachrichtigung teilen oder hier die ZIP auswählen. Enthält private Daten — " +
-                            "danach löschen.",
+                        stringResource(R.string.t_075) +
+                            stringResource(R.string.t_076),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -236,13 +244,13 @@ fun StartScreen(
             )
             if (state.rootDenied) {
                 Spacer(Modifier.height(6.dp))
-                Text("Root wurde abgelehnt oder ist nicht verfügbar.", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.t_077), style = MaterialTheme.typography.bodyMedium)
             }
             SpyDivider(Modifier.padding(vertical = 16.dp))
-            SectionLabel("Berechtigungen")
-            PermissionRow("SMS lesen", state.smsGranted, "Links in Nachrichten prüfen", onRequestSms)
+            SectionLabel(stringResource(R.string.t_078))
+            PermissionRow(stringResource(R.string.t_079), state.smsGranted, stringResource(R.string.t_080), onRequestSms)
             SpyDivider()
-            PermissionRow("Alle Dateien", state.filesGranted, "Verdächtige Dateien auf dem Speicher", onRequestFiles)
+            PermissionRow(stringResource(R.string.t_081), state.filesGranted, stringResource(R.string.t_082), onRequestFiles)
         }
     }
 }
@@ -270,7 +278,7 @@ private fun PermissionRow(label: String, granted: Boolean, hint: String, onReque
             Text(hint, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.fillMaxWidth())
         }
         if (!granted) {
-            SpyButton(text = "Erlauben", onClick = onRequest, fillWidth = false)
+            SpyButton(text = stringResource(R.string.t_083), onClick = onRequest, fillWidth = false)
         } else {
             Text("OK", style = MaterialTheme.typography.labelLarge, color = SpyColors.Clear, modifier = Modifier.padding(8.dp))
         }
@@ -286,4 +294,34 @@ private fun DnsHitLine(hit: DnsHit, fmt: DateFormat) {
         overflow = TextOverflow.Ellipsis,
         color = SpyColors.Danger,
     )
+}
+
+@Composable
+private fun LanguagePicker() {
+    val context = LocalContext.current
+    var open by remember { mutableStateOf(false) }
+    val current = AppLanguage.selected(context).substringBefore(',').substringBefore('-')
+    val label = when (current) {
+        "de" -> stringResource(R.string.language_german)
+        "en" -> stringResource(R.string.language_english)
+        else -> stringResource(R.string.language_system)
+    }
+    androidx.compose.foundation.layout.Box {
+        TextActionLink(text = stringResource(R.string.language_label, label), onClick = { open = true })
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            listOf(
+                "" to R.string.language_system,
+                "de" to R.string.language_german,
+                "en" to R.string.language_english,
+            ).forEach { (tag, title) ->
+                DropdownMenuItem(
+                    text = { Text(stringResource(title)) },
+                    onClick = {
+                        open = false
+                        AppLanguage.select(context, tag)
+                    },
+                )
+            }
+        }
+    }
 }

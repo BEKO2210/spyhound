@@ -1,5 +1,8 @@
 package de.belkis.spyhound.ui.components
 
+import de.belkis.spyhound.R
+import androidx.compose.ui.res.stringResource
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,14 +62,13 @@ fun DeepCheckSetupWizard(
             return@Column
         }
         Text(
-            "Tiefere Prüfung einrichten",
+            stringResource(R.string.t_011),
             style = MaterialTheme.typography.headlineMedium,
             color = SpyColors.Ivory,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Damit Spyhound mehr finden kann — ohne Root, nur auf dem Telefon. " +
-                "WLAN muss an sein. Nach einem Neustart musst du Shizuku erneut starten.",
+            stringResource(R.string.deep_check_intro),
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(20.dp))
@@ -74,47 +76,47 @@ fun DeepCheckSetupWizard(
             step = DeepCheckSetupStep.INSTALL_SHIZUKU,
             snapshot = snapshot,
             active = active,
-            body = "Installiere die App Shizuku. Sie hilft Spyhound, tiefer zu schauen — wie ein Werkzeug von Android selbst.",
-            help = "Die Installation klappt nicht: Lade Shizuku von shizuku.rikka.app. Bei Samsung kann „Auto Blocker“ " +
-                "Installationen blockieren — unter Sicherheit und Datenschutz kurz ausschalten.",
+            body = stringResource(R.string.t_012),
+            help = stringResource(R.string.t_013) +
+                stringResource(R.string.t_014),
         ) {
-            SpyButton(text = "Shizuku installieren", onClick = { openShizukuDownload(context) }, accent = true)
+            SpyButton(text = stringResource(R.string.t_015), onClick = { openShizukuDownload(context) }, accent = true)
         }
         DeepCheckStepBlock(
             step = DeepCheckSetupStep.DEV_OPTIONS,
             snapshot = snapshot,
             active = active,
-            body = "Öffne Einstellungen → Über das Telefon und tippe siebenmal auf „Build-Nummer“. " +
-                "Samsung: Über das Telefon → Softwareinformationen → Buildnummer.",
-            help = "Es passiert nichts beim Tippen: Tippe schneller hintereinander. Manchmal fragt Android nach deiner PIN.",
+            body = stringResource(R.string.t_016) +
+                stringResource(R.string.t_017),
+            help = stringResource(R.string.t_018),
         ) {
-            SpyButton(text = "Telefoninfo öffnen", onClick = { openDeviceInfoSettings(context) })
+            SpyButton(text = stringResource(R.string.t_019), onClick = { openDeviceInfoSettings(context) })
         }
         DeepCheckStepBlock(
             step = DeepCheckSetupStep.START_SHIZUKU,
             snapshot = snapshot,
             active = active,
-            body = "In Shizuku auf „Kopplung“ tippen. Erlaube die Benachrichtigung von Shizuku. " +
-                "In den Entwickleroptionen: „Debugging über WLAN“ einschalten, dann „Gerät über Kopplungscode koppeln“. " +
-                "Den Code in die Shizuku-Benachrichtigung eintippen. Danach in Shizuku auf „Starten“.",
-            help = "Kopplungscode wird nicht angenommen: Benachrichtigung von Shizuku muss erlaubt sein. " +
-                "Nutze den geteilten Bildschirm — Einstellungen und Benachrichtigung gleichzeitig sehen. " +
-                "Samsung: Auto Blocker aus. Bleibt „Suche nach Kopplungsdienst“ stehen: Shizuku darf im Hintergrund laufen " +
-                "(Akku: uneingeschränkt).",
+            body = stringResource(R.string.t_020) +
+                stringResource(R.string.t_021) +
+                stringResource(R.string.t_022),
+            help = stringResource(R.string.t_023) +
+                stringResource(R.string.t_024) +
+                stringResource(R.string.t_025) +
+                stringResource(R.string.t_026),
         ) {
-            SpyButton(text = "Shizuku öffnen", onClick = { openShizukuApp(context) }, accent = true)
+            SpyButton(text = stringResource(R.string.t_027), onClick = { openShizukuApp(context) }, accent = true)
             Spacer(Modifier.height(8.dp))
-            SpyButton(text = "Entwickleroptionen öffnen", onClick = { openDeveloperSettings(context) })
+            SpyButton(text = stringResource(R.string.t_028), onClick = { openDeveloperSettings(context) })
         }
         DeepCheckStepBlock(
             step = DeepCheckSetupStep.ALLOW_SPYHOUND,
             snapshot = snapshot,
             active = active,
-            body = "Spyhound braucht deine Erlaubnis, Shizuku zu nutzen. Tippe auf Erlauben, wenn Android fragt.",
-            help = "Kein Dialog: Shizuku muss laufen (Schritt 3). App neu öffnen und nochmal tippen.",
+            body = stringResource(R.string.t_029),
+            help = stringResource(R.string.t_030),
         ) {
             SpyButton(
-                text = "Spyhound erlauben",
+                text = stringResource(R.string.t_031),
                 onClick = onAllowSpyhound,
                 accent = true,
                 enabled = snapshot.step3Done,
@@ -122,7 +124,7 @@ fun DeepCheckSetupWizard(
         }
         Spacer(Modifier.height(16.dp))
         Text(
-            "Root? Dann einfach ‚Root anfragen‘ auf dem Startbildschirm tippen.",
+            stringResource(R.string.t_032),
             style = MaterialTheme.typography.bodyMedium,
             color = SpyColors.IvoryMuted,
         )
@@ -145,19 +147,19 @@ private fun DonePanel(onScanNow: () -> Unit) {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "Tiefere Prüfung ist bereit",
+            stringResource(R.string.t_033),
             style = MaterialTheme.typography.headlineMedium,
             color = SpyColors.Ivory,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "WLAN-Debugging kannst du danach wieder ausschalten; Shizuku läuft weiter bis zum nächsten Neustart.",
+            stringResource(R.string.t_034),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(28.dp))
-        SpyButton(text = "Jetzt prüfen", onClick = onScanNow, accent = true)
+        SpyButton(text = stringResource(R.string.t_035), onClick = onScanNow, accent = true)
     }
 }
 
@@ -193,7 +195,7 @@ private fun DeepCheckStepBlock(
             }
         }
         TextActionLink(
-            text = if (helpOpen) "Hilfe ▲" else "Hilfe",
+            text = if (helpOpen) stringResource(R.string.t_036) else stringResource(R.string.t_037),
             onClick = { helpOpen = !helpOpen },
             modifier = Modifier.padding(start = 34.dp, top = 6.dp),
         )
