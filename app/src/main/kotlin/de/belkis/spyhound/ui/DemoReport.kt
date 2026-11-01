@@ -12,11 +12,19 @@ import de.belkis.spyhound.scan.Gap
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.Lead
 import de.belkis.spyhound.scan.Report
+import de.belkis.spyhound.scan.AppAnalyzer
+import de.belkis.spyhound.scan.DeviceAnalyzer
+import de.belkis.spyhound.scan.MessageAnalyzer
+import de.belkis.spyhound.scan.ShellAnalyzer
+import de.belkis.spyhound.scan.TextsDe
+import de.belkis.spyhound.scan.TextsEn
 
 /** Fixed demo report for debug UI screenshots (no real device data). */
 object DemoReport {
     fun withFinding(context: Context): Report {
         fun text(id: Int) = context.getString(id)
+        // Real check ids, so the result screen reads the demo exactly like a real scan in either language.
+        val texts = if (context.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
         val now = System.currentTimeMillis()
         val ind = Indicator(
             value = "evil.example",
@@ -25,7 +33,7 @@ object DemoReport {
             family = "Predator",
             sourceId = "mvt-android",
         )
-        val apps = CheckResult("Apps").apply {
+        val apps = CheckResult(AppAnalyzer.NAME, texts).apply {
             ran = true
             examined = 142
             findings += Finding(
@@ -35,7 +43,7 @@ object DemoReport {
                 indicator = ind,
             )
         }
-        val device = CheckResult(text(R.string.demo_device_check)).apply {
+        val device = CheckResult(DeviceAnalyzer.NAME, texts).apply {
             ran = true
             examined = 38
             leads += Lead(
@@ -45,11 +53,11 @@ object DemoReport {
                 why = text(R.string.demo_why),
             )
         }
-        val sms = CheckResult("SMS").apply {
+        val sms = CheckResult(MessageAnalyzer.NAME, texts).apply {
             ran = false
             gap(text(R.string.demo_sms_gap), GapFix.PERMISSION_SMS)
         }
-        val files = CheckResult(text(R.string.demo_files)).apply { ran = true; examined = 1204 }
+        val files = CheckResult(ShellAnalyzer.FILES, texts).apply { ran = true; examined = 1204 }
         val deep = CheckResult(text(R.string.demo_deep)).apply {
             gap(
                 text(R.string.demo_deep_gap),

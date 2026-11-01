@@ -316,8 +316,9 @@
     <string name="result_gaps">Lücken</string>
     <string name="result_checked">Geprüft</string>
     <string name="result_checked_with">Geprüft mit</string>
-    <string name="result_context_finding">Bekannte Spur gefunden · %1$s</string>
-    <string name="result_context_clear">Keine bekannten Spuren im geprüften Bereich · %1$s</string>
+    <string name="result_verdict_clean">Keine bekannten Spuren</string>
+    <string name="result_context_areas">Geprüfte Bereiche</string>
+    <string name="result_context_line">%1$s · %2$s</string>
     <string name="result_checks">%1$d Prüfungen</string>
     <string name="result_checks_detail">%1$d Prüfungen liefen bei diesem Scan.</string>
     <string name="result_findings_hint">Veröffentlichte Indikatoren passen. Prüfe jeden Fund und hol dir Hilfe, bevor du etwas änderst.</string>

@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -71,9 +72,6 @@ import de.belkis.spyhound.scan.Guidance
 import de.belkis.spyhound.scan.GuidanceAction
 import de.belkis.spyhound.scan.Lead
 import de.belkis.spyhound.scan.Report
-import de.belkis.spyhound.scan.ReportText
-import de.belkis.spyhound.scan.TextsDe
-import de.belkis.spyhound.scan.TextsEn
 import de.belkis.spyhound.scan.Verdict
 import de.belkis.spyhound.scan.guidanceFor
 import de.belkis.spyhound.ui.SpyColors
@@ -123,12 +121,12 @@ fun ResultScreen(
                 }
             }
         } else {
-            ResultSummary(report, examined, Modifier.fillMaxWidth(), onGapFix)
+            ResultSummary(report, examined, Modifier.fillMaxWidth().padding(bottom = SpySpacing.Section), onGapFix)
             ScrollEdge(scrolled)
             ResultList(report, listState, onGapFix, onHelp, Modifier.weight(1f))
         }
         Row(
-            Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
+            Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SpyButton(stringResource(R.string.t_052), onShare, Modifier.weight(1f))
@@ -139,7 +137,7 @@ fun ResultScreen(
 
 @Composable
 private fun ResultSummary(report: Report, examined: Int, modifier: Modifier, onGapFix: (GapFix) -> Unit) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
         ResultHero(report)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CountCell(report.findings.size, stringResource(R.string.result_findings), SpyColors.Danger)
@@ -147,6 +145,7 @@ private fun ResultSummary(report: Report, examined: Int, modifier: Modifier, onG
             CountCell(report.gaps.size, stringResource(R.string.result_gaps), SpyColors.IvoryMuted)
             CountCell(examined, stringResource(R.string.result_checked), SpyColors.Ivory)
         }
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(stringResource(R.string.result_checked_with), style = SpyTypographyExtras.sectionLabel)
         val depth = when (report.access) {
             AccessLevel.APP -> stringResource(R.string.depth_basic)
@@ -191,15 +190,32 @@ private fun ResultSummary(report: Report, examined: Int, modifier: Modifier, onG
                 action = if (report.indicatorSourcesMissing == 0) null else ({ onGapFix(GapFix.UPDATE_INDICATORS) }),
             ),
         ))
+        }
     }
 }
 
 @Composable
 private fun ResultHero(report: Report) {
-    val context = LocalContext.current
     val reduced = rememberReducedMotion()
     val danger = report.findings.isNotEmpty()
     val tint = if (danger) SpyColors.Danger else if (report.leads.isNotEmpty()) SpyColors.Amber else SpyColors.Clear
+    val findingCount = report.findings.size
+    val leadCount = report.leads.size
+    val verdict = when {
+        findingCount > 0 -> pluralStringResource(R.plurals.result_verdict_findings, findingCount, findingCount)
+        leadCount > 0 -> pluralStringResource(R.plurals.result_verdict_leads, leadCount, leadCount)
+        else -> stringResource(R.string.result_verdict_clean)
+    }
+    val depth = when (report.access) {
+        AccessLevel.APP -> stringResource(R.string.depth_basic)
+        AccessLevel.SHELL -> stringResource(R.string.depth_deep)
+        AccessLevel.ROOT -> stringResource(R.string.depth_root)
+    }
+    val contextLine = stringResource(
+        R.string.result_context_line,
+        stringResource(R.string.result_context_areas),
+        depth,
+    )
     var entered by remember(report.startedAt, report.finishedAt) { mutableStateOf(false) }
     LaunchedEffect(report.startedAt, report.finishedAt) { entered = true }
     val wave by animateFloatAsState(if (entered || reduced) 1f else 0f, tween(if (reduced) 0 else SpyMotion.Hero, easing = SpyMotion.Enter), label = "result wave")
@@ -212,8 +228,6 @@ private fun ResultHero(report: Report) {
         )
         alpha
     } else 0.18f
-    val texts = if (context.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
-    val verdict = ReportText.verdictText(report.verdict, texts)
     Box(
         Modifier.fillMaxWidth().height(148.dp).drawBehind {
             val center = Offset(size.width / 2f, 52.dp.toPx())
@@ -233,16 +247,21 @@ private fun ResultHero(report: Report) {
                 modifier = Modifier.size(48.dp),
             )
             Spacer(Modifier.height(8.dp))
-            Text(verdict, style = MaterialTheme.typography.headlineMedium, color = tint, textAlign = TextAlign.Center, maxLines = 2)
             Text(
-                stringResource(
-                    if (danger) R.string.result_context_finding else R.string.result_context_clear,
-                    ReportText.levelName(report.access, texts),
-                ),
+                verdict,
+                style = MaterialTheme.typography.headlineMedium,
+                color = tint,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                modifier = Modifier.semantics { contentDescription = verdict },
+            )
+            Text(
+                contextLine,
                 style = MaterialTheme.typography.bodyMedium,
                 color = SpyColors.IvoryMuted,
                 textAlign = TextAlign.Center,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Clip,
             )
         }
@@ -399,8 +418,8 @@ private fun GuidanceCard(entry: ResultEntry.Card, onGapFix: (GapFix) -> Unit, on
                             pkg,
                             style = MaterialTheme.typography.bodyMedium,
                             color = SpyColors.IvoryMuted,
-                            maxLines = 1,
-                            overflow = TextOverflow.MiddleEllipsis,
+                            maxLines = 2,
+                            overflow = TextOverflow.Clip,
                         )
                     }
                 }

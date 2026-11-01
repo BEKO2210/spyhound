@@ -12,4 +12,12 @@
         <item quantity="one">Lücke</item>
         <item quantity="other">Lücken</item>
     </plurals>
+    <plurals name="result_verdict_findings">
+        <item quantity="one">%d Fund · bitte ansehen</item>
+        <item quantity="other">%d Funde · bitte ansehen</item>
+    </plurals>
+    <plurals name="result_verdict_leads">
+        <item quantity="one">Keine Spuren · %d Hinweis</item>
+        <item quantity="other">Keine Spuren · %d Hinweise</item>
+    </plurals>
 </resources>

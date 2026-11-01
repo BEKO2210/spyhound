@@ -12,4 +12,12 @@
         <item quantity="one">not checked</item>
         <item quantity="other">not checked</item>
     </plurals>
+    <plurals name="result_verdict_findings">
+        <item quantity="one">%d finding · please review</item>
+        <item quantity="other">%d findings · please review</item>
+    </plurals>
+    <plurals name="result_verdict_leads">
+        <item quantity="one">No traces · %d lead</item>
+        <item quantity="other">No traces · %d leads</item>
+    </plurals>
 </resources>
