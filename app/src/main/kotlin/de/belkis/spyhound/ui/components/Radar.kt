@@ -8,50 +8,84 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import de.belkis.spyhound.scan.ElementStatus
+import de.belkis.spyhound.scan.RadarLegendCounts
+import de.belkis.spyhound.scan.RadarMath
+import de.belkis.spyhound.scan.RadarProgress
+import de.belkis.spyhound.scan.RadarSector
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
+import de.belkis.spyhound.ui.SpyTypographyExtras
 import kotlin.math.cos
-import kotlin.math.min
 import kotlin.math.sin
 
 private const val SWEEP_DEG = 60f
 private const val SWEEP_FRAC = SWEEP_DEG / 360f
+private val LegendSlotHeight = 28.dp
+private val LegendCountWidth = 44.dp
 
-private fun blipPosition(index: Int, seed: Int, radius: Float, center: Offset): Offset {
-    val h = (index * 7919 + seed * 104729) % 10_000
-    val angle = h * 360f / 10_000f
-    val dist = 0.22f + (h % 7000) / 10_000f * 0.68f
-    val rad = Math.toRadians(angle.toDouble())
-    return Offset(
-        center.x + cos(rad).toFloat() * radius * dist,
-        center.y + sin(rad).toFloat() * radius * dist,
-    )
+private data class DrawBlip(
+    val key: Long,
+    val angleDeg: Float,
+    val radiusFraction: Float,
+    val status: ElementStatus,
+)
+
+private fun blipsForDraw(radar: RadarProgress?): List<DrawBlip> {
+    if (radar == null) return emptyList()
+    val out = ArrayList<DrawBlip>()
+    radar.sectors.forEach { sector ->
+        if (sector.sector == RadarSector.DEEP && radar.deepLocked) return@forEach
+        sector.blips.forEachIndexed { i, status ->
+            val layout = RadarMath.layoutBlipInSector(sector.sector.ordinal, i, sector.blips.size)
+            out += DrawBlip(
+                key = sector.sector.ordinal * 100L + i,
+                angleDeg = layout.angleDeg,
+                radiusFraction = layout.radiusFraction,
+                status = status,
+            )
+        }
+    }
+    return out
 }
 
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawRadarSweep(
@@ -92,15 +126,92 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawRadarSweep(
     )
 }
 
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorGrid(
+    center: Offset,
+    radius: Float,
+    radar: RadarProgress?,
+) {
+    val span = 360f / RadarMath.SECTOR_COUNT
+    for (i in 0 until RadarMath.SECTOR_COUNT) {
+        val start = -90f + i * span
+        val sector = RadarSector.entries[i]
+        val active = radar?.activeSector == sector
+        val locked = radar?.deepLocked == true && sector == RadarSector.DEEP
+        if (active && radar != null && !locked) {
+            val wedge = Path().apply {
+                moveTo(center.x, center.y)
+                arcTo(
+                    Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius),
+                    start,
+                    span,
+                    false,
+                )
+                close()
+            }
+            drawPath(
+                wedge,
+                color = SpyColors.Amber.copy(alpha = if (locked) 0.04f else 0.09f),
+            )
+        }
+        val lineRad = Math.toRadians(start.toDouble())
+        drawLine(
+            color = SpyColors.Border.copy(alpha = if (locked) 0.35f else 0.65f),
+            start = center,
+            end = Offset(
+                center.x + cos(lineRad).toFloat() * radius,
+                center.y + sin(lineRad).toFloat() * radius,
+            ),
+            strokeWidth = 0.6.dp.toPx(),
+        )
+    }
+}
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorLabels(
+    center: Offset,
+    radius: Float,
+    radar: RadarProgress?,
+) {
+    val span = 360f / RadarMath.SECTOR_COUNT
+    val labelR = radius * 1.02f
+    RadarSector.entries.forEachIndexed { i, sector ->
+        val locked = radar?.deepLocked == true && sector == RadarSector.DEEP
+        val mid = -90f + span * (i + 0.5f)
+        val rad = Math.toRadians(mid.toDouble())
+        val x = center.x + cos(rad).toFloat() * labelR
+        val y = center.y + sin(rad).toFloat() * labelR
+        val label = if (locked) "🔒" else sector.label.uppercase()
+        drawContext.canvas.nativeCanvas.apply {
+            val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+                color = android.graphics.Color.argb(
+                    if (locked) 120 else if (radar?.activeSector == sector) 230 else 170,
+                    184,
+                    176,
+                    166,
+                )
+                textSize = 9.sp.toPx()
+                textAlign = android.graphics.Paint.Align.CENTER
+            }
+            drawText(label, x, y + paint.textSize * 0.35f, paint)
+        }
+    }
+}
+
+private fun statusColor(status: ElementStatus, alpha: Float): Color = when (status) {
+    ElementStatus.CLEAN -> SpyColors.IvoryMuted.copy(alpha = alpha * 0.75f)
+    ElementStatus.LEAD -> SpyColors.Amber.copy(alpha = alpha)
+    ElementStatus.FINDING -> SpyColors.Danger.copy(alpha = alpha)
+}
+
 @Composable
 fun RadarCanvas(
-    fraction: Float,
     modifier: Modifier = Modifier,
-    blipCount: Int = min(24, (fraction * 48).toInt().coerceAtLeast(0)),
-    blipSeed: Int = 42,
+    radar: RadarProgress? = null,
+    showSweep: Boolean = true,
+    showLabels: Boolean = true,
     sweepLeadAlpha: Float = 0.55f,
 ) {
     val motion = LocalMotionEnabled.current
+    val blips = remember(radar) { blipsForDraw(radar) }
     val infinite = rememberInfiniteTransition(label = "radar")
     val sweep by infinite.animateFloat(
         initialValue = 0f,
@@ -108,61 +219,127 @@ fun RadarCanvas(
         animationSpec = infiniteRepeatable(tween(4200, easing = LinearEasing), RepeatMode.Restart),
         label = "sweep",
     )
-    val glow by infinite.animateFloat(
-        initialValue = 0.35f,
-        targetValue = 0.7f,
-        animationSpec = infiniteRepeatable(tween(2400, easing = LinearEasing), RepeatMode.Reverse),
-        label = "glow",
+    val pulse by infinite.animateFloat(
+        initialValue = 0.85f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(1800, easing = LinearEasing), RepeatMode.Reverse),
+        label = "pulse",
     )
-    val angle = if (motion) sweep else 52f
-    val centerGlow = if (motion) glow else 0.5f
-    val pulsePhase by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(tween(5000, easing = LinearEasing), RepeatMode.Restart),
-        label = "blip",
-    )
+    val angle = if (motion && showSweep) sweep else 0f
+    var revealed by remember { mutableStateOf(setOf<Long>()) }
+    LaunchedEffect(motion) {
+        if (!motion) {
+            revealed = blips.map { it.key }.toSet()
+        }
+    }
+    LaunchedEffect(blips, motion) {
+        if (!motion) {
+            revealed = blips.map { it.key }.toSet()
+        }
+    }
+    LaunchedEffect(angle, motion, blips) {
+        if (!motion) return@LaunchedEffect
+        val head = angle % 360f
+        blips.forEach { b ->
+            val a = (b.angleDeg % 360f + 360f) % 360f
+            if (a <= head || head < 6f) {
+                revealed = revealed + b.key
+            }
+        }
+    }
 
     Canvas(modifier) {
         val c = center
-        val r = size.minDimension / 2f * 0.94f
-        drawCircle(color = SpyColors.SurfaceRaised, radius = r, center = c)
+        val r = size.minDimension / 2f * 0.88f
+        drawCircle(color = SpyColors.SurfaceRaised, radius = r * 1.06f, center = c)
+        drawSectorGrid(c, r, radar)
         for (i in 1..5) {
             drawCircle(
                 color = SpyColors.Border.copy(alpha = 0.55f + i * 0.05f),
                 radius = r * i / 5f,
                 center = c,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 0.75.dp.toPx()),
+                style = Stroke(width = 0.75.dp.toPx()),
             )
         }
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    SpyColors.Amber.copy(alpha = 0.22f * centerGlow),
-                    Color.Transparent,
-                ),
-                center = c,
-                radius = r * 0.35f,
-            ),
-            radius = r * 0.35f,
-            center = c,
-        )
-        rotate(angle, pivot = c) {
-            drawRadarSweep(c, r, sweepLeadAlpha)
-        }
-        repeat(blipCount) { i ->
-            val p = blipPosition(i, blipSeed, r, c)
-            val phase = (pulsePhase + i * 29f) % 360f
-            val alpha = if (motion) {
-                0.25f + 0.75f * ((kotlin.math.sin(Math.toRadians(phase.toDouble())) + 1) / 2).toFloat()
-            } else {
-                0.85f
+        if (showSweep && motion) {
+            rotate(angle, pivot = c) {
+                drawRadarSweep(c, r, sweepLeadAlpha)
             }
-            drawCircle(color = SpyColors.Amber.copy(alpha = alpha), radius = 3.5.dp.toPx(), center = p)
-            drawCircle(
-                color = SpyColors.Amber.copy(alpha = alpha * 0.35f),
-                radius = 7.dp.toPx(),
-                center = p,
+        }
+        blips.forEach { b ->
+            if (b.key !in revealed) return@forEach
+            val rad = Math.toRadians(b.angleDeg.toDouble())
+            val p = Offset(
+                c.x + cos(rad).toFloat() * r * b.radiusFraction,
+                c.y + sin(rad).toFloat() * r * b.radiusFraction,
+            )
+            val pulseScale = if (motion && b.status != ElementStatus.CLEAN) pulse else 1f
+            val core = 3.2.dp.toPx() * pulseScale
+            val alpha = if (b.status == ElementStatus.CLEAN) 0.9f else 1f
+            drawCircle(color = statusColor(b.status, alpha), radius = core, center = p)
+            if (b.status != ElementStatus.CLEAN) {
+                drawCircle(
+                    color = statusColor(b.status, 0.28f * pulseScale),
+                    radius = 7.dp.toPx() * pulseScale,
+                    center = p,
+                )
+            }
+        }
+        if (showLabels && size.minDimension >= 120.dp.toPx()) {
+            drawSectorLabels(c, r, radar)
+        }
+    }
+}
+
+@Composable
+fun RadarLegend(
+    legend: RadarLegendCounts,
+    modifier: Modifier = Modifier,
+) {
+    val countStyle = SpyTypographyExtras.tabularMedium.copy(
+        fontSize = 15.sp,
+        lineHeight = 18.sp,
+    )
+    Row(
+        modifier
+            .fillMaxWidth()
+            .height(LegendSlotHeight),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LegendItem("geprüft", SpyColors.IvoryMuted, legend.clean, countStyle)
+        LegendItem("Hinweis", SpyColors.Amber, legend.lead, countStyle)
+        LegendItem("Fund", SpyColors.Danger, legend.finding, countStyle)
+    }
+}
+
+@Composable
+private fun LegendItem(
+    label: String,
+    dotColor: Color,
+    count: Int,
+    countStyle: androidx.compose.ui.text.TextStyle,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text("●", color = dotColor, style = MaterialTheme.typography.labelLarge)
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = SpyColors.IvoryMuted,
+            modifier = Modifier.padding(start = 4.dp, end = 6.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+        )
+        Box(
+            modifier = Modifier.width(LegendCountWidth),
+            contentAlignment = Alignment.CenterEnd,
+        ) {
+            Text(
+                count.toString().padStart(4),
+                style = countStyle,
+                color = dotColor,
+                maxLines = 1,
+                textAlign = TextAlign.End,
             )
         }
     }
@@ -175,11 +352,10 @@ fun RadarScanButton(
     modifier: Modifier = Modifier,
     label: String = "Jetzt prüfen",
     diameter: Dp = 176.dp,
+    lastRadar: RadarProgress? = null,
 ) {
     val motion = LocalMotionEnabled.current
     val infinite = rememberInfiniteTransition(label = "btn")
-    // The pulse is a halo drawn outside a fixed-size box: animating the button's own size
-    // re-measured the whole column every frame and made the screen bob up and down.
     val pulse by infinite.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -202,29 +378,28 @@ fun RadarScanButton(
             },
         contentAlignment = Alignment.Center,
     ) {
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier
-            .size(diameter)
-            .semantics { contentDescription = label },
-        shape = CircleShape,
-        color = SpyColors.SurfaceRaised,
-        border = BorderStroke(1.5.dp, SpyColors.Amber.copy(alpha = 0.65f)),
-    ) {
-        Box(
-            modifier = Modifier.defaultMinSize(minWidth = diameter, minHeight = diameter),
-            contentAlignment = Alignment.Center,
+        Surface(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = Modifier
+                .size(diameter)
+                .semantics { contentDescription = label },
+            shape = CircleShape,
+            color = SpyColors.SurfaceRaised,
+            border = BorderStroke(1.5.dp, SpyColors.Amber.copy(alpha = 0.65f)),
         ) {
-            RadarCanvas(
-                fraction = 0.15f,
-                modifier = Modifier.size(diameter * 0.92f),
-                blipCount = 3,
-                blipSeed = 7,
-                sweepLeadAlpha = 0.25f,
-            )
-            Text(label, style = MaterialTheme.typography.titleMedium, color = SpyColors.Amber)
+            Box(
+                modifier = Modifier.defaultMinSize(minWidth = diameter, minHeight = diameter),
+                contentAlignment = Alignment.Center,
+            ) {
+                RadarCanvas(
+                    modifier = Modifier.size(diameter * 0.92f),
+                    radar = lastRadar,
+                    showLabels = false,
+                    sweepLeadAlpha = if (lastRadar == null) 0.25f else 0.2f,
+                )
+                Text(label, style = MaterialTheme.typography.titleMedium, color = SpyColors.Amber)
+            }
         }
-    }
     }
 }

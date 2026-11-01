@@ -18,7 +18,10 @@ import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.scan.Progress
 import de.belkis.spyhound.scan.Report
+import de.belkis.spyhound.scan.RadarMath
+import de.belkis.spyhound.scan.RadarProgress
 import de.belkis.spyhound.scan.ScanEngine
+import de.belkis.spyhound.ui.DemoReport
 import de.belkis.spyhound.shell.RootShell
 import de.belkis.spyhound.shell.SHIZUKU_STOPPED_BANNER
 import de.belkis.spyhound.shell.ScanGatedShellChanges
@@ -49,6 +52,7 @@ data class UiState(
     val updateMessage: String? = null,
     val progress: Progress? = null,
     val report: Report? = null,
+    val lastRadar: RadarProgress? = null,
     val busy: String? = null,
     val bannerMessage: String? = null,
     val dnsRunning: Boolean = false,
@@ -223,15 +227,21 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         scanJob = viewModelScope.launch {
             shellGate.scanStarted()
             _state.update { it.copy(progress = Progress("Start", "", 0f), report = null) }
+            var lastRadar: RadarProgress? = null
             val merged = try {
                 val report = runCatching {
-                    ScanEngine(getApplication(), iocs, shell).run { p -> _state.update { s -> s.copy(progress = p) } }
+                    ScanEngine(getApplication(), iocs, shell).run { p ->
+                        lastRadar = p.radar ?: lastRadar
+                        _state.update { s -> s.copy(progress = p) }
+                    }
                 }.getOrNull()
                 report?.let { mergePendingBugreport(it) }
             } finally {
                 applyDeferredShellWork()
             }
-            _state.update { it.copy(progress = null, report = merged) }
+            _state.update {
+                it.copy(progress = null, report = merged, lastRadar = lastRadar ?: it.lastRadar)
+            }
         }
     }
 
@@ -324,7 +334,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun closeReport() = _state.update { it.copy(report = null) }
 
     fun showDemoReport() {
-        _state.update { it.copy(report = DemoReport.withFinding(), progress = null) }
+        val report = DemoReport.withFinding()
+        _state.update {
+            it.copy(report = report, progress = null, lastRadar = RadarMath.fromReport(report))
+        }
     }
 
     override fun onCleared() {

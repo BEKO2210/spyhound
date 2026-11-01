@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -136,7 +137,9 @@ class MainActivity : ComponentActivity() {
         onOpenDeepCheckSetup: () -> Unit,
     ) {
         when {
-            state.report != null -> ResultScreen(
+            state.report != null -> {
+                BackHandler { vm.closeReport() }
+                ResultScreen(
                 report = state.report,
                 onShare = { shareReport(state.report) },
                 onRescan = {
@@ -148,7 +151,8 @@ class MainActivity : ComponentActivity() {
                 onHelp = {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
                 },
-            )
+                )
+            }
             state.progress != null -> ScanScreen(
                 progress = state.progress,
                 onCancel = { vm.cancelScan() },

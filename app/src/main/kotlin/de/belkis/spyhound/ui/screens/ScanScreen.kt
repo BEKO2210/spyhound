@@ -34,10 +34,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.scan.Progress
+import de.belkis.spyhound.scan.RadarLegendCounts
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
 import de.belkis.spyhound.ui.components.RadarCanvas
+import de.belkis.spyhound.ui.components.RadarLegend
 import de.belkis.spyhound.ui.components.ScanStepRow
 import de.belkis.spyhound.ui.components.SpyButton
 import de.belkis.spyhound.ui.components.ThinProgressLine
@@ -61,6 +63,8 @@ private fun stepIndex(step: String): Int = when (step) {
     else -> if (step.contains("Tiefen") || step == "Tiefenprüfung") 4 else 3
 }
 
+private val ScanRadarBlockHeight = 280.dp + 28.dp
+
 @OptIn(FlowPreview::class)
 @Composable
 fun ScanScreen(
@@ -69,7 +73,7 @@ fun ScanScreen(
 ) {
     val motion = LocalMotionEnabled.current
     val current = stepIndex(progress.step)
-    val blipSeed = remember { progress.detail.hashCode() }
+    val radar = progress.radar
 
     val liveDetail by rememberUpdatedState(progress.detail)
     var shownDetail by remember { mutableStateOf(progress.detail) }
@@ -93,12 +97,19 @@ fun ScanScreen(
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.height(24.dp))
-        RadarCanvas(
-            fraction = progress.fraction,
-            modifier = Modifier.size(280.dp),
-            blipCount = (progress.fraction * 32).toInt().coerceIn(0, 32),
-            blipSeed = blipSeed,
-        )
+        Column(
+            modifier = Modifier.height(ScanRadarBlockHeight),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            RadarCanvas(
+                radar = radar,
+                modifier = Modifier.size(280.dp),
+            )
+            RadarLegend(
+                legend = radar?.legend ?: RadarLegendCounts(),
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
         Spacer(Modifier.height(16.dp))
         val pct = (progress.fraction.coerceIn(0f, 1f) * 100).toInt()
         Box(
