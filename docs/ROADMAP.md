@@ -19,6 +19,11 @@
       Abnahme: eine Elfenbeinfarbe in Theme und Vektoren.
 - [x] Indikator-Update auf dem Gerät. Beleg: Pixel 11 Pro XL (Android 17), 29/29 Quellen, 12.566 Indikatoren, 2026-11-01.
 - [x] Erster echter Scan (Basis). Beleg: Pixel 11 Pro XL, 16 s, 15.208 Elemente, 0 Funde, 5 plausible Hinweise, 2 Lücken.
+- [x] Shizuku-Tiefenprüfung auf echtem Gerät. Beleg: Pixel 11 Pro XL, 43 s, 18.228 Elemente, 0 Funde nach Fix eines
+      Falschtreffers (com.microsoft.familysafety aus `queriesPackages`).
+- [ ] Shizuku nach Neustart/Update der App automatisch neu verbinden, wenn Freigabe besteht. Abnahme: nach `adb install -r`
+      steht die Stufe ohne Tippen auf Shizuku.
+- [ ] Scan-Bildschirm ohne Springen (Detailzeile fest, gedrosselt). Abnahme: Pixel-Vergleich unterhalb der Detailzeile.
 - [ ] Logo verfeinern (v1 kantig, Auge wirkt wie Sonnenbrille). Abnahme: Belkis-Abnahme bei 24 dp und 512 px.
 
 ## Stufe 2 – Tiefe ohne Root
@@ -43,6 +48,8 @@
   sein, sonst wiegt „nichts gefunden“ Laien in falscher Sicherheit.
 - Animierte Größe (`Modifier.size(animiert)`) misst die ganze Spalte jedes Frame neu: der Bildschirm wippt. Puls immer als
   Zeichnung (drawBehind/graphicsLayer) in fester Box. (2026-11-01, Pixel)
+- `dumpsys package` nennt in `queriesPackages=` Apps, die eine App nur sehen *möchte* – das ist kein Beleg. Nur echte
+  Paket-/Prozess-/Verlaufsnennungen zählen. (2026-11-01, Pixel: Microsoft Family Safety)
 - Binder-Transaktionen sind auf ~1 MB begrenzt: Shell-Ausgaben (logcat, dumpsys) über Pipe streamen, nie als String.
 - Dumpstate-Abschnitte enden an der nächsten `------ TITLE`-Zeile bzw. `DUMP OF SERVICE`; Zeilen mit
   „was the duration of“ sind Zeitmessung, keine Grenze. (2026-11-01)
