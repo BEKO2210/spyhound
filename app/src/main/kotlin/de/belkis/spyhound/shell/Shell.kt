@@ -13,9 +13,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import rikka.shizuku.Shizuku
-import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.InputStream
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.system.exitProcess
 
@@ -23,41 +22,28 @@ import kotlin.system.exitProcess
 interface Shell {
     val level: AccessLevel
 
-    /** Runs [command] and returns its standard output (capped at [maxBytes]), or null if it could not run. */
+    /** Runs [command] and returns its standard output (capped at [maxBytes]), or null if it could not run or timed out. */
     fun read(command: String, maxBytes: Int = 48 shl 20, timeoutSec: Long = 180): String?
 
-    fun close() {}
-}
+    /**
+     * Like [read], but hands the output over line by line, so a large output never sits in memory as a whole.
+     * Returns false if the command could not run or timed out (lines delivered before that stay valid).
+     */
+    fun readLines(command: String, maxBytes: Int = 48 shl 20, timeoutSec: Long = 180, onLine: (String) -> Unit): Boolean =
+        read(command, maxBytes, timeoutSec)?.let { text -> text.lineSequence().forEach(onLine); true } ?: false
 
-/** Reads a stream up to [maxBytes]; the rest is drained so the producer is not blocked. */
-internal fun InputStream.readCapped(maxBytes: Int): String {
-    val out = ByteArrayOutputStream()
-    val buf = ByteArray(64 shl 10)
-    while (true) {
-        val n = read(buf)
-        if (n < 0) break
-        val room = maxBytes - out.size()
-        if (room > 0) out.write(buf, 0, minOf(n, room))
-    }
-    return out.toString(Charsets.UTF_8.name())
+    fun close() {}
 }
 
 /** Root through `su` (Magisk, KernelSU, APatch all provide it). */
 class RootShell : Shell {
     override val level = AccessLevel.ROOT
 
-    override fun read(command: String, maxBytes: Int, timeoutSec: Long): String? = runCatching {
-        val p = ProcessBuilder("su", "-c", command).redirectErrorStream(false).start()
-        p.outputStream.close()
-        Thread { runCatching { p.errorStream.readCapped(0) } }.start()
-        val reader = Thread.currentThread()
-        val killer = Thread {
-            if (!p.waitFor(timeoutSec, TimeUnit.SECONDS)) { p.destroyForcibly(); reader.interrupt() }
-        }.apply { isDaemon = true; start() }
-        val text = p.inputStream.readCapped(maxBytes)
-        killer.interrupt()
-        text
-    }.getOrNull()
+    override fun read(command: String, maxBytes: Int, timeoutSec: Long): String? =
+        streamProcess(listOf("su", "-c", command), timeoutSec) { it.readCapped(maxBytes) }
+
+    override fun readLines(command: String, maxBytes: Int, timeoutSec: Long, onLine: (String) -> Unit): Boolean =
+        streamLines(onLine) { sink -> streamProcess(listOf("su", "-c", command), timeoutSec) { it.forEachLineCapped(maxBytes, sink::accept) } }
 
     companion object {
         /** Asks su for uid 0. A root manager may show its consent prompt here. */
@@ -73,15 +59,19 @@ class RootShell : Shell {
 class ShizukuShell private constructor(private val service: IShellService, uid: Int) : Shell {
     override val level = if (uid == 0) AccessLevel.ROOT else AccessLevel.SHELL
 
-    override fun read(command: String, maxBytes: Int, timeoutSec: Long): String? = runCatching {
-        val pfd = service.exec(command)
-        val timer = Thread {
-            try { Thread.sleep(timeoutSec * 1000); pfd.close() } catch (_: InterruptedException) {}
-        }.apply { isDaemon = true; start() }
-        val text = ParcelFileDescriptor.AutoCloseInputStream(pfd).use { it.readCapped(maxBytes) }
-        timer.interrupt()
-        text
+    private fun <T> stream(command: String, timeoutSec: Long, use: (InputStream) -> T): T? = runCatching {
+        val pfd = service.exec(command, timeoutSec)
+        // Closing our end ends the producer too: its next write fails, and the service has a watchdog of its own.
+        guarded(timeoutSec, abort = { pfd.closeQuietly() }) {
+            ParcelFileDescriptor.AutoCloseInputStream(pfd).use(use)
+        }
     }.getOrNull()
+
+    override fun read(command: String, maxBytes: Int, timeoutSec: Long): String? =
+        stream(command, timeoutSec) { it.readCapped(maxBytes) }
+
+    override fun readLines(command: String, maxBytes: Int, timeoutSec: Long, onLine: (String) -> Unit): Boolean =
+        streamLines(onLine) { sink -> stream(command, timeoutSec) { it.forEachLineCapped(maxBytes, sink::accept) } }
 
     override fun close() {
         runCatching { Shizuku.unbindUserService(args, null, true) }
@@ -132,6 +122,7 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
 
                         override fun onServiceDisconnected(name: ComponentName?) {}
                     }
+                    cont.invokeOnCancellation { runCatching { Shizuku.unbindUserService(args, conn, false) } }
                     runCatching { Shizuku.bindUserService(args, conn) }.onFailure { if (cont.isActive) cont.resume(null) }
                 }
             }
@@ -141,16 +132,23 @@ class ShizukuShell private constructor(private val service: IShellService, uid: 
 
 /** Lives in Shizuku's process. Must keep a public no-argument constructor. */
 class ShellUserService : IShellService.Stub() {
-    override fun exec(command: String): ParcelFileDescriptor {
+    override fun exec(command: String, timeoutSec: Long): ParcelFileDescriptor {
         val (read, write) = ParcelFileDescriptor.createPipe()
         val p = ProcessBuilder("sh", "-c", command).start()
         p.outputStream.close()
-        Thread { runCatching { p.errorStream.readCapped(0) } }.start()
+        Thread { try { p.errorStream.drain() } catch (_: IOException) {} }.apply { isDaemon = true; start() }
+        // The client enforces the timeout too; this covers a vanished client while the command stays silent.
+        val watchdog = Thread {
+            try { Thread.sleep((timeoutSec + 5) * 1000); p.destroyForcibly() } catch (_: InterruptedException) {}
+        }.apply { isDaemon = true; start() }
         Thread {
-            runCatching {
+            try {
                 ParcelFileDescriptor.AutoCloseOutputStream(write).use { out -> p.inputStream.copyTo(out) }
+            } catch (_: IOException) {
+            } finally {
+                watchdog.interrupt()
+                p.destroyForcibly()
             }
-            p.destroy()
         }.start()
         return read
     }
