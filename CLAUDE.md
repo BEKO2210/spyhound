@@ -38,6 +38,16 @@ Verteilung als APK, kein Play Store. Logik nach dem Zero Breach Toolkit (Apache-
   `./gradlew --stop`).
 - Neue Logik braucht einen Unit-Test. Analysen bleiben reine Kotlin-Funktionen ohne `Context`.
 
+## Arbeitsablauf Cloud ↔ Pixel
+- Cloud-Sitzung (ohne Emulator/Gerät) arbeitet je Aufgabe in einem Branch `cloud/<thema>`, kleine Commits, pusht den
+  Branch. **Nicht direkt auf `main` pushen.** Am Ende jeder Aufgabe: kurze Abnahme-Notiz in `docs/handoff/<thema>.md`
+  (was geändert, was auf dem Pixel zu prüfen ist, bekannte Grenzen).
+- Eine Sitzung auf pop-os zieht den Branch, installiert auf dem **Pixel 11 Pro XL (End-Testgerät)**, Belkis testet; erst
+  nach seinem OK wird nach `main` gemergt.
+- Ohne Gerät sieht man UI nur über JVM-Screenshot-Tests (Roborazzi + Robolectric). Jede sichtbare Änderung braucht
+  einen aktualisierten Screenshot-Test (DE und EN), die PNGs werden committet und selbst angesehen.
+- Belkis ist ein Mann: „Anbieter“, „Verantwortlicher“, „Nutzer“ – keine -in-Formen über ihn.
+
 ## Architektur in Kürze
 - `ioc/` – Indikatoren: Parser (STIX 2, MISP-CSV, Domainlisten, Toolkit-TSV), `IocSet`, `IocStore` (Assets + Downloads).
 - `assets/iocs/` – mitgeliefert: MVT (MIT), ECHAP (CC BY 4.0), Toolkit-Listen (CC0). Amnesty/Citizen Lab ohne Lizenz →
