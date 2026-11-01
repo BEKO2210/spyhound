@@ -50,17 +50,58 @@ class TextScanner(private val iocs: IocSet) {
         return out
     }
 
-    fun urls(text: CharSequence): List<Match> {
-        if (iocs.count(IocType.URL) == 0) return emptyList()
-        val lower = text.toString().lowercase()
-        return iocs.all(IocType.URL).filter { lower.contains(it.value) }.map { Match(it, it.value) }
+    /** IPv4 addresses as whole tokens (IPv6 is not extracted: its text form is too ambiguous in logs). */
+    fun ips(text: CharSequence): List<Match> {
+        val seen = HashSet<String>()
+        val out = ArrayList<Match>()
+        for (m in IPV4.findAll(text)) {
+            val token = m.value
+            if (!seen.add(token)) continue
+            val ind = iocs.lookup(IocType.IP, token) ?: continue
+            out += Match(ind, token)
+        }
+        return out
     }
 
-    fun all(text: CharSequence): List<Match> = hosts(text) + appIds(text) + paths(text) + urls(text)
+    /**
+     * Links are cut out of the text and looked up directly, never searched for in the whole text.
+     * A link matches an indicator URL when it equals it or lies below it ("/a" matches "/a/b?x=1", not "/ab").
+     */
+    fun urls(text: CharSequence): List<Match> {
+        if (iocs.count(IocType.URL) == 0) return emptyList()
+        val seen = HashSet<String>()
+        val out = ArrayList<Match>()
+        for (m in URL.findAll(text)) {
+            val token = m.value.lowercase().trimEnd('.', ',', ';', ':', '!', '?')
+            if (!seen.add(token)) continue
+            val ind = lookupUrl(token) ?: continue
+            if (seen.add("ioc:" + ind.value)) out += Match(ind, token)
+        }
+        return out
+    }
+
+    private fun lookupUrl(token: String): Indicator? {
+        val schemeEnd = token.indexOf("://") + 3
+        var cur = token.substringBefore('#').substringBefore('?')
+        while (true) {
+            val bare = cur.trimEnd('/')
+            if (bare.length <= schemeEnd) return null
+            iocs.lookup(IocType.URL, bare)?.let { return it }
+            iocs.lookup(IocType.URL, "$bare/")?.let { return it }
+            iocs.lookup(IocType.URL, bare.substring(schemeEnd))?.let { return it } // feeds that omit the scheme
+            val cut = bare.lastIndexOf('/')
+            if (cut <= schemeEnd) return null
+            cur = bare.substring(0, cut)
+        }
+    }
+
+    fun all(text: CharSequence): List<Match> = hosts(text) + appIds(text) + paths(text) + ips(text) + urls(text)
 
     companion object {
         private val HOST = Regex("""(?<![A-Za-z0-9_-])(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}(?![A-Za-z0-9_-])""")
         private val PACKAGE = Regex("""(?<![A-Za-z0-9_.])[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+(?![A-Za-z0-9_])""")
         private val PATH = Regex("""(?<![A-Za-z0-9_.-])/[A-Za-z0-9_.@+-]+(?:/[A-Za-z0-9_.@+-]+)*""")
+        private val IPV4 = Regex("""(?<![0-9.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9]|\.[0-9])""")
+        private val URL = Regex("""https?://[^\s"'<>(){}\[\]\\]+""", RegexOption.IGNORE_CASE)
     }
 }
