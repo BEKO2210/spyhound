@@ -47,6 +47,11 @@ import androidx.compose.ui.res.stringResource
 import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.UiState
+import de.belkis.spyhound.ui.components.StatusItem
+import de.belkis.spyhound.ui.components.StatusTone
+import de.belkis.spyhound.ui.components.StatusStrip
+import de.belkis.spyhound.ui.components.ScrollEdge
+import de.belkis.spyhound.ui.design.staggeredAppear
 import de.belkis.spyhound.ui.components.AccessLevelBar
 import de.belkis.spyhound.ui.components.InfoCircleButton
 import de.belkis.spyhound.ui.components.RadarScanButton
@@ -104,7 +109,7 @@ fun StartScreen(
                         modifier = Modifier.size(28.dp),
                     )
                     Text(
-                        "Spyhound",
+                        stringResource(R.string.app_name),
                         style = MaterialTheme.typography.labelLarge,
                         color = SpyColors.IvoryMuted,
                         modifier = Modifier.padding(start = 8.dp),
@@ -125,52 +130,41 @@ fun StartScreen(
                 lastRadar = state.lastRadar,
             )
             Spacer(Modifier.height(12.dp))
-            val status = buildString {
-                state.iocs?.let { append(stringResource(R.string.status_indicators, it.set.size)) }
-                    ?: append(stringResource(R.string.t_059))
-                append(" · ")
-                append(stringResource(R.string.access_level_short))
-                append(" ")
-                append(
-                    when (state.access) {
-                        de.belkis.spyhound.scan.AccessLevel.APP -> stringResource(R.string.t_058)
-                        de.belkis.spyhound.scan.AccessLevel.SHELL -> "Shizuku"
-                        de.belkis.spyhound.scan.AccessLevel.ROOT -> "Root"
-                    },
-                )
+            val depth = when (state.access) {
+                de.belkis.spyhound.scan.AccessLevel.APP -> stringResource(R.string.depth_basic)
+                de.belkis.spyhound.scan.AccessLevel.SHELL -> stringResource(R.string.depth_deep)
+                de.belkis.spyhound.scan.AccessLevel.ROOT -> stringResource(R.string.depth_root)
             }
-            Text(status, style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
+            val sources = state.iocs?.status?.available ?: 0
+            StatusStrip(listOf(
+                StatusItem("◉", depth, stringResource(R.string.status_depth_explain, depth), if (state.access == de.belkis.spyhound.scan.AccessLevel.APP) StatusTone.ATTENTION else StatusTone.GOOD, stringResource(R.string.status_action_assistant), onDeepCheckSetup),
+                StatusItem("✉", stringResource(R.string.status_sms), stringResource(if (state.smsGranted) R.string.status_sms_on else R.string.status_sms_off), if (state.smsGranted) StatusTone.GOOD else StatusTone.OFF, if (state.smsGranted) null else stringResource(R.string.t_083), if (state.smsGranted) null else onRequestSms),
+                StatusItem("▤", stringResource(R.string.status_files), stringResource(if (state.filesGranted) R.string.status_files_on else R.string.status_files_off), if (state.filesGranted) StatusTone.GOOD else StatusTone.OFF, if (state.filesGranted) null else stringResource(R.string.t_083), if (state.filesGranted) null else onRequestFiles),
+                StatusItem("✦", stringResource(R.string.status_sources, sources, 29), stringResource(R.string.status_sources_explain, sources, 29), if (sources == 29) StatusTone.GOOD else StatusTone.ATTENTION, stringResource(R.string.t_063), onUpdateIndicators),
+                StatusItem("◇", stringResource(R.string.status_dns), stringResource(if (state.dnsRunning) R.string.status_dns_on else R.string.status_dns_off), if (state.dnsRunning) StatusTone.GOOD else StatusTone.OFF, stringResource(if (state.dnsRunning) R.string.status_action_stop else R.string.status_action_start), { onDnsToggle(!state.dnsRunning) }),
+            ))
             state.busy?.let {
                 Spacer(Modifier.height(6.dp))
                 Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
             }
             state.bannerMessage?.let { msg ->
                 Spacer(Modifier.height(6.dp))
-                Text(msg, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Danger, textAlign = TextAlign.Center)
+                Text(msg, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber, textAlign = TextAlign.Center)
                 TextActionLink(text = stringResource(R.string.t_060), onClick = onDismissBanner, modifier = Modifier.padding(top = 2.dp))
             }
         }
-        // Fixed header vs. scrolling list: once the list moves, a hairline and a soft fade mark the edge.
         val scrolled by remember { derivedStateOf { scroll.value > 0 } }
-        val edge by animateFloatAsState(if (scrolled) 1f else 0f, tween(180), label = "edge")
-        Spacer(Modifier.height(14.dp))
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .graphicsLayer { alpha = edge }
-                .background(SpyColors.Amber.copy(alpha = 0.35f)),
-        )
-        Spacer(Modifier.height(5.dp))
+        Spacer(Modifier.height(10.dp))
+        ScrollEdge(scrolled)
         Column(
             Modifier
                 .weight(1f)
                 .drawWithContent {
                     drawContent()
-                    if (edge > 0f) {
+                    if (scrolled) {
                         drawRect(
                             Brush.verticalGradient(
-                                listOf(SpyColors.Ink.copy(alpha = edge), SpyColors.Ink.copy(alpha = 0f)),
+                                listOf(SpyColors.Ink, SpyColors.Ink.copy(alpha = 0f)),
                                 endY = 28.dp.toPx(),
                             ),
                             size = androidx.compose.ui.geometry.Size(size.width, 28.dp.toPx()),
@@ -183,10 +177,10 @@ fun StartScreen(
             Text(
                 stringResource(R.string.t_061),
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(bottom = 8.dp).then(staggeredAppear(0)),
             )
             state.iocs?.let { loaded ->
-                SectionWithHint(stringResource(R.string.t_062), stringResource(R.string.start_help_indicators)) {
+                SectionWithHint(stringResource(R.string.t_062), stringResource(R.string.start_help_indicators), modifier = staggeredAppear(1)) {
                     Text(
                         stringResource(R.string.indicators_summary, loaded.set.size, loaded.status.available, loaded.status.sources),
                         style = MaterialTheme.typography.bodyLarge,
@@ -211,7 +205,7 @@ fun StartScreen(
                 }
                 SpyDivider(Modifier.padding(vertical = 16.dp))
             }
-            SectionWithHint(stringResource(R.string.t_064), stringResource(R.string.start_help_dns)) {
+            SectionWithHint(stringResource(R.string.t_064), stringResource(R.string.start_help_dns), modifier = staggeredAppear(2)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -248,7 +242,7 @@ fun StartScreen(
             }
             }
             SpyDivider(Modifier.padding(vertical = 16.dp))
-            SectionWithHint(stringResource(R.string.t_067), stringResource(R.string.start_help_bugreport)) {
+            SectionWithHint(stringResource(R.string.t_067), stringResource(R.string.start_help_bugreport), modifier = staggeredAppear(3)) {
                 Text(
                     stringResource(R.string.t_068),
                     style = MaterialTheme.typography.bodyMedium,
@@ -328,7 +322,7 @@ private fun PermissionRow(label: String, granted: Boolean, hint: String, onReque
         if (!granted) {
             SpyButton(text = stringResource(R.string.t_083), onClick = onRequest, fillWidth = false)
         } else {
-            Text("OK", style = MaterialTheme.typography.labelLarge, color = SpyColors.Clear, modifier = Modifier.padding(8.dp))
+            Text(stringResource(R.string.status_ok), style = MaterialTheme.typography.labelLarge, color = SpyColors.Clear, modifier = Modifier.padding(8.dp))
         }
     }
 }
@@ -343,4 +337,3 @@ private fun DnsHitLine(hit: DnsHit, fmt: DateFormat) {
         color = SpyColors.Danger,
     )
 }
-

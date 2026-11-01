@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,15 +31,15 @@ import androidx.compose.ui.unit.sp
 import de.belkis.spyhound.R
 
 object SpyColors {
-    val Ink = Color(0xFF0A0E14)
-    val Surface = Color(0xFF121820)
-    val SurfaceRaised = Color(0xFF1A2230)
-    val Border = Color(0xFF2A3344)
-    val Ivory = Color(0xFFF2EBE0)
-    val IvoryMuted = Color(0xFFB8B0A6)
-    val Amber = Color(0xFFFFB547)
-    val Danger = Color(0xFFE85D5D)
-    val Clear = Color(0xFF3DBEA7)
+    val Ink = de.belkis.spyhound.ui.design.SpyColors.Ink
+    val Surface = de.belkis.spyhound.ui.design.SpyColors.Surface
+    val SurfaceRaised = de.belkis.spyhound.ui.design.SpyColors.SurfaceRaised
+    val Border = de.belkis.spyhound.ui.design.SpyColors.Border
+    val Ivory = de.belkis.spyhound.ui.design.SpyColors.Ivory
+    val IvoryMuted = de.belkis.spyhound.ui.design.SpyColors.IvoryMuted
+    val Amber = de.belkis.spyhound.ui.design.SpyColors.Amber
+    val Danger = de.belkis.spyhound.ui.design.SpyColors.Danger
+    val Clear = de.belkis.spyhound.ui.design.SpyColors.Clear
 }
 
 private val Display = FontFamily(Font(R.font.space_grotesk, FontWeight.Bold))
@@ -50,7 +51,7 @@ private val SpyTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp,
         lineHeight = 44.sp,
-        letterSpacing = (-0.5).sp,
+        letterSpacing = (-0.8).sp,
         color = SpyColors.Ivory,
     ),
     headlineLarge = TextStyle(
@@ -58,15 +59,15 @@ private val SpyTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 32.sp,
-        letterSpacing = (-0.3).sp,
+        letterSpacing = (-0.56).sp,
         color = SpyColors.Ivory,
     ),
     headlineMedium = TextStyle(
         fontFamily = Display,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
+        fontSize = 20.sp,
         lineHeight = 26.sp,
-        letterSpacing = (-0.2).sp,
+        letterSpacing = (-0.4).sp,
         color = SpyColors.Ivory,
     ),
     titleMedium = TextStyle(
@@ -101,7 +102,7 @@ private val SpyTypography = Typography(
     headlineSmall = TextStyle(
         fontFamily = Display,
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+        fontSize = 20.sp,
         lineHeight = 22.sp,
         letterSpacing = (-0.15).sp,
         color = SpyColors.Ivory,
@@ -112,17 +113,17 @@ object SpyTypographyExtras {
     val sectionLabel = TextStyle(
         fontFamily = Body,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
+        fontSize = 12.sp,
         lineHeight = 14.sp,
-        letterSpacing = 1.2.sp,
+        letterSpacing = 1.44.sp,
         color = SpyColors.IvoryMuted,
     )
     val tabularHeadline = TextStyle(
         fontFamily = Display,
         fontWeight = FontWeight.Bold,
-        fontSize = 36.sp,
+        fontSize = 40.sp,
         lineHeight = 40.sp,
-        letterSpacing = (-0.3).sp,
+        letterSpacing = (-0.56).sp,
         color = SpyColors.Ivory,
         fontFeatureSettings = "tnum",
     )
@@ -153,9 +154,7 @@ val LocalMotionEnabled = staticCompositionLocalOf { true }
 @Composable
 fun rememberMotionEnabled(): Boolean {
     val context = LocalContext.current
-    return remember(context) {
-        Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f
-    }
+    return !de.belkis.spyhound.ui.design.rememberReducedMotion()
 }
 
 @Composable
@@ -175,6 +174,7 @@ fun SpyhoundScaffold(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val edge = if (LocalConfiguration.current.screenWidthDp >= 600) 32.dp else 20.dp
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -186,7 +186,7 @@ fun SpyhoundScaffold(
             modifier = Modifier
                 .widthIn(max = 640.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = edge, vertical = 12.dp),
             content = { content() },
         )
     }

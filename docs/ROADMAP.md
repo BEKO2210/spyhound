@@ -42,6 +42,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       - Klar sichtbar, **was genutzt wird**: Prüftiefe (Basis/Shizuku/Root) und welche Quellen/Rechte aktiv waren (SMS,
         Dateien, Indikator-Quellen x/29, DNS-Wächter) – auf Start und im Ergebnis als übersichtliche Statusleiste mit
         Symbolen statt Fließtext. (Belkis 2026-11-01)
+      - Phase A Start/Fundament: Tokens, Bewegung, Haptik und fünf Statuschips gebaut; 61 Unit-Tests und Debug-Build
+        grün (2026-11-01). Offen: DE-/Chip-Screenshots und Pixelvergleich unter dem Radar. Auf pop-os fehlt `/dev/kvm`;
+        beide x86_64-AVDs zeigen bei Software-Emulation wiederholt System-UI-ANR. Abnahme: DE/EN/Chip-Aufnahmen
+        ohne Systemdialog, drei Aufnahmen im Abstand 300 ms unter dem Radar pixelgleich.
 - [ ] Shell-Probe schlägt fehl → einmal automatisch trennen und neu verbinden (Shizuku-Dienst), erst dann Lücke melden.
       Fund: Pixel 2026-11-01, veralteter Dienst nach App-Update; App-Neustart behob es. Abnahme: Update der App bei
       laufendem Shizuku → Tiefenprüfung läuft ohne Neustart.

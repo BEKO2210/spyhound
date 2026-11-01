@@ -267,4 +267,23 @@
     <string name="guide_gap_large_files_steps">1. Du musst nichts tun.\n2. Prüfe große Dateien, die du nicht kennst, von Hand.</string>
     <string name="guide_gap_other_meaning">Eine Prüfung konnte nicht vollständig laufen. Das ist kein gutes oder schlechtes Ergebnis, nur eine Lücke.</string>
     <string name="guide_gap_other_steps">1. Lies die Beschreibung der Lücke.\n2. Prüfe später noch einmal.</string>
+    <string name="depth_basic">Basis</string>
+    <string name="depth_deep">Tief</string>
+    <string name="depth_root">Root</string>
+    <string name="status_sms">SMS</string>
+    <string name="status_files">Dateien</string>
+    <string name="status_sources">Quellen %1$d/%2$d</string>
+    <string name="status_dns">DNS-Wächter</string>
+    <string name="status_depth_explain">%1$s prüft dein Telefon. Richte eine tiefere Prüfung für mehr Zugriff ein.</string>
+    <string name="status_sms_on">SMS-Links werden geprüft.</string>
+    <string name="status_sms_off">Erlaube SMS, um Links in Nachrichten zu prüfen.</string>
+    <string name="status_files_on">Dateien werden geprüft.</string>
+    <string name="status_files_off">Erlaube Zugriff, um gespeicherte Dateien zu prüfen.</string>
+    <string name="status_sources_explain">%1$d von %2$d Quellenlisten sind für Prüfungen bereit.</string>
+    <string name="status_dns_on">Der DNS-Wächter ist aktiv.</string>
+    <string name="status_dns_off">Der DNS-Wächter ist aus. Aktiviere ihn, um bekannte Domains zu beobachten.</string>
+    <string name="status_action_assistant">Einrichten</string>
+    <string name="status_action_start">Starten</string>
+    <string name="status_action_stop">Stoppen</string>
+    <string name="status_ok">OK</string>
 </resources>

@@ -64,6 +64,8 @@ import androidx.compose.ui.platform.LocalContext
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
+import de.belkis.spyhound.ui.design.SpyHaptics
+import androidx.compose.ui.platform.LocalView
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -361,6 +363,9 @@ fun RadarScanButton(
     diameter: Dp = 176.dp,
     lastRadar: RadarProgress? = null,
 ) {
+    val context = LocalContext.current
+    val view = LocalView.current
+    val haptics = remember(context) { SpyHaptics(context) }
     val motion = LocalMotionEnabled.current
     val infinite = rememberInfiniteTransition(label = "btn")
     val pulse by infinite.animateFloat(
@@ -386,7 +391,7 @@ fun RadarScanButton(
         contentAlignment = Alignment.Center,
     ) {
         Surface(
-            onClick = onClick,
+            onClick = { haptics.tick(view); onClick() },
             enabled = enabled,
             modifier = Modifier
                 .size(diameter)

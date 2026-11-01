@@ -10,6 +10,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -53,6 +58,13 @@ import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
+import de.belkis.spyhound.ui.design.SpyHaptics
+import de.belkis.spyhound.ui.design.SpyMotion
+import de.belkis.spyhound.ui.design.SpyRadii
+import de.belkis.spyhound.ui.design.countUp
+import de.belkis.spyhound.ui.design.rememberReducedMotion
+
+enum class SpyButtonStyle { PRIMARY, SECONDARY, TEXT }
 
 @Composable
 fun SectionLabel(text: String, modifier: Modifier = Modifier) {
@@ -76,21 +88,31 @@ fun SpyButton(
     accent: Boolean = false,
     enabled: Boolean = true,
     fillWidth: Boolean = true,
+    style: SpyButtonStyle = if (accent) SpyButtonStyle.PRIMARY else SpyButtonStyle.SECONDARY,
 ) {
-    val bg = if (accent) SpyColors.Amber else SpyColors.SurfaceRaised
-    val fg = if (accent) SpyColors.Ink else SpyColors.Ivory
+    val bg = when (style) { SpyButtonStyle.PRIMARY -> SpyColors.Amber; SpyButtonStyle.SECONDARY -> SpyColors.SurfaceRaised; SpyButtonStyle.TEXT -> Color.Transparent }
+    val fg = if (style == SpyButtonStyle.PRIMARY) SpyColors.Ink else if (style == SpyButtonStyle.TEXT) SpyColors.Amber else SpyColors.Ivory
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (pressed) 0.97f else 1f, SpyMotion.Press, label = "button press")
+    val reducedMotion = rememberReducedMotion()
+    val context = LocalContext.current
+    val view = LocalView.current
+    val haptics = remember(context) { SpyHaptics(context) }
     val widthMod = if (fillWidth) Modifier.fillMaxWidth() else Modifier.wrapContentWidth()
     Surface(
-        onClick = onClick,
+        onClick = { haptics.tick(view); onClick() },
         enabled = enabled,
         modifier = modifier
             .then(widthMod)
+            .graphicsLayer { scaleX = if (reducedMotion) 1f else scale; scaleY = if (reducedMotion) 1f else scale }
             .defaultMinSize(minHeight = 48.dp)
             .semantics { contentDescription = text },
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(SpyRadii.Card),
         color = bg,
-        border = BorderStroke(1.dp, if (accent) SpyColors.Amber else SpyColors.Border),
+        border = if (style == SpyButtonStyle.TEXT) null else BorderStroke(1.dp, if (style == SpyButtonStyle.PRIMARY) SpyColors.Amber else SpyColors.Border),
         contentColor = fg,
+        interactionSource = interaction,
     ) {
         Box(
             modifier = Modifier
@@ -232,12 +254,7 @@ fun CollapsibleSection(
 
 @Composable
 fun InfoChip(text: String, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(6.dp),
-        color = SpyColors.SurfaceRaised,
-        border = BorderStroke(1.dp, SpyColors.Border),
-    ) {
+    SpySurface(modifier = modifier, raised = true) {
         Text(
             text,
             style = MaterialTheme.typography.labelLarge,
@@ -249,12 +266,7 @@ fun InfoChip(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun AnimatedCount(value: Int, modifier: Modifier = Modifier, style: androidx.compose.ui.text.TextStyle) {
-    val motion = LocalMotionEnabled.current
-    val animated by animateIntAsState(
-        targetValue = value,
-        animationSpec = if (motion) tween(700) else tween(0),
-        label = "count",
-    )
+    val animated = countUp(value)
     Text(
         animated.toString(),
         style = style,
