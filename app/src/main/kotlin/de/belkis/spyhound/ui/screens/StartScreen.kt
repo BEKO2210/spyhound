@@ -178,6 +178,7 @@ fun StartScreen(
                 AccessLevel.SHELL -> 2
                 AccessLevel.ROOT -> 3
             }
+            val filesViaShell = state.access != AccessLevel.APP
             StatusStrip(listOf(
                 StatusItem(
                     kind = StatusKind.DEPTH,
@@ -199,10 +200,18 @@ fun StartScreen(
                 StatusItem(
                     kind = StatusKind.FILES,
                     label = stringResource(R.string.status_files),
-                    explanation = stringResource(if (state.filesGranted) R.string.status_files_on else R.string.status_files_off),
-                    state = if (state.filesGranted) StatusState.ACTIVE else StatusState.OFF,
-                    actionLabel = if (state.filesGranted) null else stringResource(R.string.start_allow),
-                    action = if (state.filesGranted) null else onRequestFiles,
+                    // With shell rights the scan reads shared storage itself, so files count as checked
+                    // even without the app permission - the result says the same.
+                    explanation = stringResource(
+                        when {
+                            state.filesGranted -> R.string.status_files_on
+                            filesViaShell -> R.string.status_files_shell
+                            else -> R.string.status_files_off
+                        },
+                    ),
+                    state = if (state.filesGranted || filesViaShell) StatusState.ACTIVE else StatusState.OFF,
+                    actionLabel = if (state.filesGranted || filesViaShell) null else stringResource(R.string.start_allow),
+                    action = if (state.filesGranted || filesViaShell) null else onRequestFiles,
                 ),
                 StatusItem(
                     kind = StatusKind.SOURCES,
