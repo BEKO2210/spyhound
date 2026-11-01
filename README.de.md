@@ -67,7 +67,7 @@ sicher sein möchten, was Sie installieren.
 - Die Verbindung zu `raw.githubusercontent.com` (GitHub, USA) übermittelt dabei technisch Ihre IP-Adresse.
 
 Impressum, vollständige Datenschutzerklärung und Haftungshinweise: [docs/LEGAL.md](docs/LEGAL.md) (auch in der App unter
-„Über Spyhound“). Spyhound erkennt nur veröffentlichte Spuren; kein Ergebnis ist eine Garantie. Verantwortliche:
+„Über Spyhound“). Spyhound erkennt nur veröffentlichte Spuren; kein Ergebnis ist eine Garantie. Verantwortlicher:
 Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, belkis.aslani@gmail.com.
 
 ## Hilfe

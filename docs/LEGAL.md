@@ -30,7 +30,7 @@ Spyhound ist ein privates, nicht kommerzielles Open-Source-Projekt. Es gibt kein
 
 ## 2. Datenschutzerklärung
 
-### 2.1 Verantwortliche
+### 2.1 Verantwortlicher
 
 Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, Deutschland, E-Mail: belkis.aslani@gmail.com
 
@@ -38,7 +38,7 @@ Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, Deutschland, E-Mai
 
 Spyhound verarbeitet alle Prüfdaten ausschließlich lokal auf Deinem Gerät. Dazu gehören die Liste der installierten
 Apps, Gerätedaten und Einstellungen, SMS-Links, Dateien, Systemprotokolle (nur mit Shizuku oder Root) sowie importierte
-Fehlerberichte. Die Verantwortliche erhält diese Daten nicht und kann sie nicht einsehen.
+Fehlerberichte. Der Verantwortliche erhält diese Daten nicht und kann sie nicht einsehen.
 
 - Es gibt keine Konten und keine Registrierung.
 - Es gibt keine Telemetrie, keine Analyse- oder Tracking-Dienste, keine Werbung und keine Absturzberichte an Dritte.
@@ -56,7 +56,7 @@ Weiterleitungen werden nicht verfolgt. Die App sendet dabei keine Daten über Di
 gesetzt.
 
 Technisch bedingt erhält GitHub bei jeder Verbindung Deine IP-Adresse sowie Standard-HTTP-Angaben (zum Beispiel
-Zeitpunkt, angeforderte Datei, User-Agent). Auf die Verarbeitung dort hat die Verantwortliche keinen Einfluss; es
+Zeitpunkt, angeforderte Datei, User-Agent). Auf die Verarbeitung dort hat der Verantwortliche keinen Einfluss; es
 gilt die Datenschutzerklärung von GitHub.
 
 - **Rechtsgrundlage:** Art. 6 Abs. 1 lit. b DSGVO (Du löst die Funktion selbst aus, die Verbindung ist dafür
@@ -96,12 +96,12 @@ Shizuku und Root sind optional und werden nur auf Deinen Wunsch genutzt.
 ### 2.6 Bericht teilen
 
 Ein Prüfbericht verlässt das Gerät nur, wenn Du „Bericht teilen“ wählst. Dann übergibt die App den Text an das
-Android-Teilen-Menü; Du entscheidest, an welche App oder Person er geht. Die Verantwortliche hat darauf keinen Zugriff.
+Android-Teilen-Menü; Du entscheidest, an welche App oder Person er geht. Der Verantwortliche hat darauf keinen Zugriff.
 Prüfe den Bericht vor dem Teilen, er kann Namen installierter Apps enthalten.
 
 ### 2.7 Deine Rechte
 
-Soweit die Verantwortliche personenbezogene Daten von Dir verarbeitet (zum Beispiel wenn Du ihr per E-Mail schreibst),
+Soweit der Verantwortliche personenbezogene Daten von Dir verarbeitet (zum Beispiel wenn Du ihm per E-Mail schreibst),
 hast Du nach der DSGVO folgende Rechte:
 
 - Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18)
@@ -114,7 +114,7 @@ einsehen und löschen. Zur Verarbeitung bei GitHub wende Dich an GitHub.
 
 ### 2.8 Beschwerderecht
 
-Du kannst Dich bei einer Datenschutz-Aufsichtsbehörde beschweren. Zuständig für die Verantwortliche ist:
+Du kannst Dich bei einer Datenschutz-Aufsichtsbehörde beschweren. Zuständig für den Verantwortlichen ist:
 
 Der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg
 Lautenschlagerstraße 20, 70173 Stuttgart
@@ -122,7 +122,7 @@ Lautenschlagerstraße 20, 70173 Stuttgart
 
 ### 2.9 Kontakt per E-Mail
 
-Schreibst Du der Verantwortlichen, werden Deine E-Mail-Adresse und der Inhalt zur Bearbeitung Deiner Anfrage
+Schreibst Du dem Verantwortlichen, werden Deine E-Mail-Adresse und der Inhalt zur Bearbeitung Deiner Anfrage
 verarbeitet (Art. 6 Abs. 1 lit. f DSGVO) und danach gelöscht, sobald sie nicht mehr erforderlich sind und keine
 gesetzlichen Aufbewahrungspflichten entgegenstehen.
 
