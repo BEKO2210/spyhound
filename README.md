@@ -51,21 +51,33 @@ Spyhound compares what it can see on your phone with **published indicators of c
 (Amnesty Tech / MVT, Citizen Lab, ECHAP stalkerware list and more). It also points out things worth a closer look,
 such as apps from outside a store with far-reaching permissions, an unlocked bootloader or an old security patch.
 
+<p align="center"><img src="docs/brand/results.webp" width="100%" alt="Three kinds of result: a finding (known trace), a lead (worth a look) and a gap (not checked)"></p>
+
+<details><summary>As a table</summary>
+
 | Result | Meaning |
 |---|---|
 | 🔴 **Finding** | A published indicator matches. State-grade spyware and stalkerware get different, careful advice. |
 | 🟡 **Lead** | Worth a look, never an alarm on its own – many harmless apps look like this. |
 | ⚪ **Gap** | A check that could not run, with what would close it. |
 
+</details>
+
 ### Check depth
 
 Each level adds to the one before. Without special access Spyhound still does everything Android allows.
+
+<p align="center"><img src="docs/brand/depth.webp" width="100%" alt="Three check levels: Basic (nothing to set up), Deep (wireless debugging, no PC) and Root"></p>
+
+<details><summary>As a table</summary>
 
 | Level | What you need | What is checked |
 |---|---|---|
 | **Basic** | Nothing | Installed apps (names, APK hashes, certificates, sideloaded apps with sensitive permissions), device state (patch level, bootloader, root traces, debugging), links in SMS (if allowed), files in shared storage (if allowed) |
 | **Deep** | Wireless debugging (Android 11+), set up once in the app – or [Shizuku](https://shizuku.rikka.app/) | Everything in Basic, plus running processes, the full package list, system logs and `dumpsys` output |
 | **Root** | A rooted phone | Everything in Deep, with root access |
+
+</details>
 
 The status panel on the start screen always shows which level is active and what Spyhound may use (SMS, files,
 sources, DNS watch).

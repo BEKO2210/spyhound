@@ -53,21 +53,33 @@ Sicherheitsforschern – App-Namen, APK-Fingerabdrücke, Signaturzertifikate, Do
 auf Prüfenswertes hin, etwa Apps von außerhalb eines Stores mit weitreichenden Rechten, einen entsperrten Bootloader
 oder einen alten Sicherheitspatch.
 
+<p align="center"><img src="docs/brand/results-de.webp" width="100%" alt="Drei Ergebnisarten: Fund (bekannte Spur), Hinweis (prüfenswert) und Lücke (nicht geprüft)"></p>
+
+<details><summary>Als Tabelle</summary>
+
 | Ergebnis | Bedeutung |
 |---|---|
 | 🔴 **Fund** | Ein veröffentlichter Indikator passt. Staatliche Spyware und Stalkerware bekommen unterschiedliche, vorsichtige Ratschläge. |
 | 🟡 **Hinweis** | Prüfenswert, nie ein Alarm für sich – viele harmlose Apps sehen so aus. |
 | ⚪ **Lücke** | Eine Prüfung, die nicht laufen konnte – und was sie möglich macht. |
 
+</details>
+
 ### Prüftiefe
 
 Jede Stufe ergänzt die vorige. Auch ohne Sonderrechte macht Spyhound alles, was Android erlaubt.
+
+<p align="center"><img src="docs/brand/depth-de.webp" width="100%" alt="Drei Prüfstufen: Basis (nichts einzurichten), Tief (WLAN-Debugging, ohne PC) und Root"></p>
+
+<details><summary>Als Tabelle</summary>
 
 | Stufe | Was du brauchst | Was geprüft wird |
 |---|---|---|
 | **Basis** | Nichts | Installierte Apps (Namen, APK-Fingerabdrücke, Zertifikate, manuell installierte Apps mit heiklen Rechten), Gerätezustand (Patch-Stand, Bootloader, Root-Spuren, Debugging), Links in SMS (wenn erlaubt), Dateien im Speicher (wenn erlaubt) |
 | **Tief** | WLAN-Debugging (Android 11+), einmal in der App eingerichtet – oder [Shizuku](https://shizuku.rikka.app/) | Alles aus Basis, dazu laufende Prozesse, die vollständige Paketliste, Systemprotokolle und `dumpsys` |
 | **Root** | Ein gerootetes Handy | Alles aus Tief, mit Root-Zugriff |
+
+</details>
 
 Die Statusleiste auf dem Startbildschirm zeigt immer, welche Stufe aktiv ist und was Spyhound nutzen darf (SMS,
 Dateien, Quellen, DNS-Wächter).
