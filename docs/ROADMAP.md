@@ -2,7 +2,7 @@
 
 ## Kompass (aktuelle Schwerpunkte)
 1. Erste lauffähige APK mit starker Optik → auf S23 / Tab S9 testen.
-2. Fehlerbericht-Import (ohne Root und ohne Shizuku tiefer prüfen).
+2. Fehlerbericht in der Oberfläche (Teilen-Intent) und Abnahme mit echtem S23-Bericht.
 3. Unabhängiges Sicherheits-Review der Shell- und Download-Schicht.
 
 ## Stufe 1 – Fundament
@@ -17,8 +17,10 @@
 - [ ] Indikator-Update auf dem Gerät. Abnahme: 29/29 Quellen geladen, SHA-geprüft, auf echtem Gerät.
 
 ## Stufe 2 – Tiefe ohne Root
-- [ ] Fehlerbericht-Import (bugreport.zip über „Teilen“). Abnahme: echter S23-Bericht wird gelesen; Prozesse, Pakete,
-      dumpsys, logcat gehen in die Shell-Analysen; Test mit Fixture.
+- [x] Fehlerbericht-Import, Analyse-Schicht: `bugreport/` liest bugreport-*.zip (Prozesse, Pakete inkl.
+      Hidden/deinstalliert, dumpsys, logcat, getprop) und füttert die Shell-Analysen.
+      Beleg: BugreportTest 7/7, `:app:testDebugUnitTest` 16/16.
+- [ ] Fehlerbericht in der Oberfläche (Teilen-Intent) und Abnahme mit echtem S23-Bericht.
 - [ ] DNS-Wächter (lokales VpnService, kein Server): meldet Verbindungen zu Indikator-Domains live. Abnahme: Test-Domain
       löst Warnung aus, kein Datenabfluss.
 - [ ] Anleitung „Shizuku ohne PC einrichten“ in der App (WLAN-Debugging, Schritt für Schritt mit Bildern).
@@ -35,5 +37,9 @@
 - Android-Sandbox: Ohne Shell sieht eine App keine fremden App-Daten, Logs oder Prozesse. Das muss als Lücke sichtbar
   sein, sonst wiegt „nichts gefunden“ Laien in falscher Sicherheit.
 - Binder-Transaktionen sind auf ~1 MB begrenzt: Shell-Ausgaben (logcat, dumpsys) über Pipe streamen, nie als String.
+- Dumpstate-Abschnitte enden an der nächsten `------ TITLE`-Zeile bzw. `DUMP OF SERVICE`; Zeilen mit
+  „was the duration of“ sind Zeitmessung, keine Grenze. (2026-11-01)
+- Fehlerbericht-ZIP nie auf die Platte entpacken: Zip-Slip und Zip-Bomben über Eintragszahl und
+  unkomprimierte Gesamtgröße abwehren, je Abschnitt 32 MB. (2026-11-01)
 - Lizenzen der Indikatoren: MVT MIT, ECHAP CC BY 4.0, Toolkit CC0 → mitliefern; Amnesty/Citizen Lab ohne Lizenz →
   nur auf dem Gerät laden.
