@@ -32,6 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -394,13 +399,24 @@ fun RadarScanButton(
                 modifier = Modifier.defaultMinSize(minWidth = diameter, minHeight = diameter),
                 contentAlignment = Alignment.Center,
             ) {
+                // The last result's dots stay visible but recede, so the label always reads.
                 RadarCanvas(
-                    modifier = Modifier.size(diameter * 0.92f),
+                    modifier = Modifier
+                        .size(diameter * 0.92f)
+                        .graphicsLayer { alpha = if (lastRadar == null) 1f else 0.45f },
                     radar = lastRadar,
                     showLabels = false,
                     sweepLeadAlpha = if (lastRadar == null) 0.25f else 0.2f,
                 )
-                Text(label, style = MaterialTheme.typography.titleMedium, color = SpyColors.Amber)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(SpyColors.SurfaceRaised.copy(alpha = 0.92f))
+                        .border(1.dp, SpyColors.Amber.copy(alpha = 0.35f), RoundedCornerShape(50))
+                        .padding(horizontal = 18.dp, vertical = 10.dp),
+                ) {
+                    Text(label, style = MaterialTheme.typography.titleMedium, color = SpyColors.Amber)
+                }
             }
         }
     }

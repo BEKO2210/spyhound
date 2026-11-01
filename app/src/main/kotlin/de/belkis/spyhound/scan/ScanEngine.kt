@@ -153,32 +153,8 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
         val root = shell.level == AccessLevel.ROOT
         tracker.replaceSector(RadarSector.DEEP, emptyList())
 
-        emit("Prozesse", "Laufende Prozesse …", 0.52f, RadarSector.DEEP)
-        val processes = ShellAnalyzer.processes(shell.read("ps -A -o NAME", 4 shl 20, 30).orEmpty(), iocs.set)
-        out += processes
-        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(processes))
-
-        emit("Pakete", "Alle Pakete, auch gelöschte …", 0.55f, RadarSector.DEEP)
-        val packages = ShellAnalyzer.packages(
-            shell.read("pm list packages -u -i", 4 shl 20, 60).orEmpty(),
-            installed,
-            iocs.set,
-        )
-        out += packages
-        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(packages))
-
-        val logCommands = LOG_COMMANDS + if (root) ROOT_LOG_COMMANDS else emptyList()
-        val logSources = logCommands.mapIndexed { i, (label, cmd) ->
-            label to ShellAnalyzer.LineSource { onLine ->
-                emit("Systemprotokolle", label, 0.58f + 0.17f * i / logCommands.size.coerceAtLeast(1), RadarSector.DEEP)
-                shell.readLines(cmd, 32 shl 20, 180, onLine)
-            }
-        }
-        val logs = ShellAnalyzer.logs(logSources, iocs.set, installed)
-        out += logs
-        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(logs))
-
-        emit("Dateien", "Dateiliste …", 0.76f, RadarSector.FILES)
+        // Order matches the step list: files first, then the deep check.
+        emit("Dateien", "Dateiliste …", 0.53f, RadarSector.FILES)
         tracker.replaceSector(RadarSector.FILES, emptyList())
         val listRoots = if (root) SHELL_FILE_ROOTS + ROOT_FILE_ROOTS else SHELL_FILE_ROOTS
         val listCmd = "find ${listRoots.joinToString(" ")} -type f 2>/dev/null"
@@ -199,14 +175,39 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
         out += files
         tracker.replaceSector(RadarSector.FILES, RadarMath.filePathStatuses(listedPaths, files))
 
-        emit("Fingerabdrücke", "Programmdateien werden gehasht …", 0.82f, RadarSector.DEEP)
+        emit("Fingerabdrücke", "Programmdateien werden gehasht …", 0.6f, RadarSector.FILES)
         val hashRoots = if (root) SHELL_HASH_ROOTS + ROOT_HASH_ROOTS else SHELL_HASH_ROOTS
         val exec = if (root) " -o -perm -u+x" else ""
         val names = StorageCollector.CANDIDATES.joinToString(" -o ") { "-iname '*.$it'" }
         val hashCmd = "find ${hashRoots.joinToString(" ")} -type f -size -122880k \\( $names$exec \\) -exec sha256sum {} + 2>/dev/null"
         val hashes = ShellAnalyzer.hashes(ShellAnalyzer.LineSource { shell.readLines(hashCmd, 64 shl 20, 900, it) }, iocs.set)
         out += hashes
-        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(hashes))
+        tracker.appendSector(RadarSector.FILES, RadarMath.statusesFromCheck(hashes))
+
+        emit("Prozesse", "Laufende Prozesse …", 0.66f, RadarSector.DEEP)
+        val processes = ShellAnalyzer.processes(shell.read("ps -A -o NAME", 4 shl 20, 30).orEmpty(), iocs.set)
+        out += processes
+        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(processes))
+
+        emit("Pakete", "Alle Pakete, auch gelöschte …", 0.69f, RadarSector.DEEP)
+        val packages = ShellAnalyzer.packages(
+            shell.read("pm list packages -u -i", 4 shl 20, 60).orEmpty(),
+            installed,
+            iocs.set,
+        )
+        out += packages
+        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(packages))
+
+        val logCommands = LOG_COMMANDS + if (root) ROOT_LOG_COMMANDS else emptyList()
+        val logSources = logCommands.mapIndexed { i, (label, cmd) ->
+            label to ShellAnalyzer.LineSource { onLine ->
+                emit("Systemprotokolle", label, 0.72f + 0.17f * i / logCommands.size.coerceAtLeast(1), RadarSector.DEEP)
+                shell.readLines(cmd, 32 shl 20, 180, onLine)
+            }
+        }
+        val logs = ShellAnalyzer.logs(logSources, iocs.set, installed)
+        out += logs
+        tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(logs))
 
         if (!root) {
             out += CheckResult("Root-Prüfung").apply {
