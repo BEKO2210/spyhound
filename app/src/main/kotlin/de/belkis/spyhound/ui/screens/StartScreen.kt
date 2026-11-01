@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -160,13 +161,18 @@ fun StartScreen(
             SectionLabel("DNS-Wächter")
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(Modifier.weight(1f).padding(end = 12.dp)) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .widthIn(min = 0.dp)
+                        .padding(end = 12.dp),
+                ) {
                     Text(
                         "Warnt bei DNS-Anfragen zu bekannten Indikator-Domains.",
                         style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
                 Switch(
@@ -250,15 +256,24 @@ private fun PermissionRow(label: String, granted: Boolean, hint: String, onReque
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(Modifier.weight(1f).padding(end = 8.dp)) {
-            Text(label, style = MaterialTheme.typography.labelLarge, color = if (granted) SpyColors.Clear else SpyColors.Ivory)
-            Text(hint, style = MaterialTheme.typography.bodyMedium)
+        Column(
+            Modifier
+                .weight(1f)
+                .widthIn(min = 0.dp)
+                .padding(end = 8.dp),
+        ) {
+            Text(
+                label,
+                style = MaterialTheme.typography.labelLarge,
+                color = if (granted) SpyColors.Clear else SpyColors.Ivory,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Text(hint, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.fillMaxWidth())
         }
         if (!granted) {
-            SpyButton(text = "Erlauben", onClick = onRequest)
+            SpyButton(text = "Erlauben", onClick = onRequest, fillWidth = false)
         } else {
             Text("OK", style = MaterialTheme.typography.labelLarge, color = SpyColors.Clear, modifier = Modifier.padding(8.dp))
         }

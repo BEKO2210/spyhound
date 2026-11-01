@@ -11,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -74,13 +74,16 @@ fun SpyButton(
     modifier: Modifier = Modifier,
     accent: Boolean = false,
     enabled: Boolean = true,
+    fillWidth: Boolean = true,
 ) {
     val bg = if (accent) SpyColors.Amber else SpyColors.SurfaceRaised
     val fg = if (accent) SpyColors.Ink else SpyColors.Ivory
+    val widthMod = if (fillWidth) Modifier.fillMaxWidth() else Modifier.wrapContentWidth()
     Surface(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
+            .then(widthMod)
             .defaultMinSize(minHeight = 48.dp)
             .semantics { contentDescription = text },
         shape = RoundedCornerShape(10.dp),
@@ -90,7 +93,7 @@ fun SpyButton(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .then(widthMod)
                 .defaultMinSize(minHeight = 48.dp),
             contentAlignment = Alignment.Center,
         ) {
@@ -320,8 +323,11 @@ private fun ShizukuAction(
                 },
                 modifier = Modifier.fillMaxWidth(),
             )
-            Spacer(Modifier.height(8.dp))
-            SpyButton(text = "Anleitung", onClick = onGuide, modifier = Modifier.fillMaxWidth())
+            TextActionLink(
+                text = "Anleitung: Shizuku ohne PC",
+                onClick = onGuide,
+                modifier = Modifier.padding(top = 4.dp),
+            )
         }
         ShizukuShell.Status.NEEDS_PERMISSION, ShizukuShell.Status.READY -> {
             SpyButton(
@@ -330,8 +336,11 @@ private fun ShizukuAction(
                 modifier = Modifier.fillMaxWidth(),
             )
             if (status != ShizukuShell.Status.READY) {
-                Spacer(Modifier.height(8.dp))
-                SpyButton(text = "Anleitung", onClick = onGuide, modifier = Modifier.fillMaxWidth())
+                TextActionLink(
+                    text = "Anleitung: Shizuku ohne PC",
+                    onClick = onGuide,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
             }
         }
     }

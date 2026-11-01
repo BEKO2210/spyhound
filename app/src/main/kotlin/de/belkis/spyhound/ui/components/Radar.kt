@@ -17,12 +17,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -33,6 +37,9 @@ import de.belkis.spyhound.ui.SpyColors
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+
+private const val SWEEP_DEG = 60f
+private const val SWEEP_FRAC = SWEEP_DEG / 360f
 
 private fun blipPosition(index: Int, seed: Int, radius: Float, center: Offset): Offset {
     val h = (index * 7919 + seed * 104729) % 10_000
@@ -45,12 +52,51 @@ private fun blipPosition(index: Int, seed: Int, radius: Float, center: Offset): 
     )
 }
 
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawRadarSweep(
+    center: Offset,
+    radius: Float,
+    leadAlpha: Float,
+) {
+    val bounds = Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius)
+    val wedge = Path().apply {
+        moveTo(center.x, center.y)
+        arcTo(bounds, 0f, SWEEP_DEG, false)
+        close()
+    }
+    clipPath(wedge) {
+        drawCircle(
+            brush = Brush.sweepGradient(
+                0f to Color.Transparent,
+                (SWEEP_FRAC * 0.2f) to SpyColors.Amber.copy(alpha = leadAlpha * 0.08f),
+                (SWEEP_FRAC * 0.55f) to SpyColors.Amber.copy(alpha = leadAlpha * 0.45f),
+                SWEEP_FRAC to SpyColors.Amber.copy(alpha = leadAlpha),
+                1f to Color.Transparent,
+                center = center,
+            ),
+            radius = radius,
+            center = center,
+        )
+    }
+    val edgeRad = Math.toRadians(SWEEP_DEG.toDouble())
+    drawLine(
+        color = SpyColors.Amber.copy(alpha = (leadAlpha + 0.35f).coerceAtMost(1f)),
+        start = center,
+        end = Offset(
+            center.x + cos(edgeRad).toFloat() * radius,
+            center.y + sin(edgeRad).toFloat() * radius,
+        ),
+        strokeWidth = 2.dp.toPx(),
+        cap = StrokeCap.Round,
+    )
+}
+
 @Composable
 fun RadarCanvas(
     fraction: Float,
     modifier: Modifier = Modifier,
     blipCount: Int = min(24, (fraction * 48).toInt().coerceAtLeast(0)),
     blipSeed: Int = 42,
+    sweepLeadAlpha: Float = 0.55f,
 ) {
     val motion = LocalMotionEnabled.current
     val infinite = rememberInfiniteTransition(label = "radar")
@@ -99,32 +145,8 @@ fun RadarCanvas(
             radius = r * 0.35f,
             center = c,
         )
-        rotate(angle) {
-            drawArc(
-                brush = Brush.sweepGradient(
-                    0f to Color.Transparent,
-                    0.06f to SpyColors.Amber.copy(alpha = 0.08f),
-                    0.1f to SpyColors.Amber.copy(alpha = 0.55f),
-                    0.14f to SpyColors.Amber.copy(alpha = 0.95f),
-                    0.18f to SpyColors.Amber.copy(alpha = 0.45f),
-                    0.24f to SpyColors.Amber.copy(alpha = 0.12f),
-                    0.28f to Color.Transparent,
-                    center = c,
-                ),
-                startAngle = -90f,
-                sweepAngle = 60f,
-                useCenter = true,
-                topLeft = Offset(c.x - r, c.y - r),
-                size = androidx.compose.ui.geometry.Size(r * 2, r * 2),
-            )
-            drawArc(
-                color = SpyColors.Amber.copy(alpha = 0.9f),
-                startAngle = -90f,
-                sweepAngle = 1.2f,
-                useCenter = true,
-                topLeft = Offset(c.x - r, c.y - r),
-                size = androidx.compose.ui.geometry.Size(r * 2, r * 2),
-            )
+        rotate(angle, pivot = c) {
+            drawRadarSweep(c, r, sweepLeadAlpha)
         }
         repeat(blipCount) { i ->
             val p = blipPosition(i, blipSeed, r, c)
@@ -180,6 +202,7 @@ fun RadarScanButton(
                 modifier = Modifier.size(outer * 0.92f),
                 blipCount = 3,
                 blipSeed = 7,
+                sweepLeadAlpha = 0.25f,
             )
             Text(label, style = MaterialTheme.typography.titleMedium, color = SpyColors.Amber)
         }
