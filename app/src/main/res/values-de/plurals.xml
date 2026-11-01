@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="findings">
+        <item quantity="one">Fund</item>
+        <item quantity="other">Funde</item>
+    </plurals>
+    <plurals name="leads">
+        <item quantity="one">Hinweis</item>
+        <item quantity="other">Hinweise</item>
+    </plurals>
+    <plurals name="gaps">
+        <item quantity="one">Lücke</item>
+        <item quantity="other">Lücken</item>
+    </plurals>
+</resources>

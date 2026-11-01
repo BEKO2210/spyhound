@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="findings">
+        <item quantity="one">finding</item>
+        <item quantity="other">findings</item>
+    </plurals>
+    <plurals name="leads">
+        <item quantity="one">worth a look</item>
+        <item quantity="other">worth a look</item>
+    </plurals>
+    <plurals name="gaps">
+        <item quantity="one">not checked</item>
+        <item quantity="other">not checked</item>
+    </plurals>
+</resources>
