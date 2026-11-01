@@ -45,6 +45,8 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Upstream (Zero Breach Toolkit)
 - [ ] PR #31 „Android: package names in <queries> declarations are not install traces“ – offen seit 2026-11-01.
       Abnahme: gemergt. Beleg lokal: 1959 Tests grün, build --check grün.
+      Blocker: Upstream verlangt signierte Commits. Belkis (am PC): `gh auth refresh -s admin:ssh_signing_key`,
+      `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`, dann Commit mit -S neu signieren + force-with-lease.
 - [ ] Issue: Spyhound als Begleit-App vorschlagen – erst nach öffentlichem, signiertem Release.
 
 ## Testmatrix (Emulatoren, strikt nacheinander – RAM 15 GB)
