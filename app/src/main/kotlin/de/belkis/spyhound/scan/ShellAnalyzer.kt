@@ -77,8 +77,9 @@ object ShellAnalyzer {
             var lines = 0
             val ok = source.feed { line ->
                 if (line.isNotBlank()) lines++
+                val declaration = DECLARATION.containsMatchIn(line)
                 for (m in scanner.all(line)) {
-                    if (m.indicator.type == IocType.APP_ID && m.token in installed) continue
+                    if (m.indicator.type == IocType.APP_ID && (m.token in installed || declaration)) continue
                     if (!reported.add(m.indicator.value)) continue
                     val kind = when (m.indicator.type) {
                         IocType.DOMAIN -> "die Adresse ${m.token}"
@@ -97,6 +98,13 @@ object ShellAnalyzer {
         r.ran = r.examined > 0
         return r
     }
+
+    /**
+     * Lines where an app only declares which other packages it wants to see or talk to
+     * (`<queries>` in its manifest). Microsoft apps, for example, list com.microsoft.familysafety
+     * there; naming a package in such a list says nothing about it being on the phone.
+     */
+    private val DECLARATION = Regex("""\b(queriesPackages|queriesProviders|queriesIntents|usesLibraries|usesOptionalLibraries|usesStaticLibraries|usesSdkLibraries)=""")
 
     /** `find ... -type f` output: one absolute path per line. */
     fun files(listing: String, iocs: IocSet): CheckResult = files(fromText(listing), iocs)

@@ -144,4 +144,13 @@ class CoreTest {
         assertTrue(set.lookup(IocType.APP_CERT, "31A6ECECD97CF39BC4126B8745CD94A7C30BF81C") != null)
     }
 
+
+    @Test fun queriesDeclarationsAreNotEvidence() {
+        val dump = "    queriesPackages=[com.android.vending, com.spy.agent, com.whatsapp]\n" +
+            "  Package [com.spy.agent] (1a2b3c):\n"
+        val r = ShellAnalyzer.logs(mapOf("dumpsys package" to dump), iocs)
+        assertEquals(1, r.findings.size)
+        val onlyDeclared = ShellAnalyzer.logs(mapOf("dumpsys package" to dump.lines().first()), iocs)
+        assertEquals(0, onlyDeclared.findings.size)
+    }
 }
