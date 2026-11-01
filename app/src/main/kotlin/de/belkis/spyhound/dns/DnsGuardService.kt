@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -24,6 +25,8 @@ import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -35,7 +38,14 @@ class DnsGuardService : VpnService() {
     private val stopFlag = AtomicBoolean(false)
     private var worker: Thread? = null
 
+    /** One slow resolver must not hold up every other lookup on the phone. */
+    private var lookups: ExecutorService? = null
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == DnsGuard.ACTION_STOP) {
+            shutdown()
+            return START_NOT_STICKY
+        }
         if (intent?.action != DnsGuard.ACTION_START && !DnsGuard.isRunning) {
             stopSelf()
             return START_NOT_STICKY
@@ -49,10 +59,23 @@ class DnsGuardService : VpnService() {
     }
 
     override fun onDestroy() {
+        closeTunnel()
+        super.onDestroy()
+    }
+
+    /** Closing the tunnel ends the VPN for the system and unblocks the worker's read. */
+    private fun shutdown() {
+        closeTunnel()
+        stopSelf()
+    }
+
+    private fun closeTunnel() {
         stopFlag.set(true)
+        lookups?.shutdownNow()
+        lookups = null
         worker?.interrupt()
         worker = null
-        tun?.close()
+        runCatching { tun?.close() }
         tun = null
         DnsGuard.isRunning = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -61,7 +84,6 @@ class DnsGuardService : VpnService() {
             @Suppress("DEPRECATION")
             stopForeground(true)
         }
-        super.onDestroy()
     }
 
     private fun runTunnel() {
@@ -70,10 +92,14 @@ class DnsGuardService : VpnService() {
             stopSelf()
             return
         }
+        if (stopFlag.get()) {
+            // Stopped while the tunnel was being opened.
+            runCatching { iface.close() }
+            return
+        }
         tun = iface
         DnsGuard.isRunning = true
-        val socket4 = DatagramSocket().apply { protect(this) }
-        val socket6 = DatagramSocket().apply { protect(this) }
+        val pool = Executors.newFixedThreadPool(LOOKUP_THREADS).also { lookups = it }
         val buf = ByteArray(32_767)
         FileInputStream(iface.fileDescriptor).use { input ->
             FileOutputStream(iface.fileDescriptor).use { output ->
@@ -84,12 +110,13 @@ class DnsGuardService : VpnService() {
                         break
                     }
                     if (n <= 0) continue
-                    handlePacket(buf, n, iocs, socket4, socket6, output)
+                    val packet = buf.copyOf(n)
+                    // A failing lookup must never take the whole watcher (and the phone's DNS) down with it.
+                    runCatching { pool.execute { runCatching { handlePacket(packet, n, iocs, output) } } }
                 }
             }
         }
-        socket4.close()
-        socket6.close()
+        pool.shutdownNow()
         stopSelf()
     }
 
@@ -97,8 +124,6 @@ class DnsGuardService : VpnService() {
         buf: ByteArray,
         length: Int,
         iocs: IocSet,
-        socket4: DatagramSocket,
-        socket6: DatagramSocket,
         output: FileOutputStream,
     ) {
         val parsed = DnsPacket.parse(buf, length) ?: return
@@ -108,9 +133,9 @@ class DnsGuardService : VpnService() {
             iocs.lookupHost(name)?.let { recordHit(it, name) }
         }
         if (BLOCK_ON_HIT && names.any { iocs.lookupHost(it) != null }) return
-        val dnsResponse = forwardQuery(parsed, socket4, socket6) ?: return
+        val dnsResponse = forwardQuery(parsed) ?: return
         val reply = DnsPacket.buildReply(parsed, dnsResponse) ?: return
-        output.write(reply)
+        synchronized(output) { runCatching { output.write(reply) } }
     }
 
     private fun recordHit(indicator: Indicator, queriedName: String) {
@@ -124,21 +149,23 @@ class DnsGuardService : VpnService() {
         postWarningNotification(hit)
     }
 
-    private fun forwardQuery(parsed: DnsPacket.Parsed, socket4: DatagramSocket, socket6: DatagramSocket): ByteArray? {
-        val servers = upstreamDnsServers()
-        val preferV6 = parsed.isIpv6
-        val ordered = servers.filter { if (preferV6) it is Inet6Address else it is Inet4Address }
-        if (ordered.isEmpty()) return null
-        val socket = if (preferV6) socket6 else socket4
-        for (dns in ordered) {
+    private fun forwardQuery(parsed: DnsPacket.Parsed): ByteArray? {
+        // Same address family first, the other one as fallback: a v6 query may still be answered by a v4 resolver.
+        // Link-local resolvers (fe80::1 on many routers) often do not answer, so they come last.
+        val servers = upstreamDnsServers().sortedWith(
+            compareBy<InetAddress> { it.isLinkLocalAddress }.thenBy { if (parsed.isIpv6 == (it is Inet6Address)) 0 else 1 },
+        )
+        for (dns in servers) {
             try {
-                socket.soTimeout = 8_000
-                val out = DatagramPacket(parsed.payload, parsed.payload.size, dns, 53)
-                socket.send(out)
-                val inBuf = ByteArray(4096)
-                val incoming = DatagramPacket(inBuf, inBuf.size)
-                socket.receive(incoming)
-                return inBuf.copyOf(incoming.length)
+                DatagramSocket().use { socket ->
+                    protect(socket)
+                    socket.soTimeout = UPSTREAM_TIMEOUT_MS
+                    socket.send(DatagramPacket(parsed.payload, parsed.payload.size, dns, 53))
+                    val inBuf = ByteArray(4096)
+                    val incoming = DatagramPacket(inBuf, inBuf.size)
+                    socket.receive(incoming)
+                    return inBuf.copyOf(incoming.length)
+                }
             } catch (_: Exception) {
                 continue
             }
@@ -147,29 +174,37 @@ class DnsGuardService : VpnService() {
     }
 
     /**
-     * DNS from [ConnectivityManager.getLinkProperties] on the active network — what the OS would use without us.
-     * Fallback only when there is no active network or the link reports no resolvers (common briefly after
-     * connect or on some captive portals); hard-coded public resolvers avoid dropping queries entirely.
+     * Resolvers of the real network underneath. While the watcher runs, the active network is our own VPN,
+     * whose only resolver is this service - asking it would loop until the query times out.
+     * Hard-coded public resolvers only when no network reports any (briefly after connect, captive portals).
      */
     private fun upstreamDnsServers(): List<InetAddress> {
         val cm = getSystemService(ConnectivityManager::class.java)
-        val network = cm.activeNetwork
-        if (network != null) {
-            val props = cm.getLinkProperties(network)
-            if (props != null) {
-                val fromLink = props.dnsServers.filter { it is Inet4Address || it is Inet6Address }
-                if (fromLink.isNotEmpty()) return fromLink
-            }
+        @Suppress("DEPRECATION")
+        val networks = listOfNotNull(cm.activeNetwork) + cm.allNetworks
+        for (network in networks.distinct()) {
+            val caps = cm.getNetworkCapabilities(network) ?: continue
+            if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) continue
+            if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) continue
+            val servers = cm.getLinkProperties(network)?.dnsServers
+                ?.filter { (it is Inet4Address || it is Inet6Address) && !isOwnResolver(it) }
+                .orEmpty()
+            if (servers.isNotEmpty()) return servers
         }
         return FALLBACK_DNS
     }
+
+    // Numeric literals: getByName parses them without a lookup, and equality ignores v6 notation.
+    private val ownResolvers by lazy { setOf(InetAddress.getByName(VIRTUAL_DNS_V4), InetAddress.getByName(VIRTUAL_DNS_V6)) }
+
+    private fun isOwnResolver(address: InetAddress) = address in ownResolvers
 
     private fun openTunnel(): ParcelFileDescriptor? {
         return Builder()
             .setSession(localizedString(R.string.dns_session))
             .setMtu(1500)
-            .addAddress(VIRTUAL_DNS_V4, 32)
-            .addAddress(VIRTUAL_DNS_V6, 128)
+            .addAddress(TUN_ADDRESS_V4, 32)
+            .addAddress(TUN_ADDRESS_V6, 128)
             .addDnsServer(VIRTUAL_DNS_V4)
             .addDnsServer(VIRTUAL_DNS_V6)
             .addRoute(VIRTUAL_DNS_V4, 32)
@@ -239,9 +274,16 @@ class DnsGuardService : VpnService() {
     companion object {
         /** Prepared for a future block mode; default is warn-only per spec. */
         const val BLOCK_ON_HIT = false
+        private const val LOOKUP_THREADS = 4
+        private const val UPSTREAM_TIMEOUT_MS = 4_000
 
         private const val VIRTUAL_DNS_V4 = "10.111.222.1"
         private const val VIRTUAL_DNS_V6 = "fd00:5ec::1"
+
+        // The interface needs its own address: packets to the interface's own address are delivered locally
+        // and never reach the tunnel, so a resolver on that address would swallow every query.
+        private const val TUN_ADDRESS_V4 = "10.111.222.2"
+        private const val TUN_ADDRESS_V6 = "fd00:5ec::2"
         private const val CHANNEL_ALERTS = "Warnungen"
         private const val CHANNEL_SERVICE = "dns_guard_service"
         private const val NOTIF_SERVICE = 4101

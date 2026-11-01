@@ -83,6 +83,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         refreshPermissions()
         refreshDnsGuard()
         scheduleShellRestore()
+        viewModelScope.launch { DnsGuard.running.collect { refreshDnsGuard() } }
     }
 
     private fun reloadIocs() = viewModelScope.launch {
