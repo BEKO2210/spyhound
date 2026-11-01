@@ -8,8 +8,8 @@ data class Message(val sender: String, val date: Long, val body: String)
 object MessageAnalyzer {
     const val NAME = "SMS-Links"
 
-    fun analyze(messages: List<Message>?, iocs: IocSet): CheckResult {
-        val r = CheckResult(NAME)
+    fun analyze(messages: List<Message>?, iocs: IocSet, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(NAME, texts)
         if (messages == null) {
             r.gap("SMS wurden nicht geprüft: Die Berechtigung „SMS lesen“ fehlt.", GapFix.PERMISSION_SMS)
             return r

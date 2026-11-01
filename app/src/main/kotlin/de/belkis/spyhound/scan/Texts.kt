@@ -176,6 +176,7 @@ object TextsEn : Texts {
 
     override fun text(source: String): String {
         exact[source]?.let { return it }
+        if (source.startsWith("Fehlerbericht: ")) return "Bug report: ${text(source.removePrefix("Fehlerbericht: "))}"
         patterns.forEach { (pattern, render) -> pattern.matchEntire(source)?.let { return render(it) } }
         return source
             .replace("SMS lesen", "read SMS")

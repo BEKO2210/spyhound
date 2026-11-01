@@ -36,7 +36,8 @@ enum class GapFix { NONE, PERMISSION_SMS, PERMISSION_FILES, SHIZUKU, ROOT, UPDAT
 
 data class CheckSummary(val name: String, val examined: Int, val ran: Boolean)
 
-class CheckResult(val name: String) {
+class CheckResult(sourceName: String, private val texts: Texts = TextsDe) {
+    val name = texts.text(sourceName)
     val findings = ArrayList<Finding>()
     val leads = ArrayList<Lead>()
     val gaps = ArrayList<Gap>()
@@ -44,15 +45,15 @@ class CheckResult(val name: String) {
     var ran = false
 
     fun hit(where: String, detail: String, ind: Indicator) {
-        findings += Finding(name, where, detail, ind)
+        findings += Finding(name, texts.text(where), texts.text(detail), ind)
     }
 
     fun lead(where: String, detail: String, why: String) {
-        leads += Lead(name, where, detail, why)
+        leads += Lead(name, texts.text(where), texts.text(detail), texts.text(why))
     }
 
     fun gap(detail: String, fix: GapFix = GapFix.NONE) {
-        gaps += Gap(name, detail, fix)
+        gaps += Gap(name, texts.text(detail), fix)
     }
 }
 

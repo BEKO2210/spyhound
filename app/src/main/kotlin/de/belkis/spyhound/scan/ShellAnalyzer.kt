@@ -17,8 +17,8 @@ object ShellAnalyzer {
     const val HASHES = "Datei-Fingerabdrücke"
 
     /** `ps -A -o NAME` (one process name per line). */
-    fun processes(psOutput: String, iocs: IocSet): CheckResult {
-        val r = CheckResult(PROCESSES)
+    fun processes(psOutput: String, iocs: IocSet, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(PROCESSES, texts)
         for (line in psOutput.lineSequence().drop(1)) {
             val name = line.trim().ifEmpty { continue }
             r.examined++
@@ -36,8 +36,8 @@ object ShellAnalyzer {
      * `pm list packages -u -i`: "package:com.x  installer=y". -u includes apps that were
      * uninstalled but kept their data, and apps of other users / work profiles.
      */
-    fun packages(pmOutput: String, installed: Set<String>, iocs: IocSet): CheckResult {
-        val r = CheckResult(PACKAGES)
+    fun packages(pmOutput: String, installed: Set<String>, iocs: IocSet, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(PACKAGES, texts)
         for (line in pmOutput.lineSequence()) {
             if (!line.startsWith("package:")) continue
             val name = line.removePrefix("package:").substringBefore(' ').trim()
@@ -65,12 +65,12 @@ object ShellAnalyzer {
 
     /** Domains, app ids, paths and URLs mentioned in dumpsys output and logcat. */
     /** [installed] apps are compared by the app check; here only their absence matters (removed spyware). */
-    fun logs(sources: Map<String, String>, iocs: IocSet, installed: Set<String> = emptySet()): CheckResult =
-        logs(sources.map { (label, text) -> label to fromText(text) }, iocs, installed)
+    fun logs(sources: Map<String, String>, iocs: IocSet, installed: Set<String> = emptySet(), texts: Texts = TextsDe): CheckResult =
+        logs(sources.map { (label, text) -> label to fromText(text) }, iocs, installed, texts)
 
     /** Same as above, but each log is read and scanned line by line, so only one line is in memory at a time. */
-    fun logs(sources: List<Pair<String, LineSource>>, iocs: IocSet, installed: Set<String> = emptySet()): CheckResult {
-        val r = CheckResult(LOGS)
+    fun logs(sources: List<Pair<String, LineSource>>, iocs: IocSet, installed: Set<String> = emptySet(), texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(LOGS, texts)
         val scanner = TextScanner(iocs)
         val reported = HashSet<String>()
         for ((label, source) in sources) {
@@ -107,10 +107,10 @@ object ShellAnalyzer {
     private val DECLARATION = Regex("""\b(queriesPackages|queriesProviders|queriesIntents|usesLibraries|usesOptionalLibraries|usesStaticLibraries|usesSdkLibraries)=""")
 
     /** `find ... -type f` output: one absolute path per line. */
-    fun files(listing: String, iocs: IocSet): CheckResult = files(fromText(listing), iocs)
+    fun files(listing: String, iocs: IocSet, texts: Texts = TextsDe): CheckResult = files(fromText(listing), iocs, texts)
 
-    fun files(source: LineSource, iocs: IocSet): CheckResult {
-        val r = CheckResult(FILES)
+    fun files(source: LineSource, iocs: IocSet, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(FILES, texts)
         val ok = source.feed { line ->
             val path = line.trim()
             if (path.startsWith("/")) {
@@ -125,10 +125,10 @@ object ShellAnalyzer {
     }
 
     /** `sha256sum` output: "<hash>  <path>". */
-    fun hashes(sumOutput: String, iocs: IocSet): CheckResult = hashes(fromText(sumOutput), iocs)
+    fun hashes(sumOutput: String, iocs: IocSet, texts: Texts = TextsDe): CheckResult = hashes(fromText(sumOutput), iocs, texts)
 
-    fun hashes(source: LineSource, iocs: IocSet): CheckResult {
-        val r = CheckResult(HASHES)
+    fun hashes(source: LineSource, iocs: IocSet, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(HASHES, texts)
         val ok = source.feed { line ->
             val hash = line.substringBefore(' ').trim().lowercase()
             if (hash.length == 64) {

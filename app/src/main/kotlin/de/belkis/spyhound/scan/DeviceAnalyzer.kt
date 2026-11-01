@@ -32,8 +32,8 @@ object DeviceAnalyzer {
         "Ein entsperrter Bootloader, Root oder abgeschaltetes SELinux schwächen den Schutz des Systems. " +
             "Wenn Sie das nicht selbst eingerichtet haben, ist das ein deutliches Warnzeichen."
 
-    fun analyze(state: DeviceState, iocs: IocSet, today: LocalDate = LocalDate.now(), shellExpected: Boolean = false): CheckResult {
-        val r = CheckResult(NAME)
+    fun analyze(state: DeviceState, iocs: IocSet, today: LocalDate = LocalDate.now(), shellExpected: Boolean = false, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(NAME, texts)
         r.examined = state.props.size + 1
 
         // Published Android system properties (Amnesty 2023 campaign and others).

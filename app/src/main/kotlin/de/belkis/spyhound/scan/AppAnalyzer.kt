@@ -63,8 +63,8 @@ object AppAnalyzer {
         "Bedienungshilfe, Benachrichtigungszugriff und Geräteadministrator erlauben, " +
             "den Bildschirm mitzulesen oder das Löschen zu verhindern. Seriöse Apps wie Passwortmanager nutzen sie auch."
 
-    fun analyze(apps: List<AppRecord>, iocs: IocSet, ownPackage: String): CheckResult {
-        val r = CheckResult(NAME)
+    fun analyze(apps: List<AppRecord>, iocs: IocSet, ownPackage: String, texts: Texts = TextsDe): CheckResult {
+        val r = CheckResult(NAME, texts)
         var unhashed = 0
         var noCert = 0
         for (app in apps) {

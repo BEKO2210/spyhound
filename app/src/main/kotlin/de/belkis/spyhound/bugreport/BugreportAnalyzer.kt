@@ -4,6 +4,8 @@ import de.belkis.spyhound.ioc.IocSet
 import de.belkis.spyhound.ioc.IocType
 import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.scan.ShellAnalyzer
+import de.belkis.spyhound.scan.Texts
+import de.belkis.spyhound.scan.TextsDe
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -15,8 +17,8 @@ const val BUGREPORT_PREFIX = "Fehlerbericht: "
  * [installed] apps are skipped in the package/log APP_ID comparison (already covered
  * by the live app check). Pass an empty set when the report is analysed on its own.
  */
-fun analyzeBugreport(input: InputStream, iocs: IocSet, installed: Set<String>): List<CheckResult> =
-    BugreportAnalyzer.analyze(BugreportParser.parse(input), iocs, installed)
+fun analyzeBugreport(input: InputStream, iocs: IocSet, installed: Set<String>, texts: Texts = TextsDe): List<CheckResult> =
+    BugreportAnalyzer.analyze(BugreportParser.parse(input), iocs, installed, texts = texts)
 
 object BugreportAnalyzer {
     const val PROPS = "Systemeigenschaften"
@@ -31,10 +33,11 @@ object BugreportAnalyzer {
         iocs: IocSet,
         installed: Set<String>,
         today: LocalDate = LocalDate.now(),
+        texts: Texts = TextsDe,
     ): List<CheckResult> {
         val out = ArrayList<CheckResult>()
 
-        val meta = CheckResult(BUGREPORT_PREFIX + REPORT)
+        val meta = CheckResult(BUGREPORT_PREFIX + REPORT, texts)
         for (w in report.warnings) meta.gap(w)
         if (report.truncated) {
             meta.gap("Mindestens ein Abschnitt wurde bei 32 MB abgeschnitten; spätere Zeilen fehlen.")
@@ -55,20 +58,20 @@ object BugreportAnalyzer {
 
         val psNames = BugreportParser.toPsNames(report.psText)
         if (psNames.lineSequence().drop(1).none { it.isNotBlank() }) {
-            out += CheckResult(BUGREPORT_PREFIX + ShellAnalyzer.PROCESSES).apply {
+            out += CheckResult(BUGREPORT_PREFIX + ShellAnalyzer.PROCESSES, texts).apply {
                 gap("Der Abschnitt PROCESSES AND THREADS fehlt im Fehlerbericht.")
             }
         } else {
-            out += named(ShellAnalyzer.processes(psNames, iocs), BUGREPORT_PREFIX + ShellAnalyzer.PROCESSES)
+            out += named(ShellAnalyzer.processes(psNames, iocs, texts), BUGREPORT_PREFIX + ShellAnalyzer.PROCESSES, texts)
         }
 
         if (report.packages.isEmpty()) {
-            out += CheckResult(BUGREPORT_PREFIX + ShellAnalyzer.PACKAGES).apply {
+            out += CheckResult(BUGREPORT_PREFIX + ShellAnalyzer.PACKAGES, texts).apply {
                 gap("Die Paketliste (DUMP OF SERVICE package) fehlt im Fehlerbericht.")
             }
         } else {
             val pm = report.packages.joinToString("\n") { "package:$it" }
-            out += named(ShellAnalyzer.packages(pm, installed, iocs), BUGREPORT_PREFIX + ShellAnalyzer.PACKAGES)
+            out += named(ShellAnalyzer.packages(pm, installed, iocs, texts), BUGREPORT_PREFIX + ShellAnalyzer.PACKAGES, texts)
         }
 
         val sources = LinkedHashMap<String, String>()
@@ -77,18 +80,18 @@ object BugreportAnalyzer {
         if (report.boardText.isNotEmpty()) sources["dumpstate_board"] = report.boardText
         if (report.fsPaths.isNotEmpty()) sources["FS"] = report.fsPaths.joinToString("\n")
         if (sources.isEmpty()) {
-            out += CheckResult(BUGREPORT_PREFIX + ShellAnalyzer.LOGS).apply {
+            out += CheckResult(BUGREPORT_PREFIX + ShellAnalyzer.LOGS, texts).apply {
                 gap("Die Systemprotokolle (logcat, dumpsys) fehlen im Fehlerbericht.")
             }
         } else {
-            val logs = named(ShellAnalyzer.logs(sources, iocs, installed), BUGREPORT_PREFIX + ShellAnalyzer.LOGS)
+            val logs = named(ShellAnalyzer.logs(sources, iocs, installed, texts), BUGREPORT_PREFIX + ShellAnalyzer.LOGS, texts)
             if (report.logcat.isEmpty()) {
                 logs.gap("Der Abschnitt SYSTEM LOG (logcat) fehlt im Fehlerbericht.")
             }
             out += logs
         }
 
-        val props = CheckResult(BUGREPORT_PREFIX + PROPS)
+        val props = CheckResult(BUGREPORT_PREFIX + PROPS, texts)
         if (report.props.isEmpty()) {
             props.gap("Der Abschnitt SYSTEM PROPERTIES (getprop) fehlt im Fehlerbericht.")
         } else {
@@ -108,13 +111,13 @@ object BugreportAnalyzer {
         return out
     }
 
-    private fun named(source: CheckResult, name: String): CheckResult {
-        val r = CheckResult(name)
+    private fun named(source: CheckResult, name: String, texts: Texts): CheckResult {
+        val r = CheckResult(name, texts)
         r.examined = source.examined
         r.ran = source.ran
-        source.findings.forEach { r.findings += it.copy(check = name) }
-        source.leads.forEach { r.leads += it.copy(check = name) }
-        source.gaps.forEach { r.gaps += it.copy(check = name) }
+        source.findings.forEach { r.findings += it.copy(check = r.name) }
+        source.leads.forEach { r.leads += it.copy(check = r.name) }
+        source.gaps.forEach { r.gaps += it.copy(check = r.name) }
         return r
     }
 }
