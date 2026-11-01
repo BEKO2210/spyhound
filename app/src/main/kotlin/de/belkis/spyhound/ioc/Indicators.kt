@@ -29,8 +29,12 @@ class IocSet(indicators: Iterable<Indicator>) {
         for (ind in indicators) {
             val key = normalise(ind.type, ind.value) ?: continue
             if (ind.type == IocType.DOMAIN && SharedServices.isShared(key)) continue
-            // First source wins, so the curated lists (loaded first) keep their attribution.
-            if (maps.getValue(ind.type).putIfAbsent(key, ind.copy(value = key)) == null) n++
+            // First source wins, so the curated lists (loaded first) keep their attribution,
+            // except that an Android-relevant duplicate must replace an iPhone-only one, or lookup() would drop it.
+            val map = maps.getValue(ind.type)
+            val old = map[key]
+            if (old == null) { map[key] = ind.copy(value = key); n++ }
+            else if (!old.androidArtifacts && ind.androidArtifacts) map[key] = ind.copy(value = key)
         }
         byType = maps
         size = n
@@ -70,6 +74,7 @@ class IocSet(indicators: Iterable<Indicator>) {
                 IocType.SHA256 -> v.lowercase().takeIf { SHA256.matches(it) }
                 IocType.APP_CERT -> v.replace(":", "").lowercase().takeIf { SHA1.matches(it) || SHA256.matches(it) }
                 IocType.IP, IocType.EMAIL, IocType.URL -> v.lowercase()
+                IocType.FILE_PATH -> v.trimEnd('/').ifEmpty { "/" } // directory indicators carry a trailing slash
                 else -> v
             }
         }

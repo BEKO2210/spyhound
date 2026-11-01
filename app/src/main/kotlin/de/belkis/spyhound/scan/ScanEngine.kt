@@ -102,25 +102,27 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
         onProgress(Progress("Pakete", "Alle Pakete, auch gelöschte …", 0.55f))
         out += ShellAnalyzer.packages(shell.read("pm list packages -u -i", 4 shl 20, 60).orEmpty(), installed, iocs.set)
 
-        val logs = LinkedHashMap<String, String>()
         val logCommands = LOG_COMMANDS + if (root) ROOT_LOG_COMMANDS else emptyList()
-        logCommands.forEachIndexed { i, (label, cmd) ->
-            onProgress(Progress("Systemprotokolle", label, 0.58f + 0.17f * i / logCommands.size))
-            logs[label] = shell.read(cmd, 32 shl 20, 180).orEmpty()
+        // Each log is streamed through the scanner while it is read; none is ever held whole.
+        val logSources = logCommands.mapIndexed { i, (label, cmd) ->
+            label to ShellAnalyzer.LineSource { onLine ->
+                onProgress(Progress("Systemprotokolle", label, 0.58f + 0.17f * i / logCommands.size))
+                shell.readLines(cmd, 32 shl 20, 180, onLine)
+            }
         }
-        out += ShellAnalyzer.logs(logs, iocs.set, installed)
-        logs.clear()
+        out += ShellAnalyzer.logs(logSources, iocs.set, installed)
 
         onProgress(Progress("Dateien", "Dateiliste …", 0.76f))
         val listRoots = if (root) SHELL_FILE_ROOTS + ROOT_FILE_ROOTS else SHELL_FILE_ROOTS
-        out += ShellAnalyzer.files(shell.read("find ${listRoots.joinToString(" ")} -type f 2>/dev/null", 64 shl 20, 300).orEmpty(), iocs.set)
+        val listCmd = "find ${listRoots.joinToString(" ")} -type f 2>/dev/null"
+        out += ShellAnalyzer.files(ShellAnalyzer.LineSource { shell.readLines(listCmd, 64 shl 20, 300, it) }, iocs.set)
 
         onProgress(Progress("Fingerabdrücke", "Programmdateien werden gehasht …", 0.82f))
         val hashRoots = if (root) SHELL_HASH_ROOTS + ROOT_HASH_ROOTS else SHELL_HASH_ROOTS
         val exec = if (root) " -o -perm -u+x" else ""
         val names = StorageCollector.CANDIDATES.joinToString(" -o ") { "-iname '*.$it'" }
         val hashCmd = "find ${hashRoots.joinToString(" ")} -type f -size -122880k \\( $names$exec \\) -exec sha256sum {} + 2>/dev/null"
-        out += ShellAnalyzer.hashes(shell.read(hashCmd, 64 shl 20, 900).orEmpty(), iocs.set)
+        out += ShellAnalyzer.hashes(ShellAnalyzer.LineSource { shell.readLines(hashCmd, 64 shl 20, 900, it) }, iocs.set)
 
         if (!root) {
             out += CheckResult("Root-Prüfung").apply {

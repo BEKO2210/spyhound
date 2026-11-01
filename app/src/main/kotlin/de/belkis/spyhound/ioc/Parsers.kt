@@ -188,6 +188,9 @@ data class FeedSource(
     val fileName: String get() = id + "." + path.substringAfterLast('.', "dat")
 }
 
+/** A source file name is a plain name inside the indicator folder, never a path. */
+private val SAFE_FILE_NAME = Regex("[A-Za-z0-9_-]+\\.[A-Za-z0-9]+")
+
 object FeedCatalog {
     /** Only these repositories are ever downloaded from, as in the desktop toolkit. */
     val ALLOWED_REPOS = setOf(
@@ -217,6 +220,6 @@ object FeedCatalog {
             category = if (s("category") == "stalkerware") Category.STALKERWARE else Category.MERCENARY,
             family = s("family"), sha256 = s("sha256").lowercase(),
             bundled = repo in BUNDLED_REPOS, androidArtifacts = s("id") !in IOS_ONLY,
-        )
+        ).also { require(SAFE_FILE_NAME.matches(it.fileName)) { "unsafe file name: ${it.fileName}" } }
     }
 }
