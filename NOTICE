@@ -56,3 +56,17 @@ Not bundled, loaded onto the device only when the user updates indicators:
 These two repositories carry no license that permits redistribution, so
 Spyhound does not ship their data. The app downloads it directly from the
 original repositories at the pinned commits.
+
+== Libraries ==
+
+Shizuku API and provider (Apache License 2.0)
+https://github.com/RikkaApps/Shizuku-API
+
+libadb-android 3.1.1 (Muntashir Al-Islam), used for the built-in ADB
+connection to this phone's own wireless debugging. Dual licensed under
+GPL-3.0-or-later or Apache-2.0; Spyhound uses it under Apache-2.0.
+https://github.com/MuntashirAkon/libadb-android
+It is not on Maven Central; it is resolved from JitPack at build time only
+(see settings.gradle.kts). Its dependency spake2-android (MuntashirAkon/
+spake2-java, Apache-2.0 per its repository) and Conscrypt (Apache-2.0,
+https://github.com/google/conscrypt) are packaged with the app.

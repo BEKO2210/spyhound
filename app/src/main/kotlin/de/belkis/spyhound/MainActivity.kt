@@ -1,6 +1,7 @@
 package de.belkis.spyhound
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -194,6 +195,8 @@ class MainActivity : AppCompatActivity() {
                                 snapshot = setupSnapshot,
                                 onDismiss = { showDeepCheckSetup = false },
                                 onAllowSpyhound = { vm.connectShizuku() },
+                                builtinAdb = state.builtinAdb,
+                                onSetupWithoutPc = { startBuiltinSetup() },
                                 onScanNow = {
                                     showDeepCheckSetup = false
                                     vm.startScan()
@@ -323,11 +326,19 @@ class MainActivity : AppCompatActivity() {
         when (fix) {
             GapFix.PERMISSION_SMS -> smsPermission.launch(Manifest.permission.READ_SMS)
             GapFix.PERMISSION_FILES -> openAllFilesAccess()
-            GapFix.SHIZUKU -> onDeepCheckSetup()
+            GapFix.SHIZUKU, GapFix.RESTART_BUILTIN_ADB -> onDeepCheckSetup()
             GapFix.ROOT -> vm.requestRoot()
             GapFix.UPDATE_INDICATORS -> vm.updateIndicators()
             GapFix.NONE -> Unit
         }
+    }
+
+    /** The pairing code is typed into a notification, so that needs the notification permission. */
+    private fun startBuiltinSetup() {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) notificationsPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        vm.startBuiltinAdb()
     }
 
     companion object {

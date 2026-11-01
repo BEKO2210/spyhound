@@ -116,3 +116,88 @@ internal fun <T> streamProcess(argv: List<String>, timeoutSec: Long, use: (Input
         p.errorStream.closeQuietly()
     }) { use(p.inputStream) }
 }
+
+/**
+ * Ends [inner] at the first [marker] and reads the exit code printed right after it. For transports (libadb
+ * `shell:` streams) that never signal the end of a finished command; the marker carries a per-call nonce so
+ * command output cannot fake it. Output before the marker is passed on unchanged.
+ */
+internal class MarkerInputStream(private val inner: InputStream, marker: String) : InputStream() {
+    private val mark = marker.toByteArray(Charsets.US_ASCII)
+    private val held = ByteArrayOutputStream()
+    private var ready = ByteArray(0)
+    private var pos = 0
+    private var innerEof = false
+    private var finished = false
+
+    /** Exit code of the command once the marker was seen; null if the stream ended without it. */
+    var exitCode: Int? = null
+        private set
+
+    override fun read(): Int {
+        val one = ByteArray(1)
+        return if (read(one, 0, 1) < 0) -1 else one[0].toInt() and 0xff
+    }
+
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
+        if (len == 0) return 0
+        while (pos >= ready.size) {
+            if (finished) return -1
+            fill()
+        }
+        val n = minOf(len, ready.size - pos)
+        System.arraycopy(ready, pos, b, off, n)
+        pos += n
+        return n
+    }
+
+    private fun fill() {
+        val chunk = ByteArray(8192)
+        val n = if (innerEof) -1 else inner.read(chunk)
+        if (n < 0) {
+            innerEof = true
+            ready = held.toByteArray()
+            held.reset()
+            pos = 0
+            finished = true
+            return
+        }
+        held.write(chunk, 0, n)
+        val all = held.toByteArray()
+        val at = indexOf(all, mark)
+        if (at >= 0) {
+            ready = all.copyOfRange(0, at)
+            pos = 0
+            finished = true
+            exitCode = readExit(all, at + mark.size)
+            held.reset()
+            return
+        }
+        val keep = minOf(all.size, mark.size - 1)
+        ready = all.copyOfRange(0, all.size - keep)
+        pos = 0
+        held.reset()
+        held.write(all, all.size - keep, keep)
+    }
+
+    private fun readExit(all: ByteArray, from: Int): Int? {
+        val digits = StringBuilder()
+        var i = from
+        while (true) {
+            val c = if (i < all.size) all[i++].toInt() else try { inner.read() } catch (_: IOException) { -1 }
+            if (c !in '0'.code..'9'.code) break
+            if (digits.length < 4) digits.append(c.toChar())
+        }
+        return digits.toString().toIntOrNull()
+    }
+
+    private fun indexOf(h: ByteArray, n: ByteArray): Int {
+        outer@ for (i in 0..h.size - n.size) {
+            for (j in n.indices) if (h[i + j] != n[j]) continue@outer
+            return i
+        }
+        return -1
+    }
+
+    override fun close() = inner.close()
+}

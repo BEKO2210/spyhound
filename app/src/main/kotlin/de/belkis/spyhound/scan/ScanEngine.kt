@@ -23,7 +23,13 @@ data class Progress(
 )
 
 /** Runs every check the current access level allows, and records every one it could not. */
-class ScanEngine(private val context: Context, private val iocs: LoadedIocs, private val shell: Shell?) {
+class ScanEngine(
+    private val context: Context,
+    private val iocs: LoadedIocs,
+    private val shell: Shell?,
+    /** The built-in ADB connection was set up before, so a missing shell most likely means wireless debugging is off. */
+    private val builtinAdbPaired: Boolean = false,
+) {
     private val level = shell?.level ?: AccessLevel.APP
 
     suspend fun run(onProgress: (Progress) -> Unit): Report = withContext(Dispatchers.IO) {
@@ -84,12 +90,14 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
         } else if (shell != null) {
             checks += storageCheck(tracker, ::emit)
             checks += CheckResult("Tiefenprüfung").apply {
-                gap(SHELL_DEAD, if (shell.level == AccessLevel.ROOT) GapFix.ROOT else GapFix.SHIZUKU)
+                if (shell.isBuiltinAdb) gap(BUILTIN_ADB_RESTART, GapFix.RESTART_BUILTIN_ADB)
+                else gap(SHELL_DEAD, if (shell.level == AccessLevel.ROOT) GapFix.ROOT else GapFix.SHIZUKU)
             }
         } else {
             checks += storageCheck(tracker, ::emit)
             checks += CheckResult("Tiefenprüfung").apply {
-                gap(
+                if (builtinAdbPaired) gap(BUILTIN_ADB_RESTART, GapFix.RESTART_BUILTIN_ADB)
+                else gap(
                     "Laufende Prozesse, Systemprotokolle (logcat, dumpsys), gelöschte Apps und Dateien außerhalb des " +
                         "gemeinsamen Speichers wurden nicht geprüft. Dafür braucht es Shizuku (ohne Root) oder Root.",
                     GapFix.SHIZUKU,
@@ -225,6 +233,8 @@ class ScanEngine(private val context: Context, private val iocs: LoadedIocs, pri
     }
 
     companion object {
+        const val BUILTIN_ADB_RESTART = "Die Tiefenprüfung lief nicht: Das WLAN-Debugging ist aus (z. B. nach einem Neustart des Telefons). " +
+            "Tiefe Prüfung wieder starten: WLAN-Debugging einschalten und noch einmal prüfen."
         const val SHELL_DEAD = "Die Tiefenprüfung lief nicht: Shizuku bzw. Root ist verbunden, antwortet aber nicht. " +
             "Shizuku neu starten (oder Root erneut erlauben) und noch einmal prüfen."
 

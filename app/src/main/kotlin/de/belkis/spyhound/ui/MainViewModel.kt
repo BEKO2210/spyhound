@@ -25,6 +25,9 @@ import de.belkis.spyhound.scan.RadarProgress
 import de.belkis.spyhound.scan.ScanEngine
 import de.belkis.spyhound.ui.DemoReport
 import de.belkis.spyhound.shell.RootShell
+import de.belkis.spyhound.shell.AdbSetupState
+import de.belkis.spyhound.shell.AdbShell
+import de.belkis.spyhound.shell.BuiltinAdb
 import de.belkis.spyhound.shell.SHIZUKU_STOPPED_BANNER
 import de.belkis.spyhound.shell.ScanGatedShellChanges
 import de.belkis.spyhound.shell.Shell
@@ -61,6 +64,9 @@ data class UiState(
     val bannerMessage: String? = null,
     val dnsRunning: Boolean = false,
     val dnsHits: List<DnsHit> = emptyList(),
+    /** Null until the user starts "set up without a PC". */
+    val builtinAdb: AdbSetupState? = null,
+    val builtinAdbActive: Boolean = false,
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -74,6 +80,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private var scanJob: Job? = null
     private var pendingBugreportChecks: List<CheckResult>? = null
     private var shellRestoreJob: Job? = null
+    private var builtinAdbStarted = false
 
     private val binderReceivedListener = Shizuku.OnBinderReceivedListener { scheduleShellRestore() }
     private val binderDeadListener = Shizuku.OnBinderDeadListener { onShizukuBinderDead() }
@@ -86,6 +93,24 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         refreshDnsGuard()
         scheduleShellRestore()
         viewModelScope.launch { DnsGuard.running.collect { refreshDnsGuard() } }
+    }
+
+    /** "Set up without a PC": pairs with this phone's own wireless debugging and adopts the shell when it is up. */
+    fun startBuiltinAdb() {
+        if (!builtinAdbStarted) {
+            builtinAdbStarted = true
+            viewModelScope.launch { BuiltinAdb.state.collect { st -> _state.update { it.copy(builtinAdb = st) } } }
+        }
+        BuiltinAdb.start(getApplication()) { adb ->
+            viewModelScope.launch {
+                // Root and Shizuku keep priority; the built-in connection only fills the gap.
+                if (shell == null || shell?.isBuiltinAdb == true) adoptShell(adb) else adb.close()
+            }
+        }
+    }
+
+    fun stopBuiltinAdb() {
+        if (builtinAdbStarted) BuiltinAdb.stop(getApplication())
     }
 
     private fun reloadIocs() = viewModelScope.launch {
@@ -110,6 +135,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 shizukuInstalled = isShizukuInstalled(ctx.packageManager),
                 devOptionsEnabled = isDeveloperOptionsEnabled(ctx),
                 access = shell?.level ?: AccessLevel.APP,
+                builtinAdbActive = shell?.isBuiltinAdb == true,
             )
         }
         refreshDnsGuard()
@@ -188,6 +214,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             if (sh != null) adoptShell(sh)
             refreshPermissions()
         }
+        // Last resort before the basic check: the built-in ADB connection, if it was paired before and the
+        // setup flow is not running right now. After a reboot wireless debugging is off and this finds nothing.
+        val builtinBusy = builtinAdbStarted && BuiltinAdb.state.value.let {
+            it == AdbSetupState.WaitingForPairingCode || it == AdbSetupState.Pairing || it == AdbSetupState.Paired
+        }
+        if (shell == null && pendingShell == null && !builtinBusy &&
+            ShellPreferences.wasBuiltinAdbPaired(ctx) && BuiltinAdb.wirelessDebuggingOn(ctx)
+        ) {
+            AdbShell.connect(ctx)?.let { adoptShell(it) }
+            refreshPermissions()
+        }
     }
 
     private fun onShizukuBinderDead() {
@@ -237,7 +274,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             var lastRadar: RadarProgress? = null
             val merged = try {
                 val report = runCatching {
-                    ScanEngine(getApplication(), iocs, shell).run { p ->
+                    ScanEngine(getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication())).run { p ->
                         lastRadar = p.radar ?: lastRadar
                         _state.update { s -> s.copy(progress = p) }
                     }

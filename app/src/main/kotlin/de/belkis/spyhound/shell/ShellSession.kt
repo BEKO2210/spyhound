@@ -6,6 +6,15 @@ import android.content.Context
 object ShellPreferences {
     private const val PREFS = "spyhound_shell"
     private const val KEY_ROOT_GRANTED = "root_once_granted"
+    private const val KEY_ADB_PAIRED = "builtin_adb_paired"
+
+    /** The phone accepted our own ADB key once (built-in connection; no PC, no Shizuku). */
+    fun wasBuiltinAdbPaired(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ADB_PAIRED, false)
+
+    fun setBuiltinAdbPaired(context: Context, paired: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_ADB_PAIRED, paired).apply()
+    }
 
     fun wasRootGranted(context: Context): Boolean =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ROOT_GRANTED, false)

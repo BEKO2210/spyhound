@@ -11,7 +11,7 @@
     <string name="t_007">Deep check is active. Root can check more.</string>
     <string name="t_008">Full access is active. All available checks will run.</string>
     <string name="t_009">A deep check can find more, such as running background processes.\u0020</string>
-    <string name="t_010">Set up Shizuku once. Root is not needed.</string>
+    <string name="t_010">Set it up once – no PC, no root.</string>
     <string name="t_011">Set up deep check</string>
     <string name="t_012">Install Shizuku. It lets Spyhound check more of your phone.</string>
     <string name="t_013">Installation failed? Download Shizuku from shizuku.rikka.app. On Samsung, Auto Blocker may\u0020</string>
@@ -111,7 +111,7 @@
     <string name="scan_step_done">%1$s, done</string>
     <string name="scan_step_active">%1$s, checking</string>
     <string name="scan_step_pending">%1$s, waiting</string>
-    <string name="deep_check_intro">To check more of your phone, set up Shizuku. Root is not needed. Wi-Fi must be on. Restart Shizuku after a reboot.</string>
+    <string name="deep_check_intro">To check more of your phone – no PC and no root, right on the phone. Wi-Fi must be on. After a reboot, one tap on “Restart deep check” is enough.</string>
     <string name="dns_session">Spyhound DNS watch</string>
     <string name="dns_alert_channel">Alerts</string>
     <string name="dns_alert_description">DNS matches for known spyware domains</string>
@@ -147,7 +147,7 @@
     <string name="demo_sms_gap">SMS permission is missing. Links in messages were not checked.</string>
     <string name="demo_files">Files</string>
     <string name="demo_deep">Deep check</string>
-    <string name="demo_deep_gap">Processes and system logs were not checked without Shizuku (demo).</string>
+    <string name="demo_deep_gap">Processes and system logs were not checked without the deep check (demo).</string>
     <string name="demo_device">Demo device, Android 14 (patch 2024-09-05)</string>
     <string name="scan_demo_detail">Settings and system properties…</string>
     <string name="cd_info_button">About Spyhound</string>
@@ -162,14 +162,14 @@
     <string name="intro_page3_title">Your privacy</string>
     <string name="intro_page3_body">Checks stay on your device. No account, no telemetry. The app uses the internet only when you load updated indicator lists.</string>
     <string name="intro_page4_title">Three check depths</string>
-    <string name="intro_page4_body">Basic runs right away. Deeper uses Shizuku — no root, the in-app assistant helps you set it up. Root adds the strongest checks if your phone allows it.</string>
+    <string name="intro_page4_body">Basic runs right away. Set up the deep check once in the app – no PC, no root, no extra app. Root adds the strongest checks if your phone allows it.</string>
     <string name="info_title">About Spyhound</string>
     <string name="info_section_what">What it does</string>
     <string name="info_what_body">Spyhound searches your phone for traces of known spyware and stalkerware, matched against published indicators from research groups and MVT/ECHAP lists.</string>
     <string name="info_section_limits">What it does not do</string>
     <string name="info_limits_body">It is not live protection. It only knows published traces. A clear result covers the areas checked — not every risk. Seek expert help if you fear targeted surveillance.</string>
     <string name="info_section_depths">Check depths</string>
-    <string name="info_depths_body">Basic: apps, device settings, optional SMS and files. Deeper (Shizuku): processes and system logs without root. Root: the same deep data with full shell access when available.</string>
+    <string name="info_depths_body">Basic: apps, device settings, optional SMS and files. Deep: also processes and system logs – through wireless debugging on the phone itself (or Shizuku). Root: the same data with full access when available.</string>
     <string name="info_section_privacy">Privacy</string>
     <string name="info_privacy_body">Scans are offline. No analytics or ads. Indicator updates download pinned files from allowed repositories only; hashes must match before use.</string>
     <string name="info_section_sources">Indicator sources</string>
@@ -203,9 +203,9 @@
     <string name="start_help_indicators">Published domains, apps, and files used to spot known spyware and stalkerware traces.</string>
     <string name="start_help_dns">Watches DNS while active and warns if a known indicator domain is requested.</string>
     <string name="start_help_bugreport">Imports an Android bug report ZIP for extra offline checks — no upload.</string>
-    <string name="start_help_access">Basic needs no extras; Shizuku and root unlock deeper checks step by step.</string>
+    <string name="start_help_access">Basic needs nothing. The deep check (no PC) and root unlock more step by step.</string>
     <string name="start_card_depth">Check depth</string>
-    <string name="start_depth_explain">A deep check finds more traces. Set up Shizuku once — no root needed.</string>
+    <string name="start_depth_explain">A deep check finds more traces. Set it up once – no PC, no root.</string>
     <string name="start_indicators_from_sources">Entries from %1$d of %2$d sources</string>
     <string name="start_update_error">No connection — try again later</string>
     <string name="start_dns_state_on">On</string>
@@ -343,4 +343,31 @@
     <string name="info_hint_legal">Imprint, privacy policy, and liability disclaimer.</string>
     <string name="info_section_about">App &amp; licence</string>
     <string name="info_hint_about">Version, open-source licence, and detection origin.</string>
+
+    <!-- Built-in ADB connection (no PC, no Shizuku) -->
+    <string name="adb_notif_channel">Deep check pairing</string>
+    <string name="adb_notif_title">Enter the pairing code</string>
+    <string name="adb_notif_text">In the Wireless debugging settings, tap “Pair device with pairing code”. Then type the six digits here.</string>
+    <string name="adb_notif_hint">6-digit code</string>
+    <string name="adb_notif_action">Enter code</string>
+    <string name="adb_notif_pairing">Pairing …</string>
+    <string name="adb_notif_wrong">That did not work. Check the six digits and try again.</string>
+    <string name="adb_notif_lost">Spyhound lost its place. Open Spyhound and start the setup again.</string>
+    <string name="adb_setup_button">Set up without a PC</string>
+    <string name="gap_fix_restart_builtin_adb">Restart deep check</string>
+    <string name="adb_setup_hint">No second app and no computer needed. Spyhound pairs with this phone’s own wireless debugging. Wi-Fi must be on.</string>
+    <string name="adb_state_dev_options">Turn on developer options first (Settings → About phone → tap the build number seven times).</string>
+    <string name="adb_state_wireless">Turn on “Wireless debugging” in the developer options.</string>
+    <string name="adb_state_waiting">Tap “Pair device with pairing code” and type the code into the Spyhound notification.</string>
+    <string name="adb_state_pairing">Pairing …</string>
+    <string name="adb_state_paired">Paired. Connecting …</string>
+    <string name="adb_state_connected">Connected. The deeper check is ready.</string>
+    <string name="adb_failed_unsupported">This needs Android 11 or newer.</string>
+    <string name="adb_failed_codes">Too many wrong entries. Start again.</string>
+    <string name="adb_failed_pairing">The phone did not accept the code. Start again.</string>
+    <string name="adb_failed_connect">The connection did not work. Start again.</string>
+    <string name="adb_failed_timeout">That took too long. Start again.</string>
+    <string name="adb_failed_internal">Something went wrong inside Spyhound. Start again.</string>
+    <string name="guide_gap_builtin_adb_meaning">The deeper check was not available this time. After a restart of the phone, wireless debugging is switched off. This is a gap, not a result.</string>
+    <string name="guide_gap_builtin_adb_steps">1. Turn “Wireless debugging” back on in the developer options (Wi-Fi must be on).\n2. Restart the deeper check in Spyhound. No new code is needed.\n3. Scan again afterwards.</string>
 </resources>

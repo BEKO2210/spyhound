@@ -7,10 +7,12 @@ Kotlin-Nachbau der Logik von github.com/interplains/Zero-Breach-Toolkit (Apache-
 ## Grundsätze (nicht verhandelbar)
 1. **Offline.** Der Scan macht keinen Netzwerkzugriff. Netzwerk nur in `IocStore.update()`; Quellen nur aus der Allow-List
    (`FeedCatalog.ALLOWED_REPOS`), nur vom festgelegten Commit, SHA-256 muss passen, keine Redirects.
+   Zusätzlich nur lokale Sockets zu `127.0.0.1` für die eingebaute ADB-Verbindung (`AdbShell`); die INTERNET-Permission
+   wird dafür gebraucht (Loopback-Sockets) und im Manifest begründet. Nie ein Ziel außerhalb des eigenen Geräts.
 2. **Ehrlich.** Ein Ergebnis ohne Funde heißt „Keine bekannten Spuren im geprüften Bereich“, nie „sauber“. Jede Prüfung,
    die nicht lief, erscheint als `Gap` mit `GapFix` (was sie schließen würde).
-3. **Drei Stufen, jede addiert:** `AccessLevel.APP` (keine Sonderrechte, das maximal Mögliche), `SHELL` (Shizuku = ADB-Rechte
-   ohne PC), `ROOT` (su oder Shizuku als root). Ohne Root muss trotzdem alles Mögliche laufen.
+3. **Drei Stufen, jede addiert:** `AccessLevel.APP` (keine Sonderrechte, das maximal Mögliche), `SHELL` (Shizuku oder eingebaute ADB-Verbindung
+   = ADB-Rechte ohne PC), `ROOT` (su oder Shizuku als root). Ohne Root muss trotzdem alles Mögliche laufen.
 4. **Funde vs. Hinweise:** `Finding` = veröffentlichter Indikator passt. `Lead` = prüfenswert, nie Alarm (Sideload + Rechte,
    Bootloader offen, alter Patch …). Stalkerware wird anders formuliert als staatliche Spyware.
 5. **Keine Telemetrie, keine Tracker, keine Analytics, keine Werbung.** Keine neuen Abhängigkeiten mit Netzwerkzugriff.
@@ -26,6 +28,11 @@ Kotlin-Nachbau der Logik von github.com/interplains/Zero-Breach-Toolkit (Apache-
   `ReportText` (Bericht zum Teilen).
 - `collect/` – Android-Sammler: `AppCollector`, `DeviceCollector`, `SmsCollector`, `StorageCollector`.
 - `shell/` – `Shell`-Interface, `RootShell` (su), `ShizukuShell` + `ShellUserService` (AIDL `IShellService`, streamt über Pipe).
+  Eingebaute ADB (Android 11+): `AdbShell` (libadb-android, nur 127.0.0.1, mDNS-Portsuche), `BuiltinAdb` (Controller,
+  Kopplungs-Benachrichtigung mit RemoteInput), `AdbSetupState`/`AdbSetup` (reine Zustandsmaschine), `AdbKeys` (RSA-Schlüssel
+  app-privat, per Keystore umhüllt), `SelfSignedCert`. Auswahl: Root → Shizuku → eingebaute ADB → Basis.
+  Abhängigkeiten: libadb-android 3.1.1 (Apache-2.0 gewählt, nur via JitPack, Build-Zeit) und Conscrypt 2.5.3 (Apache-2.0);
+  Herkunft in `NOTICE`. Nach Neustart ist WLAN-Debugging aus → Gap `RESTART_BUILTIN_ADB`.
 - `ui/MainViewModel.kt` – Zustand (`UiState`), Aktionen: `updateIndicators`, `connectShizuku`, `requestRoot`, `startScan`,
   `cancelScan`, `closeReport`, `refreshPermissions`.
 - Tests: `app/src/test/.../CoreTest.kt` (`./gradlew :app:testDebugUnitTest`), 9/9 grün.

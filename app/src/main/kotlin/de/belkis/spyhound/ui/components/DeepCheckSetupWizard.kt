@@ -38,7 +38,26 @@ import de.belkis.spyhound.setup.openDeviceInfoSettings
 import de.belkis.spyhound.setup.openShizukuApp
 import de.belkis.spyhound.setup.openShizukuDownload
 import de.belkis.spyhound.setup.stepDone
+import de.belkis.spyhound.shell.AdbFailure
+import de.belkis.spyhound.shell.AdbSetupState
 import de.belkis.spyhound.ui.SpyColors
+
+private fun builtinAdbStatus(state: AdbSetupState): Int = when (state) {
+    AdbSetupState.NeedsDevOptions -> R.string.adb_state_dev_options
+    AdbSetupState.NeedsWirelessDebugging -> R.string.adb_state_wireless
+    AdbSetupState.WaitingForPairingCode -> R.string.adb_state_waiting
+    AdbSetupState.Pairing -> R.string.adb_state_pairing
+    AdbSetupState.Paired -> R.string.adb_state_paired
+    AdbSetupState.Connected -> R.string.adb_state_connected
+    is AdbSetupState.Failed -> when (state.reason) {
+        AdbFailure.UNSUPPORTED -> R.string.adb_failed_unsupported
+        AdbFailure.TOO_MANY_INVALID_CODES -> R.string.adb_failed_codes
+        AdbFailure.PAIRING_REJECTED -> R.string.adb_failed_pairing
+        AdbFailure.CONNECT_FAILED -> R.string.adb_failed_connect
+        AdbFailure.TIMEOUT -> R.string.adb_failed_timeout
+        AdbFailure.INTERNAL -> R.string.adb_failed_internal
+    }
+}
 
 @Composable
 fun DeepCheckSetupWizard(
@@ -47,6 +66,8 @@ fun DeepCheckSetupWizard(
     onAllowSpyhound: () -> Unit,
     onScanNow: () -> Unit,
     modifier: Modifier = Modifier,
+    builtinAdb: AdbSetupState? = null,
+    onSetupWithoutPc: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val active = activeDeepCheckStep(snapshot)
@@ -72,6 +93,16 @@ fun DeepCheckSetupWizard(
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(20.dp))
+        if (onSetupWithoutPc != null) {
+            Text(stringResource(R.string.adb_setup_hint), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+            Spacer(Modifier.height(8.dp))
+            builtinAdb?.let {
+                Text(stringResource(builtinAdbStatus(it)), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
+                Spacer(Modifier.height(8.dp))
+            }
+            SpyButton(text = stringResource(R.string.adb_setup_button), onClick = onSetupWithoutPc, accent = true)
+            Spacer(Modifier.height(20.dp))
+        }
         DeepCheckStepBlock(
             step = DeepCheckSetupStep.INSTALL_SHIZUKU,
             snapshot = snapshot,

@@ -78,6 +78,7 @@ class GuidanceTest {
             GapFix.PERMISSION_FILES to GuidanceAction.PERMISSION_FILES,
             GapFix.SHIZUKU to GuidanceAction.SETUP_DEEP_CHECK,
             GapFix.ROOT to GuidanceAction.SETUP_DEEP_CHECK,
+            GapFix.RESTART_BUILTIN_ADB to GuidanceAction.SETUP_DEEP_CHECK,
             GapFix.UPDATE_INDICATORS to GuidanceAction.UPDATE_INDICATORS,
         )
         for ((fix, action) in expected) assertEquals(action, guidanceFor(Gap("c", "d", fix)).action)

@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.shizuku.api)
     implementation(libs.shizuku.provider)
+    implementation(libs.libadb.android)
+    implementation(libs.conscrypt.android)
     debugImplementation(libs.compose.ui.tooling)
 
     testImplementation(libs.junit)

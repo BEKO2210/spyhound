@@ -43,7 +43,7 @@ enum class LeadKind {
 
 enum class GapKind { OTHER, APP_FILES, CERTIFICATES, READ_FAILED, BUGREPORT_PART, LARGE_FILES }
 
-enum class GapFix { NONE, PERMISSION_SMS, PERMISSION_FILES, SHIZUKU, ROOT, UPDATE_INDICATORS }
+enum class GapFix { NONE, PERMISSION_SMS, PERMISSION_FILES, SHIZUKU, ROOT, UPDATE_INDICATORS, RESTART_BUILTIN_ADB }
 
 data class CheckSummary(val name: String, val examined: Int, val ran: Boolean)
 

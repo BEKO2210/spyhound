@@ -38,6 +38,8 @@ object TextsEn : Texts {
         "Ein entsperrter Bootloader, Root oder abgeschaltetes SELinux schwächen den Schutz des Systems. Wenn Sie das nicht selbst eingerichtet haben, ist das ein deutliches Warnzeichen." to
             "An unlocked bootloader, root or disabled SELinux weakens system protection. If you did not set this up, look into it.",
         "WLAN-Debugging ist eingeschaltet." to "Wireless debugging is on.",
+        ScanEngine.BUILTIN_ADB_RESTART to "The deep check did not run: wireless debugging is off (for example after a restart of the phone). " +
+            "Restart the deep check: turn wireless debugging on and scan once more.",
         ScanEngine.SHELL_DEAD to "The deep check did not run: Shizuku or root is connected but does not respond. " +
             "Restart Shizuku (or allow root again) and scan once more.",
         "USB-Debugging ist eingeschaltet." to "USB debugging is on.",

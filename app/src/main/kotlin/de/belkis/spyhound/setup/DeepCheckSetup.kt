@@ -8,12 +8,14 @@ data class DeepCheckSetupSnapshot(
     val devOptionsEnabled: Boolean,
     val shizukuStatus: ShizukuShell.Status,
     val access: AccessLevel,
+    /** The shell in use is Spyhound's own ADB connection, so the Shizuku steps do not apply. */
+    val builtinAdbActive: Boolean = false,
 ) {
     val step1Done: Boolean get() = shizukuInstalled
     val step2Done: Boolean get() = devOptionsEnabled
     val step3Done: Boolean get() = shizukuStatus != ShizukuShell.Status.NOT_RUNNING
     val step4Done: Boolean get() = access >= AccessLevel.SHELL
-    val allDone: Boolean get() = step1Done && step2Done && step3Done && step4Done
+    val allDone: Boolean get() = (builtinAdbActive && step4Done) || (step1Done && step2Done && step3Done && step4Done)
 }
 
 enum class DeepCheckSetupStep(val title: String) {

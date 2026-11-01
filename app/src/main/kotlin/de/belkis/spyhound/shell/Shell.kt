@@ -22,6 +22,9 @@ import kotlin.system.exitProcess
 interface Shell {
     val level: AccessLevel
 
+    /** True for the connection Spyhound sets up with the phone's own wireless debugging (no PC, no Shizuku). */
+    val isBuiltinAdb: Boolean get() = false
+
     /** Runs [command] and returns its standard output (capped at [maxBytes]), or null if it could not run or timed out. */
     fun read(command: String, maxBytes: Int = 48 shl 20, timeoutSec: Long = 180): String?
 

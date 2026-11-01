@@ -8,4 +8,5 @@ fun UiState.deepCheckSnapshot(): DeepCheckSetupSnapshot =
         devOptionsEnabled = devOptionsEnabled,
         shizukuStatus = shizuku,
         access = access,
+        builtinAdbActive = builtinAdbActive,
     )

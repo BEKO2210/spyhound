@@ -7,6 +7,9 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Kompass (aktuelle Schwerpunkte)
 1. **Eingebauter Prüf-Dienst** (kein PC, keine Shizuku-App): Kopplung über WLAN-Debugging komplett in Spyhound, Code per
    Benachrichtigung eingeben. Grund: „Niemand, den ich kenne, kann das am PC“ (Belkis, 2026-11-01).
+   **Stand:** Kern fertig auf Branch `builtin-adb` (AdbShell, Zustandsmaschine, Gap „Tiefe Prüfung wieder starten“, Tests
+   grün). Offen, Abnahme: Pixel-Test nach `docs/handoff-builtin-adb.md` (Kopplung, Scan, Neustart ohne neuen Code); R8-Release
+   baut und verbindet; Chip-Label „Shizuku“ für eingebaute ADB im UI-Umbau korrigieren.
 2. **UI/UX-Durchgang**: übersichtlich, animiert, selbsterklärend (DE+EN), klar sichtbar, was genutzt wird.
 3. Abnahme jeder Runde auf dem Pixel 11 Pro XL (End-Testgerät).
 

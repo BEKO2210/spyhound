@@ -11,7 +11,7 @@
     <string name="t_007">Tiefere Prüfung ist aktiv. Root geht noch einen Schritt weiter.</string>
     <string name="t_008">Höchste Stufe aktiv — alle verfügbaren Prüfungen laufen.</string>
     <string name="t_009">Die tiefere Prüfung findet mehr — zum Beispiel laufende Hintergrundprozesse.\u0020</string>
-    <string name="t_010">Dafür richtest du einmal Shizuku ein, ohne Root.</string>
+    <string name="t_010">Einmal einrichten – ohne PC, ohne Root.</string>
     <string name="t_011">Tiefere Prüfung einrichten</string>
     <string name="t_012">Installiere die App Shizuku. Sie hilft Spyhound, tiefer zu schauen — wie ein Werkzeug von Android selbst.</string>
     <string name="t_013">Die Installation klappt nicht: Lade Shizuku von shizuku.rikka.app. Bei Samsung kann „Auto Blocker“\u0020</string>
@@ -111,7 +111,7 @@
     <string name="scan_step_done">%1$s, erledigt</string>
     <string name="scan_step_active">%1$s, wird geprüft</string>
     <string name="scan_step_pending">%1$s, wartet</string>
-    <string name="deep_check_intro">Damit Spyhound mehr finden kann — ohne Root, nur auf dem Telefon. WLAN muss an sein. Nach einem Neustart musst du Shizuku erneut starten.</string>
+    <string name="deep_check_intro">Damit Spyhound mehr finden kann – ohne PC und ohne Root, direkt auf dem Telefon. WLAN muss an sein. Nach einem Neustart reicht ein Tipp auf „Tiefe Prüfung wieder starten“.</string>
     <string name="dns_session">Spyhound DNS-Wächter</string>
     <string name="dns_alert_channel">Warnungen</string>
     <string name="dns_alert_description">DNS-Treffer auf bekannte Spionage-Domains</string>
@@ -147,7 +147,7 @@
     <string name="demo_sms_gap">SMS-Berechtigung fehlt — Links in Nachrichten wurden nicht gelesen.</string>
     <string name="demo_files">Dateien</string>
     <string name="demo_deep">Tiefenprüfung</string>
-    <string name="demo_deep_gap">Prozesse und Systemprotokolle ohne Shizuku nicht geprüft (Demo-Lücke).</string>
+    <string name="demo_deep_gap">Prozesse und Systemprotokolle wurden ohne tiefe Prüfung nicht geprüft (Demo).</string>
     <string name="demo_device">Demo-Gerät, Android 14 (Patch 2024-09-05)</string>
     <string name="scan_demo_detail">Einstellungen und Systemeigenschaften …</string>
     <string name="cd_info_button">Über Spyhound</string>
@@ -162,14 +162,14 @@
     <string name="intro_page3_title">Deine Privatsphäre</string>
     <string name="intro_page3_body">Prüfungen bleiben auf dem Gerät. Kein Konto, keine Telemetrie. Internet nutzt die App nur, wenn du Spurenlisten nachlädst.</string>
     <string name="intro_page4_title">Drei Prüftiefen</string>
-    <string name="intro_page4_body">Basis startet sofort. Tiefer nutzt Shizuku — ohne Root, der Assistent in der App hilft beim Einrichten. Root ergänzt die stärksten Prüfungen, wenn dein Handy es erlaubt.</string>
+    <string name="intro_page4_body">Basis startet sofort. Die tiefe Prüfung richtest du einmal in der App ein – ohne PC, ohne Root, ohne Zusatz-App. Root ergänzt die stärksten Prüfungen, wenn dein Handy es erlaubt.</string>
     <string name="info_title">Über Spyhound</string>
     <string name="info_section_what">Was es macht</string>
     <string name="info_what_body">Spyhound durchsucht dein Handy nach Spuren bekannter Spyware und Stalkerware — abgeglichen mit veröffentlichten Indikatoren aus Forschungsgruppen sowie MVT- und ECHAP-Listen.</string>
     <string name="info_section_limits">Was es nicht tut</string>
     <string name="info_limits_body">Kein Dauer-Schutz. Nur bekannte Spuren. Ein klares Ergebnis gilt für die geprüften Bereiche — nicht jede Gefahr. Hol dir fachliche Hilfe, wenn du gezielte Überwachung vermutest.</string>
     <string name="info_section_depths">Prüftiefen</string>
-    <string name="info_depths_body">Basis: Apps, Gerät, optional SMS und Dateien. Tiefer (Shizuku): Prozesse und Systemprotokolle ohne Root. Root: dieselben Tiefendaten mit vollem Shell-Zugriff, wenn verfügbar.</string>
+    <string name="info_depths_body">Basis: Apps, Geräteeinstellungen, optional SMS und Dateien. Tief: zusätzlich Prozesse und Systemprotokolle – über WLAN-Debugging direkt auf dem Handy (oder Shizuku). Root: dieselben Daten mit vollem Zugriff, wenn verfügbar.</string>
     <string name="info_section_privacy">Datenschutz</string>
     <string name="info_privacy_body">Scans laufen offline. Keine Analytics, keine Werbung. Updates laden nur festgepinnte Dateien aus erlaubten Quellen; Hashes müssen passen.</string>
     <string name="info_section_sources">Quellen der Spuren</string>
@@ -203,9 +203,9 @@
     <string name="start_help_indicators">Veröffentlichte Domains, Apps und Dateien, an denen bekannte Spyware- und Stalkerware-Spuren erkannt werden.</string>
     <string name="start_help_dns">Beobachtet DNS solange aktiv und warnt bei Anfragen zu bekannten Indikator-Domains.</string>
     <string name="start_help_bugreport">Importiert eine Android-Fehlerbericht-ZIP für zusätzliche Offline-Prüfungen — kein Upload.</string>
-    <string name="start_help_access">Basis braucht nichts Extra; Shizuku und Root schalten schrittweise tiefere Prüfungen frei.</string>
+    <string name="start_help_access">Basis braucht nichts. Die tiefe Prüfung (ohne PC) und Root schalten schrittweise mehr frei.</string>
     <string name="start_card_depth">Prüftiefe</string>
-    <string name="start_depth_explain">Mehr Spuren mit tiefer Prüfung. Shizuku einmal einrichten — ohne Root.</string>
+    <string name="start_depth_explain">Mehr Spuren mit tiefer Prüfung. Einmal einrichten – ohne PC, ohne Root.</string>
     <string name="start_indicators_from_sources">Einträge aus %1$d von %2$d Quellen</string>
     <string name="start_update_error">Keine Verbindung – später erneut versuchen</string>
     <string name="start_dns_state_on">An</string>
@@ -343,4 +343,31 @@
     <string name="info_hint_legal">Impressum, Datenschutzerklärung und Haftungshinweis.</string>
     <string name="info_section_about">App &amp; Lizenz</string>
     <string name="info_hint_about">Version, Open-Source-Lizenz und Herkunft der Erkennungslogik.</string>
+
+    <!-- Eingebaute ADB-Verbindung (ohne PC, ohne Shizuku) -->
+    <string name="adb_notif_channel">Kopplung der tiefen Prüfung</string>
+    <string name="adb_notif_title">Kopplungscode eingeben</string>
+    <string name="adb_notif_text">Tippe in den Einstellungen für Drahtlos-Debugging auf „Gerät mit Kopplungscode koppeln“. Gib die sechs Ziffern dann hier ein.</string>
+    <string name="adb_notif_hint">6-stelliger Code</string>
+    <string name="adb_notif_action">Code eingeben</string>
+    <string name="adb_notif_pairing">Kopplung läuft …</string>
+    <string name="adb_notif_wrong">Das hat nicht geklappt. Prüfe die sechs Ziffern und versuche es noch einmal.</string>
+    <string name="adb_notif_lost">Spyhound hat den Faden verloren. Öffne Spyhound und starte die Einrichtung neu.</string>
+    <string name="adb_setup_button">Ohne PC einrichten</string>
+    <string name="gap_fix_restart_builtin_adb">Tiefe Prüfung wieder starten</string>
+    <string name="adb_setup_hint">Keine zweite App und kein Computer nötig. Spyhound koppelt sich mit dem WLAN-Debugging dieses Telefons. WLAN muss an sein.</string>
+    <string name="adb_state_dev_options">Schalte zuerst die Entwickleroptionen ein (Einstellungen → Über das Telefon → siebenmal auf die Build-Nummer tippen).</string>
+    <string name="adb_state_wireless">Schalte in den Entwickleroptionen „WLAN-Debugging“ ein.</string>
+    <string name="adb_state_waiting">Tippe auf „Gerät mit Kopplungscode koppeln“ und gib den Code in die Spyhound-Benachrichtigung ein.</string>
+    <string name="adb_state_pairing">Kopplung läuft …</string>
+    <string name="adb_state_paired">Gekoppelt. Verbinde …</string>
+    <string name="adb_state_connected">Verbunden. Die tiefere Prüfung ist bereit.</string>
+    <string name="adb_failed_unsupported">Dafür braucht es Android 11 oder neuer.</string>
+    <string name="adb_failed_codes">Zu viele falsche Eingaben. Starte neu.</string>
+    <string name="adb_failed_pairing">Das Telefon hat den Code nicht angenommen. Starte neu.</string>
+    <string name="adb_failed_connect">Die Verbindung hat nicht geklappt. Starte neu.</string>
+    <string name="adb_failed_timeout">Das hat zu lange gedauert. Starte neu.</string>
+    <string name="adb_failed_internal">In Spyhound ist etwas schiefgelaufen. Starte neu.</string>
+    <string name="guide_gap_builtin_adb_meaning">Die tiefere Prüfung war diesmal nicht verfügbar. Nach einem Neustart des Telefons ist das WLAN-Debugging ausgeschaltet. Das ist eine Lücke, kein Ergebnis.</string>
+    <string name="guide_gap_builtin_adb_steps">1. Schalte „WLAN-Debugging“ in den Entwickleroptionen wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
 </resources>

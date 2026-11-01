@@ -10,6 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Build-time only (libadb-android is not on Maven Central); nothing else is resolved from here.
+        maven("https://jitpack.io") {
+            content { includeGroupAndSubgroups("com.github.MuntashirAkon") }
+        }
     }
 }
 rootProject.name = "Spyhound"

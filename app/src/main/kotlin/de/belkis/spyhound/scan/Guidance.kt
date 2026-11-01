@@ -56,6 +56,7 @@ fun guidanceFor(gap: Gap): Guidance = when (gap.fix) {
     GapFix.PERMISSION_FILES -> guide("gap_permission_files", GuidanceAction.PERMISSION_FILES)
     GapFix.SHIZUKU -> guide("gap_shizuku", GuidanceAction.SETUP_DEEP_CHECK)
     GapFix.ROOT -> guide("gap_root", GuidanceAction.SETUP_DEEP_CHECK)
+    GapFix.RESTART_BUILTIN_ADB -> guide("gap_builtin_adb", GuidanceAction.SETUP_DEEP_CHECK)
     GapFix.UPDATE_INDICATORS -> guide("gap_update_indicators", GuidanceAction.UPDATE_INDICATORS)
     GapFix.NONE -> when (gap.kind) {
         GapKind.APP_FILES -> guide("gap_app_files", null)
