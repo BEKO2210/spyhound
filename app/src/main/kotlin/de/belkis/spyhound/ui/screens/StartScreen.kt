@@ -109,11 +109,13 @@ fun StartScreen(
     onRequestSms: () -> Unit,
     onRequestFiles: () -> Unit,
     onDnsToggle: (Boolean) -> Unit,
+    onWeeklyBackgroundToggle: (Boolean) -> Unit,
     onPickBugreport: () -> Unit,
     onDismissBanner: () -> Unit,
     onDemoReport: () -> Unit = {},
     onDeepCheckSetup: () -> Unit,
     onOpenInfo: () -> Unit,
+    onOpenPermissionAudit: () -> Unit = {},
     radarModifier: Modifier = Modifier,
 ) {
     var showBugreportSteps by remember { mutableStateOf(false) }
@@ -443,6 +445,12 @@ fun StartScreen(
                     },
                 )
             }
+            PermissionAuditEntryCard(onOpenPermissionAudit, Modifier.then(staggeredAppear(staggerIndex++)))
+            BackgroundWeeklyCard(
+                enabled = state.weeklyBackgroundEnabled,
+                onToggle = onWeeklyBackgroundToggle,
+                modifier = Modifier.then(staggeredAppear(staggerIndex++)),
+            )
             if (state.hardening.isNotEmpty()) HardeningCard(state.hardening, Modifier.then(staggeredAppear(staggerIndex++)))
             Spacer(Modifier.height(4.dp))
         }
@@ -476,7 +484,59 @@ fun StartScreen(
 }
 
 @Composable
+fun BackgroundWeeklyCard(enabled: Boolean, onToggle: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+    SpyCard(modifier) {
+        SectionHeader(
+            label = stringResource(R.string.start_card_background),
+            hint = stringResource(R.string.start_help_background),
+        )
+        val enabledLabel = stringResource(if (enabled) R.string.start_dns_state_on else R.string.start_dns_state_off)
+        val title = stringResource(R.string.start_background_weekly)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                title,
+                style = MaterialTheme.typography.labelLarge,
+                color = SpyColors.Ivory,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                enabledLabel,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (enabled) SpyColors.Clear else SpyColors.IvoryMuted,
+                modifier = Modifier.padding(end = 8.dp),
+            )
+            Switch(
+                checked = enabled,
+                onCheckedChange = onToggle,
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                    .semantics { contentDescription = "$title: $enabledLabel" },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = SpyColors.Ivory,
+                    checkedTrackColor = SpyColors.Clear,
+                    uncheckedThumbColor = SpyColors.IvoryMuted,
+                    uncheckedTrackColor = SpyColors.Border,
+                    checkedBorderColor = SpyColors.Border,
+                    uncheckedBorderColor = SpyColors.Border,
+                ),
+            )
+        }
+        Text(
+            stringResource(R.string.start_background_weekly_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = SpyColors.IvoryMuted,
+            maxLines = 3,
+            overflow = TextOverflow.Clip,
+        )
+    }
+}
+
+@Composable
 private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit) {
+    val locale = LocalConfiguration.current.locales[0]
     val stateLabel = stringResource(
         if (state.dnsRunning) R.string.start_dns_state_on else R.string.start_dns_state_off,
     )
@@ -525,7 +585,7 @@ private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit) {
     if (state.dnsHits.isNotEmpty()) {
         Spacer(Modifier.height(4.dp))
         Text(stringResource(R.string.t_066), style = MaterialTheme.typography.labelLarge)
-        val fmt = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+        val fmt = remember(locale) { DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale) }
         state.dnsHits.take(5).forEach { hit -> DnsHitLine(hit, fmt) }
     }
 }

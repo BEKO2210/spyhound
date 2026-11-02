@@ -38,6 +38,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.ui.screens.HardeningCard
+import de.belkis.spyhound.scan.AppRecord
+import de.belkis.spyhound.scan.PermissionAudit
+import de.belkis.spyhound.scan.AuditSnapshot
+import de.belkis.spyhound.scan.RightGroup
+import de.belkis.spyhound.ui.screens.AuditResult
+import de.belkis.spyhound.ui.screens.PermissionAuditScreen
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
@@ -92,7 +98,8 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         StartScreen(
             state = UiState(iocs = iocs()),
             onScan = {}, onUpdateIndicators = {}, onRequestRoot = {}, onRequestSms = {}, onRequestFiles = {},
-            onDnsToggle = {}, onPickBugreport = {}, onDismissBanner = {}, onDeepCheckSetup = {}, onOpenInfo = {},
+            onDnsToggle = {}, onWeeklyBackgroundToggle = {}, onPickBugreport = {}, onDismissBanner = {},
+            onDeepCheckSetup = {}, onOpenInfo = {},
         )
     }
 
@@ -159,5 +166,33 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     @Test
     fun info() = shot("info") {
         InfoScreen(onBack = {}, onReplayIntro = {})
+    }
+
+    private fun auditResult(): AuditResult {
+        val cam = "android.permission.CAMERA"
+        val mic = "android.permission.RECORD_AUDIO"
+        val apps = listOf(
+            AppRecord("com.example.chat", "Chat", grantedPermissions = setOf(cam, mic)),
+            AppRecord("org.example.scanner.documents.pro", "Dokumentenscanner Pro Premium Edition", grantedPermissions = setOf(cam)),
+            AppRecord("com.example.newcam", "Neue Kamera", grantedPermissions = setOf(cam, mic)),
+            AppRecord("com.google.android.GoogleCamera", "Camera", isSystem = true, grantedPermissions = setOf(cam)),
+            AppRecord("com.example.helper", "Helper", accessibility = true),
+        )
+        val before = AuditSnapshot(
+            1_793_000_000_000L,
+            mapOf(RightGroup.CAMERA to setOf("com.example.chat", "org.example.scanner.documents.pro", "com.google.android.GoogleCamera"),
+                RightGroup.MICROPHONE to setOf("com.example.chat")),
+        )
+        return AuditResult(PermissionAudit.evaluate(apps, "me", before), before.takenAt)
+    }
+
+    @Test
+    fun audit() = shot("audit") {
+        PermissionAuditScreen(auditResult(), onBack = {}, onAppInfo = {})
+    }
+
+    @Test
+    fun auditSystem() = shot("audit_system") {
+        PermissionAuditScreen(auditResult(), onBack = {}, onAppInfo = {}, initialShowSystem = true)
     }
 }

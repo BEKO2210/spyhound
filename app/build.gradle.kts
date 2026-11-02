@@ -68,6 +68,15 @@ android {
     }
 }
 
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    // Screenshot capture keeps large bitmaps in memory; 512m regularly crashes the worker.
+    maxHeapSize = "2048m"
+    // Keep one JVM fork for deterministic binary test result writing.
+    maxParallelForks = 1
+    // Isolates parameterized screenshot cases to avoid classloader leakage between methods.
+    forkEvery = 1
+}
+
 // Robolectric brings its own desktop Conscrypt; the Android build of it has no native library on the JVM.
 configurations.matching { it.name.endsWith("UnitTestRuntimeClasspath") }.configureEach {
     exclude(group = "org.conscrypt", module = "conscrypt-android")
@@ -90,6 +99,7 @@ dependencies {
     implementation(libs.shizuku.provider)
     implementation(libs.libadb.android)
     implementation(libs.conscrypt.android)
+    implementation(libs.work.runtime)
     debugImplementation(libs.compose.ui.tooling)
 
     testImplementation(libs.junit)
@@ -98,5 +108,6 @@ dependencies {
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
     testImplementation(libs.compose.ui.test.junit4)
+    testImplementation(libs.work.testing)
     debugImplementation(libs.compose.ui.test.manifest)
 }

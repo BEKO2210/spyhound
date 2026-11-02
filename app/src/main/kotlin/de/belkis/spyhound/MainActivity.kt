@@ -71,6 +71,7 @@ import de.belkis.spyhound.ui.navigation.rootTransitionPlan
 import de.belkis.spyhound.ui.screens.ResultScreen
 import de.belkis.spyhound.ui.screens.ScanScreen
 import de.belkis.spyhound.ui.screens.InfoScreen
+import de.belkis.spyhound.ui.screens.PermissionAuditRoute
 import de.belkis.spyhound.ui.screens.IntroScreen
 import de.belkis.spyhound.ui.screens.StartScreen
 import androidx.compose.ui.unit.dp
@@ -171,6 +172,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 var showInfo by remember { mutableStateOf(false) }
+                var showAudit by remember { mutableStateOf(false) }
                 val finishIntro = {
                     IntroPreferences.markCompleted(context)
                     showIntro = false
@@ -187,6 +189,7 @@ class MainActivity : AppCompatActivity() {
                                 state = state,
                                 onOpenDeepCheckSetup = { showDeepCheckSetup = true },
                                 onOpenInfo = { showInfo = true },
+                                onOpenPermissionAudit = { showAudit = true },
                             )
                         }
                     }
@@ -208,6 +211,11 @@ class MainActivity : AppCompatActivity() {
                                 },
                                 modifier = Modifier.fillMaxSize(),
                             )
+                        }
+                    }
+                    SpyhoundOverlay(visible = showAudit && !showDeepCheckSetup, onBack = { showAudit = false }) {
+                        SpyhoundScaffold {
+                            PermissionAuditRoute(onBack = { showAudit = false }, modifier = Modifier.fillMaxSize())
                         }
                     }
                     SpyhoundOverlay(visible = showDeepCheckSetup, onBack = null) {
@@ -232,12 +240,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
         dispatchBugreportIntent(intent)
+        dispatchBackgroundIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         dispatchBugreportIntent(intent)
+        dispatchBackgroundIntent(intent)
     }
 
     override fun onResume() {
@@ -259,12 +269,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun dispatchBackgroundIntent(intent: Intent?) {
+        if (intent?.action == ACTION_OPEN_BACKGROUND_RESULT) vm.openBackgroundReportIfAvailable()
+    }
+
     @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
     private fun SpyhoundNav(
         state: UiState,
         onOpenDeepCheckSetup: () -> Unit,
         onOpenInfo: () -> Unit,
+        onOpenPermissionAudit: () -> Unit,
     ) {
         val motionEnabled = LocalMotionEnabled.current
         val shift = with(LocalDensity.current) { 16.dp.roundToPx() }
@@ -336,6 +351,7 @@ class MainActivity : AppCompatActivity() {
                         },
                         onRequestFiles = { openAllFilesAccess() },
                         onDnsToggle = { on -> toggleDns(on) },
+                        onWeeklyBackgroundToggle = { enabled -> vm.setWeeklyBackgroundEnabled(enabled) },
                         onPickBugreport = { openBugreportPicker() },
                         onDismissBanner = { vm.clearBanner() },
                         onDemoReport = {
@@ -343,6 +359,7 @@ class MainActivity : AppCompatActivity() {
                         },
                         onDeepCheckSetup = onOpenDeepCheckSetup,
                         onOpenInfo = onOpenInfo,
+                        onOpenPermissionAudit = onOpenPermissionAudit,
                         radarModifier = sharedRadar,
                     )
                 }
@@ -472,6 +489,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val ACTION_OPEN_BACKGROUND_RESULT = "de.belkis.spyhound.action.OPEN_BACKGROUND_RESULT"
         const val EXTRA_SCAN_SCREENSHOT = "scan_screenshot"
         const val EXTRA_INTRO_SCREENSHOT = "intro_screenshot"
         const val EXTRA_INTRO_PAGE = "intro_page"

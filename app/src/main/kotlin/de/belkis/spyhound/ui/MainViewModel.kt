@@ -12,6 +12,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import de.belkis.spyhound.bugreport.BugreportImport
 import de.belkis.spyhound.bugreport.analyzeBugreport
+import de.belkis.spyhound.background.BackgroundReportStore
+import de.belkis.spyhound.background.BackgroundScanPreferences
+import de.belkis.spyhound.background.BackgroundScanScheduler
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.ioc.IocStore
@@ -75,6 +78,7 @@ data class UiState(
     val adbPairingPort: Int? = null,
     /** Empty until the first read finishes; the start card stays hidden meanwhile. */
     val hardening: List<HardeningItem> = emptyList(),
+    val weeklyBackgroundEnabled: Boolean = false,
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -99,6 +103,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         reloadIocs()
         refreshPermissions()
         refreshDnsGuard()
+        refreshBackgroundWeeklySetting()
         scheduleShellRestore()
         viewModelScope.launch { DnsGuard.running.collect { refreshDnsGuard() } }
     }
@@ -140,7 +145,26 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     /** Called on cold start and from [MainActivity.onResume]. */
     fun onAppVisible() {
         refreshPermissions()
+        refreshBackgroundWeeklySetting()
         scheduleShellRestore()
+    }
+
+    fun setWeeklyBackgroundEnabled(enabled: Boolean) {
+        val ctx = getApplication<Application>()
+        BackgroundScanPreferences.setWeeklyEnabled(ctx, enabled)
+        BackgroundScanScheduler.setEnabled(ctx, enabled)
+        _state.update { it.copy(weeklyBackgroundEnabled = enabled) }
+    }
+
+    fun openBackgroundReportIfAvailable() {
+        val report = BackgroundReportStore.consume(getApplication()) ?: return
+        _state.update {
+            it.copy(
+                report = report,
+                progress = null,
+                lastRadar = RadarMath.fromReport(report),
+            )
+        }
     }
 
     fun refreshPermissions() {
@@ -169,6 +193,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             }
             _state.update { it.copy(hardening = items) }
         }
+    }
+
+    private fun refreshBackgroundWeeklySetting() {
+        val ctx = getApplication<Application>()
+        val enabled = BackgroundScanPreferences.isWeeklyEnabled(ctx)
+        if (enabled) BackgroundScanScheduler.setEnabled(ctx, true)
+        _state.update { it.copy(weeklyBackgroundEnabled = enabled) }
     }
 
     fun refreshDnsGuard() {

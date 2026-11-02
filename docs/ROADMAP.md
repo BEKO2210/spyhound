@@ -145,7 +145,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] Antivirus offline: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
       YARA-Regeln prüfen; Lizenz jeder Quelle prüfen. Abnahme: EICAR-ähnliche Test-APK wird erkannt, 0 Falschtreffer
       auf Pixel.
-- [ ] Rechte-Prüfer: welche App darf was (Kamera, Mikro, Standort, Bedienungshilfe), mit Verlauf über Zeit.
+- [x] Rechte-Prüfer „Wer darf was“: 11 Rechte-Gruppen, Systemapps ausblendbar, Verlauf lokal, „neu seit letzter Prüfung“.
+      Beleg: PermissionAuditTest, Screenshots audit_*. Offen: Abnahme auf dem Pixel.
 - [ ] Netzwerk-Wächter ausbauen (DNS-Wächter → auch Tracker/Phishing-Listen, optional blockieren).
 - [x] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (491530d) (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [ ] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund.

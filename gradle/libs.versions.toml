@@ -13,6 +13,7 @@ junit = "4.13.2"
 appcompat = "1.7.1"
 roborazzi = "1.77.0"
 robolectric = "4.17"
+work = "2.10.5"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -39,6 +40,8 @@ roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

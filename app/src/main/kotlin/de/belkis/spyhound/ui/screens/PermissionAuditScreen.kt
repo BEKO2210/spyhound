@@ -1,0 +1,352 @@
+package de.belkis.spyhound.ui.screens
+
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import de.belkis.spyhound.R
+import de.belkis.spyhound.collect.AppCollector
+import de.belkis.spyhound.collect.PermissionAuditStore
+import de.belkis.spyhound.scan.AuditApp
+import de.belkis.spyhound.scan.AuditGroup
+import de.belkis.spyhound.scan.PermissionAudit
+import de.belkis.spyhound.scan.RightGroup
+import de.belkis.spyhound.ui.components.CardRowIconBadge
+import de.belkis.spyhound.ui.components.ScrollEdge
+import de.belkis.spyhound.ui.components.SectionHeader
+import de.belkis.spyhound.ui.components.SpyCard
+import de.belkis.spyhound.ui.components.SpyNavigateBack
+import de.belkis.spyhound.ui.components.TextActionLink
+import de.belkis.spyhound.ui.design.SpyColors
+import de.belkis.spyhound.ui.design.SpySpacing
+import de.belkis.spyhound.ui.design.staggeredAppear
+import de.belkis.spyhound.ui.formatCount
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.text.DateFormat
+import java.util.Date
+
+/** Result of one audit run: the groups plus when the previous check was taken (null on the first run). */
+data class AuditResult(val groups: List<AuditGroup>, val previousAt: Long?)
+
+/** Reads the apps, compares with the last stored check, stores this check, and shows the screen. */
+@Composable
+fun PermissionAuditRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val result by produceState<AuditResult?>(null, context) {
+        value = withContext(Dispatchers.IO) { runAudit(context) }
+    }
+    PermissionAuditScreen(
+        result = result,
+        onBack = onBack,
+        onAppInfo = { openAppInfo(context, it) },
+        modifier = modifier,
+    )
+}
+
+private fun runAudit(context: Context): AuditResult {
+    val store = PermissionAuditStore(context)
+    val history = store.load()
+    val previous = history.lastOrNull()
+    val apps = AppCollector(context).collect { _, _, _ -> }
+    val groups = PermissionAudit.evaluate(apps, context.packageName, previous)
+    store.save(PermissionAudit.appendSnapshot(history, PermissionAudit.snapshot(groups, System.currentTimeMillis())))
+    return AuditResult(groups, previous?.takenAt)
+}
+
+private fun openAppInfo(context: Context, packageName: String) {
+    runCatching {
+        context.startActivity(
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+    }
+}
+
+@Composable
+fun PermissionAuditScreen(
+    result: AuditResult?,
+    onBack: () -> Unit,
+    onAppInfo: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    initialShowSystem: Boolean = false,
+) {
+    val locale = LocalConfiguration.current.locales[0]
+    val scroll = rememberScrollState()
+    val scrolled by remember { derivedStateOf { scroll.value > 0 } }
+    var showSystem by remember { mutableStateOf(initialShowSystem) }
+    Column(modifier.fillMaxSize()) {
+        SpyNavigateBack(onClick = onBack)
+        Text(
+            stringResource(R.string.audit_title),
+            style = MaterialTheme.typography.headlineLarge,
+            color = SpyColors.Ivory,
+            modifier = Modifier.padding(bottom = SpySpacing.Unit * 2),
+        )
+        ScrollEdge(scrolled = scrolled)
+        Column(
+            Modifier.weight(1f).fillMaxWidth().verticalScroll(scroll),
+            verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 4),
+        ) {
+            if (result == null) {
+                Text(stringResource(R.string.audit_loading), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+                return@Column
+            }
+            val newCount = PermissionAudit.totalNew(result.groups, showSystem)
+            Column(Modifier.fillMaxWidth().then(staggeredAppear(0))) {
+                SectionHeader(label = stringResource(R.string.audit_title), hint = stringResource(R.string.audit_hint))
+                val summary = when {
+                    result.previousAt == null -> stringResource(R.string.audit_first)
+                    newCount > 0 -> stringResource(R.string.audit_new_total, formatCount(newCount, locale))
+                    else -> stringResource(R.string.audit_none_new)
+                }
+                Text(
+                    summary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (newCount > 0 && result.previousAt != null) SpyColors.Amber else SpyColors.IvoryMuted,
+                )
+                result.previousAt?.let {
+                    val stamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale).format(Date(it))
+                    Text(
+                        stringResource(R.string.audit_since, stamp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SpyColors.IvoryMuted,
+                    )
+                }
+                TextActionLink(
+                    text = stringResource(if (showSystem) R.string.audit_system_hide else R.string.audit_system_show),
+                    onClick = { showSystem = !showSystem },
+                )
+            }
+            result.groups.forEachIndexed { i, group ->
+                GroupCard(group, showSystem, onAppInfo, Modifier.then(staggeredAppear(i + 1)))
+            }
+            Spacer(Modifier.height(SpySpacing.Unit * 4))
+        }
+    }
+}
+
+private fun RightGroup.iconRes() = when (this) {
+    RightGroup.CAMERA -> R.drawable.ic_right_camera
+    RightGroup.MICROPHONE -> R.drawable.ic_right_microphone
+    RightGroup.FINE_LOCATION -> R.drawable.ic_right_fine_location
+    RightGroup.BACKGROUND_LOCATION -> R.drawable.ic_right_background_location
+    RightGroup.SMS -> R.drawable.ic_right_sms
+    RightGroup.CALL_LOG -> R.drawable.ic_right_call_log
+    RightGroup.CONTACTS -> R.drawable.ic_right_contacts
+    RightGroup.ACCESSIBILITY -> R.drawable.ic_right_accessibility
+    RightGroup.NOTIFICATION_ACCESS -> R.drawable.ic_right_notification_access
+    RightGroup.DEVICE_ADMIN -> R.drawable.ic_right_device_admin
+    RightGroup.OVERLAY -> R.drawable.ic_right_overlay
+}
+
+private fun RightGroup.titleRes() = when (this) {
+    RightGroup.CAMERA -> R.string.audit_g_camera
+    RightGroup.MICROPHONE -> R.string.audit_g_microphone
+    RightGroup.FINE_LOCATION -> R.string.audit_g_fine_location
+    RightGroup.BACKGROUND_LOCATION -> R.string.audit_g_background_location
+    RightGroup.SMS -> R.string.audit_g_sms
+    RightGroup.CALL_LOG -> R.string.audit_g_call_log
+    RightGroup.CONTACTS -> R.string.audit_g_contacts
+    RightGroup.ACCESSIBILITY -> R.string.audit_g_accessibility
+    RightGroup.NOTIFICATION_ACCESS -> R.string.audit_g_notification_access
+    RightGroup.DEVICE_ADMIN -> R.string.audit_g_device_admin
+    RightGroup.OVERLAY -> R.string.audit_g_overlay
+}
+
+private fun RightGroup.bodyRes() = when (this) {
+    RightGroup.CAMERA -> R.string.audit_g_camera_d
+    RightGroup.MICROPHONE -> R.string.audit_g_microphone_d
+    RightGroup.FINE_LOCATION -> R.string.audit_g_fine_location_d
+    RightGroup.BACKGROUND_LOCATION -> R.string.audit_g_background_location_d
+    RightGroup.SMS -> R.string.audit_g_sms_d
+    RightGroup.CALL_LOG -> R.string.audit_g_call_log_d
+    RightGroup.CONTACTS -> R.string.audit_g_contacts_d
+    RightGroup.ACCESSIBILITY -> R.string.audit_g_accessibility_d
+    RightGroup.NOTIFICATION_ACCESS -> R.string.audit_g_notification_access_d
+    RightGroup.DEVICE_ADMIN -> R.string.audit_g_device_admin_d
+    RightGroup.OVERLAY -> R.string.audit_g_overlay_d
+}
+
+@Composable
+private fun GroupCard(group: AuditGroup, showSystem: Boolean, onAppInfo: (String) -> Unit, modifier: Modifier = Modifier) {
+    val locale = LocalConfiguration.current.locales[0]
+    val visible = if (showSystem) group.apps else group.userApps
+    val users = group.userApps
+    val system = if (showSystem) group.systemApps else emptyList()
+    val newCount = visible.count { it.isNew }
+    SpyCard(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CardRowIconBadge(iconRes = group.group.iconRes(), active = false)
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
+                Text(stringResource(group.group.titleRes()), style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
+                Text(stringResource(group.group.bodyRes()), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    if (visible.size == 1) stringResource(R.string.audit_count_one)
+                    else stringResource(R.string.audit_count, formatCount(visible.size, locale)),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = SpyColors.Ivory,
+                )
+                if (newCount > 0) {
+                    Text(
+                        stringResource(R.string.audit_new_count, formatCount(newCount, locale)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SpyColors.Amber,
+                    )
+                }
+            }
+        }
+        if (visible.isEmpty()) {
+            Text(stringResource(R.string.audit_none), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Clear)
+        }
+        users.forEach { app ->
+            HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            AppRow(app, onAppInfo)
+        }
+        if (system.isNotEmpty()) {
+            HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            Text(
+                stringResource(R.string.audit_system_label).uppercase(),
+                style = MaterialTheme.typography.labelLarge.copy(fontSize = 12.sp),
+                color = SpyColors.IvoryMuted,
+            )
+            system.forEach { app ->
+                HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+                AppRow(app, onAppInfo)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit) {
+    val infoLabel = stringResource(R.string.audit_app_info)
+    val infoDesc = stringResource(R.string.audit_app_info_for, app.label)
+    val newDesc = stringResource(R.string.audit_new_desc, app.label)
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 48.dp)
+            .semantics { if (app.isNew) contentDescription = newDesc },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f).widthIn(min = 0.dp).padding(end = 8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    app.label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = SpyColors.Ivory,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (app.isNew) NewBadge()
+            }
+            Text(
+                app.packageName,
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
+                color = SpyColors.IvoryMuted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        Text(
+            infoLabel,
+            style = MaterialTheme.typography.labelLarge,
+            color = SpyColors.Amber,
+            maxLines = 1,
+            modifier = Modifier
+                .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { onAppInfo(app.packageName) },
+                )
+                .semantics { contentDescription = infoDesc }
+                .padding(vertical = 14.dp),
+        )
+    }
+}
+
+@Composable
+private fun NewBadge() {
+    val shape = RoundedCornerShape(50)
+    Box(Modifier.border(1.dp, SpyColors.Amber, shape).padding(horizontal = 8.dp, vertical = 2.dp)) {
+        Text(
+            stringResource(R.string.audit_new_badge),
+            style = MaterialTheme.typography.labelLarge.copy(fontSize = 12.sp),
+            color = SpyColors.Amber,
+            maxLines = 1,
+        )
+    }
+}
+
+/** Start-screen card that opens the audit. */
+@Composable
+fun PermissionAuditEntryCard(onOpen: () -> Unit, modifier: Modifier = Modifier) {
+    val title = stringResource(R.string.audit_entry_title)
+    SpyCard(
+        modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onOpen,
+            )
+            .semantics { contentDescription = title },
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CardRowIconBadge(iconRes = R.drawable.ic_right_audit, active = false)
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
+                Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
+                Text(stringResource(R.string.audit_entry_body), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+            }
+            Text(
+                stringResource(R.string.audit_entry_open),
+                style = MaterialTheme.typography.labelLarge,
+                color = SpyColors.Amber,
+                maxLines = 1,
+            )
+        }
+    }
+}
