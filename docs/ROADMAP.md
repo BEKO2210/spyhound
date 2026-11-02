@@ -25,7 +25,9 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       Serienaufnahmen ohne Überlagerung, verifyRoborazzi grün, 0 Abstürze): Beim Wechsel überlagern sich alter und neuer Untertitel sichtbar („Checking file fingerprints…“
       über „File list…“, Screenshot Pixel 11, 17:38). Abnahme: Überblendung ohne lesbare Überlagerung (alter Text erst
       aus, dann neuer ein, ≤ 200 ms), Screenshot-Test unverändert.
-- [ ] Positivliste für weitere Geräte (Pixel 9, Samsung) ergänzen – nur mit Gerät, nur Systempartitionen.
+- [x] Positivliste um Pixel 9 (Android 17, CP3A.261005.005) ergänzt: +1435 → 2885 Hashes. Beleg: 0 Überschneidung mit
+      allen 44 Quellen (3675 Hashes mitgeliefert + 7 aus 14 Download-Quellen, am gepinnten Commit geladen), Tests grün.
+- [ ] Positivliste für Samsung (Galaxy) ergänzen – nur mit Gerät, nur Systempartitionen. Abnahme wie oben.
 
 ## Release 0.3.2 (2026-11-02) – Virenschutz Schritt 2: 161 Malware-Hashes (ESET 14 Kampagnen + Meta), Positivliste, 0 Falschtreffer auf 703 APKs (Pixel 9), Datei-Fund offline belegt (Emulator, Flugmodus). Offen: abuse.ch/YARAify anfragen, Positivliste um echte Systembibliotheken erweitern.
 
