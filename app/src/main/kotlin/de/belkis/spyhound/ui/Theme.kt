@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -177,7 +178,10 @@ fun rememberMotionEnabled(): Boolean {
 @Composable
 fun SpyhoundTheme(content: @Composable () -> Unit) {
     val motion = rememberMotionEnabled()
-    CompositionLocalProvider(LocalMotionEnabled provides motion) {
+    CompositionLocalProvider(
+        LocalMotionEnabled provides motion,
+        LocalMinimumInteractiveComponentSize provides 48.dp,
+    ) {
         MaterialTheme(
             colorScheme = SpyColorScheme,
             typography = SpyTypography,

@@ -18,6 +18,7 @@ import de.belkis.spyhound.scan.MessageAnalyzer
 import de.belkis.spyhound.scan.ShellAnalyzer
 import de.belkis.spyhound.scan.TextsDe
 import de.belkis.spyhound.scan.TextsEn
+import de.belkis.spyhound.scan.TimeRange
 
 /** Fixed demo report for debug UI screenshots (no real device data). */
 object DemoReport {
@@ -73,6 +74,11 @@ object DemoReport {
             indicatorSourcesMissing = 3,
             checks = listOf(apps, device, sms, files, deep),
             device = text(R.string.demo_device),
+            oldestEvidence = mapOf(
+                TimeRange.LOGS to now - 18 * 60 * 60 * 1000L,
+                TimeRange.FILES to now - 14 * 24 * 60 * 60 * 1000L,
+                TimeRange.APPS to now - 180 * 24 * 60 * 60 * 1000L,
+            ),
         )
     }
 }

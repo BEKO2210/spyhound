@@ -17,7 +17,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Nachtrunde 3 (2026-11-02, ab 01:50)
 - [ ] Barrierefreiheit-Durchgang (s. u.). Abnahme: TalkBack-Labels aller Bedienelemente, Tippflächen ≥ 48 dp, Kontrast AA
       (Liste mit Messwerten), Screenshots unverändert oder bewusst neu aufgenommen.
-- [ ] Geräte-Härtung „Handy absichern“: Checkliste mit Direkt-Knöpfen (Bildschirmsperre, USB-/WLAN-Debugging aus wenn
+- [x] Geräte-Härtung „Handy absichern“ (Gerätetest offen): Checkliste mit Direkt-Knöpfen (Bildschirmsperre, USB-/WLAN-Debugging aus wenn
       nicht genutzt, Apps mit Erlaubnis „unbekannte Apps installieren“, Sicherheitspatch-Alter, Entwickleroptionen).
       Abnahme: reine Bewertungsfunktion mit Tests, Karte auf dem Start, DE/EN, Screenshot-Test.
 - [ ] Zeitreichweite (Stufe 3): wie weit reichen SMS/Logs/Dateien zurück; im Ergebnis ehrlich anzeigen. Abnahme: reine

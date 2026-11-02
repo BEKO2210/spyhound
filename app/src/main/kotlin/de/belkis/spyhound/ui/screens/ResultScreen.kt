@@ -72,6 +72,7 @@ import de.belkis.spyhound.scan.Guidance
 import de.belkis.spyhound.scan.GuidanceAction
 import de.belkis.spyhound.scan.Lead
 import de.belkis.spyhound.scan.Report
+import de.belkis.spyhound.scan.TimeRange
 import de.belkis.spyhound.scan.Verdict
 import de.belkis.spyhound.scan.guidanceFor
 import de.belkis.spyhound.ui.SpyColors
@@ -204,6 +205,20 @@ private fun ResultSummary(
                 action = if (report.indicatorSourcesMissing == 0) null else ({ onGapFix(GapFix.UPDATE_INDICATORS) }),
             ),
         ))
+        // The app language, not the system default: German UI must get German lines.
+        val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+        val range = remember(report.oldestEvidence, report.finishedAt, locale) {
+            TimeRange.evaluate(report.oldestEvidence, report.finishedAt, locale)
+        }
+        if (range.hasEvidence) {
+            SpySurface(Modifier.fillMaxWidth().padding(top = 8.dp), raised = true) {
+                Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(R.string.result_time_range), style = SpyTypographyExtras.sectionLabel)
+                    range.sources.forEach { Text(it.text, style = MaterialTheme.typography.bodySmall, color = SpyColors.IvoryMuted) }
+                    if (range.warning) Text(stringResource(R.string.result_time_range_warning), style = MaterialTheme.typography.bodySmall, color = SpyColors.Amber)
+                }
+            }
+        }
         }
     }
 }

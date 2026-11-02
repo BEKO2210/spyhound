@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.R
 import de.belkis.spyhound.ui.SpyColors
@@ -57,7 +58,9 @@ fun SectionHintButton(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val label = stringResource(R.string.section_hint_open)
+    val openLabel = stringResource(R.string.section_hint_open)
+    val closeLabel = stringResource(R.string.section_hint_close)
+    val label = if (expanded) closeLabel else openLabel
     // 48 dp touch target, 28 dp visible circle: the circle must never reach past the header row.
     Box(
         modifier = modifier
@@ -67,7 +70,10 @@ fun SectionHintButton(
                 indication = null,
                 onClick = onToggle,
             )
-            .semantics { contentDescription = label },
+            .semantics {
+                contentDescription = label
+                stateDescription = label
+            },
         contentAlignment = Alignment.Center,
     ) {
         Surface(

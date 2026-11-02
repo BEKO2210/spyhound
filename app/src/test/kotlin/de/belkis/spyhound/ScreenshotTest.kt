@@ -30,6 +30,14 @@ import de.belkis.spyhound.ui.screens.InfoScreen
 import de.belkis.spyhound.ui.screens.ResultScreen
 import de.belkis.spyhound.ui.screens.ScanScreen
 import de.belkis.spyhound.ui.screens.StartScreen
+import de.belkis.spyhound.scan.HardeningInput
+import de.belkis.spyhound.scan.evaluateHardening
+import java.time.LocalDate
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import de.belkis.spyhound.ui.screens.HardeningCard
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
@@ -87,6 +95,19 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             onDnsToggle = {}, onPickBugreport = {}, onDismissBanner = {}, onDeepCheckSetup = {}, onOpenInfo = {},
         )
     }
+
+    @Test
+    fun hardening() = shot("hardening") {
+        Box(Modifier.padding(20.dp)) { HardeningCard(sampleHardening()) }
+    }
+
+    private fun sampleHardening() = evaluateHardening(
+        HardeningInput(
+            screenLockSet = true, usbDebuggingOn = false, wifiDebuggingOn = true, developerOptionsOn = true,
+            securityPatch = LocalDate.of(2026, 11, 2).minusDays(120), unknownInstallerApps = listOf("Files", "Store"),
+        ),
+        LocalDate.of(2026, 11, 2),
+    )
 
     @Test
     fun scan() = shot("scan") {

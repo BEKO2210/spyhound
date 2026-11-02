@@ -52,8 +52,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -186,26 +188,34 @@ fun TextActionLink(
             textDecoration = TextDecoration.Underline,
         ),
         modifier = modifier
-            .defaultMinSize(minHeight = 48.dp)
+            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onClick,
+                role = Role.Button,
             )
+            .semantics { contentDescription = text }
             .padding(vertical = 8.dp),
     )
 }
 
 @Composable
 fun WhyLink(expanded: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
+    val stateLabel = stringResource(if (expanded) R.string.result_collapse else R.string.result_expand)
+    val label = stringResource(R.string.t_001)
     Row(
         modifier = modifier
-            .defaultMinSize(minHeight = 48.dp)
-            .clickable(onClick = onToggle)
+            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+            .clickable(onClick = onToggle, role = Role.Button)
+            .semantics {
+                contentDescription = "$label. $stateLabel"
+                stateDescription = stateLabel
+            }
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(stringResource(R.string.t_001), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
         Icon(
             Icons.Default.ExpandMore,
             contentDescription = null,
@@ -227,16 +237,23 @@ fun CollapsibleSection(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     var open by remember { mutableStateOf(initiallyExpanded) }
+    val stateLabel = stringResource(if (open) R.string.result_collapse else R.string.result_expand)
+    val headerLabel = if (count != null) stringResource(R.string.section_count, title, count) else title
+    val headerCd = "$headerLabel. $stateLabel"
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .animateContentSize(tween(220))
-            .clickable { open = !open },
+            .animateContentSize(tween(220)),
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 48.dp)
+                .clickable(role = Role.Button) { open = !open }
+                .semantics {
+                    contentDescription = headerCd
+                    stateDescription = stateLabel
+                }
                 .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -442,10 +459,19 @@ fun AccessLevelBar(
 
 @Composable
 fun ScanStepRow(label: String, done: Boolean, active: Boolean) {
+    val description = stringResource(
+        when {
+            done -> R.string.scan_step_done
+            active -> R.string.scan_step_active
+            else -> R.string.scan_step_pending
+        },
+        label,
+    )
     Row(
         Modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = 44.dp)
+            .defaultMinSize(minHeight = 48.dp)
+            .semantics { contentDescription = description }
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),

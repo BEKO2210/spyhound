@@ -36,6 +36,7 @@ class ScanEngine(
         val started = System.currentTimeMillis()
         val set = iocs.set
         val checks = ArrayList<CheckResult>()
+        val oldestEvidence = linkedMapOf<String, Long>()
         val tracker = RadarTracker(deepLocked = shell == null)
         val ownPackage = context.packageName
 
@@ -51,6 +52,7 @@ class ScanEngine(
             emit("Apps", label, 0.45f * done / total.coerceAtLeast(1), RadarSector.APPS)
         }
         val appCheck = AppAnalyzer.analyze(apps, set, ownPackage)
+        apps.map { it.firstInstall }.filter { it > 0L }.minOrNull()?.let { oldestEvidence[TimeRange.APPS] = it }
         checks += appCheck
         tracker.replaceSector(RadarSector.APPS, RadarMath.appStatuses(apps, appCheck, ownPackage))
         emit("Apps", "${appCheck.examined} Apps ausgewertet", 0.45f, RadarSector.APPS)
@@ -68,6 +70,7 @@ class ScanEngine(
 
         emit("SMS", "Links in Nachrichten …", 0.5f, RadarSector.SMS)
         val messages = SmsCollector(context).collect()
+        messages?.mapNotNull { it.date }?.filter { it > 0L }?.minOrNull()?.let { oldestEvidence[TimeRange.SMS] = it }
         val smsCheck = MessageAnalyzer.analyze(messages, set)
         checks += smsCheck
         if (messages != null) {
@@ -86,15 +89,15 @@ class ScanEngine(
             reconnect = { shell.reconnect() },
         ) != ProbeOutcome.DEAD
         if (shell != null && shellAlive) {
-            checks += shellChecks(shell, apps.map { it.packageName }.toSet(), tracker, ::emit)
+            checks += shellChecks(shell, apps.map { it.packageName }.toSet(), tracker, ::emit, oldestEvidence)
         } else if (shell != null) {
-            checks += storageCheck(tracker, ::emit)
+            checks += storageCheck(tracker, ::emit, oldestEvidence)
             checks += CheckResult("Tiefenprüfung").apply {
                 if (shell.isBuiltinAdb) gap(BUILTIN_ADB_RESTART, GapFix.RESTART_BUILTIN_ADB)
                 else gap(SHELL_DEAD, if (shell.level == AccessLevel.ROOT) GapFix.ROOT else GapFix.SHIZUKU)
             }
         } else {
-            checks += storageCheck(tracker, ::emit)
+            checks += storageCheck(tracker, ::emit, oldestEvidence)
             checks += CheckResult("Tiefenprüfung").apply {
                 if (builtinAdbPaired) gap(BUILTIN_ADB_RESTART, GapFix.RESTART_BUILTIN_ADB)
                 else gap(
@@ -124,12 +127,14 @@ class ScanEngine(
             indicatorSourcesMissing = iocs.status.missing.size + iocs.status.corrupt.size,
             checks = checks,
             device = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE} (Patch ${Build.VERSION.SECURITY_PATCH})",
+            oldestEvidence = oldestEvidence,
         )
     }
 
     private fun storageCheck(
         tracker: RadarTracker,
         emit: (String, String, Float, RadarSector) -> Unit,
+        oldestEvidence: MutableMap<String, Long>,
     ): List<CheckResult> {
         val storage = StorageCollector()
         if (!storage.canRead()) {
@@ -147,6 +152,8 @@ class ScanEngine(
             tracker.appendClean(RadarSector.FILES)
             emit("Dateien", it, 0.55f + 0.15f * hashed.coerceAtMost(500) / 500f, RadarSector.FILES)
         }
+        res.listing.lineSequence().mapNotNull { path -> runCatching { java.io.File(path).lastModified() }.getOrNull() }
+            .filter { it > 0L }.minOrNull()?.let { oldestEvidence[TimeRange.FILES] = it }
         val files = ShellAnalyzer.files(res.listing, iocs.set)
         val hashes = ShellAnalyzer.hashes(res.hashes, iocs.set)
         if (res.skippedLarge > 0) hashes.gap("${res.skippedLarge} Datei(en) über 120 MB wurden nicht mit den Fingerabdrücken verglichen.", kind = GapKind.LARGE_FILES)
@@ -162,6 +169,7 @@ class ScanEngine(
         installed: Set<String>,
         tracker: RadarTracker,
         emit: (String, String, Float, RadarSector) -> Unit,
+        oldestEvidence: MutableMap<String, Long>,
     ): List<CheckResult> {
         val out = ArrayList<CheckResult>()
         val root = shell.level == AccessLevel.ROOT
@@ -213,14 +221,19 @@ class ScanEngine(
         tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(packages))
 
         val logCommands = LOG_COMMANDS + if (root) ROOT_LOG_COMMANDS else emptyList()
+        var oldestLog: Long? = null
         val logSources = logCommands.mapIndexed { i, (label, cmd) ->
             label to ShellAnalyzer.LineSource { onLine ->
                 val fraction = 0.72f + 0.17f * i / logCommands.size.coerceAtLeast(1)
-                LogSource.read(shell, label, cmd, onLine, onProgress = { detail -> emit("Systemprotokolle", detail, fraction, RadarSector.DEEP) })
+                LogSource.read(shell, label, cmd, { line ->
+                    if (label == "logcat") TimeRange.logcatTimestamp(line, System.currentTimeMillis())?.let { t -> oldestLog = minOf(oldestLog ?: t, t) }
+                    onLine(line)
+                }, onProgress = { detail -> emit("Systemprotokolle", detail, fraction, RadarSector.DEEP) })
             }
         }
         val logs = ShellAnalyzer.logs(logSources, iocs.set, installed)
         out += logs
+        oldestLog?.let { oldestEvidence[TimeRange.LOGS] = it }
         tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(logs))
 
         if (!root) {

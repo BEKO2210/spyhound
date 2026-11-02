@@ -17,9 +17,12 @@ import de.belkis.spyhound.ui.SpyColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import de.belkis.spyhound.R
 
 @Composable
@@ -59,18 +62,22 @@ fun LanguageToggle(modifier: Modifier = Modifier) {
     val chosen = AppLanguage.selected(context).substringBefore(',').substringBefore('-')
     val effective = chosen.ifEmpty { context.resources.configuration.locales[0].language }
     val isGerman = effective == "de"
+    val currentName = stringResource(if (isGerman) R.string.language_german else R.string.language_english)
+    val toggleCd = stringResource(R.string.cd_language_toggle, currentName)
     androidx.compose.foundation.layout.Row(
         modifier = modifier
+            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
             .height(48.dp)
             .clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
-            .clickable(onClickLabel = stringResource(R.string.language_label, if (isGerman) "English" else "Deutsch")) {
+            .clickable(onClickLabel = toggleCd) {
                 AppLanguage.select(context, if (isGerman) "en" else "de")
             }
+            .semantics(mergeDescendants = true) { contentDescription = toggleCd }
             .padding(horizontal = 10.dp),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
     ) {
         Text("DE", style = MaterialTheme.typography.labelLarge, color = if (isGerman) SpyColors.Amber else SpyColors.IvoryMuted)
-        Text("  |  ", style = MaterialTheme.typography.labelLarge, color = SpyColors.IvoryMuted.copy(alpha = 0.5f))
+        Text("  |  ", style = MaterialTheme.typography.labelLarge, color = SpyColors.Border)
         Text("EN", style = MaterialTheme.typography.labelLarge, color = if (!isGerman) SpyColors.Amber else SpyColors.IvoryMuted)
     }
 }

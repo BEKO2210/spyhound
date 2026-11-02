@@ -18,7 +18,11 @@ import de.belkis.spyhound.ioc.IocStore
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.scan.CheckResult
+import de.belkis.spyhound.collect.HardeningCollector
+import de.belkis.spyhound.scan.HardeningItem
 import de.belkis.spyhound.scan.Progress
+import de.belkis.spyhound.scan.evaluateHardening
+import java.time.LocalDate
 import de.belkis.spyhound.scan.Report
 import de.belkis.spyhound.scan.RadarMath
 import de.belkis.spyhound.scan.RadarProgress
@@ -69,6 +73,8 @@ data class UiState(
     val builtinAdbActive: Boolean = false,
     val adbWirelessOn: Boolean = false,
     val adbPairingPort: Int? = null,
+    /** Empty until the first read finishes; the start card stays hidden meanwhile. */
+    val hardening: List<HardeningItem> = emptyList(),
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -152,6 +158,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             )
         }
         refreshDnsGuard()
+        refreshHardening()
+    }
+
+    private fun refreshHardening() {
+        val ctx = getApplication<Application>()
+        viewModelScope.launch {
+            val items = withContext(Dispatchers.IO) {
+                evaluateHardening(HardeningCollector(ctx).collect(), LocalDate.now())
+            }
+            _state.update { it.copy(hardening = items) }
+        }
     }
 
     fun refreshDnsGuard() {

@@ -229,6 +229,7 @@ private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier) {
     }
     Column(
         modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
             .clickable { open = true }
             .semantics { contentDescription = "$name: $value. ${item.explanation}" }
             .padding(top = 14.dp, bottom = 12.dp),
@@ -320,7 +321,6 @@ fun SectionHeader(label: String, hint: String, modifier: Modifier = Modifier) {
         SectionHintButton(
             expanded = open,
             onToggle = { open = !open },
-            modifier = Modifier.semantics { contentDescription = "$label: $hint" },
         )
     }
     if (open) AlertDialog(

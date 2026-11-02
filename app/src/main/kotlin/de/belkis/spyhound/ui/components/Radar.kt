@@ -537,7 +537,7 @@ fun RadarScanButton(
             enabled = enabled,
             modifier = Modifier
                 .size(diameter)
-                .semantics { contentDescription = label },
+                .semantics(mergeDescendants = true) { contentDescription = label },
             shape = CircleShape,
             color = SpyColors.SurfaceRaised,
             border = BorderStroke(1.5.dp, SpyColors.Amber.copy(alpha = 0.65f)),

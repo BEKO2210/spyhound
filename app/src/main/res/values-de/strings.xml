@@ -151,7 +151,9 @@
     <string name="demo_device">Demo-Gerät, Android 14 (Patch 2024-09-05)</string>
     <string name="scan_demo_detail">Einstellungen und Systemeigenschaften …</string>
     <string name="cd_info_button">Über Spyhound</string>
+    <string name="cd_language_toggle">Sprache, aktuell %1$s. Doppeltippen zum Wechseln.</string>
     <string name="section_hint_open">Abschnitt erklären</string>
+    <string name="section_hint_close">Erklärung schließen</string>
     <string name="intro_skip">Überspringen</string>
     <string name="intro_next">Weiter</string>
     <string name="intro_start">Los geht\'s</string>
@@ -317,6 +319,8 @@
     <string name="result_gaps">Lücken</string>
     <string name="result_checked">Geprüft</string>
     <string name="result_checked_with">Geprüft mit</string>
+    <string name="result_time_range">Geprüfter Zeitraum</string>
+    <string name="result_time_range_warning">Systemprotokolle reichen weniger als 48 Stunden zurück. Ältere Infektionen sind dort möglicherweise nicht sichtbar.</string>
     <string name="result_verdict_clean">Keine bekannten Spuren</string>
     <string name="result_context_areas">Geprüfte Bereiche</string>
     <string name="result_context_line">%1$s · %2$s</string>
@@ -390,4 +394,30 @@
     <string name="adb_wizard_step_done_cd">Schritt erledigt</string>
     <string name="guide_gap_builtin_adb_meaning">Die tiefere Prüfung war diesmal nicht verfügbar. Nach einem Neustart des Telefons ist das WLAN-Debugging ausgeschaltet. Das ist eine Lücke, kein Ergebnis.</string>
     <string name="guide_gap_builtin_adb_steps">1. Schalte „WLAN-Debugging“ in den Entwickleroptionen wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
+    <string name="harden_title">Handy absichern</string>
+    <string name="harden_hint">Eine kurze Liste von Einstellungen, die Angriffe erschweren. Spyhound liest sie nur; ändern kannst du sie in den Systemeinstellungen.</string>
+    <string name="harden_open">Öffnen</string>
+    <string name="harden_important">wichtig</string>
+    <string name="harden_recommended">empfohlen</string>
+    <string name="harden_lock_title">Bildschirmsperre</string>
+    <string name="harden_lock_ok">Eine PIN, ein Muster oder ein Passwort schützt dein Handy</string>
+    <string name="harden_lock_bad">Keine Bildschirmsperre. Wer dein Handy hält, kann alles lesen</string>
+    <string name="harden_usb_title">USB-Debugging</string>
+    <string name="harden_usb_ok">Aus</string>
+    <string name="harden_usb_bad">An. Schalte es aus, wenn du es nicht nutzt</string>
+    <string name="harden_wifi_title">WLAN-Debugging</string>
+    <string name="harden_wifi_ok">Aus</string>
+    <string name="harden_wifi_bad">An. Für die tiefe Prüfung nötig, also gerade in Ordnung. Schalte es danach aus</string>
+    <string name="harden_dev_title">Entwickleroptionen</string>
+    <string name="harden_dev_ok">Aus</string>
+    <string name="harden_dev_bad">An. Schalte sie nach der tiefen Prüfung wieder aus</string>
+    <string name="harden_patch_title">Sicherheitsupdate</string>
+    <string name="harden_patch_ok">Dein Sicherheitspatch ist aktuell (%1$d Tage alt)</string>
+    <string name="harden_patch_bad">Dein Sicherheitspatch ist %1$d Tage alt. Suche nach einem Systemupdate</string>
+    <string name="harden_install_title">Unbekannte Apps</string>
+    <string name="harden_install_ok">Keine App darf andere Apps installieren</string>
+    <plurals name="harden_install_bad">
+        <item quantity="one">%1$d App darf andere Apps installieren. Prüfe, ob Du sie noch brauchst</item>
+        <item quantity="other">%1$d Apps dürfen andere Apps installieren. Prüfe, ob Du sie noch brauchst</item>
+    </plurals>
 </resources>

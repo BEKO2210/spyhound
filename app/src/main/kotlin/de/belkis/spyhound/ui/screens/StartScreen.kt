@@ -63,6 +63,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import androidx.compose.ui.res.pluralStringResource
+import de.belkis.spyhound.scan.HardeningAction
+import de.belkis.spyhound.scan.HardeningId
+import de.belkis.spyhound.scan.HardeningItem
+import de.belkis.spyhound.scan.HardeningState
 import de.belkis.spyhound.R
 import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.scan.AccessLevel
@@ -435,6 +443,7 @@ fun StartScreen(
                     },
                 )
             }
+            if (state.hardening.isNotEmpty()) HardeningCard(state.hardening, Modifier.then(staggeredAppear(staggerIndex++)))
             Spacer(Modifier.height(4.dp))
         }
     }
@@ -584,6 +593,101 @@ private fun PermissionCardRow(
             TextActionLink(text = allowLabel, onClick = onAllow, modifier = Modifier.padding(start = 4.dp))
         }
     }
+}
+
+@Composable
+fun HardeningCard(items: List<HardeningItem>, modifier: Modifier = Modifier) {
+    SpyCard(modifier) {
+        SectionHeader(
+            label = stringResource(R.string.harden_title),
+            hint = stringResource(R.string.harden_hint),
+        )
+        items.forEachIndexed { i, item ->
+            if (i > 0) HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            HardeningCardRow(item)
+        }
+    }
+}
+
+@Composable
+private fun HardeningCardRow(item: HardeningItem) {
+    val context = LocalContext.current
+    val ok = item.state == HardeningState.OK
+    val (iconRes, titleRes) = when (item.id) {
+        HardeningId.SCREEN_LOCK -> R.drawable.ic_hardening_lock to R.string.harden_lock_title
+        HardeningId.USB_DEBUGGING -> R.drawable.ic_hardening_usb to R.string.harden_usb_title
+        HardeningId.WIFI_DEBUGGING -> R.drawable.ic_hardening_wifi to R.string.harden_wifi_title
+        HardeningId.DEVELOPER_OPTIONS -> R.drawable.ic_hardening_developer to R.string.harden_dev_title
+        HardeningId.SECURITY_PATCH -> R.drawable.ic_hardening_patch to R.string.harden_patch_title
+        HardeningId.UNKNOWN_APP_INSTALLERS -> R.drawable.ic_hardening_install to R.string.harden_install_title
+    }
+    val subtitle = when (item.id) {
+        HardeningId.SCREEN_LOCK -> stringResource(if (ok) R.string.harden_lock_ok else R.string.harden_lock_bad)
+        HardeningId.USB_DEBUGGING -> stringResource(if (ok) R.string.harden_usb_ok else R.string.harden_usb_bad)
+        HardeningId.WIFI_DEBUGGING -> stringResource(if (ok) R.string.harden_wifi_ok else R.string.harden_wifi_bad)
+        HardeningId.DEVELOPER_OPTIONS -> stringResource(if (ok) R.string.harden_dev_ok else R.string.harden_dev_bad)
+        HardeningId.SECURITY_PATCH ->
+            stringResource(if (ok) R.string.harden_patch_ok else R.string.harden_patch_bad, item.detail)
+        HardeningId.UNKNOWN_APP_INSTALLERS ->
+            if (ok) stringResource(R.string.harden_install_ok)
+            else pluralStringResource(R.plurals.harden_install_bad, item.detail, item.detail)
+    }
+    val title = stringResource(titleRes)
+    val openLabel = stringResource(R.string.harden_open)
+    val okLabel = stringResource(R.string.status_ok)
+    val stateLabel = when (item.state) {
+        HardeningState.OK -> okLabel
+        HardeningState.RECOMMENDED -> stringResource(R.string.harden_recommended)
+        HardeningState.IMPORTANT -> stringResource(R.string.harden_important)
+    }
+    val open = { openHardeningAction(context, item.action) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 48.dp)
+            .clickable(
+                enabled = !ok,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = open,
+            )
+            .semantics { contentDescription = if (ok) "$title: $okLabel. $subtitle" else "$title: $stateLabel. $subtitle. $openLabel" }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CardRowIconBadge(iconRes = iconRes, active = ok)
+        Column(
+            Modifier
+                .weight(1f)
+                .widthIn(min = 0.dp)
+                .padding(start = 14.dp, end = 8.dp),
+        ) {
+            Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory, maxLines = 1, overflow = TextOverflow.Clip)
+            Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+        }
+        if (ok) {
+            Icon(
+                painter = painterResource(R.drawable.ic_permission_granted),
+                contentDescription = null,
+                tint = SpyColors.Clear,
+                modifier = Modifier.size(22.dp),
+            )
+        } else {
+            TextActionLink(text = openLabel, onClick = open, modifier = Modifier.padding(start = 4.dp))
+        }
+    }
+}
+
+private fun openHardeningAction(context: Context, action: HardeningAction) {
+    val primary = when (action) {
+        HardeningAction.SECURITY_SETTINGS -> Settings.ACTION_SECURITY_SETTINGS
+        HardeningAction.DEVELOPER_SETTINGS -> Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS
+        HardeningAction.SYSTEM_UPDATE -> Settings.ACTION_DEVICE_INFO_SETTINGS
+        HardeningAction.UNKNOWN_APPS -> Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES
+    }
+    // Some phones lack a screen for the exact target; the general settings always open.
+    runCatching { context.startActivity(Intent(primary).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+        .recoverCatching { context.startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
 }
 
 @Composable

@@ -151,7 +151,9 @@
     <string name="demo_device">Demo device, Android 14 (patch 2024-09-05)</string>
     <string name="scan_demo_detail">Settings and system properties…</string>
     <string name="cd_info_button">About Spyhound</string>
+    <string name="cd_language_toggle">Language, currently %1$s. Double tap to switch.</string>
     <string name="section_hint_open">Explain this section</string>
+    <string name="section_hint_close">Close section explanation</string>
     <string name="intro_skip">Skip</string>
     <string name="intro_next">Next</string>
     <string name="intro_start">Let\'s go</string>
@@ -317,6 +319,8 @@
     <string name="result_gaps">Gaps</string>
     <string name="result_checked">Checked</string>
     <string name="result_checked_with">Checked with</string>
+    <string name="result_time_range">Checked time range</string>
+    <string name="result_time_range_warning">System logs cover less than 48 hours. Older infections may not appear there.</string>
     <string name="result_verdict_clean">No known traces</string>
     <string name="result_context_areas">Checked areas</string>
     <string name="result_context_line">%1$s · %2$s</string>
@@ -390,4 +394,30 @@
     <string name="adb_wizard_step_done_cd">Step completed</string>
     <string name="guide_gap_builtin_adb_meaning">The deeper check was not available this time. After a restart of the phone, wireless debugging is switched off. This is a gap, not a result.</string>
     <string name="guide_gap_builtin_adb_steps">1. Turn “Wireless debugging” back on in the developer options (Wi-Fi must be on).\n2. Restart the deeper check in Spyhound. No new code is needed.\n3. Scan again afterwards.</string>
+    <string name="harden_title">Secure your phone</string>
+    <string name="harden_hint">A short checklist of phone settings that make it harder to attack. Spyhound only reads them; you change them in the system settings.</string>
+    <string name="harden_open">Open</string>
+    <string name="harden_important">important</string>
+    <string name="harden_recommended">recommended</string>
+    <string name="harden_lock_title">Screen lock</string>
+    <string name="harden_lock_ok">A PIN, pattern or password protects your phone</string>
+    <string name="harden_lock_bad">No screen lock. Anyone holding your phone can read everything</string>
+    <string name="harden_usb_title">USB debugging</string>
+    <string name="harden_usb_ok">Off</string>
+    <string name="harden_usb_bad">On. Turn it off if you do not use it</string>
+    <string name="harden_wifi_title">Wireless debugging</string>
+    <string name="harden_wifi_ok">Off</string>
+    <string name="harden_wifi_bad">On. Needed for the deep check, so this is fine for now. Turn it off afterwards</string>
+    <string name="harden_dev_title">Developer options</string>
+    <string name="harden_dev_ok">Off</string>
+    <string name="harden_dev_bad">On. Turn them off when you are done with the deep check</string>
+    <string name="harden_patch_title">Security update</string>
+    <string name="harden_patch_ok">Your security patch is recent (%1$d days old)</string>
+    <string name="harden_patch_bad">Your security patch is %1$d days old. Look for a system update</string>
+    <string name="harden_install_title">Install unknown apps</string>
+    <string name="harden_install_ok">No app may install other apps</string>
+    <plurals name="harden_install_bad">
+        <item quantity="one">%1$d app may install other apps. Check that you still need it</item>
+        <item quantity="other">%1$d apps may install other apps. Check that you still need them</item>
+    </plurals>
 </resources>

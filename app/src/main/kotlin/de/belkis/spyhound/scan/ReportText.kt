@@ -2,6 +2,7 @@ package de.belkis.spyhound.scan
 
 import java.text.DateFormat
 import java.util.Date
+import java.util.Locale
 
 /** Plain-text report to hand to a helper. Contains app names and SMS senders: share it privately. */
 object ReportText {
@@ -17,6 +18,7 @@ object ReportText {
         appendLine("Prüftiefe: ${levelName(r.access)}")
         appendLine("Indikatoren: ${r.indicatorCount} aus ${r.indicatorSources} Quellen" +
             if (r.indicatorSourcesMissing > 0) " (${r.indicatorSourcesMissing} fehlen)" else "")
+        appendTimeRange(r, Locale.GERMAN)
         appendLine()
         appendLine("ERGEBNIS: ${verdictText(r.verdict)}")
         appendLine()
@@ -53,6 +55,7 @@ object ReportText {
         appendLine("Check depth: ${levelName(r.access, TextsEn)}")
         appendLine("Indicators: ${r.indicatorCount} from ${r.indicatorSources} sources" +
             if (r.indicatorSourcesMissing > 0) " (${r.indicatorSourcesMissing} missing)" else "")
+        appendTimeRange(r, Locale.ENGLISH)
         appendLine()
         appendLine("RESULT: ${verdictText(r.verdict, TextsEn)}")
         appendLine()
@@ -79,6 +82,17 @@ object ReportText {
         appendLine("No findings does not mean your phone is safe. Spyhound detects only published traces")
         appendLine("of known spyware. If you have reason for concern, contact Access Now Digital")
         appendLine("Security Helpline (https://www.accessnow.org/help/) or Amnesty Security Lab.")
+    }
+
+    private fun StringBuilder.appendTimeRange(r: Report, locale: java.util.Locale) {
+        val range = TimeRange.evaluate(r.oldestEvidence, r.finishedAt, locale)
+        if (!range.hasEvidence) return
+        appendLine()
+        appendLine(if (locale.language == "en") "CHECKED TIME RANGE" else "GEPRÜFTER ZEITRAUM")
+        range.sources.forEach { appendLine("- ${it.text}") }
+        if (range.warning) appendLine(if (locale.language == "en")
+            "Warning: System logs cover less than 48 hours; older infections may not appear there."
+        else "Warnung: Systemprotokolle reichen weniger als 48 Stunden zurück; ältere Infektionen sind dort möglicherweise nicht sichtbar.")
     }
 
     fun levelName(l: AccessLevel, texts: Texts = TextsDe) = if (texts === TextsEn) when (l) {
