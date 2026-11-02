@@ -4,11 +4,28 @@
 Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien verständlich, für Profis tief. Start mit
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
-## Kompass (aktuelle Schwerpunkte)
-1. **Release 0.1.0** (öffentlich): signierte APK, SHA256SUMS, README DE/EN mit Pixel-Bildern, danach Repo öffentlich.
-   Abnahme: Release-APK auf Pixel 9 und Pixel 11 Pro XL installiert, Scan läuft, Signatur `2A:E3:…:BD:4A`.
-2. **Tablet/Querformat** in allen Bildschirmen zwei Spalten (Ergebnis hat es schon), Übergänge Start → Scan → Ergebnis.
-3. **Ohne-PC-Einrichtung als geführter 3-Schritte-Assistent** mit Splitscreen-Hilfe (Code und Eingabe nebeneinander).
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 01:20)
+1. **Einrichtung ohne PC als geführter Assistent** – größter Hebel für Laien. Abnahme: 3 Schritte, die sich selbst
+   abhaken (WLAN-Debugging an → Kopplungsdialog offen → Code eingegeben), Knopf öffnet direkt die richtige Einstellung,
+   Hinweis/Knopf für Splitscreen; Pixel 9: Kopplung ohne Rückfrage durchführbar.
+2. **Kleine Funde vom Pixel (Politur)** – siehe „Offen aus Gerätetests“. Abnahme je Punkt dort.
+3. **Tablet/Querformat überall zwei Spalten** (Start, Scan; Ergebnis hat es). Abnahme: Breite ≥ 600 dp zwei Spalten,
+   keine leere Hälfte; Telefon unverändert (Pixelvergleich).
+4. **Übergänge Start → Scan → Ergebnis** (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
+   Bewegung respektiert, 60 fps auf Pixel 9.
+
+## Offen aus Gerätetests (2026-11-01/02)
+- [ ] Einführung: Seitenpunkte ungleich verteilt (Lücke nach der breiten Pille kleiner). Abnahme: gleiche Abstände
+      Mitte-zu-Mitte, Pixelmessung.
+- [ ] Start-Radar zeigt >100 graue Punkte vom letzten Scan → unruhig. Abnahme: nur Funde/Hinweise sichtbar, Rest als
+      zarter Schimmer (≤ 15 % Deckkraft).
+- [ ] Systemprotokolle (logcat) brauchen lange ohne sichtbaren Fortschritt. Abnahme: Zähler/Fortschritt im Schritt,
+      Obergrenze 45 s, danach ehrliche Lücke statt Hängen.
+- [ ] Assistent zeigt unter Android 17 „Entwickleroptionen“ evtl. fälschlich als offen (Flag vor Apps verborgen).
+      Abnahme: WLAN-Debugging aktiv ⇒ Schritt abgehakt (Test).
+- [ ] DNS-Wächter: JVM-Tests für Upstream-Auswahl (eigene Adresse ausgeschlossen, Link-Local zuletzt). Abnahme: Tests grün.
+- [ ] Release-Build-Abhängigkeit libadb von JitPack: Prüfsumme pinnen (Gradle dependency verification). Abnahme:
+      `gradle/verification-metadata.xml` mit SHA-256 für libadb/conscrypt, Build grün.
 
 ## Erledigt 2026-11-02 (Release-Runde)
 - [x] Eingebauter Prüf-Dienst ohne PC und ohne Shizuku. Beleg: 8cc3f73; Pixel 9 (Android 17): Kopplung per
