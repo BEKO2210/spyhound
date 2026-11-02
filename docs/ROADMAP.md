@@ -145,6 +145,12 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- JVM-Screenshot-Tests fanden in der ersten Runde drei echte Fehler, die Unit-Tests nie zeigen: Knopf bricht mitten im
+  Wort um, Tablet-Spalte schneidet das Statuspanel ab, Zahlen nach Systemsprache statt App-Sprache („4,200“ auf
+  Deutsch). Lehre: Jede sichtbare Änderung bekommt ein Screenshot-Bild DE/EN × Telefon/Tablet, und jemand sieht es an.
+  (2026-11-02)
+- Nachts ist das Testgerät gesperrt, Zugangsdaten werden nie automatisch eingegeben. Lehre: Gerätetests in Arbeitszeiten
+  legen, nachts auf Screenshot-Tests und Release-Build stützen; offene Gerätetests in der Roadmap vermerken. (2026-11-02)
 - DNS-Wächter legte das DNS des ganzen Handys lahm (Pixel 9, 2026-11-01), vier Fehler in Folge: (1) Tunnel-Adresse =
   DNS-Adresse → Android stellt lokal zu, keine Anfrage erreicht den Tunnel; (2) `activeNetwork` ist bei laufendem VPN
   das VPN selbst → Anfragen im Kreis; (3) fehlende `ACCESS_NETWORK_STATE` → Absturz bei der ersten Anfrage; (4)
