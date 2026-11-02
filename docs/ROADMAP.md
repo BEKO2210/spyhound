@@ -11,13 +11,22 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 2. **Kleine Funde vom Pixel (Politur)** – siehe „Offen aus Gerätetests“. Abnahme je Punkt dort.
 3. ~~**Tablet/Querformat überall zwei Spalten**~~ – gebaut (1186e7d), Prüfung im Querformat auf dem Pixel 9 offen. Abnahme: Breite ≥ 600 dp zwei Spalten,
    keine leere Hälfte; Telefon unverändert (Pixelvergleich).
-4. **Übergänge Start → Scan → Ergebnis** (Nachtrunde 2) (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
+4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
-## Nachtrunde 2 (2026-11-02, ab 01:35)
-- [ ] Übergänge Start → Scan → Ergebnis (gemeinsames Radar, Überblendung + 16 dp). Abnahme: kein Sprung, reduzierte
+## Nachtrunde 3 (2026-11-02, ab 01:50)
+- [ ] Barrierefreiheit-Durchgang (s. u.). Abnahme: TalkBack-Labels aller Bedienelemente, Tippflächen ≥ 48 dp, Kontrast AA
+      (Liste mit Messwerten), Screenshots unverändert oder bewusst neu aufgenommen.
+- [ ] Geräte-Härtung „Handy absichern“: Checkliste mit Direkt-Knöpfen (Bildschirmsperre, USB-/WLAN-Debugging aus wenn
+      nicht genutzt, Apps mit Erlaubnis „unbekannte Apps installieren“, Sicherheitspatch-Alter, Entwickleroptionen).
+      Abnahme: reine Bewertungsfunktion mit Tests, Karte auf dem Start, DE/EN, Screenshot-Test.
+- [ ] Zeitreichweite (Stufe 3): wie weit reichen SMS/Logs/Dateien zurück; im Ergebnis ehrlich anzeigen. Abnahme: reine
+      Funktion + Tests, Zeile „Geprüfter Zeitraum“ im Ergebnis und im geteilten Bericht.
+
+## Nachtrunde 2 (2026-11-02, ab 01:35) – Beleg a8bcc48: 139 Tests, verifyRoborazzi grün, Release-Build grün
+- [x] Übergänge Start → Scan → Ergebnis (gemeinsames Radar, Überblendung + 16 dp). Abnahme: kein Sprung, reduzierte
       Bewegung = sofortiger Wechsel, Tests grün.
-- [ ] JVM-Screenshot-Tests (Roborazzi + Robolectric) für Start, Scan, Ergebnis, Assistent – DE/EN, Telefon/Tablet.
+- [x] JVM-Screenshot-Tests (Roborazzi + Robolectric) für Start, Scan, Ergebnis, Assistent – DE/EN, Telefon/Tablet.
       Abnahme: PNGs im Repo, `./gradlew verifyRoborazziDebug` grün. Grund: UI ohne Gerät nachts prüfbar.
 - [ ] Barrierefreiheit-Durchgang (DESIGN §1.6): TalkBack-Labels aller Knöpfe/Chips/Karten, Tippflächen ≥ 48 dp,
       Kontrast AA. Abnahme: Liste der Funde + Fixes, Unit-/Screenshot-Test wo möglich.
@@ -122,7 +131,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 
 ## Stufe 3 – Qualität und Reichweite
 - [ ] „Zeitreichweite“ wie im Toolkit: wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
-- [ ] Signierte Release-APK + Reproduzierbarkeit + SHA256SUMS.
+- [x] Signierte Release-APK + SHA256SUMS (v0.1.0, 2026-11-02). Offen: Reproduzierbarkeit.
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
 
 ## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
