@@ -14,6 +14,17 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
+## Offen nach der Nacht (2026-11-02, 02:45)
+- [ ] **Gerätetest Pixel 9/11** für alles aus den Nachtrunden 1–5 (Assistent ohne PC, Querformat, Übergänge, Handy
+      absichern, Zeitraum, Wer darf was, Hintergrundprüfung). Danach Release 0.2.0 (APK + Notizen liegen bereit in
+      ~/StudioProjects/spyhound-release/v0.2.0/).
+- [ ] Tablet-Start: linke Spalte zeigt Radar und Panel klein oben, darunter leer. Abnahme: Radar skaliert mit der
+      Spaltenhöhe, Inhalt vertikal zentriert, keine leere Hälfte (Screenshot start_de_tablet).
+- [ ] Tablet-Scan: viel Leerfläche (handoff-polish.md). Abnahme wie oben.
+- [ ] Assistent-Titel kleiner als andere Bildschirmtitel; Gedankenstriche uneinheitlich (– vs —).
+- [ ] Test `ReviewFixesTest.timeoutEndsReadEvenIfAChildKeepsThePipeOpen` einmal zeitabhängig rot. Abnahme: 20 Läufe
+      grün oder Test deterministisch gemacht.
+
 ## Nachtrunde 4 (2026-11-02, ab 02:00) – Beleg 295ff6d: 173 Tests, verifyRoborazzi + Release grün, Gerätetest offen
 - [x] Rechte-Prüfer „Wer darf was“: Apps je Recht-Gruppe, lokaler Verlauf „seit letzter Prüfung neu“. Abnahme: reine
       Auswertung + Tests, Bildschirm DE/EN, Screenshot-Test.
