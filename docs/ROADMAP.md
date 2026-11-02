@@ -15,7 +15,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
    Bewegung respektiert, 60 fps auf Pixel 9.
 
 ## Offen nach der Nacht (2026-11-02, 02:45)
-- [ ] **Gerätetest Pixel 9/11** für alles aus den Nachtrunden 1–5 (Assistent ohne PC, Querformat, Übergänge, Handy
+- [x] **Gerätetest Pixel 9/11** (Pixel 9: Release-Start ohne Absturz; Pixel 11: Belkis „Läuft“, 2026-11-02) für alles aus den Nachtrunden 1–5 (Assistent ohne PC, Querformat, Übergänge, Handy
       absichern, Zeitraum, Wer darf was, Hintergrundprüfung). Danach Release 0.2.0 (APK + Notizen liegen bereit in
       ~/StudioProjects/spyhound-release/v0.2.0/).
 - [ ] Tablet-Start: linke Spalte zeigt Radar und Panel klein oben, darunter leer. Abnahme: Radar skaliert mit der
@@ -30,7 +30,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       Auswertung + Tests, Bildschirm DE/EN, Screenshot-Test.
 - [x] Prüfung im Hintergrund (WorkManager, wöchentlich, nur Basis, Standard aus), Benachrichtigung nur bei neuem Fund.
       Abnahme: Worker-Test, Schalter DE/EN, keine Netzwerkzugriffe.
-- [ ] Release 0.2.0 vorbereiten – veröffentlichen erst nach Gerätetest auf Pixel 9/11.
+- [x] Release 0.2.0 vorbereiten → veröffentlicht als 0.2.2 (0.2.0 Startabsturz, 0.2.1 Fix, 0.2.2 SMS-Hilfe) – veröffentlichen erst nach Gerätetest auf Pixel 9/11.
 
 ## Nachtrunde 3 (2026-11-02, ab 01:50) – Beleg 491530d: 156 Tests, verifyRoborazzi + Release grün, Gerätetest offen
 - [x] Barrierefreiheit-Durchgang (s. u.). Abnahme: TalkBack-Labels aller Bedienelemente, Tippflächen ≥ 48 dp, Kontrast AA
