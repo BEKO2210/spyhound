@@ -229,7 +229,7 @@ class ScreenshotTest(private val language: String, private val device: Device) {
 
     @Test
     fun info() = shot("info") {
-        InfoScreen(onBack = {}, onReplayIntro = {})
+        InfoScreen(onBack = {}, onReplayIntro = {}, displayVersion = "0.0.0")
     }
 
     private fun auditResult(): AuditResult {

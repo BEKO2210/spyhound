@@ -45,6 +45,7 @@ fun InfoScreen(
     onBack: () -> Unit,
     onReplayIntro: () -> Unit,
     modifier: Modifier = Modifier,
+    displayVersion: String = BuildConfig.VERSION_NAME,
 ) {
     val context = LocalContext.current
     val scroll = rememberScrollState()
@@ -70,7 +71,7 @@ fun InfoScreen(
                 .verticalScroll(scroll),
             verticalArrangement = Arrangement.spacedBy(SpySpacing.Section),
         ) {
-            WhatsNewSection(modifier = staggeredAppear(0))
+            WhatsNewSection(displayVersion = displayVersion, modifier = staggeredAppear(0))
             InfoSection(
                 title = R.string.info_section_what,
                 body = R.string.info_what_body,
@@ -211,7 +212,7 @@ fun InfoScreen(
                             verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 2),
                         ) {
                             Text(
-                                stringResource(R.string.info_version, BuildConfig.VERSION_NAME),
+                                stringResource(R.string.info_version, displayVersion),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = SpyColors.Ivory,
                             )
@@ -263,9 +264,9 @@ private fun LegalSection(title: Int, body: Int) {
 }
 
 @Composable
-private fun WhatsNewSection(modifier: Modifier = Modifier) {
+private fun WhatsNewSection(displayVersion: String, modifier: Modifier = Modifier) {
     val items = stringArrayResource(R.array.info_whats_new_items)
-    val version = BuildConfig.VERSION_NAME
+    val version = displayVersion
     Column(modifier = modifier.fillMaxWidth()) {
         SectionHeader(
             label = stringResource(R.string.info_section_whats_new),
