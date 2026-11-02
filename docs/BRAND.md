@@ -11,7 +11,7 @@ Das Zeichen liegt in `drawable/hound_mark.xml` (24×24). Elfenbein auf Tinte. Be
 | Rolle | Hex | Verwendung |
 | --- | --- | --- |
 | Tinte | `#0A0E14` | Grund, Icon-Hintergrund |
-| Elfenbein | `#F3EEE3` | Zeichen, stille Bögen |
+| Elfenbein | `#F2EBE0` | Zeichen, stille Bögen, Text (eine Farbe für Oberfläche und Marke) |
 | Bernstein | `#FFB547` | Einziger Akzent: der Bogen, ein Fund |
 
 Die Radar-Ringe im Icon-Hintergrund nutzen `#1A2230`, dieselbe Fläche wie die erhöhte Oberfläche. Sie bleiben leise und sind kein zweiter Akzent.

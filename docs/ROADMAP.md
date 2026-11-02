@@ -5,12 +5,10 @@ Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 19:00)
-1. **Spot-Illustrationen auf Logo v2** – Einführung zeigt noch den kantigen v1-Hund; dabei Elfenbein vereinheitlichen.
-   Abnahme: alle illu_*.xml im v2-Stil, eine Elfenbeinfarbe, Screenshots DE/EN neu und angesehen, Pixel 11.
-2. **Samsung-Anleitungen auf echtem Galaxy prüfen** (S24 Ultra / Tab S9 Ultra, nur mit Freigabe des Besitzers):
+1. **Samsung-Anleitungen auf echtem Galaxy prüfen** (S24 Ultra / Tab S9 Ultra, nur mit Freigabe des Besitzers):
    Assistent, Auto Blocker, SMS-Rechte. Abnahme: jeder Knopf öffnet die richtige One-UI-Seite.
-3. **Laientest Assistent** – eine Person ohne Technikwissen schafft die Einrichtung allein (braucht Belkis).
-4. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+2. **Laientest Assistent** – eine Person ohne Technikwissen schafft die Einrichtung allein (braucht Belkis).
+3. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Tagesrunde 2026-11-02 (17:40)
 - [x] Positivliste um echte Systemdateien erweitert: 1450 SHA-256 aller APK/JAR/ODEX/VDEX/.so eines Pixel 11 Pro XL
@@ -105,7 +103,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Material-Standardlook, Belkis-Abnahme.
 - [x] App-Icon + Spürhund-Maskottchen (Vektor). Abnahme: adaptive Icon, hell/dunkel.
       Beleg: `hound_mark`, Adaptive Icon (Grund, Vordergrund, Monochrom), Spot-Bilder, `docs/brand`, `:app:assembleDebug`.
-- [ ] Elfenbein vereinheitlichen: die Oberfläche nutzt `#F2EBE0`, die Marke `#F3EEE3`.
+- [x] Elfenbein vereinheitlichen (2026-11-02: Code und Vektoren nutzen nur `#F2EBE0`, BRAND.md angeglichen): die Oberfläche nutzt `#F2EBE0`, die Marke `#F3EEE3`.
       Abnahme: eine Elfenbeinfarbe in Theme und Vektoren.
 - [x] Indikator-Update auf dem Gerät. Beleg: Pixel 11 Pro XL (Android 17), 29/29 Quellen, 12.566 Indikatoren, 2026-11-01.
 - [x] Erster echter Scan (Basis). Beleg: Pixel 11 Pro XL, 16 s, 15.208 Elemente, 0 Funde, 5 plausible Hinweise, 2 Lücken.
@@ -118,7 +116,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 
 - [x] Einführung beim ersten Start + Info-Knopf „Über Spyhound“ (was/was nicht, Datenschutz, Quellen, Hilfe). Abnahme:
       Screenshots de/en, Belkis-Abnahme. (Wunsch Belkis 2026-11-01) Beleg: 29feeaa, docs/shots/intro-*, info-*.
-- [ ] Spot-Illustrationen (illu_*.xml) im Stil von Logo v2 neu zeichnen – Einführung zeigt noch den kantigen v1-Hund.
+- [x] Spot-Illustrationen (illu_*.xml) im Stil von Logo v2 (erledigt in 5c4173f, Render-Kontrolle 2026-11-02: alle fünf v2) – Einführung zeigte den kantigen v1-Hund.
 - [x] Englische Oberfläche + Sprachwahl. Beleg: Cherry-Pick der i18n-Commits, 58 Tests, docs/shots/en-*.
 
 - [x] UI/UX-Durchgang (erledigt: 1532fe2, f7a1d2c, Abnahme Belkis „Läuft alles“) (Cloud-Sitzung): übersichtlicher, animierter, selbsterklärend in DE+EN; u. a. weiche Ausblendung
