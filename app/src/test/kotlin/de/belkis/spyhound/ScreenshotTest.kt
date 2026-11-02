@@ -3,6 +3,10 @@ package de.belkis.spyhound
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.platform.LocalContext
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -24,6 +28,7 @@ import de.belkis.spyhound.shell.ShizukuShell
 import de.belkis.spyhound.ui.DemoReport
 import de.belkis.spyhound.ui.SpyhoundScaffold
 import de.belkis.spyhound.ui.SpyhoundTheme
+import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.components.DeepCheckSetupWizard
 import de.belkis.spyhound.ui.screens.InfoScreen
@@ -74,12 +79,16 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             listOf("de", "en").flatMap { l -> Device.entries.map { d -> arrayOf<Any>(l, d) } }
     }
 
-    private fun shot(name: String, content: @Composable () -> Unit) {
+    private fun shot(name: String, scrollToEnd: Boolean = false, twoColumn: Boolean = false, content: @Composable () -> Unit) {
         RuntimeEnvironment.setQualifiers("+$language-${device.qualifiers}")
         runComposeUiTest {
             mainClock.autoAdvance = false
-            setContent { SpyhoundTheme { SpyhoundScaffold { content() } } }
+            setContent { SpyhoundTheme { SpyhoundScaffold(maxContentWidth = if (twoColumn) SpySpacing.TwoColumnMaxWidth else 640.dp) { content() } } }
             mainClock.advanceTimeBy(2_000)
+            if (scrollToEnd) {
+                repeat(6) { onAllNodes(hasScrollAction()).onFirst().performTouchInput { swipeUp() } }
+                mainClock.advanceTimeBy(2_000)
+            }
             onRoot().captureRoboImage("src/test/screenshots/${name}_${language}_${device.name.lowercase()}.png")
         }
     }
@@ -94,7 +103,27 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     }
 
     @Test
-    fun start() = shot("start") {
+    fun start() = shot("start", twoColumn = true) {
+        StartScreen(
+            state = UiState(iocs = iocs()),
+            onScan = {}, onUpdateIndicators = {}, onRequestRoot = {}, onRequestSms = {}, onRequestFiles = {},
+            onDnsToggle = {}, onWeeklyBackgroundToggle = {}, onPickBugreport = {}, onDismissBanner = {},
+            onDeepCheckSetup = {}, onOpenInfo = {},
+        )
+    }
+
+    @Test
+    fun startBottom() = shot("start_bottom", scrollToEnd = true, twoColumn = true) {
+        StartScreen(
+            state = UiState(iocs = iocs(), hardening = sampleHardening()),
+            onScan = {}, onUpdateIndicators = {}, onRequestRoot = {}, onRequestSms = {}, onRequestFiles = {},
+            onDnsToggle = {}, onWeeklyBackgroundToggle = {}, onPickBugreport = {}, onDismissBanner = {},
+            onDeepCheckSetup = {}, onOpenInfo = {},
+        )
+    }
+
+    @Test
+    fun startLower() = shot("start_lower", scrollToEnd = true, twoColumn = true) {
         StartScreen(
             state = UiState(iocs = iocs()),
             onScan = {}, onUpdateIndicators = {}, onRequestRoot = {}, onRequestSms = {}, onRequestFiles = {},
@@ -117,7 +146,7 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     )
 
     @Test
-    fun scan() = shot("scan") {
+    fun scan() = shot("scan", twoColumn = true) {
         val sectors = RadarSector.entries.map { sector ->
             val blips = when (sector) {
                 RadarSector.APPS -> List(14) { ElementStatus.CLEAN } + ElementStatus.LEAD
@@ -143,7 +172,7 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     }
 
     @Test
-    fun result() = shot("result") {
+    fun result() = shot("result", twoColumn = true) {
         ResultScreen(
             report = DemoReport.withFinding(LocalContext.current),
             onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {},

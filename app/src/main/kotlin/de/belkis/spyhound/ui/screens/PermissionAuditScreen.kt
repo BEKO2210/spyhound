@@ -40,7 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.belkis.spyhound.R
@@ -52,13 +51,13 @@ import de.belkis.spyhound.scan.PermissionAudit
 import de.belkis.spyhound.scan.RightGroup
 import de.belkis.spyhound.ui.components.CardRowIconBadge
 import de.belkis.spyhound.ui.components.ScrollEdge
-import de.belkis.spyhound.ui.components.SectionHeader
 import de.belkis.spyhound.ui.components.SpyCard
 import de.belkis.spyhound.ui.components.SpyNavigateBack
 import de.belkis.spyhound.ui.components.TextActionLink
 import de.belkis.spyhound.ui.design.SpyColors
 import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.design.staggeredAppear
+import de.belkis.spyhound.ui.SpyTypographyExtras
 import de.belkis.spyhound.ui.formatCount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -133,7 +132,12 @@ fun PermissionAuditScreen(
             }
             val newCount = PermissionAudit.totalNew(result.groups, showSystem)
             Column(Modifier.fillMaxWidth().then(staggeredAppear(0))) {
-                SectionHeader(label = stringResource(R.string.audit_title), hint = stringResource(R.string.audit_hint))
+                Text(
+                    stringResource(R.string.audit_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SpyColors.IvoryMuted,
+                    modifier = Modifier.padding(bottom = SpySpacing.Unit * 2),
+                )
                 val summary = when {
                     result.previousAt == null -> stringResource(R.string.audit_first)
                     newCount > 0 -> stringResource(R.string.audit_new_total, formatCount(newCount, locale))
@@ -277,8 +281,7 @@ private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit) {
                     app.label,
                     style = MaterialTheme.typography.labelLarge,
                     color = SpyColors.Ivory,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     modifier = Modifier.weight(1f, fill = false),
                 )
                 if (app.isNew) NewBadge()
@@ -287,8 +290,7 @@ private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit) {
                 app.packageName,
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
                 color = SpyColors.IvoryMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
             )
         }
         Text(
@@ -338,7 +340,8 @@ fun PermissionAuditEntryCard(onOpen: () -> Unit, modifier: Modifier = Modifier) 
         Row(verticalAlignment = Alignment.CenterVertically) {
             CardRowIconBadge(iconRes = R.drawable.ic_right_audit, active = false)
             Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
-                Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
+                Text(title.uppercase(), style = SpyTypographyExtras.sectionLabel)
+                Spacer(Modifier.height(SpySpacing.Unit))
                 Text(stringResource(R.string.audit_entry_body), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
             }
             Text(

@@ -59,7 +59,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.R
 import de.belkis.spyhound.scan.AccessLevel
@@ -161,7 +160,7 @@ private fun ResultSummary(
             CountCell(examined, stringResource(R.string.result_checked), SpyColors.Ivory)
         }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.result_checked_with), style = SpyTypographyExtras.sectionLabel)
+        Text(stringResource(R.string.result_checked_with).uppercase(), style = SpyTypographyExtras.sectionLabel)
         val depth = when (report.access) {
             AccessLevel.APP -> stringResource(R.string.depth_basic)
             AccessLevel.SHELL -> stringResource(R.string.depth_deep)
@@ -213,7 +212,7 @@ private fun ResultSummary(
         if (range.hasEvidence) {
             SpySurface(Modifier.fillMaxWidth().padding(top = 8.dp), raised = true) {
                 Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(stringResource(R.string.result_time_range), style = SpyTypographyExtras.sectionLabel)
+                    Text(stringResource(R.string.result_time_range).uppercase(), style = SpyTypographyExtras.sectionLabel)
                     range.sources.forEach { Text(it.text, style = MaterialTheme.typography.bodySmall, color = SpyColors.IvoryMuted) }
                     if (range.warning) Text(stringResource(R.string.result_time_range_warning), style = MaterialTheme.typography.bodySmall, color = SpyColors.Amber)
                 }
@@ -281,8 +280,6 @@ private fun ResultHero(report: Report, symbolModifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.headlineMedium,
                 color = tint,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
                 modifier = Modifier.semantics { contentDescription = verdict },
             )
             Text(
@@ -290,8 +287,6 @@ private fun ResultHero(report: Report, symbolModifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = SpyColors.IvoryMuted,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
             )
         }
     }
@@ -440,16 +435,12 @@ private fun GuidanceCard(entry: ResultEntry.Card, onGapFix: (GapFix) -> Unit, on
                         entry.headline,
                         style = MaterialTheme.typography.titleMedium,
                         color = SpyColors.Ivory,
-                        maxLines = 2,
-                        overflow = TextOverflow.Clip,
                     )
                     entry.packageName?.let { pkg ->
                         Text(
                             pkg,
                             style = MaterialTheme.typography.bodyMedium,
                             color = SpyColors.IvoryMuted,
-                            maxLines = 2,
-                            overflow = TextOverflow.Clip,
                         )
                     }
                 }

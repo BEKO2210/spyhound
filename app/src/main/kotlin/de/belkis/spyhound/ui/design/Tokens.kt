@@ -21,6 +21,7 @@ object SpySpacing {
     val PhoneEdge = 20.dp
     val TabletEdge = 32.dp
     val Section = 28.dp
+    val TwoColumnMaxWidth = 960.dp
 }
 
 object SpyRadii {

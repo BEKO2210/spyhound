@@ -27,6 +27,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.belkis.spyhound.R
@@ -193,6 +194,7 @@ fun SpyhoundTheme(content: @Composable () -> Unit) {
 @Composable
 fun SpyhoundScaffold(
     modifier: Modifier = Modifier,
+    maxContentWidth: Dp = 640.dp,
     content: @Composable () -> Unit,
 ) {
     val edge = if (LocalConfiguration.current.screenWidthDp >= 600) 32.dp else 20.dp
@@ -205,7 +207,7 @@ fun SpyhoundScaffold(
     ) {
         Box(
             modifier = Modifier
-                .widthIn(max = 640.dp)
+                .widthIn(max = maxContentWidth)
                 .fillMaxWidth()
                 .padding(horizontal = edge, vertical = 12.dp),
             content = { content() },

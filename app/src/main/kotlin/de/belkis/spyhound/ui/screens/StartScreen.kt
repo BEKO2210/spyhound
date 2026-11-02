@@ -60,7 +60,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import android.content.Context
@@ -292,8 +291,6 @@ fun StartScreen(
                                 stringResource(R.string.start_depth_explain),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = SpyColors.IvoryMuted,
-                                maxLines = 2,
-                                overflow = TextOverflow.Clip,
                             )
                             SpyButton(
                                 text = stringResource(R.string.t_004),
@@ -308,8 +305,6 @@ fun StartScreen(
                                 stringResource(R.string.t_007),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = SpyColors.Clear,
-                                maxLines = 2,
-                                overflow = TextOverflow.Clip,
                             )
                             RootRequestSlot(asking = state.rootAsking, denied = state.rootDenied, onRequest = onRequestRoot)
                         }
@@ -339,16 +334,12 @@ fun StartScreen(
                         ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = SpyColors.IvoryMuted,
-                        maxLines = 2,
-                        overflow = TextOverflow.Clip,
                     )
                     if (loaded.status.missing.isNotEmpty()) {
                         Text(
                             stringResource(R.string.sources_missing, loaded.status.missing.size),
                             style = MaterialTheme.typography.bodyMedium,
                             color = SpyColors.IvoryMuted,
-                            maxLines = 1,
-                            overflow = TextOverflow.Clip,
                         )
                     }
                     val allSourcesReady = loaded.status.missing.isEmpty() &&
@@ -387,8 +378,6 @@ fun StartScreen(
                     stringResource(R.string.t_068),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.IvoryMuted,
-                    maxLines = 2,
-                    overflow = TextOverflow.Clip,
                 )
                 SpyButton(
                     text = stringResource(R.string.t_069),
@@ -457,11 +446,10 @@ fun StartScreen(
     }
     Box(Modifier.fillMaxSize()) {
         if (tablet) {
-            Row(Modifier.fillMaxSize().padding(horizontal = SpySpacing.TabletEdge), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
+            Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
                 Column(
                     Modifier.weight(1f).fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
                     content = headerContent,
                 )
                 Column(Modifier.weight(1f).fillMaxHeight(), content = cardsContent)
@@ -528,8 +516,6 @@ fun BackgroundWeeklyCard(enabled: Boolean, onToggle: (Boolean) -> Unit, modifier
             stringResource(R.string.start_background_weekly_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = SpyColors.IvoryMuted,
-            maxLines = 3,
-            overflow = TextOverflow.Clip,
         )
     }
 }
@@ -550,8 +536,6 @@ private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit) {
             style = MaterialTheme.typography.labelLarge,
             color = SpyColors.Ivory,
             modifier = Modifier.weight(1f),
-            maxLines = 1,
-            overflow = TextOverflow.Clip,
         )
         Text(
             stateLabel,
@@ -579,8 +563,6 @@ private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit) {
         stringResource(R.string.t_065),
         style = MaterialTheme.typography.bodyMedium,
         color = SpyColors.IvoryMuted,
-        maxLines = 2,
-        overflow = TextOverflow.Clip,
     )
     if (state.dnsHits.isNotEmpty()) {
         Spacer(Modifier.height(4.dp))
@@ -633,13 +615,11 @@ private fun PermissionCardRow(
                 .widthIn(min = 0.dp)
                 .padding(start = 14.dp, end = 8.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory, maxLines = 1, overflow = TextOverflow.Clip)
+            Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
             Text(
                 subtitle,
                 style = MaterialTheme.typography.bodyMedium,
                 color = SpyColors.IvoryMuted,
-                maxLines = 2,
-                overflow = TextOverflow.Clip,
             )
         }
         if (granted) {
@@ -722,7 +702,7 @@ private fun HardeningCardRow(item: HardeningItem) {
                 .widthIn(min = 0.dp)
                 .padding(start = 14.dp, end = 8.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory, maxLines = 1, overflow = TextOverflow.Clip)
+            Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
             Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
         }
         if (ok) {
@@ -755,8 +735,6 @@ private fun DnsHitLine(hit: DnsHit, fmt: DateFormat) {
     Text(
         "${fmt.format(Date(hit.atMillis))} · ${hit.domain}",
         style = MaterialTheme.typography.bodyMedium,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
         color = SpyColors.Danger,
     )
 }

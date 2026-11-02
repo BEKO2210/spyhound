@@ -6,7 +6,7 @@
     <string name="t_002">Basis</string>
     <string name="t_003">Zugriffsstufe</string>
     <string name="t_004">Tiefere Prüfung einrichten</string>
-    <string name="t_005">Root? Dann einfach ‚Root anfragen‘ tippen.</string>
+    <string name="t_005">Root? Dann einfach „Root anfragen“ tippen.</string>
     <string name="t_006">Root anfragen</string>
     <string name="t_007">Tiefere Prüfung ist aktiv. Root geht noch einen Schritt weiter.</string>
     <string name="t_008">Höchste Stufe aktiv — alle verfügbaren Prüfungen laufen.</string>
@@ -33,7 +33,7 @@
     <string name="t_029">Spyhound braucht deine Erlaubnis, Shizuku zu nutzen. Tippe auf Erlauben, wenn Android fragt.</string>
     <string name="t_030">Kein Dialog: Shizuku muss laufen (Schritt 3). App neu öffnen und nochmal tippen.</string>
     <string name="t_031">Spyhound erlauben</string>
-    <string name="t_032">Root? Dann einfach ‚Root anfragen‘ auf dem Startbildschirm tippen.</string>
+    <string name="t_032">Root? Dann einfach „Root anfragen“ auf dem Startbildschirm tippen.</string>
     <string name="t_033">Tiefere Prüfung ist bereit</string>
     <string name="t_034">WLAN-Debugging kannst du danach wieder ausschalten; Shizuku läuft weiter bis zum nächsten Neustart.</string>
     <string name="t_035">Jetzt prüfen</string>

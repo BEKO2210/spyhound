@@ -6,7 +6,7 @@
     <string name="t_002">Basic</string>
     <string name="t_003">Access level</string>
     <string name="t_004">Set up deep check</string>
-    <string name="t_005">Have root? Tap Request root.</string>
+    <string name="t_005">Have root? Tap “Request root”.</string>
     <string name="t_006">Request root</string>
     <string name="t_007">Deep check is active. Root can check more.</string>
     <string name="t_008">Full access is active. All available checks will run.</string>
@@ -33,7 +33,7 @@
     <string name="t_029">Spyhound needs your permission to use Shizuku. Tap Allow when Android asks.</string>
     <string name="t_030">No dialog? Make sure Shizuku is running (step 3). Reopen Spyhound and try again.</string>
     <string name="t_031">Allow Spyhound</string>
-    <string name="t_032">Have root? Tap Request root on the start screen.</string>
+    <string name="t_032">Have root? Tap “Request root” on the start screen.</string>
     <string name="t_033">Deep check is ready</string>
     <string name="t_034">You can turn off Wireless debugging afterward. Shizuku keeps running until next restart.</string>
     <string name="t_035">Scan now</string>
@@ -428,7 +428,7 @@
     <string name="audit_entry_title">Who may do what</string>
     <string name="audit_entry_body">See which apps can use the camera, microphone, location and more – and what is new since your last check.</string>
     <string name="audit_entry_open">Open</string>
-    <string name="audit_hint">Shows which apps hold a right right now. Spyhound only reads this; you change rights in the app info. It remembers each check on this phone only.</string>
+    <string name="audit_hint">Shows which apps currently have each right. Spyhound only reads this; you change rights in the app info. It remembers each check on this phone only.</string>
     <string name="audit_first">This is your first check. From now on Spyhound marks rights that are new since the last check.</string>
     <string name="audit_since">Compared with your last check on %1$s.</string>
     <string name="audit_new_total">%1$s new since the last check</string>

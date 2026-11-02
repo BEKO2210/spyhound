@@ -60,6 +60,7 @@ import de.belkis.spyhound.ui.IntroPreferences
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.MainViewModel
 import de.belkis.spyhound.ui.SpyhoundScaffold
+import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.SpyhoundTheme
 import de.belkis.spyhound.ui.UiState
 import de.belkis.spyhound.ui.design.SpyMotion
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG && intent.getBooleanExtra(EXTRA_SCAN_SCREENSHOT, false)) {
             setContent {
                 SpyhoundTheme {
-                    SpyhoundScaffold {
+                    SpyhoundScaffold(maxContentWidth = SpySpacing.TwoColumnMaxWidth) {
                         ScanScreen(
                             progress = Progress(
                                 step = getString(R.string.scan_step_device),
@@ -183,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                 val setupSnapshot = screenshotKey?.let { debugDeepCheckSnapshot(it) } ?: state.deepCheckSnapshot()
                 LaunchedEffect(Unit) { vm.refreshDnsGuard() }
                 Box(Modifier.fillMaxSize()) {
-                    SpyhoundScaffold {
+                    SpyhoundScaffold(maxContentWidth = SpySpacing.TwoColumnMaxWidth) {
                         Box(Modifier.fillMaxSize()) {
                             SpyhoundNav(
                                 state = state,
