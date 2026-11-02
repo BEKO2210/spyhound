@@ -49,7 +49,10 @@ einfacher Sprache, auf Deutsch und Englisch.
 
 Spyhound vergleicht, was es auf deinem Handy sehen kann, mit **veröffentlichten Indikatoren** von
 Sicherheitsforschern – App-Namen, APK-Fingerabdrücke, Signaturzertifikate, Domains, IP-Adressen und Dateinamen – aus
-29 fest gepinnten Quellen (Amnesty Tech / MVT, Citizen Lab, ECHAP-Stalkerware-Liste und weitere). Außerdem weist es
+34 fest gepinnten Quellen (Amnesty Tech / MVT, Citizen Lab, ECHAP-Stalkerware-Liste, ESET-Schadsoftware-Hashes und
+weitere). Installierte APKs und Dateien im Speicher werden zusätzlich gegen **ESET Research**-Listen
+(`eset/malware-ioc`, BSD-2-Clause) geprüft: fünf Android-Kampagnen, **nur exakte SHA-256-Treffer** – kein
+allgemeiner Virenscan. Außerdem weist es
 auf Prüfenswertes hin, etwa Apps von außerhalb eines Stores mit weitreichenden Rechten, einen entsperrten Bootloader
 oder einen alten Sicherheitspatch.
 
@@ -86,6 +89,9 @@ Dateien, Quellen, DNS-Wächter).
 
 ### Außerdem dabei
 
+- **Offline-Schadsoftware-Fingerabdrücke** – Apps und Dateien in Downloads gegen mitgelieferte ESET-Hashlisten
+  (AridSpy, VajraSpy, SpyLoan, NGate, PromptSpy). Nur exakte Treffer; wenige benannte Kampagnen – kein Ersatz für
+  Play Protect und kein Echtzeitschutz.
 - **Wer darf was** – jede App mit Zugriff auf Kamera, Mikrofon, Standort, SMS, Bedienungshilfe und mehr, nach Recht
   sortiert; seit der letzten Prüfung neu hinzugekommene Rechte sind markiert.
 - **Handy absichern** – eine kurze Checkliste (Bildschirmsperre, Debugging, Sicherheitspatch, Apps, die Apps

@@ -47,8 +47,10 @@ that. Spyhound brings the same published indicators to the phone, in plain langu
 ## What it checks
 
 Spyhound compares what it can see on your phone with **published indicators of compromise** from security researchers
-– app package names, APK hashes, signing certificates, domains, IP addresses and file names – from 29 pinned sources
-(Amnesty Tech / MVT, Citizen Lab, ECHAP stalkerware list and more). It also points out things worth a closer look,
+– app package names, APK hashes, signing certificates, domains, IP addresses and file names – from 34 pinned sources
+(Amnesty Tech / MVT, Citizen Lab, ECHAP stalkerware list, ESET malware sample hashes and more). Installed APKs and
+files in shared storage are also checked against **ESET Research** lists (`eset/malware-ioc`, BSD-2-Clause): five
+Android campaigns, **exact SHA-256 matches only** – not a general virus scan. It also points out things worth a closer look,
 such as apps from outside a store with far-reaching permissions, an unlocked bootloader or an old security patch.
 
 <p align="center"><img src="docs/brand/results.webp" width="100%" alt="Three kinds of result: a finding (known trace), a lead (worth a look) and a gap (not checked)"></p>
@@ -84,6 +86,9 @@ sources, DNS watch).
 
 ### Also included
 
+- **Offline malware fingerprints** – apps and files in Downloads against ESET's bundled hash lists (AridSpy, VajraSpy,
+  SpyLoan, NGate, PromptSpy). Only exact matches; a small, named set of campaigns – not Play Protect and not
+  real-time protection.
 - **Who can do what** – every app with access to camera, microphone, location, SMS, accessibility and more, grouped
   by right; rights that appeared since your last check are marked.
 - **Secure your phone** – a short checklist (screen lock, debugging, security patch, apps allowed to install apps)
