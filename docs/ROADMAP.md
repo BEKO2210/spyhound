@@ -132,10 +132,11 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       - Scan-Bildschirm (§3/§4): Sweep-Nachleuchten, Punkt-Aufleuchten, monotone Prozentzahl, Häkchen-Pfad, Shimmer,
         Haptik, Abbrechen fest, zwei Spalten ab 600 dp. Abnahme: Pixel DE/EN, drei Aufnahmen im Abstand 300 ms
         pixelgleich (nichts wandert), Querformat mit Radar links.
-- [ ] Shell-Probe schlägt fehl → einmal automatisch trennen und neu verbinden (Shizuku-Dienst), erst dann Lücke melden.
+- [x] Shell-Probe schlägt fehl → einmal automatisch trennen und neu verbinden (Shizuku-Dienst), erst dann Lücke melden.
       Fund: Pixel 2026-11-01, veralteter Dienst nach App-Update; App-Neustart behob es. Abnahme: Update der App bei
       laufendem Shizuku → Tiefenprüfung läuft ohne Neustart. Code fertig (281c49b, `probeWithReconnect` + Test),
-      offen nur die Abnahme auf dem Pixel 11 (Shizuku läuft dort), sobald Belkis das Gerät freigibt.
+      Abgenommen 2026-11-02 22:42 auf dem Pixel 11: `adb install -r` 0.3.5 bei laufendem Shizuku, App ohne Neustart
+      → Tiefe Prüfung „Tief“, 0 Funde · 5 Hinweise · 2 Lücken (Virenschutz-Umfang, Root), keine Shell-Lücke, kein Absturz.
 
 ## Stufe 2 – Tiefe ohne Root
 - [x] Fehlerbericht-Import, Analyse-Schicht: `bugreport/` liest bugreport-*.zip (Prozesse, Pakete inkl.
@@ -213,6 +214,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Fokus-Prüfung und Aktion nie in einem Befehl verketten, wenn die Aktion selbst die App wechselt: Erst prüfen, Ergebnis lesen, dann handeln. Sonst landet ein App-Start über der App, in der Belkis gerade schreibt (2026-11-02).
 - Ein einmal gekoppeltes Gerät verbindet adb per mDNS von selbst wieder. Fremde Geräte nach dem Lesen trennen und den
   Besitzer bitten, WLAN-Debugging auszuschalten und pop-os unter „Gekoppelte Geräte“ zu entfernen.
 - **Vor jedem Tipp und jeder Aufnahme am Gerät `mCurrentFocus` prüfen – auch mit Freigabe.** Steht Spyhound nicht vorne:
