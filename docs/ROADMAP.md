@@ -201,7 +201,19 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       schlüssel, kein Server. Kein Bezahlen pro Scan (bricht „offline“, schreckt gefährdete Menschen ab, bei Apache-2.0
       leicht zu umgehen).
 
-- [ ] Rechtstexte vor öffentlichem Release fachlich prüfen lassen (Liste aus 33939df: § 18 MStV, DPF-Status GitHub,
+- [x] Rechtstexte-Prüfung 2026-11-02 (Compliance-Check, Fakten an Primärquellen geprüft): 10 Funde behoben in LEGAL.md
+      DE/EN – Aufsichtsbehörde BW umgezogen (Heilbronner Str. 35, seit 22.12.2025), neue Funktionen fehlten (eingebauter
+      Prüf-Dienst/WLAN-Debugging, Hintergrundprüfung, Wer-darf-was-Verlauf, Domainlisten, Sperren = lokale Antwort),
+      Berechtigungen ACCESS_NETWORK_STATE/POST_NOTIFICATIONS/VIBRATE ergänzt, § 25 Abs. 2 Nr. 2 TDDDG, Art. 13 Abs. 2 e/f
+      (keine Pflicht, keine Art.-22-Entscheidung), DPF-Stand (EuG 03.09.2025, Rechtsmittel C-703/25 P anhängig, GitHub
+      B.V.), Spenden ohne Funktionsfreischaltung, §§ 202a ff. StGB-Hinweis, neutrale Formulierung „Besitzer“. Links öffnen
+      nur auf Tipp (Code geprüft). Restrisiko: keine anwaltliche Prüfung – optional, wenn die App gewerblich wird.
+- [ ] DPF: Entscheidung des EuGH zu C-703/25 P beobachten; fällt das DPF, Abschnitt 2.3 auf Art. 49 Abs. 1 lit. a/b DSGVO
+      bzw. GitHub B.V. (EU) umstellen. Abnahme: LEGAL.md binnen einer Woche nach dem Urteil angepasst.
+- [ ] abuse.ch (MalwareBazaar): Weitergabe in Open-Source-App braucht Zustimmung (Nutzungsbedingungen § 7.3, Stand
+      21.10.2026). Anfrage über contact.abuse.ch (reCAPTCHA → Belkis sendet, Text liegt bereit). YARAify ist CC0 (§ 3.4):
+      prüfen, ob dort Android-Hashes mit Regel-Treffern exportierbar sind. Abnahme: Antwort bzw. Lizenz-Beleg in ANTIVIRUS.md.
+- [x] Ursprünglicher Prüfauftrag, abgearbeitet am 2026-11-02 (Liste aus 33939df: § 18 MStV, DPF-Status GitHub,
       Rolle als Verantwortlicher, § 25 TDDDG, Haftung/Apache-2.0, Aufsichtsbehörde-Adresse, § 202a StGB-Hinweis, Art. 13
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
