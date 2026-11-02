@@ -18,7 +18,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 
 ## Tagesrunde 2026-11-02 (17:40)
 - [x] Positivliste um echte Systemdateien erweitert: 1450 SHA-256 aller APK/JAR/ODEX/VDEX/.so eines Pixel 11 Pro XL
-      (Android 17, CD1A.261005.003), Asset `iocs/knowngood-pixel.sha256` (166 KB). Eine Quelle, die eine davon listet,
+      (Android 17, CD1A.261005.003), Asset `iocs/knowngood-pixel.sha256` (heute `knowngood-system.sha256`) (166 KB). Eine Quelle, die eine davon listet,
       fliegt ganz raus. Beleg: 0 Überschneidung mit den 161 Malware-Hashes; 243 Tests grün; Release auf Pixel 11:
       Start ohne Absturz, 44/44 Quellen gültig, Tief-Scan 26 s, 0 Funde, 0 Zeilen im Crash-Log.
 - [x] Scan-Schritt-Text (behoben: erst aus, dann ein, je 80 ms; Wechsel höchstens alle 400 ms. Beleg Pixel 11: 40
@@ -27,7 +27,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       aus, dann neuer ein, ≤ 200 ms), Screenshot-Test unverändert.
 - [x] Positivliste um Pixel 9 (Android 17, CP3A.261005.005) ergänzt: +1435 → 2885 Hashes. Beleg: 0 Überschneidung mit
       allen 44 Quellen (3675 Hashes mitgeliefert + 7 aus 14 Download-Quellen, am gepinnten Commit geladen), Tests grün.
-- [ ] Positivliste für Samsung (Galaxy) ergänzen – nur mit Gerät, nur Systempartitionen. Abnahme wie oben.
+- [x] Positivliste um Samsung ergänzt: Galaxy S24 Ultra (One UI, Android 16, +3615) und Galaxy Tab S9 Ultra (+4330) →
+      10830 Hashes, Asset umbenannt in `knowngood-system.sha256` (1,2 MB, im APK 0,5 MB). Beleg: 0 Überschneidung mit allen
+      44 Quellen, Tests grün, Release-Start Pixel 9 ohne Absturz. Geräte nur lesend per adb, danach getrennt.
+- [ ] Positivliste: weitere Hersteller (Xiaomi, OnePlus, Motorola) und je Gerät neue Builds nach Updates. Abnahme wie oben.
 
 ## Release 0.3.2 (2026-11-02) – Virenschutz Schritt 2: 161 Malware-Hashes (ESET 14 Kampagnen + Meta), Positivliste, 0 Falschtreffer auf 703 APKs (Pixel 9), Datei-Fund offline belegt (Emulator, Flugmodus). Offen: abuse.ch/YARAify anfragen, Positivliste um echte Systembibliotheken erweitern.
 
@@ -201,6 +204,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Ein einmal gekoppeltes Gerät verbindet adb per mDNS von selbst wieder. Fremde Geräte nach dem Lesen trennen und den
+  Besitzer bitten, WLAN-Debugging auszuschalten und pop-os unter „Gekoppelte Geräte“ zu entfernen.
 - **Vor jedem Tipp und jeder Aufnahme am Gerät `mCurrentFocus` prüfen – auch mit Freigabe.** Steht Spyhound nicht vorne:
   abbrechen. Am 2026-11-02 ging ein Tipp in eine fremde App und die Serienaufnahmen zeigten private Inhalte (sofort gelöscht).
 - **Release erst committen und taggen, dann bauen.** AGP schreibt die Git-Revision in `META-INF/version-control-info.textproto`;

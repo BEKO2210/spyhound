@@ -151,7 +151,7 @@ class IocStore(private val context: Context) {
 
     companion object {
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
-        const val KNOWN_GOOD = "knowngood-pixel.sha256"
+        const val KNOWN_GOOD = "knowngood-system.sha256"
         private const val MAX_DOWNLOAD = 64 shl 20
         internal const val DEBUG_TEST_FILE = "debug-test.tsv"
 

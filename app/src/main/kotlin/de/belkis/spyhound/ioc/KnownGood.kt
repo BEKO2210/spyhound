@@ -2,8 +2,8 @@ package de.belkis.spyhound.ioc
 
 /**
  * Positive list against poisoned or broken hash sources: fingerprints of files that can never be a malware sample
- * (the empty file, trivial one-byte or line-break files, and the system files of a stock Pixel from
- * `assets/iocs/knowngood-pixel.sha256`). A source that lists one is dropped as a whole by [IocStore.load], and
+ * (the empty file, trivial one-byte or line-break files, and the system files of stock Pixel and Galaxy devices from
+ * `assets/iocs/knowngood-system.sha256`). A source that lists one is dropped as a whole by [IocStore.load], and
  * [IocSet] never answers a lookup for them.
  */
 object KnownGood {
