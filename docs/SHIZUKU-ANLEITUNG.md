@@ -27,10 +27,10 @@ muss Shizuku erneut gestartet werden (Schritt 4); das Koppeln (Schritt 3) ist nu
 ## 3. Koppeln über WLAN-Debugging (nur beim ersten Mal)
 
 1. Verbinden Sie das Telefon mit Ihrem WLAN.
-2. Öffnen Sie in den **Entwickleroptionen** den Punkt **WLAN-Debugging** und schalten Sie ihn ein
+2. Öffnen Sie in den **Entwickleroptionen** den Punkt **Debugging über WLAN** und schalten Sie ihn ein
    (Hinweis zum Netzwerk mit „Zulassen“ bestätigen).
 3. Öffnen Sie Shizuku und wählen Sie **Über WLAN-Debugging starten → Koppeln**.
-4. Tippen Sie in den Einstellungen unter WLAN-Debugging auf **Gerät per Kopplungscode koppeln**. Es erscheint ein
+4. Tippen Sie in den Einstellungen unter „Debugging über WLAN“ auf **Gerät über einen Kopplungscode koppeln**. Es erscheint ein
    sechsstelliger Code.
 5. Geben Sie den Code in der **Benachrichtigung von Shizuku** ein (Antwortfeld in der Benachrichtigung).
    Wenn die Einstellungen dabei verschwinden, hilft der Mehrfenster-Modus (Einstellungen und Benachrichtigung
@@ -78,7 +78,7 @@ Nach einem Neustart: WLAN-Debugging einschalten und Schritt 4 wiederholen, danac
 
 - Build-Nummer: **Einstellungen → Über das Telefon → Build-Nummer** (siebenmal tippen).
 - Entwickleroptionen: **Einstellungen → System → Entwickleroptionen**.
-- WLAN-Debugging: im Menü aktivieren; **Gerät per Kopplungscode koppeln**. Lassen Sie den Kopplungsdialog geöffnet, bis
+- WLAN-Debugging: im Menü aktivieren; **Gerät über einen Kopplungscode koppeln**. Lassen Sie den Kopplungsdialog geöffnet, bis
   Sie den Code in Shizuku eingegeben haben, sonst wird der Code ungültig.
 - Akku: **Einstellungen → Apps → Shizuku → Akkunutzung → Uneingeschränkt**.
 - Ist ein Pixel mit GrapheneOS im Einsatz, muss laut Shizuku-Doku unter „Sicherheit“ ggf. „Secure app spawning“

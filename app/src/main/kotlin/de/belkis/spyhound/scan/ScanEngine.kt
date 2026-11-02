@@ -246,8 +246,8 @@ class ScanEngine(
     }
 
     companion object {
-        const val BUILTIN_ADB_RESTART = "Die Tiefenprüfung lief nicht: Das WLAN-Debugging ist aus (z. B. nach einem Neustart des Telefons). " +
-            "Tiefe Prüfung wieder starten: WLAN-Debugging einschalten und noch einmal prüfen."
+        const val BUILTIN_ADB_RESTART = "Die Tiefenprüfung lief nicht: Das Debugging über WLAN ist aus (z. B. nach einem Neustart des Telefons). " +
+            "Tiefe Prüfung wieder starten: „Debugging über WLAN“ einschalten und noch einmal prüfen."
         const val SHELL_DEAD = "Die Tiefenprüfung lief nicht: Shizuku bzw. Root ist verbunden, antwortet aber nicht. " +
             "Shizuku neu starten (oder Root erneut erlauben) und noch einmal prüfen."
 

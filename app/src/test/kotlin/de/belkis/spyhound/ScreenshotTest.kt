@@ -202,7 +202,8 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             ),
             set, "de.belkis.spyhound", if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn,
         )
-        val now = System.currentTimeMillis()
+        // Fixed time: the report shows dates relative to its end, so a moving clock would change the picture daily.
+        val now = java.time.Instant.parse("2026-11-02T12:00:00Z").toEpochMilli()
         ResultScreen(
             report = Report(now - 30_000, now, AccessLevel.APP, set.size, 1, 0, listOf(apps), "Pixel"),
             onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {},

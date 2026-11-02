@@ -23,7 +23,7 @@ object TextsEn : Texts {
         "Alle Pakete, auch gelöschte …" to "All packages, including removed apps…",
         "Programmdateien werden gehasht …" to "Checking file fingerprints…",
         "Tiefenprüfung ausgewertet" to "Deep check complete",
-        "Systemeigenschaft" to "System property", "WLAN-Debugging" to "Wireless debugging",
+        "Systemeigenschaft" to "System property", "Debugging über WLAN" to "Wireless debugging",
         "USB-Debugging" to "USB debugging", "Bootloader" to "Bootloader", "System-Build" to "System build",
         "Unbekannte Quellen" to "Unknown sources", "Die Dateiliste" to "The file list",
         "Die Liste der Fingerabdrücke" to "The fingerprint list",
@@ -37,7 +37,7 @@ object TextsEn : Texts {
             "USB or wireless debugging can allow someone with brief access to install apps. It is normal for developers and Shizuku.",
         "Ein entsperrter Bootloader, Root oder abgeschaltetes SELinux schwächen den Schutz des Systems. Wenn Sie das nicht selbst eingerichtet haben, ist das ein deutliches Warnzeichen." to
             "An unlocked bootloader, root or disabled SELinux weakens system protection. If you did not set this up, look into it.",
-        "WLAN-Debugging ist eingeschaltet." to "Wireless debugging is on.",
+        "Debugging über WLAN ist eingeschaltet." to "Wireless debugging is on.",
         ScanEngine.BUILTIN_ADB_RESTART to "The deep check did not run: wireless debugging is off (for example after a restart of the phone). " +
             "Restart the deep check: turn wireless debugging on and scan once more.",
         ScanEngine.SHELL_DEAD to "The deep check did not run: Shizuku or root is connected but does not respond. " +

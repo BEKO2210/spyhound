@@ -51,7 +51,7 @@ object DeviceAnalyzer {
             }
         }
         if (state.adbWifiEnabled == true) {
-            r.lead("WLAN-Debugging", "WLAN-Debugging ist eingeschaltet." + if (shellExpected) " (wird für Shizuku gebraucht)" else "", WHY_DEBUG, LeadKind.DEBUGGING)
+            r.lead("Debugging über WLAN", "Debugging über WLAN ist eingeschaltet." + if (shellExpected) " (wird für Shizuku gebraucht)" else "", WHY_DEBUG, LeadKind.DEBUGGING)
         } else if (state.adbEnabled == true && !shellExpected) {
             r.lead("USB-Debugging", "USB-Debugging ist eingeschaltet.", WHY_DEBUG, LeadKind.DEBUGGING)
         }

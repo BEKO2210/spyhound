@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
-        <item>Tiefere Prüfung ohne PC (WLAN-Debugging direkt auf dem Handy)</item>
+        <item>Tiefere Prüfung ohne PC (Debugging über WLAN direkt auf dem Handy)</item>
         <item>Querformat mit zwei Spalten und weiche Übergänge Start – Scan – Ergebnis</item>
         <item>Handy absichern: Checkliste mit Direkt-Knöpfen in die Einstellungen</item>
         <item>Geprüfter Zeitraum im Ergebnis und im geteilten Bericht</item>
