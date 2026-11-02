@@ -196,6 +196,8 @@ fun StartScreen(
                 AccessLevel.ROOT -> stringResource(R.string.depth_root)
             }
             val sources = state.iocs?.status?.available ?: 0
+            // The catalogue grows (29 spyware feeds, then the malware lists); count it instead of hard-coding.
+            val sourcesTotal = state.iocs?.status?.let { it.available + it.missing.size + it.corrupt.size } ?: 0
             val depthLevel = when (state.access) {
                 AccessLevel.APP -> 1
                 AccessLevel.SHELL -> 2
@@ -239,9 +241,9 @@ fun StartScreen(
                 ),
                 StatusItem(
                     kind = StatusKind.SOURCES,
-                    label = stringResource(R.string.status_sources_ratio, sources, 29),
-                    explanation = stringResource(R.string.status_sources_explain, sources, 29),
-                    state = if (sources == 29) StatusState.ACTIVE else StatusState.PARTIAL,
+                    label = stringResource(R.string.status_sources_ratio, sources, sourcesTotal),
+                    explanation = stringResource(R.string.status_sources_explain, sources, sourcesTotal),
+                    state = if (sourcesTotal > 0 && sources >= sourcesTotal) StatusState.ACTIVE else StatusState.PARTIAL,
                     actionLabel = stringResource(R.string.t_063),
                     action = onUpdateIndicators,
                 ),
