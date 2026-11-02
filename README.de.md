@@ -142,6 +142,13 @@ sha256sum -c SHA256SUMS                                   # Datei muss zur verö
 Android selbst verweigert ein Update mit anderem Schlüssel – einmal installiert, kann nur ein echtes Update die App
 ersetzen.
 
+**Selbst nachbauen.** Releases sind reproduzierbar: Wer den Release-Tag baut, erhält byte-gleichen Inhalt (jede
+dex-Datei, Ressource und Bibliothek – nur die Signatur fehlt, weil der Schlüssel fehlt):
+
+```
+scripts/verify-reproducible.sh v<version> spyhound-<version>.apk   # meldet REPRODUCIBLE oder die abweichenden Dateien
+```
+
 ## Datenschutz
 
 - **Die Prüfung ist offline.** Sie nutzt nie das Netzwerk.

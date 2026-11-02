@@ -160,7 +160,11 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 
 ## Stufe 3 – Qualität und Reichweite
 - [x] „Zeitreichweite“ wie im Toolkit (491530d): wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
-- [x] Signierte Release-APK + SHA256SUMS (v0.1.0, 2026-11-02). Offen: Reproduzierbarkeit.
+- [x] Signierte Release-APK + SHA256SUMS (v0.1.0, 2026-11-02).
+- [x] Reproduzierbarkeit (2026-11-02): v0.3.4 aus frischem Klon (anderer Pfad) neu gebaut → 463 Dateien byte-gleich, auch
+      unsigniert (ohne Schlüssel). Einzige Abweichung: eingebettete Git-Revision, weil die veröffentlichte APK vor dem
+      Commit gebaut wurde. Prüfskript `scripts/verify-reproducible.sh`, README DE/EN. Abnahme ab 0.3.5: Skript meldet
+      REPRODUCIBLE.
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
 
 ## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
@@ -184,6 +188,9 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- **Release erst committen und taggen, dann bauen.** AGP schreibt die Git-Revision in `META-INF/version-control-info.textproto`;
+  0.3.4 wurde aus dem Arbeitsbaum vor dem Commit gebaut und ist darum nur inhaltlich, nicht vollständig reproduzierbar (2026-11-02).
+- Hängende Agentenläufe nach jeder Runde prüfen (`pgrep -af cursor-agent`): ein Lauf hing 14 h auf einem gelöschten Worktree.
 - 0.2.0 stürzte beim Start ab: R8 entfernte den von WorkManager per Reflexion genutzten Room-Konstruktor. Debug-Build,
   181 Unit-Tests und Screenshot-Tests waren grün – keiner davon läuft verkleinert. Lehre: Vor jeder Veröffentlichung
   die **Release-APK auf einem echten Gerät starten** und das Absturzprotokoll lesen (`am start` + `logcat -b crash`

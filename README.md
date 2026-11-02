@@ -138,6 +138,13 @@ sha256sum -c SHA256SUMS                                   # file must match the 
 Android itself refuses an update that is signed with a different key, so once installed, only genuine updates can
 replace it.
 
+**Rebuild it yourself.** Releases are reproducible: building the release tag gives byte-identical contents (every dex
+file, resource and library – only the signature differs, because you do not have the key):
+
+```
+scripts/verify-reproducible.sh v<version> spyhound-<version>.apk   # prints REPRODUCIBLE or the differing files
+```
+
 ## Privacy
 
 - **The scan is offline.** It never uses the network.
