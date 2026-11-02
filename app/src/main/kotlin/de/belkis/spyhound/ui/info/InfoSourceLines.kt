@@ -22,6 +22,7 @@ fun infoSourceGroups(sources: List<FeedSource>): List<InfoSourceGroup> {
         "mvt-project/mvt-indicators",
         "AssoEchap/stalkerware-indicators",
         "eset/malware-ioc",
+        "meta/threat-research",
         "AmnestyTech/investigations",
         "citizenlab/malware-indicators",
     )
@@ -31,7 +32,7 @@ fun infoSourceGroups(sources: List<FeedSource>): List<InfoSourceGroup> {
             InfoSourceGroup(
                 repo = repo,
                 license = when (repo) {
-                    "mvt-project/mvt-indicators" -> SourceLicenseKind.MIT
+                    "mvt-project/mvt-indicators", "meta/threat-research" -> SourceLicenseKind.MIT
                     "AssoEchap/stalkerware-indicators" -> SourceLicenseKind.CC_BY_4
                     "eset/malware-ioc" -> SourceLicenseKind.BSD_2
                     else -> SourceLicenseKind.DEVICE_ONLY

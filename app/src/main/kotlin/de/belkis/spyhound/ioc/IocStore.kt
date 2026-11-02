@@ -72,7 +72,10 @@ class IocStore(private val context: Context) {
             if (sha256(bytes) != s.sha256) { corrupt += s; continue }
             runCatching {
                 Parsers.parse(s.format, bytes.toString(Charsets.UTF_8), SourceContext(s.id, s.category, s.family, s.androidArtifacts))
-            }.onSuccess { all += it }.onFailure { corrupt += s }
+            }.onSuccess {
+                // A source that lists a known-harmless fingerprint is treated as unreliable and left out entirely.
+                if (KnownGood.conflicts(it).isEmpty()) all += it else corrupt += s
+            }.onFailure { corrupt += s }
         }
         IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
         LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - corrupt.size, missing, corrupt))

@@ -188,7 +188,7 @@
     <string name="info_privacy_body">Scans laufen offline. Keine Analytics, keine Werbung. Updates laden nur festgepinnte Dateien aus erlaubten Quellen; Hashes müssen passen.</string>
     <string name="info_section_sources">Quellen der Spuren</string>
     <string name="info_sources_notice">Kuratierte Toolkit-Listen (CC0) aus dem Zero Breach Toolkit werden in die mitgelieferten Sets eingerechnet. Amnesty- und Citizen-Lab-Feeds haben keine Weitergabe-Lizenz und werden nur auf dem Gerät geladen.</string>
-    <string name="info_malware_coverage">Die Schadsoftware-Hashliste deckt nur ausgewählte Kampagnen ab (AridSpy, VajraSpy, SpyLoan, NGate, PromptSpy). Nur exakte Fingerabdruck-Treffer zählen. Sie ist kein Virenscanner und kein Ersatz für Play Protect.</string>
+    <string name="info_malware_coverage">Die Schadsoftware-Hashliste deckt nur ausgewählte Android-Kampagnen ab, die ESET und Meta veröffentlicht haben. Nur exakte Fingerabdruck-Treffer zählen. Sie ist kein Virenscanner und kein Ersatz für Play Protect.</string>
     <string name="info_sources_bundled">in der App enthalten</string>
     <string name="info_sources_on_device">auf dem Gerät geladen</string>
     <string name="info_sources_cite">Zitat: %1$s</string>
@@ -199,6 +199,7 @@
     <string name="source_license_mit">MIT-Lizenz</string>
     <string name="source_license_bsd2">BSD-2-Clause-Lizenz</string>
     <string name="info_repo_eset">ESET Malware-Indikatoren (eset/malware-ioc)</string>
+    <string name="info_repo_meta">Meta Threat Research (meta/threat-research)</string>
     <string name="source_license_cc_by">CC BY 4.0</string>
     <string name="source_license_device_only">keine Weitergabe-Lizenz – nur Download auf dem Gerät</string>
     <string name="info_section_help">Hilfe</string>
@@ -261,9 +262,9 @@
     <string name="guide_finding_link_stalkerware_meaning">Eine Adresse, die zu einer bekannten Überwachungs-App gehört, taucht auf deinem Handy auf. Das heißt nicht, dass die App installiert ist. Ein Falschtreffer ist möglich.</string>
     <string name="guide_finding_link_stalkerware_steps">1. Öffne den Link nicht. Entferne nichts auf eigene Faust: Eine überwachende Person kann das bemerken.\n2. Hol dir bei Unsicherheit Hilfe, zum Beispiel beim Hilfetelefon Gewalt gegen Frauen (116 016, kostenlos, rund um die Uhr).</string>
 
-    <string name="guide_finding_malware_meaning">Der Fingerabdruck (SHA-256) einer App oder Datei auf deinem Handy stimmt exakt mit einer Probe überein, die Sicherheitsforscher (ESET) als bekannte Schadsoftware veröffentlicht haben. Solche Apps können dich ausspähen, Zugangsdaten stehlen oder Online-Banking übernehmen. Der Treffer ist exakt, die Liste deckt aber nur wenige benannte Kampagnen ab.</string>
+    <string name="guide_finding_malware_meaning">Der Fingerabdruck (SHA-256) einer App oder Datei auf deinem Handy stimmt exakt mit einer Probe überein, die Sicherheitsforscher (ESET, Meta) als bekannte Schadsoftware veröffentlicht haben. Solche Apps können dich ausspähen, Zugangsdaten stehlen oder Online-Banking übernehmen. Der Treffer ist exakt, die Liste deckt aber nur wenige benannte Kampagnen ab.</string>
     <string name="guide_finding_malware_steps">1. Deinstalliere die App: Einstellungen > Apps > die App > Deinstallieren. Lässt sie sich nicht entfernen, entziehe ihr zuerst Geräteadministrator und Bedienungshilfe. Eine selbst heruntergeladene Datei löschst du.\n2. Ändere von einem anderen Gerät die Passwörter deiner wichtigen Konten (E-Mail, Bank, Messenger) und aktiviere die Zwei-Faktor-Anmeldung.\n3. Hast du währenddessen Banking- oder Bezahl-Apps benutzt, melde dich bei deiner Bank.\n4. Prüfe danach noch einmal. Befürchtest du gezielte Überwachung, wende dich an eine Beratungsstelle.</string>
-    <string name="guide_gap_malware_coverage_meaning">Die Schadsoftware-Liste enthält nur ausgewählte Kampagnen (AridSpy, VajraSpy, SpyLoan, NGate, PromptSpy von ESET). Sie ist kein allgemeiner Virenscanner und ersetzt Play Protect nicht.</string>
+    <string name="guide_gap_malware_coverage_meaning">Die Schadsoftware-Liste enthält nur ausgewählte Kampagnen (veröffentlicht von ESET und Meta). Sie ist kein allgemeiner Virenscanner und ersetzt Play Protect nicht.</string>
     <string name="guide_gap_malware_coverage_steps">1. Du musst nichts tun.\n2. Lass Play Protect eingeschaltet und installiere Apps nur aus vertrauenswürdigen Stores.</string>
     <string name="guide_lead_sideloaded_app_meaning">Diese App stammt nicht aus einem App-Store und hat weitreichende Rechte. Das ist nur ein Hinweis, kein Fund: Viele harmlose Apps kommen so aufs Handy.</string>
     <string name="guide_lead_sideloaded_app_steps">1. Erkennst du die App und hast du sie selbst installiert? Dann ist alles in Ordnung.\n2. Wenn nicht: Öffne die App-Info und prüfe, was sie darf.\n3. Du brauchst sie nicht? Deinstalliere sie. Fühlst du dich überwacht, hol dir vorher Hilfe – das Entfernen kann auffallen.</string>

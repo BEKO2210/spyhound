@@ -321,6 +321,7 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
         "mvt-project/mvt-indicators" -> stringResource(R.string.info_repo_mvt)
         "AssoEchap/stalkerware-indicators" -> stringResource(R.string.info_repo_echap)
         "eset/malware-ioc" -> stringResource(R.string.info_repo_eset)
+        "meta/threat-research" -> stringResource(R.string.info_repo_meta)
         "AmnestyTech/investigations" -> stringResource(R.string.info_repo_amnesty)
         "citizenlab/malware-indicators" -> stringResource(R.string.info_repo_citizenlab)
         else -> group.repo
@@ -360,7 +361,7 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
                     color = SpyColors.IvoryMuted,
                 )
             }
-            if (group.repo == "eset/malware-ioc") {
+            if (group.repo == "eset/malware-ioc" || group.repo == "meta/threat-research") {
                 Text(
                     stringResource(R.string.info_malware_coverage),
                     style = MaterialTheme.typography.bodyMedium,

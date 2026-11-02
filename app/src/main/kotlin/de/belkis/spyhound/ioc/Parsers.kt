@@ -25,6 +25,7 @@ object Parsers {
         "csv-domain-ip" -> csvDomainIp(text, ctx)
         "curated-tsv" -> curatedTsv(text, ctx)
         "hashlist" -> hashlist(text, ctx)
+        "typed-csv-android-sha256" -> typedCsvAndroidSha256(text, ctx)
         else -> throw IocFormatException("unknown indicator format: $format")
     }
 
@@ -137,6 +138,19 @@ object Parsers {
             .filter { SHA256_LOWER_RE.matches(it) }
             .map { Indicator(it, IocType.SHA256, ctx.category, ctx.family, ctx.sourceId) }.toList()
 
+    /**
+     * Meta threat-research CSV: `indicator_type,indicator_value,comment,ds`. Only `sha256` rows whose comment says
+     * Android count; the Windows hash in the same file and all other rows are dropped.
+     */
+    fun typedCsvAndroidSha256(text: String, ctx: SourceContext): List<Indicator> =
+        text.lineSequence().mapNotNull { line ->
+            val cols = line.split(',')
+            if (cols.size < 3 || cols[0].trim() != "sha256") return@mapNotNull null
+            val hash = cols[1].trim().lowercase()
+            if (!SHA256_LOWER_RE.matches(hash) || !cols[2].contains("android", ignoreCase = true)) return@mapNotNull null
+            Indicator(hash, IocType.SHA256, ctx.category, ctx.family, ctx.sourceId)
+        }.toList()
+
     private val SHA256_LOWER_RE = Regex("[0-9a-f]{64}")
     private val APP_ID_RE = Regex("""^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]+)+$""")
 
@@ -223,17 +237,17 @@ object FeedCatalog {
     val ALLOWED_REPOS = setOf(
         "mvt-project/mvt-indicators", "AmnestyTech/investigations",
         "AssoEchap/stalkerware-indicators", "citizenlab/malware-indicators",
-        "eset/malware-ioc",
+        "eset/malware-ioc", "meta/threat-research",
         // Plain domain lists for the DNS watcher (tracker, phishing); see assets/iocs/domainlists.json.
         "Perflyst/PiHoleBlocklist", "StevenBlack/hosts", "Phishing-Database/Phishing.Database",
     )
 
-    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0), ESET (BSD-2-Clause) and the two small MIT tracker lists ship inside
+    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0), ESET (BSD-2-Clause), Meta (MIT) and the two small MIT tracker lists ship inside
     // the app; the others carry no licence (or are too large and too short-lived, as the phishing list) and are fetched
     // on the device from the pinned commit instead.
     private val BUNDLED_REPOS = setOf(
         "mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators", "eset/malware-ioc",
-        "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
+        "meta/threat-research", "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
     )
 
     // Sources that document iPhone spyware only: their domains still count everywhere, their

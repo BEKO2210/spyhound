@@ -1,6 +1,6 @@
 # Antivirus offline – Konzept (Roadmap Stufe 4)
 
-Status: **Schritt 1 umgesetzt (ESET, 5 Android-Ordner); Rest Konzept.** Stand der Recherche: **2026-11-02** (alle Quellen an diesem Tag selbst geöffnet).
+Status: **Schritt 1 (ESET, 5 Ordner) und Schritt 2 (alle ESET-Android-Ordner, Meta, Positivliste) umgesetzt; Rest Konzept.** Stand der Recherche: **2026-11-02** (alle Quellen an diesem Tag selbst geöffnet).
 Grundlage: `docs/SPEC.md` (Grundsätze 1, 2, 4, 5), `app/src/main/assets/iocs/sources.json` (29 gepinnte Quellen, Repos:
 `mvt-project/mvt-indicators`, `AmnestyTech/investigations`, `citizenlab/malware-indicators`, `AssoEchap/stalkerware-indicators`),
 `ioc/FeedCatalog` (`ALLOWED_REPOS`), `IocStore.update()` (Pin + SHA-256, keine Redirects).
@@ -24,7 +24,7 @@ Bewertung: **mitliefern** (Datei im APK-Asset), **nur Download** (Gerät lädt g
 | **Koodous** | Plattform, API mit Schlüssel, öffentliche/private YARA-Rulesets | Nutzungsbedingungen nicht lesbar: koodous.com/terms liefert nur eine JavaScript-Hülle. Regeln gehören ihren Autoren, kein einheitliches Lizenzmodell belegt | **Gar nicht**, bis Bedingungen schriftlich geklärt sind (Konto/Schlüssel widerspricht ohnehin Offline-Grundsatz) |
 | **VirusShare** | Hash-/Sample-Archiv (aktuell 120,4 Mio. Samples, Stand 2026-11-02 am Seitenkopf) | „access … is granted by invitation only“; „The use of bots, scripts, or other methods to scrape data … will not be tolerated.“ Keine Weitergaberechte genannt | **Gar nicht** |
 | **ashishb/android-malware** (GitHub) | Ordner je Familie mit echten Samples; Repo ~600 MB, letzter Push 2025-12-31 | Keine Lizenz (GitHub-API: `license: null`), enthält lebende Schadsoftware | **Gar nicht** (ohne Lizenz keine Weitergabe; Samples gehören nicht in die Toolchain) |
-| Bereits eingebunden: MVT (MIT), ECHAP (CC BY 4.0), Toolkit-Kurationen (CC0); Amnesty/Citizen Lab (ohne Lizenz → nur Download) | STIX 2 inkl. `file:hashes.sha-256` | siehe `docs/SPEC.md` | unverändert; deckt Spyware/Stalkerware, **nicht** Banking-Trojaner/Adware/Massenmalware |
+| Bereits eingebunden: MVT (MIT), ECHAP (CC BY 4.0), Toolkit-Kurationen (CC0); Amnesty (CC BY laut README) und Citizen Lab (CC BY-NC-SA) → nur Download, siehe 7.2 | STIX 2 inkl. `file:hashes.sha-256` | siehe `docs/SPEC.md` | unverändert; deckt Spyware/Stalkerware, **nicht** Banking-Trojaner/Adware/Massenmalware |
 
 **Ehrliches Fazit:** Die großen Massen-Hashlisten (MalwareBazaar, VirusShare, Koodous) sind für eine quelloffene, kontolose,
 gepinnte App **nicht nutzbar**. Rechtlich sauber und pinnbar sind kleine, kuratierte Forscher-Repos (ESET). Damit prüft
@@ -124,11 +124,70 @@ Quelle: `eset/malware-ioc`, Commit `59745502656e813f9f79fc8005243edbc04f9397` (2
 Summe 79 eindeutige Hashes (A1). Parser `hashlist`, `Category.MALWARE`, `Verdict.MALWARE`, Texte/Guidance DE+EN, Lücke
 `MALWARE_COVERAGE` („nur ausgewählte Kampagnen, kein Ersatz für Play Protect“) und Hinweis in den Quelldetails der Info-Seite.
 Installierte APKs (`AppAnalyzer`) und Dateien (`ShellAnalyzer.hashes`, inkl. Downloads mit Dateizugriff) werden gegen die Hashes
-geprüft; nur exakte Treffer. Die Positivliste aus 2.4 ist noch nicht gebaut.
+geprüft; nur exakte Treffer. Die Positivliste aus 2.4 ist seit Schritt 2 gebaut (Abschnitt 7).
 
 Abnahme: A1, A2, A3 (JVM-Teil), A7 (Textcheck bleibt grün), A8 per `AntivirusTest`/`testDebugUnitTest`. Gerätetest offen: A3
 (EICAR-Test-APK im Download-Ordner), A4 (0 Falschtreffer auf echtem Gerät), A5 (Flugmodus-Lauf), A6 (Leistung Pixel 9).
 
+## 7. Schritt 2: weitere lizenzklare Quellen (2026-11-02)
+
+Alle Lizenzdateien/READMEs an der Quelle selbst geöffnet (GitHub-API und `raw.githubusercontent.com`, Abruf 2026-11-02).
+
+### 7.1 ESET `malware-ioc`, alle Ordner durchgegangen
+Repo-Stand `5974550` (2026-10-21), BSD-2-Clause. 304 `README.adoc`/`samples.sha256` (alle ~190 Kampagnenordner) geladen und
+auf „Android“, „apk“, „Google Play“, „mobile“ geprüft. Ergebnis:
+
+| Ordner | Familie | SHA-256 | Entscheidung |
+|---|---|---|---|
+| aridspy, vajraspy, spyloan, ngate, promptspy | siehe Abschnitt 6 | 79 | seit Schritt 1 |
+| callphantom | CallPhantom | 28 | **mitgeliefert** (README-Titel „…Tricks Android Users“, nur APK-Hashes) |
+| virtual_invaders | eXotic Visit | 20 | **mitgeliefert** (Android-Kampagne) |
+| prospytospy | ProSpy / ToSpy | 12 | **mitgeliefert** (UAE, Android) |
+| gref | BadBazaar | 5 | **mitgeliefert** (Tabelle: nur `Android/Spy.BadBazaar.A`) |
+| gravityrat | GravityRAT | 3 | **mitgeliefert** (nur `Android/Spy.Gravity.A`) |
+| ghostchat | GhostChat | 2 | **mitgeliefert** (Datei ist Großbuchstaben, Parser kleinschreibt) |
+| pwa_phishing | PWA-Phishing-Banker | 2 | **mitgeliefert** (beide `base.apk`, `Android/Spy.Banker`) |
+| kamran | Kamran | 1 | **mitgeliefert** |
+| evilvideo | EvilVideo | 1 | **mitgeliefert** (Telegram-Android-Nutzlast) |
+| scarcruft | – | 14 | **weggelassen**: README mischt 6 Android- mit Windows-Hashes und weiteren Abschnitten (Dolphin …); `samples.sha256` hat 14 Zeilen, die README-Tabelle nur 9 SHA-1 – Zuordnung nicht beweisbar |
+| thewizards | – | 8 | **weggelassen**: 6 Windows-, 2 Android-Zeilen; Android-Zeilen nur über die Reihenfolge zuordenbar |
+| quarterly_reports/2020_Q2 | – | 24 | **weggelassen**: Sammelbericht, Android nur als Paketnamen (kein Hash-Bezug) |
+| interception, evasive_panda, agrius | – | – | Treffer „mobile/apk“ sind Dateinamen/Provider, kein Android |
+| alle anderen Ordner | – | – | Windows/Linux/macOS/Web, kein Android-Bezug |
+
+Neu: 9 Ordner, **74** SHA-256, zusammen mit Schritt 1 **153**. Pin: derselbe Commit `59745502656e813f9f79fc8005243edbc04f9397`,
+je Datei SHA-256 in `sources.json`. Die Dateien sind unverändert (je README-Zeile ein SHA-1, je `samples.sha256`-Zeile ein SHA-256,
+Zeilenzahl gleich – so geprüft).
+
+### 7.2 Weitere Quellen
+
+| Quelle | Lizenz (Beleg, Abruf 2026-11-02) | Android / SHA-256 | Entscheidung |
+|---|---|---|---|
+| **Meta** `meta/threat-research` (GitHub) | `LICENSE`: „MIT License – Copyright (c) Meta Platforms, Inc. and its affiliates. Permission is hereby granted, free of charge … to use, copy, modify, merge, publish, distribute …“; Commit `2d664e9` (2026-08-27) | 27 CSV-Dateien; Android-Hashes nur in `2021_04_taking_action_against_hackers_in_palestine.csv`: 13 × `sha256` mit Kommentar „PSS Android Malware Hash“, daneben 1 Windows-Hash und viele Domains. `2022_malicious_mobile_apps.csv`: 355 Android-Paketnamen (kein Hash). `2023_05_malware_iocs.csv` 31 SHA-256 = NodeStealer (Windows) | **Mitgeliefert**, nur die 13 Android-Zeilen (Parser `typed-csv-android-sha256`, trennt über die Kommentarspalte; Datei unverändert gepinnt). Paketnamen **nicht** (Namens-Treffer sind laut 2.4 keine Funde). Windows-/Domain-Zeilen ignoriert |
+| **Zimperium** `Zimperium/IOC` (zLabs) | GitHub-API `license: null`, kein LICENSE-File; README nur: „provided ‚as-is‘ for threat intel and defensive use only … Users assume full responsibility“ – keine Weitergaberechte | rund 40 Android-Kampagnenordner (Konfety, ClayRat, DroidLock …), 64-stellige Hex-Werte insgesamt ca. 113 800 (Regex über alle CSV/TXT, nicht je Datei auf Hashes geprüft) | **Gar nicht** eingebaut (ohne Lizenz keine Weitergabe). Nur Download-Hinweis: Nutzer könnte die Listen selbst laden; kein Pin in der App, solange die Lizenz fehlt. Rückfrage an Zimperium wäre sinnvoll (sehr gute Android-Abdeckung) |
+| **Amnesty** `AmnestyTech/investigations` | **Korrektur:** README Z. 5: „These indicators are shared under the license CC-BY“ (Link auf CC BY 2.0); GitHub-API `license: null`. Die frühere Annahme „keine Lizenz“ war falsch | Android-Kampagne 2023, FinSpy u. a. als STIX, Hash-Anzahl nicht je Datei gezählt | Heute nur Download (Pin vorhanden). Mitliefern wäre mit Namensnennung zulässig, ist hier **nicht** umgesetzt (kein Hash-Zuwachs für diesen Schritt, STIX ist groß); als eigener Schritt prüfen |
+| **Citizen Lab** `citizenlab/malware-indicators` | README „License“: „Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International“ (nicht in der GitHub-API erkannt). NC und SA passen nicht zu einem Apache-2.0-Paket | Android nur vereinzelt (nicht je Ordner geprüft); letzter Commit 2020-06-09 | **Nur laden** (Gerät holt gepinnt, wie bisher), **nicht mitliefern** |
+| **Kaspersky** (GitHub `KasperskyLab`) | `threat-intelligence`: Apache-2.0, enthält aber nur Konnektoren (OpenCTI), **keine** IOC-Listen; securelist-IOCs stehen im Blogtext ohne Git-Repo/Lizenz | 0 | **Gar nicht** (kein Pin, keine Lizenz) |
+| **Lookout** | GitHub-Organisation `lookout` hat keine IOC-Repos; Lookout-Android-Hashes stecken bereits in `mvt-indicators` (MIT) | 0 neu | **Gar nicht** (nichts Neues) |
+| **Cyble** | GitHub-Organisation `cyble` ohne öffentliche Repos; IOCs nur im Blog | 0 | **Gar nicht** |
+| **Check Point** | `CheckPointSW/Cyber-Research`: keine Lizenz, nur Skripte (`Malware/APT32/…`), keine Hashlisten | 0 | **Gar nicht** |
+| **Trend Micro** | `trendmicro`-Organisation: Repos `tlsh`, `telfhash` u. a., keine IOC-Listen | 0 | **Gar nicht** |
+| **CERT-Feeds** | `CERT-Polska` hat 92 Repos (`mwdb_iocextract`, `hsn2-*` …), keine Android-Hashliste; abuse.ch siehe Abschnitt 1 | 0 | **Gar nicht** |
+| **Google Threat Intelligence** | kein öffentliches IOC-Repo gefunden | 0 | offen |
+
+Hinweis: Die Websuche war am Abrufstag nicht erreichbar; Blog-/Webseitenbedingungen der Firmen (Kaspersky, Lookout, Cyble, Check
+Point, Trend Micro) wurden daher **nicht** gelesen. Sie kommen ohne Git-Repo ohnehin nicht in Frage (kein Pin).
+
+### 7.3 Positivliste (Konzept 2.4)
+`ioc/KnownGood`: SHA-256 der leeren Datei, eines einzelnen NUL-Bytes, von `\n` und `\r\n`. `IocSet` beantwortet für diese Werte nie
+eine Suche; `IocStore.load()` verwirft eine Quelle, die einen davon enthält, als Ganzes (erscheint als „fehlerhaft“ in `IocStatus`).
+Test: keine mitgelieferte Quelle trifft die Liste; eine vergiftete Quelle erzeugt keinen Fund. **Ehrliche Grenze:** Hashes echter
+Systembibliotheken/-apps ließen sich hier nicht erheben (kein Gerätezugriff in dieser Sitzung, die Werte sind je Android-Build
+verschieden). Die Liste ist erweiterbar (`KnownGood.trivial`); eine geräteabgeleitete Liste (A4) bleibt offen.
+
+### 7.4 Ergebnis
+Hashes insgesamt (SHA-256, Kategorie Malware): **166** = ESET 153 (14 Ordner) + Meta 13. Quellen in `sources.json`: 44.
+Offene Punkte: Amnesty als mitlieferbar prüfen, Zimperium-Lizenz anfragen, Systemhash-Positivliste vom Gerät.
 ## Gerätetest Schritt 1 (2026-11-02)
 Aufbau: Emulator API 34, Debug-Build, Dateizugriff erteilt; die harmlose Test-App „Testspy“ nur als Datei
 `Download/rechnung.apk` (nicht installiert); als einziger Indikator deren SHA-256 (`debug-test.tsv`, nur Debug);
@@ -140,3 +199,4 @@ Aufbau: Emulator API 34, Debug-Build, Dateizugriff erteilt; die harmlose Test-Ap
 | A4 – 0 Falschtreffer auf echtem Gerät | ✅ Pixel 9: 703 APK-Dateien gegen 79 ESET-Hashes, 0 Treffer |
 | A5 – Prüfung offline | ✅ kompletter Scan im Flugmodus, 0 Abstürze |
 | A6 – Leistung | Emulator: Basis-Scan inkl. Datei-Fingerabdrücken 25 s (768 geprüft). Pixel 9 (Release, tiefe Prüfung): 58 s gesamt; der Hash-Abgleich selbst ist eine Binärsuche und fällt nicht ins Gewicht. |
+| A4 nach Schritt 2 | ✅ Pixel 9: 703 APK-Dateien gegen 161 eindeutige Malware-SHA-256 (ESET 14 Kampagnen + Meta), 0 Treffer; alle 15 Quellen-Pins an der Quelle nachgerechnet |

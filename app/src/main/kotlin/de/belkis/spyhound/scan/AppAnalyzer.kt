@@ -133,7 +133,11 @@ object AppAnalyzer {
             "Die App-Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe${family(ind.family)}."
         }
 
-    fun sourceName(ind: Indicator) = if (ind.sourceId.startsWith("eset-")) "ESET" else ind.sourceId
+    fun sourceName(ind: Indicator) = when {
+        ind.sourceId.startsWith("eset-") -> "ESET"
+        ind.sourceId.startsWith("meta-") -> "Meta"
+        else -> ind.sourceId
+    }
 
     /** Honest limit of the malware hash list, shown whenever it is loaded. */
     fun malwareCoverage(iocs: IocSet): String? {

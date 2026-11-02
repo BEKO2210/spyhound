@@ -38,6 +38,7 @@ class IocSet(indicators: Iterable<Indicator>) {
         for (ind in indicators) {
             val key = normalise(ind.type, ind.value) ?: continue
             if (ind.type == IocType.DOMAIN && SharedServices.isShared(key)) continue
+            if (ind.type == IocType.SHA256 && KnownGood.contains(key)) continue
             // First source wins, so the curated lists (loaded first) keep their attribution,
             // except that an Android-relevant duplicate must replace an iPhone-only one, or lookup() would drop it.
             val map = maps.getValue(ind.type)

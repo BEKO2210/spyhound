@@ -26,8 +26,8 @@ android {
         // Sideload-only app (no Play Store): QUERY_ALL_PACKAGES, READ_SMS and
         // MANAGE_EXTERNAL_STORAGE are used without Play policy constraints.
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.3.1"
+        versionCode = 7
+        versionName = "0.3.2"
         // Shizuku reuses a running user service while this number stays the same. Derive it from the
         // service's interface and code, so a changed service is always restarted after an update.
         val shellSources = listOf("src/main/aidl/de/belkis/spyhound/shell/IShellService.aidl", "src/main/kotlin/de/belkis/spyhound/shell/Shell.kt")

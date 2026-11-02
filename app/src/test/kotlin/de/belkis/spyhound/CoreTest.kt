@@ -125,7 +125,7 @@ class CoreTest {
     @Test fun bundledAssetsParse() {
         val dir = File("src/main/assets/iocs")
         val sources = FeedCatalog.parse(File(dir, "sources.json").readText())
-        assertEquals(34, sources.size)
+        assertEquals(44, sources.size)
         var total = 0
         for (s in sources.filter { it.bundled }) {
             val f = File(dir, s.fileName)
