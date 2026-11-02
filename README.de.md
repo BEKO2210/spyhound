@@ -168,6 +168,11 @@ angesehen hat, sonst gehen Beweise verloren.
 **Warum fragt es nach SMS und Dateien?** Um Links in Nachrichten und Dateien im Speicher mit bekannten Indikatoren zu
 vergleichen. Beides ist freiwillig; ohne wird der Bereich als Lücke angezeigt.
 
+**Ich kann SMS nicht erlauben.** Android schützt SMS bei Apps, die nicht über den Play Store installiert wurden
+(„Eingeschränkte Einstellungen“). Öffne Einstellungen → Apps → Spyhound, tippe oben rechts auf ⋮, wähle
+„Eingeschränkte Einstellungen zulassen“ und tippe in Spyhound erneut auf „Erlauben“. Spyhound zeigt diese Schritte
+selbst an und öffnet die App-Info für dich.
+
 **Warum WLAN-Debugging?** Android verbirgt Prozesse und Systemprotokolle vor normalen Apps. Über WLAN-Debugging kann
 Spyhound sie direkt auf dem Handy lesen – ohne Computer, ohne zweite App. Nach der Prüfung kannst du es ausschalten.
 

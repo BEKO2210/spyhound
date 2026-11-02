@@ -17,6 +17,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,6 +58,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.R
 import de.belkis.spyhound.scan.Progress
@@ -177,14 +179,28 @@ fun ScanScreen(
                             .weight(5f)
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
-                        ScanRadar(radar = radar, modifier = radarModifier)
-                        RadarLegend(legend = radar?.legend ?: RadarLegendCounts(), modifier = Modifier.padding(top = 8.dp))
-                        Spacer(Modifier.height(16.dp))
-                        ScanPercent(pct)
-                        Spacer(Modifier.height(8.dp))
-                        ThinProgressLine(shown, Modifier.padding(horizontal = 4.dp))
-                        Spacer(Modifier.weight(1f))
+                        BoxWithConstraints(
+                            Modifier.fillMaxWidth().fillMaxHeight(),
+                        ) {
+                            val radarSize = (maxWidth * 0.8f).coerceAtMost(maxHeight * 0.5f)
+                            Column(
+                                Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                ScanRadar(radar = radar, modifier = radarModifier, size = radarSize)
+                                RadarLegend(
+                                    legend = radar?.legend ?: RadarLegendCounts(),
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                ScanPercent(pct)
+                                Spacer(Modifier.height(8.dp))
+                                ThinProgressLine(shown, Modifier.padding(horizontal = 4.dp))
+                            }
+                        }
                     }
                     Column(
                         Modifier
@@ -263,13 +279,13 @@ private fun ScanHeading() {
 }
 
 @Composable
-private fun ScanRadar(radar: RadarProgress?, modifier: Modifier = Modifier) {
+private fun ScanRadar(radar: RadarProgress?, modifier: Modifier = Modifier, size: Dp = ScanRadarSize) {
     val radarLabel = stringResource(R.string.scan_radar_cd)
     RadarCanvas(
         radar = radar,
         modifier = Modifier
             .then(modifier)
-            .size(ScanRadarSize)
+            .size(size)
             .clearAndSetSemantics { contentDescription = radarLabel },
         sweepTrail = true,
         blipFlash = true,

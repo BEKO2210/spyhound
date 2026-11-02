@@ -307,6 +307,12 @@
     <string name="status_dns">DNS-Wächter</string>
     <string name="status_depth_explain">%1$s prüft dein Telefon. Richte eine tiefere Prüfung für mehr Zugriff ein.</string>
     <string name="status_sms_on">SMS-Links werden geprüft.</string>
+    <string name="sms_blocked_title">Android sperrt SMS</string>
+    <string name="sms_blocked_intro">Android schützt SMS bei Apps außerhalb des Play Stores. So schaltest du es frei:</string>
+    <string name="sms_blocked_step1">1. Tippe auf „App-Info öffnen“.</string>
+    <string name="sms_blocked_step2">2. Tippe oben rechts auf ⋮ und dann auf „Eingeschränkte Einstellungen zulassen“.</string>
+    <string name="sms_blocked_step3">3. Komm hierher zurück und tippe erneut auf „Erlauben“.</string>
+    <string name="sms_blocked_open">App-Info öffnen</string>
     <string name="status_sms_off">Erlaube SMS, um Links in Nachrichten zu prüfen.</string>
     <string name="status_files_on">Dateien werden geprüft.</string>
     <string name="status_files_shell">Dateien werden über die tiefe Prüfung geprüft – dafür braucht es keine eigene Berechtigung.</string>

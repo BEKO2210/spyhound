@@ -180,6 +180,11 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     }
 
     @Test
+    fun smsBlocked() = shot("sms_blocked") {
+        de.belkis.spyhound.ui.components.SmsBlockedDialog(onOpenAppInfo = {}, onDismiss = {})
+    }
+
+    @Test
     fun wizard() = shot("wizard") {
         DeepCheckSetupWizard(
             snapshot = DeepCheckSetupSnapshot(

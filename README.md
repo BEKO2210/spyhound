@@ -164,6 +164,10 @@ noticed by the person monitoring you. Do not reset the phone before an expert ha
 **Why does it ask for SMS and file access?** To check links in messages and files in shared storage against known
 indicators. Both are optional; without them those areas are listed as gaps.
 
+**I can't allow SMS.** Android protects SMS for apps installed outside the Play Store ("restricted settings"). Open
+Settings → Apps → Spyhound, tap ⋮ at the top right, choose "Allow restricted settings", then tap "Allow" in Spyhound
+again. Spyhound shows these steps itself and opens the app info for you.
+
 **Why does it want wireless debugging?** Android hides processes and system logs from normal apps. Wireless debugging
 lets Spyhound read them on the phone itself – no computer, no second app. You can switch it off after the scan.
 

@@ -307,6 +307,12 @@
     <string name="status_dns">DNS watch</string>
     <string name="status_depth_explain">%1$s checks your phone. Set up deeper checks for more access.</string>
     <string name="status_sms_on">SMS links are included in scans.</string>
+    <string name="sms_blocked_title">Android is blocking SMS</string>
+    <string name="sms_blocked_intro">Android protects SMS for apps from outside the Play Store. Here is how to switch it on:</string>
+    <string name="sms_blocked_step1">1. Tap “Open app info”.</string>
+    <string name="sms_blocked_step2">2. Tap ⋮ at the top right, then “Allow restricted settings”.</string>
+    <string name="sms_blocked_step3">3. Come back here and tap “Allow” again.</string>
+    <string name="sms_blocked_open">Open app info</string>
     <string name="status_sms_off">Allow SMS to check links in messages.</string>
     <string name="status_files_on">Files are included in scans.</string>
     <string name="status_files_shell">Files are checked through the deep check – no separate permission needed.</string>

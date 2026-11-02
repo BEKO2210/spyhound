@@ -22,6 +22,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -60,6 +61,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import android.content.Context
@@ -130,7 +132,7 @@ fun StartScreen(
         notificationsGranted = granted || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
     }
     val tablet = LocalConfiguration.current.screenWidthDp >= 600
-    val headerContent: @Composable ColumnScope.() -> Unit = {
+    val headerContent: @Composable ColumnScope.(radarDiameter: Dp) -> Unit = { radarDiameter ->
         Column(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -182,6 +184,7 @@ fun StartScreen(
                 enabled = state.iocs != null && state.progress == null,
                 modifier = radarModifier,
                 lastRadar = state.lastRadar,
+                diameter = radarDiameter,
             )
             Spacer(Modifier.height(12.dp))
             val depth = when (state.access) {
@@ -196,7 +199,8 @@ fun StartScreen(
                 AccessLevel.ROOT -> 3
             }
             val filesViaShell = state.access != AccessLevel.APP
-            StatusStrip(listOf(
+            StatusStrip(
+                listOf(
                 StatusItem(
                     kind = StatusKind.DEPTH,
                     label = depth,
@@ -246,9 +250,12 @@ fun StartScreen(
                     actionLabel = stringResource(if (state.dnsRunning) R.string.status_action_stop else R.string.status_action_start),
                     action = { onDnsToggle(!state.dnsRunning) },
                 ),
-            ))
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
+    val defaultRadarDiameter = 176.dp
     val cardsContent: @Composable ColumnScope.() -> Unit = {
         val scrolled by remember { derivedStateOf { scroll.value > 0 } }
         Spacer(Modifier.height(10.dp))
@@ -447,16 +454,23 @@ fun StartScreen(
     Box(Modifier.fillMaxSize()) {
         if (tablet) {
             Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
-                Column(
+                BoxWithConstraints(
                     Modifier.weight(1f).fillMaxHeight(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    content = headerContent,
-                )
+                ) {
+                    val radarDiameter = (maxWidth * 0.8f).coerceAtMost(maxHeight * 0.5f)
+                    Column(
+                        Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        headerContent(radarDiameter)
+                    }
+                }
                 Column(Modifier.weight(1f).fillMaxHeight(), content = cardsContent)
             }
         } else {
             Column(Modifier.fillMaxSize()) {
-                headerContent()
+                headerContent(defaultRadarDiameter)
                 cardsContent()
             }
         }

@@ -340,3 +340,29 @@ fun ScrollEdge(scrolled: Boolean, modifier: Modifier = Modifier) {
         }
     })
 }
+
+/** Shown when Android's restricted settings block READ_SMS for a sideloaded app. */
+@Composable
+fun SmsBlockedDialog(onOpenAppInfo: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.sms_blocked_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.sms_blocked_intro))
+                Text(stringResource(R.string.sms_blocked_step1))
+                Text(stringResource(R.string.sms_blocked_step2))
+                Text(stringResource(R.string.sms_blocked_step3))
+            }
+        },
+        confirmButton = {
+            SpyButton(stringResource(R.string.sms_blocked_open), onClick = onOpenAppInfo, accent = true, fillWidth = false)
+        },
+        dismissButton = { TextActionLink(text = stringResource(R.string.t_060), onClick = onDismiss) },
+        containerColor = SpyColors.SurfaceRaised,
+        shape = RoundedCornerShape(SpyRadii.Card),
+        tonalElevation = 0.dp,
+        titleContentColor = SpyColors.Ivory,
+        textContentColor = SpyColors.Ivory,
+    )
+}

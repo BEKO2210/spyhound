@@ -75,13 +75,22 @@ import de.belkis.spyhound.ui.screens.InfoScreen
 import de.belkis.spyhound.ui.screens.PermissionAuditRoute
 import de.belkis.spyhound.ui.screens.IntroScreen
 import de.belkis.spyhound.ui.screens.StartScreen
+import de.belkis.spyhound.ui.components.SmsBlockedDialog
+import de.belkis.spyhound.scan.SmsRequestOutcome
+import de.belkis.spyhound.scan.smsRequestOutcome
 import androidx.compose.ui.unit.dp
 
 class MainActivity : AppCompatActivity() {
     private val vm: MainViewModel by viewModels()
 
-    private val smsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+    private var showSmsBlocked by mutableStateOf(false)
+
+    private val smsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         vm.refreshPermissions()
+        showSmsBlocked = smsRequestOutcome(
+            granted,
+            shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS),
+        ) == SmsRequestOutcome.BLOCKED_BY_ANDROID
     }
 
     private val notificationsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -194,6 +203,10 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
+                    if (showSmsBlocked) SmsBlockedDialog(
+                        onOpenAppInfo = { openAppInfo() },
+                        onDismiss = { showSmsBlocked = false },
+                    )
                     SpyhoundOverlay(visible = showIntro && !showDeepCheckSetup, onBack = finishIntro) {
                         SpyhoundScaffold {
                             IntroScreen(
@@ -254,6 +267,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (!intent.getBooleanExtra(EXTRA_SCAN_SCREENSHOT, false)) vm.onAppVisible()
+        if (checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) showSmsBlocked = false
     }
 
     private fun dispatchBugreportIntent(intent: Intent?) {
@@ -448,6 +462,14 @@ class MainActivity : AppCompatActivity() {
             DnsGuard.stop(this)
         }
         vm.refreshDnsGuard()
+    }
+
+    private fun openAppInfo() {
+        startActivity(
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            },
+        )
     }
 
     private fun openAllFilesAccess() {

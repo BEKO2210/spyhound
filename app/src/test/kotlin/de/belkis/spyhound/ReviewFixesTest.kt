@@ -81,11 +81,17 @@ class ReviewFixesTest {
     }
 
     @Test fun timeoutEndsReadEvenIfAChildKeepsThePipeOpen() {
+        val timeoutSec = 1L
         val t0 = System.nanoTime()
-        // sh exits at once, but the background sleep inherits stdout and keeps it open.
-        val r = streamProcess(listOf("sh", "-c", "sleep 30 & echo hi"), 1) { it.readCapped(1000) }
+        // stdout stays open with no bytes until the process is killed on timeout.
+        val r = streamProcess(
+            listOf("sh", "-c", "tail -f /dev/null"),
+            timeoutSec,
+        ) { it.readCapped(1000) }
+        val elapsedSec = (System.nanoTime() - t0) / 1_000_000_000.0
         assertNull(r)
-        assertTrue((System.nanoTime() - t0) / 1_000_000_000 < 15)
+        assertTrue(elapsedSec >= timeoutSec * 0.75, "expected timeout wait, was ${elapsedSec}s")
+        assertTrue(elapsedSec < 30.0, "expected abort within 30s, was ${elapsedSec}s")
     }
 
     @Test fun timeoutKillsSilentProcess() {
