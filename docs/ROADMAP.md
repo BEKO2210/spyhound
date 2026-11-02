@@ -173,6 +173,10 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- 0.2.0 stürzte beim Start ab: R8 entfernte den von WorkManager per Reflexion genutzten Room-Konstruktor. Debug-Build,
+  181 Unit-Tests und Screenshot-Tests waren grün – keiner davon läuft verkleinert. Lehre: Vor jeder Veröffentlichung
+  die **Release-APK auf einem echten Gerät starten** und das Absturzprotokoll lesen (`am start` + `logcat -b crash`
+  geht auch bei gesperrtem Gerät). Jede neue Bibliothek mit Reflexion braucht Keep-Regeln. (2026-11-02, behoben 0.2.1)
 - JVM-Screenshot-Tests fanden in der ersten Runde drei echte Fehler, die Unit-Tests nie zeigen: Knopf bricht mitten im
   Wort um, Tablet-Spalte schneidet das Statuspanel ab, Zahlen nach Systemsprache statt App-Sprache („4,200“ auf
   Deutsch). Lehre: Jede sichtbare Änderung bekommt ein Screenshot-Bild DE/EN × Telefon/Tablet, und jemand sieht es an.
