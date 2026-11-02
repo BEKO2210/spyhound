@@ -4,19 +4,13 @@
 Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien verständlich, für Profis tief. Start mit
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 01:20)
-1. ~~**Einrichtung ohne PC als geführter Assistent**~~ – gebaut (1186e7d), Gerätetest offen. Größter Hebel für Laien. Abnahme: 3 Schritte, die sich selbst
-   abhaken (WLAN-Debugging an → Kopplungsdialog offen → Code eingegeben), Knopf öffnet direkt die richtige Einstellung,
-   Hinweis/Knopf für Splitscreen; Pixel 9: Kopplung ohne Rückfrage durchführbar.
-2. **Kleine Funde vom Pixel (Politur)** – siehe „Offen aus Gerätetests“. Abnahme je Punkt dort.
-3. ~~**Tablet/Querformat überall zwei Spalten**~~ – gebaut (1186e7d), Prüfung im Querformat auf dem Pixel 9 offen. Abnahme: Breite ≥ 600 dp zwei Spalten,
-   keine leere Hälfte; Telefon unverändert (Pixelvergleich).
-4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
-   Bewegung respektiert, 60 fps auf Pixel 9.
-
-## Release 0.3.5 (2026-11-02) – erstes vollständig reproduzierbares Release (verify-reproducible: 464 Dateien gleich), Positivliste Pixel + Samsung (10830), ruhigere Scan-Zeile. Startprobe Release-APK Pixel 9 ohne Absturz; Abgenommen von Belkis auf dem Pixel 11 Pro XL („Funktioniert“).
-
-## Release 0.3.4 (2026-11-02) – abgenommen von Belkis auf dem Pixel 11 Pro XL („funktioniert“): einheitliche Quellenzahl in der Aktualisierungsmeldung, DNS-Schalter in einfacher Sprache.
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 19:00)
+1. **Spot-Illustrationen auf Logo v2** – Einführung zeigt noch den kantigen v1-Hund; dabei Elfenbein vereinheitlichen.
+   Abnahme: alle illu_*.xml im v2-Stil, eine Elfenbeinfarbe, Screenshots DE/EN neu und angesehen, Pixel 11.
+2. **Samsung-Anleitungen auf echtem Galaxy prüfen** (S24 Ultra / Tab S9 Ultra, nur mit Freigabe des Besitzers):
+   Assistent, Auto Blocker, SMS-Rechte. Abnahme: jeder Knopf öffnet die richtige One-UI-Seite.
+3. **Laientest Assistent** – eine Person ohne Technikwissen schafft die Einrichtung allein (braucht Belkis).
+4. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Tagesrunde 2026-11-02 (17:40)
 - [x] Positivliste um echte Systemdateien erweitert: 1450 SHA-256 aller APK/JAR/ODEX/VDEX/.so eines Pixel 11 Pro XL
@@ -75,7 +69,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       Bewegung = sofortiger Wechsel, Tests grün.
 - [x] JVM-Screenshot-Tests (Roborazzi + Robolectric) für Start, Scan, Ergebnis, Assistent – DE/EN, Telefon/Tablet.
       Abnahme: PNGs im Repo, `./gradlew verifyRoborazziDebug` grün. Grund: UI ohne Gerät nachts prüfbar.
-- [ ] Barrierefreiheit-Durchgang (DESIGN §1.6): TalkBack-Labels aller Knöpfe/Chips/Karten, Tippflächen ≥ 48 dp,
+- [x] Barrierefreiheit-Durchgang (erledigt in Nachtrunde 3, 491530d) (DESIGN §1.6): TalkBack-Labels aller Knöpfe/Chips/Karten, Tippflächen ≥ 48 dp,
       Kontrast AA. Abnahme: Liste der Funde + Fixes, Unit-/Screenshot-Test wo möglich.
 
 ## Offen aus Gerätetests (2026-11-01/02)
@@ -127,7 +121,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] Spot-Illustrationen (illu_*.xml) im Stil von Logo v2 neu zeichnen – Einführung zeigt noch den kantigen v1-Hund.
 - [x] Englische Oberfläche + Sprachwahl. Beleg: Cherry-Pick der i18n-Commits, 58 Tests, docs/shots/en-*.
 
-- [ ] UI/UX-Durchgang (Cloud-Sitzung): übersichtlicher, animierter, selbsterklärend in DE+EN; u. a. weiche Ausblendung
+- [x] UI/UX-Durchgang (erledigt: 1532fe2, f7a1d2c, Abnahme Belkis „Läuft alles“) (Cloud-Sitzung): übersichtlicher, animierter, selbsterklärend in DE+EN; u. a. weiche Ausblendung
       an der Scroll-Kante unter dem festen Kopfbereich (Abschnitte wirken dort „abgeschnitten“). Abnahme: Belkis testet
       auf dem Pixel.
       - Klar sichtbar, **was genutzt wird**: Prüftiefe (Basis/Shizuku/Root) und welche Quellen/Rechte aktiv waren (SMS,
@@ -172,7 +166,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - Lücke: Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – Anleitungstexte bleiben
   ungetestet, bis ein Samsung-Gerät verfügbar ist.
 
-- [ ] Eingebauter Prüf-Dienst statt separater Shizuku-App: Kopplung per WLAN-Debugging direkt in Spyhound (libadb-android,
+- [x] Eingebauter Prüf-Dienst statt separater Shizuku-App (erledigt: 8cc3f73, Pixel 9 + 11): Kopplung per WLAN-Debugging direkt in Spyhound (libadb-android,
       Apache-2.0/GPL-3.0 dual; Shizuku Apache-2.0, API MIT → NOTICE), eigener Dienst per app_process mit ADB-Rechten.
       Abnahme: Pixel ohne installierte Shizuku-App erreicht Stufe „Tief“; nach Neustart ein Tipp zum Neustarten.
 
@@ -186,12 +180,12 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
 
 ## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
-- [~] Antivirus offline – Schritt 1 erledigt (ESET-Hashlisten, 79 Hashes, 0 Falschtreffer auf 703 APKs Pixel 9). Offen: Gerätetest A3/A5/A6, Positivliste, weitere lizenzklare Quellen (abuse.ch anfragen, YARAify prüfen). Ursprünglich: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
+- [~] Antivirus offline – Schritt 1+2 erledigt (161 Hashes ESET+Meta, 0 Falschtreffer, Gerätetest A3/A5/A6, Positivliste 10830; Release 0.3.2/0.3.5). Offen: nur noch weitere lizenzklare Quellen (abuse.ch anfragen, YARAify prüfen). Ursprünglich: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
       YARA-Regeln prüfen; Lizenz jeder Quelle prüfen. Abnahme: EICAR-ähnliche Test-APK wird erkannt, 0 Falschtreffer
       auf Pixel.
 - [x] Rechte-Prüfer „Wer darf was“: 11 Rechte-Gruppen, Systemapps ausblendbar, Verlauf lokal, „neu seit letzter Prüfung“.
       Beleg: PermissionAuditTest, Screenshots audit_*. Offen: Abnahme auf dem Pixel.
-- [~] Netzwerk-Wächter ausbauen – gebaut (Tracker/Phishing, Warnen/Blockieren je Kategorie, Lizenzen geprüft). **Gerätetest offen**: DNS an, Phishing-Testdomain → Warnung; Blockieren → NXDOMAIN; Aus → normales DNS (Lehre vom 2026-11-01!). Erst danach Release.
+- [x] Netzwerk-Wächter ausbauen – gebaut und geprüft (Emulator: Auflösen/NXDOMAIN/Aus; Release 0.3.1/0.3.4 von Belkis abgenommen). War: DNS an, Phishing-Testdomain → Warnung; Blockieren → NXDOMAIN; Aus → normales DNS (Lehre vom 2026-11-01!). Erst danach Release.
 - [x] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (491530d) (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [x] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund (295ff6d).
 
