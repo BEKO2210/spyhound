@@ -73,7 +73,9 @@ import de.belkis.spyhound.scan.HardeningId
 import de.belkis.spyhound.scan.HardeningItem
 import de.belkis.spyhound.scan.HardeningState
 import de.belkis.spyhound.R
+import de.belkis.spyhound.dns.DnsFilterSettings
 import de.belkis.spyhound.dns.DnsHit
+import de.belkis.spyhound.ioc.Category
 import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
@@ -114,6 +116,7 @@ fun StartScreen(
     onPickBugreport: () -> Unit,
     onDismissBanner: () -> Unit,
     onDemoReport: () -> Unit = {},
+    onDnsFilterChange: (DnsFilterSettings) -> Unit = {},
     onDeepCheckSetup: () -> Unit,
     onOpenInfo: () -> Unit,
     onOpenPermissionAudit: () -> Unit = {},
@@ -374,7 +377,7 @@ fun StartScreen(
                     label = stringResource(R.string.t_064),
                     hint = stringResource(R.string.start_help_dns),
                 )
-                DnsWatchCardBody(state = state, onDnsToggle = onDnsToggle)
+                DnsWatchCardBody(state = state, onDnsToggle = onDnsToggle, onFilterChange = onDnsFilterChange)
             }
             SpyCard(Modifier.then(staggeredAppear(staggerIndex++))) {
                 SectionHeader(
@@ -535,7 +538,7 @@ fun BackgroundWeeklyCard(enabled: Boolean, onToggle: (Boolean) -> Unit, modifier
 }
 
 @Composable
-private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit) {
+private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit, onFilterChange: (DnsFilterSettings) -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
     val stateLabel = stringResource(
         if (state.dnsRunning) R.string.start_dns_state_on else R.string.start_dns_state_off,
@@ -578,11 +581,73 @@ private fun DnsWatchCardBody(state: UiState, onDnsToggle: (Boolean) -> Unit) {
         style = MaterialTheme.typography.bodyMedium,
         color = SpyColors.IvoryMuted,
     )
+    val f = state.dnsFilter
+    Spacer(Modifier.height(8.dp))
+    DnsFilterRow(
+        title = stringResource(R.string.dns_filter_phishing),
+        warn = f.warnPhishing, block = f.blockPhishing,
+        onWarn = { onFilterChange(f.copy(warnPhishing = it)) },
+        onBlock = { onFilterChange(f.copy(blockPhishing = it)) },
+    )
+    DnsFilterRow(
+        title = stringResource(R.string.dns_filter_tracker),
+        warn = f.warnTracker, block = f.blockTracker,
+        onWarn = { onFilterChange(f.copy(warnTracker = it)) },
+        onBlock = { onFilterChange(f.copy(blockTracker = it)) },
+    )
+    Text(
+        stringResource(R.string.dns_filter_note),
+        style = MaterialTheme.typography.bodyMedium,
+        color = SpyColors.IvoryMuted,
+    )
     if (state.dnsHits.isNotEmpty()) {
         Spacer(Modifier.height(4.dp))
         Text(stringResource(R.string.t_066), style = MaterialTheme.typography.labelLarge)
         val fmt = remember(locale) { DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale) }
         state.dnsHits.take(5).forEach { hit -> DnsHitLine(hit, fmt) }
+    }
+}
+
+@Composable
+private fun DnsFilterRow(
+    title: String,
+    warn: Boolean,
+    block: Boolean,
+    onWarn: (Boolean) -> Unit,
+    onBlock: (Boolean) -> Unit,
+) {
+    val warnLabel = stringResource(R.string.dns_filter_warn)
+    val blockLabel = stringResource(R.string.dns_filter_block)
+    val colors = SwitchDefaults.colors(
+        checkedThumbColor = SpyColors.Ivory,
+        checkedTrackColor = SpyColors.Clear,
+        uncheckedThumbColor = SpyColors.IvoryMuted,
+        uncheckedTrackColor = SpyColors.Border,
+        checkedBorderColor = SpyColors.Border,
+        uncheckedBorderColor = SpyColors.Border,
+    )
+    Text(title, style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(warnLabel, style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted, modifier = Modifier.weight(1f))
+        Switch(
+            checked = warn,
+            onCheckedChange = onWarn,
+            modifier = Modifier
+                .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                .semantics { contentDescription = "$title: $warnLabel" },
+            colors = colors,
+        )
+    }
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(blockLabel, style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted, modifier = Modifier.weight(1f))
+        Switch(
+            checked = block,
+            onCheckedChange = onBlock,
+            modifier = Modifier
+                .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                .semantics { contentDescription = "$title: $blockLabel" },
+            colors = colors,
+        )
     }
 }
 
@@ -747,9 +812,12 @@ private fun openHardeningAction(context: Context, action: HardeningAction) {
 @Composable
 private fun DnsHitLine(hit: DnsHit, fmt: DateFormat) {
     Text(
-        "${fmt.format(Date(hit.atMillis))} · ${hit.domain}",
+        buildString {
+            append("${fmt.format(Date(hit.atMillis))} · ${hit.domain}")
+            if (hit.blocked) append(" · ").append(stringResource(R.string.dns_hit_blocked))
+        },
         style = MaterialTheme.typography.bodyMedium,
-        color = SpyColors.Danger,
+        color = if (hit.category.isEvidence || hit.category == Category.PHISHING) SpyColors.Danger else SpyColors.IvoryMuted,
     )
 }
 

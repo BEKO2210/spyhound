@@ -23,6 +23,28 @@ data class IocStatus(
 
 class LoadedIocs(val set: IocSet, val status: IocStatus)
 
+/** A tracker or phishing domain list hit: [domain] is the listed entry, [family] the label of its source. */
+data class DomainMatch(val category: Category, val family: String, val domain: String)
+
+/** The domain lists the DNS watcher uses beside the spyware indicators. They are never part of an [IocSet]. */
+class DomainLists(
+    private val lists: Map<Category, List<Pair<String, DomainList>>>,
+    val missing: List<FeedSource> = emptyList(),
+) {
+    fun lookup(category: Category, host: String): DomainMatch? {
+        for ((family, list) in lists[category].orEmpty()) {
+            list.lookup(host)?.let { return DomainMatch(category, family, it) }
+        }
+        return null
+    }
+
+    fun size(category: Category): Int = lists[category].orEmpty().sumOf { it.second.size }
+
+    companion object {
+        val EMPTY = DomainLists(emptyMap())
+    }
+}
+
 /**
  * Bundled indicators (MVT, ECHAP, Zero Breach Toolkit curated lists) plus the sources
  * that may only be downloaded on the device. Downloads come from the commit this
@@ -56,6 +78,21 @@ class IocStore(private val context: Context) {
         LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - corrupt.size, missing, corrupt))
     }
 
+    fun domainCatalog(): List<FeedSource> =
+        FeedCatalog.parse(context.assets.open("iocs/domainlists.json").bufferedReader().use { it.readText() })
+
+    /** Loads the tracker and phishing lists; a missing or altered file is skipped and reported, never half-used. */
+    suspend fun loadDomainLists(): DomainLists = withContext(Dispatchers.IO) {
+        val byCategory = HashMap<Category, MutableList<Pair<String, DomainList>>>()
+        val missing = ArrayList<FeedSource>()
+        for (s in domainCatalog()) {
+            val bytes = readSource(s)
+            if (bytes == null || sha256(bytes) != s.sha256) { missing += s; continue }
+            byCategory.getOrPut(s.category) { ArrayList() } += s.family to DomainList.parse(bytes)
+        }
+        DomainLists(byCategory, missing)
+    }
+
     private fun readSource(s: FeedSource): ByteArray? {
         val local = File(dir, s.fileName)
         if (local.isFile) return local.readBytes()
@@ -67,7 +104,7 @@ class IocStore(private val context: Context) {
     suspend fun update(onProgress: (String) -> Unit = {}): Pair<Int, List<String>> = withContext(Dispatchers.IO) {
         var ok = 0
         val failed = ArrayList<String>()
-        for (s in catalog().filter { !it.bundled }) {
+        for (s in (catalog() + domainCatalog()).filter { !it.bundled }) {
             onProgress(s.name)
             val target = File(dir, s.fileName)
             if (target.isFile && sha256(target.readBytes()) == s.sha256) { ok++; continue }

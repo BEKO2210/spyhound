@@ -19,6 +19,7 @@ data class DnsHit(
     val domain: String,
     val family: String,
     val category: Category,
+    val blocked: Boolean = false,
 )
 
 /** Append-only local list of indicator DNS hits (no benign logging). */
@@ -30,8 +31,23 @@ object DnsHitStore {
     suspend fun append(context: Context, hit: DnsHit) = withContext(Dispatchers.IO) {
         val file = File(context.filesDir, FILE)
         val current = readLocked(file)
-        val next = (listOf(hit) + current).take(MAX)
+        val next = trim(listOf(hit) + current, MAX)
         file.writeText(encode(next))
+    }
+
+    /**
+     * Newest first, at most [max]. When full, tracker and phishing entries go before spyware ones: a flood of
+     * advertising lookups must never push out a spyware trace, which may be evidence.
+     */
+    internal fun trim(hits: List<DnsHit>, max: Int): List<DnsHit> {
+        if (hits.size <= max) return hits
+        var excess = hits.size - max
+        val drop = HashSet<Int>()
+        for (i in hits.indices.reversed()) {
+            if (excess == 0) break
+            if (!hits[i].category.isEvidence) { drop += i; excess-- }
+        }
+        return hits.filterIndexed { i, _ -> i !in drop }.take(max)
     }
 
     fun recent(context: Context, limit: Int = 50): List<DnsHit> {
@@ -53,6 +69,7 @@ object DnsHitStore {
                     domain = o["domain"]?.jsonPrimitive?.content ?: return@mapNotNull null,
                     family = o["family"]?.jsonPrimitive?.content ?: return@mapNotNull null,
                     category = cat,
+                    blocked = o["blocked"]?.jsonPrimitive?.content == "true",
                 )
             }
         }.getOrDefault(emptyList())
@@ -67,6 +84,7 @@ object DnsHitStore {
                         put("domain", h.domain)
                         put("family", h.family)
                         put("category", h.category.name)
+                        put("blocked", h.blocked)
                     },
                 )
             }

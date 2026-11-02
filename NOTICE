@@ -88,6 +88,22 @@ These two repositories carry no license that permits redistribution, so
 Spyhound does not ship their data. The app downloads it directly from the
 original repositories at the pinned commits.
 
+7. DNS watcher domain lists (separate from the spyware indicators; assets/iocs/domainlists.json,
+   each pinned to a commit and verified by SHA-256). All three are MIT licensed:
+   Permission is hereby granted, free of charge, to any person obtaining a copy of the data and associated
+   files, to deal in them without restriction, subject to the copyright notices below being included and
+   THE DATA BEING PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+   - Perflyst/PiHoleBlocklist, android-tracking.txt, commit
+     ad5020ba0e0a979970486b57b883aba0925f2801 (bundled)
+     Copyright (c) 2018 Perflyst
+   - StevenBlack/hosts, data/StevenBlack/hosts (only this MIT file, not the unified hosts file), commit
+     6d56ab44f2b3d27de062b5194eb51bcd8115a773 (bundled)
+     Copyright (c) Steven Black
+   - Phishing-Database/Phishing.Database, phishing-domains-ACTIVE.txt, commit
+     12a20bf8dd2b7e78d9d38fc12b3e5c970f79d1a7 (downloaded on the device only)
+     Copyright (c) 2018-2025 Mitchell Krog, Nissar Chababy, Phishing.Database Contributors
+
 == Libraries ==
 
 Shizuku API and provider (Apache License 2.0)

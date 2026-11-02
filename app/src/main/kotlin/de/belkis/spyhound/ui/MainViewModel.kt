@@ -17,6 +17,8 @@ import de.belkis.spyhound.background.BackgroundScanPreferences
 import de.belkis.spyhound.background.BackgroundScanScheduler
 import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.dns.DnsHit
+import de.belkis.spyhound.dns.DnsFilterPrefs
+import de.belkis.spyhound.dns.DnsFilterSettings
 import de.belkis.spyhound.ioc.IocStore
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.scan.AccessLevel
@@ -71,6 +73,7 @@ data class UiState(
     val bannerMessage: String? = null,
     val dnsRunning: Boolean = false,
     val dnsHits: List<DnsHit> = emptyList(),
+    val dnsFilter: DnsFilterSettings = DnsFilterSettings(),
     /** Null until the user starts "set up without a PC". */
     val builtinAdb: AdbSetupState? = null,
     val builtinAdbActive: Boolean = false,
@@ -208,8 +211,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             it.copy(
                 dnsRunning = DnsGuard.isRunning,
                 dnsHits = DnsGuard.recentHits(ctx),
+                dnsFilter = DnsFilterPrefs.load(ctx),
             )
         }
+    }
+
+    /** Takes effect on the next DNS query of a running watcher; no restart needed. */
+    fun setDnsFilter(settings: DnsFilterSettings) {
+        DnsFilterPrefs.save(getApplication(), settings)
+        _state.update { it.copy(dnsFilter = settings) }
     }
 
     fun updateIndicators() = viewModelScope.launch {

@@ -41,6 +41,29 @@ object DnsPacket {
 
     // --- DNS names inside a UDP payload ---
 
+    /**
+     * An NXDOMAIN answer to [query]: same id and question, no records. Null if the question cannot be read.
+     * Used to block a name locally; the query never leaves the device.
+     */
+    fun buildNxdomain(query: ByteArray): ByteArray? {
+        if (query.size < 12) return null
+        val qd = readU16(query, 4) ?: return null
+        var end = 12
+        repeat(qd) {
+            val name = readName(query, 12, end) ?: return null
+            end = name.second + 4
+            if (end > query.size) return null
+        }
+        val reply = query.copyOf(end)
+        val flags = readU16(query, 2) ?: return null
+        // QR=1, keep opcode and RD, RA=1, RCODE=3 (name does not exist).
+        writeU16(reply, 2, 0x8000 or (flags and 0x7900) or 0x0080 or 0x0003)
+        writeU16(reply, 6, 0)
+        writeU16(reply, 8, 0)
+        writeU16(reply, 10, 0)
+        return reply
+    }
+
     /** Reads QNAMEs from the question section; null if the message is invalid. */
     fun questionNames(dnsPayload: ByteArray): List<String>? {
         if (dnsPayload.size < 12) return null
@@ -69,6 +92,7 @@ object DnsPacket {
         var jumped = false
         val visited = HashSet<Int>()
         var steps = 0
+        var terminated = false
         while (off < message.size) {
             if (++steps > message.size + 8) return null
             val len = message[off].toInt() and 0xff
@@ -76,6 +100,7 @@ object DnsPacket {
                 len == 0 -> {
                     off++
                     if (!jumped) endOffset = off
+                    terminated = true
                     break
                 }
                 len and 0xc0 == 0xc0 -> {
@@ -99,7 +124,7 @@ object DnsPacket {
                 }
             }
         }
-        if (labels.isEmpty()) return null
+        if (!terminated || labels.isEmpty()) return null // a name cut off before its end is no name
         return labels.joinToString(".") to endOffset
     }
 

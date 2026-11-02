@@ -366,6 +366,7 @@ class MainActivity : AppCompatActivity() {
                         },
                         onRequestFiles = { openAllFilesAccess() },
                         onDnsToggle = { on -> toggleDns(on) },
+                        onDnsFilterChange = { vm.setDnsFilter(it) },
                         onWeeklyBackgroundToggle = { enabled -> vm.setWeeklyBackgroundEnabled(enabled) },
                         onPickBugreport = { openBugreportPicker() },
                         onDismissBanner = { vm.clearBanner() },

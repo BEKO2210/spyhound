@@ -122,6 +122,15 @@
     <string name="dns_spyware_match">Spyware domain match</string>
     <string name="dns_malware_match">Malware domain match</string>
     <string name="dns_stalkerware_match">Stalkerware domain match</string>
+    <string name="dns_phishing_match">Known phishing domain</string>
+    <string name="dns_phishing_blocked">Phishing domain blocked</string>
+    <string name="dns_tracker_match">Tracker or advertising domain</string>
+    <string name="dns_filter_phishing">Phishing and fraud sites</string>
+    <string name="dns_filter_tracker">Trackers and advertising</string>
+    <string name="dns_filter_warn">Warn</string>
+    <string name="dns_filter_block">Block (answer \"does not exist\")</string>
+    <string name="dns_hit_blocked">blocked</string>
+    <string name="dns_filter_note">Spyware matches always warn and are never blocked, so the trace stays as evidence. Tracker matches are only listed here, without a notification. Blocking can stop pages or apps from loading.</string>
     <string name="vm_connecting">Connecting…</string>
     <string name="vm_sources_loaded">%1$d sources loaded and checked.</string>
     <string name="vm_sources_failed">%1$d loaded, %2$d failed: %3$s</string>

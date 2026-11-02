@@ -122,6 +122,15 @@
     <string name="dns_spyware_match">Verdächtige Spyware-Domain</string>
     <string name="dns_malware_match">Verdächtige Schadsoftware-Domain</string>
     <string name="dns_stalkerware_match">Verdächtige Stalkerware-Domain</string>
+    <string name="dns_phishing_match">Bekannte Phishing-Domain</string>
+    <string name="dns_phishing_blocked">Phishing-Domain blockiert</string>
+    <string name="dns_tracker_match">Tracker- oder Werbe-Domain</string>
+    <string name="dns_filter_phishing">Phishing- und Betrugsseiten</string>
+    <string name="dns_filter_tracker">Tracker und Werbung</string>
+    <string name="dns_filter_warn">Warnen</string>
+    <string name="dns_filter_block">Blockieren (Antwort „gibt es nicht“)</string>
+    <string name="dns_hit_blocked">blockiert</string>
+    <string name="dns_filter_note">Spyware-Treffer warnen immer und werden nie blockiert, damit die Spur als Beweis erhalten bleibt. Tracker-Treffer erscheinen nur in der Liste, ohne Benachrichtigung. Blockieren kann dazu führen, dass Seiten oder Apps nicht laden.</string>
     <string name="vm_connecting">Verbinde …</string>
     <string name="vm_sources_loaded">%1$d Quellen geladen und geprüft.</string>
     <string name="vm_sources_failed">%1$d geladen, %2$d fehlgeschlagen: %3$s</string>

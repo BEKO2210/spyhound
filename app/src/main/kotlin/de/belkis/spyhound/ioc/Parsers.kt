@@ -224,11 +224,17 @@ object FeedCatalog {
         "mvt-project/mvt-indicators", "AmnestyTech/investigations",
         "AssoEchap/stalkerware-indicators", "citizenlab/malware-indicators",
         "eset/malware-ioc",
+        // Plain domain lists for the DNS watcher (tracker, phishing); see assets/iocs/domainlists.json.
+        "Perflyst/PiHoleBlocklist", "StevenBlack/hosts", "Phishing-Database/Phishing.Database",
     )
 
-    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0) and ESET (BSD-2-Clause) ship inside the app; the others
-    // carry no licence and are fetched on the device from the pinned commit instead.
-    private val BUNDLED_REPOS = setOf("mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators", "eset/malware-ioc")
+    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0), ESET (BSD-2-Clause) and the two small MIT tracker lists ship inside
+    // the app; the others carry no licence (or are too large and too short-lived, as the phishing list) and are fetched
+    // on the device from the pinned commit instead.
+    private val BUNDLED_REPOS = setOf(
+        "mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators", "eset/malware-ioc",
+        "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
+    )
 
     // Sources that document iPhone spyware only: their domains still count everywhere, their
     // app ids, process names and paths do not describe anything on Android.
@@ -248,6 +254,8 @@ object FeedCatalog {
             category = when (s("category")) {
                 "stalkerware" -> Category.STALKERWARE
                 "malware" -> Category.MALWARE
+                "tracker" -> Category.TRACKER
+                "phishing" -> Category.PHISHING
                 else -> Category.MERCENARY
             },
             family = s("family"), sha256 = s("sha256").lowercase(),

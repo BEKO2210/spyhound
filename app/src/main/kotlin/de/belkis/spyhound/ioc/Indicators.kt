@@ -5,8 +5,17 @@ enum class IocType {
     DOMAIN, IP, URL, SHA256, APP_ID, APP_CERT, PROCESS, FILE_PATH, FILE_NAME, ANDROID_PROP, EMAIL
 }
 
-/** Mercenary spyware (state-grade), commercial stalkerware or other known malware: they read very differently to a user. */
-enum class Category { MERCENARY, STALKERWARE, MALWARE }
+/**
+ * Mercenary spyware (state-grade), commercial stalkerware or other known malware: they read very differently to a user.
+ * TRACKER and PHISHING come from the plain domain lists ([DomainList]), never from the spyware indicators, and are
+ * never part of an [IocSet]: a scan must not call an advertising host spyware.
+ */
+enum class Category {
+    MERCENARY, STALKERWARE, MALWARE, TRACKER, PHISHING;
+
+    /** Spyware indicators are evidence: they only ever produce a warning, never a block. */
+    val isEvidence: Boolean get() = this == MERCENARY || this == STALKERWARE || this == MALWARE
+}
 
 data class Indicator(
     val value: String,

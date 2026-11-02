@@ -14,7 +14,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.system.OsConstants
 import de.belkis.spyhound.ioc.Category
-import de.belkis.spyhound.ioc.Indicator
+import de.belkis.spyhound.ioc.DomainLists
 import de.belkis.spyhound.ioc.IocSet
 import de.belkis.spyhound.ioc.IocStore
 import kotlinx.coroutines.runBlocking
@@ -23,13 +23,15 @@ import java.io.FileOutputStream
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Local VPN that only captures DNS to the virtual resolvers and forwards queries to the device’s
- * normal DNS servers via [protect]. No traffic is blocked unless [BLOCK_ON_HIT] is enabled later.
+ * normal DNS servers via [protect]. Spyware indicators only ever warn. Tracker and phishing lists warn and,
+ * if the user switched blocking on for that category, are answered locally with NXDOMAIN (see [DnsFilter]).
  */
 class DnsGuardService : VpnService() {
     private var tun: ParcelFileDescriptor? = null
@@ -85,7 +87,9 @@ class DnsGuardService : VpnService() {
     }
 
     private fun runTunnel() {
-        val iocs = runBlocking { IocStore(this@DnsGuardService).load().set }
+        val store = IocStore(this)
+        val iocs = runBlocking { store.load().set }
+        val lists = runBlocking { runCatching { store.loadDomainLists() }.getOrDefault(DomainLists.EMPTY) }
         val iface = openTunnel() ?: run {
             stopSelf()
             return
@@ -110,7 +114,7 @@ class DnsGuardService : VpnService() {
                     if (n <= 0) continue
                     val packet = buf.copyOf(n)
                     // A failing lookup must never take the whole watcher (and the phone's DNS) down with it.
-                    runCatching { pool.execute { runCatching { handlePacket(packet, n, iocs, output) } } }
+                    runCatching { pool.execute { runCatching { handlePacket(packet, n, iocs, lists, output) } } }
                 }
             }
         }
@@ -122,29 +126,35 @@ class DnsGuardService : VpnService() {
         buf: ByteArray,
         length: Int,
         iocs: IocSet,
+        lists: DomainLists,
         output: FileOutputStream,
     ) {
         val parsed = DnsPacket.parse(buf, length) ?: return
         if (!parsed.isDnsQuery) return
         val names = DnsPacket.questionNames(parsed.payload) ?: return
-        for (name in names) {
-            iocs.lookupHost(name)?.let { recordHit(it, name) }
-        }
-        if (BLOCK_ON_HIT && names.any { iocs.lookupHost(it) != null }) return
-        val dnsResponse = forwardQuery(parsed) ?: return
+        val verdict = DnsFilter.evaluate(names, iocs, lists, DnsFilterPrefs.load(this))
+        verdict.matches.forEach { recordHit(it) }
+        val dnsResponse = (if (verdict.block) DnsPacket.buildNxdomain(parsed.payload) else forwardQuery(parsed)) ?: return
         val reply = DnsPacket.buildReply(parsed, dnsResponse) ?: return
         synchronized(output) { runCatching { output.write(reply) } }
     }
 
-    private fun recordHit(indicator: Indicator, queriedName: String) {
-        val hit = DnsHit(
-            atMillis = System.currentTimeMillis(),
-            domain = queriedName,
-            family = indicator.family,
-            category = indicator.category,
-        )
+    // Apps repeat the same lookup constantly; a tracker or phishing name is logged once per interval.
+    private val lastLogged = ConcurrentHashMap<String, Long>()
+
+    private fun recordHit(match: DnsMatch) {
+        val now = System.currentTimeMillis()
+        if (!match.category.isEvidence) {
+            val key = match.name + '|' + match.blocked
+            val last = lastLogged[key]
+            if (last != null && now - last < REPEAT_QUIET_MS) return
+            if (lastLogged.size > 2_000) lastLogged.clear()
+            lastLogged[key] = now
+        }
+        val hit = DnsHit(now, match.name, match.family, match.category, match.blocked)
         runBlocking { DnsHitStore.append(this@DnsGuardService, hit) }
-        postWarningNotification(hit)
+        // Tracker hits only fill the list: a notification per advertising lookup would be noise.
+        if (match.category != Category.TRACKER) postWarningNotification(hit)
     }
 
     private fun forwardQuery(parsed: DnsPacket.Parsed): ByteArray? {
@@ -248,6 +258,10 @@ class DnsGuardService : VpnService() {
             Category.MERCENARY -> localizedString(R.string.dns_spyware_match)
             Category.STALKERWARE -> localizedString(R.string.dns_stalkerware_match)
             Category.MALWARE -> localizedString(R.string.dns_malware_match)
+            Category.PHISHING -> localizedString(
+                if (hit.blocked) R.string.dns_phishing_blocked else R.string.dns_phishing_match,
+            )
+            Category.TRACKER -> localizedString(R.string.dns_tracker_match)
         }
         val text = "${hit.domain} · ${hit.family}"
         val id = (hit.domain.hashCode() xor hit.family.hashCode()) and 0x7fffffff
@@ -263,8 +277,7 @@ class DnsGuardService : VpnService() {
     }
 
     companion object {
-        /** Prepared for a future block mode; default is warn-only per spec. */
-        const val BLOCK_ON_HIT = false
+        private const val REPEAT_QUIET_MS = 10 * 60_000L
         private const val LOOKUP_THREADS = 4
         private const val UPSTREAM_TIMEOUT_MS = 4_000
 

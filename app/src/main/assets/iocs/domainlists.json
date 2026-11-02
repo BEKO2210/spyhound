@@ -1,0 +1,38 @@
+[
+  {
+    "id": "perflyst-android-tracking",
+    "name": "Android-Tracker",
+    "repo": "Perflyst/PiHoleBlocklist",
+    "commit": "ad5020ba0e0a979970486b57b883aba0925f2801",
+    "path": "android-tracking.txt",
+    "format": "domain-list",
+    "cite": "Perflyst, PiHoleBlocklist (MIT)",
+    "category": "tracker",
+    "family": "Tracker",
+    "sha256": "164b9bbb1030b69da5d0c2f5a327c7780c9674dc589f65996a974bb0184814ab"
+  },
+  {
+    "id": "stevenblack-adhoc",
+    "name": "Werbung und zweifelhafte Domains",
+    "repo": "StevenBlack/hosts",
+    "commit": "6d56ab44f2b3d27de062b5194eb51bcd8115a773",
+    "path": "data/StevenBlack/hosts",
+    "format": "domain-list",
+    "cite": "Steven Black, hosts, data/StevenBlack (MIT)",
+    "category": "tracker",
+    "family": "Werbung",
+    "sha256": "8e5bd5f7fb563f4707ce905a787428aca1797309845401075c1be2d545c3f89a"
+  },
+  {
+    "id": "phishing-database-domains",
+    "name": "Phishing-Domains (aktiv)",
+    "repo": "Phishing-Database/Phishing.Database",
+    "commit": "12a20bf8dd2b7e78d9d38fc12b3e5c970f79d1a7",
+    "path": "phishing-domains-ACTIVE.txt",
+    "format": "domain-list",
+    "cite": "Phishing.Database (MIT)",
+    "category": "phishing",
+    "family": "Phishing",
+    "sha256": "70c6c2e24e6b3484e7ace27b079723e55937bc1f4cbd98bea38a472ec8e37326"
+  }
+]
