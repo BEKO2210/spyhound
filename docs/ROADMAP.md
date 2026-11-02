@@ -211,7 +211,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] DPF: Entscheidung des EuGH zu C-703/25 P beobachten; fällt das DPF, Abschnitt 2.3 auf Art. 49 Abs. 1 lit. a/b DSGVO
       bzw. GitHub B.V. (EU) umstellen. Abnahme: LEGAL.md binnen einer Woche nach dem Urteil angepasst.
 - [ ] abuse.ch (MalwareBazaar): Weitergabe in Open-Source-App braucht Zustimmung (Nutzungsbedingungen § 7.3, Stand
-      21.10.2026). Anfrage über contact.abuse.ch (reCAPTCHA → Belkis sendet, Text liegt bereit). YARAify ist CC0 (§ 3.4):
+      21.10.2026). Anfrage gesendet 2026-11-02, Ticket ST7319719 (Antwort abwarten). YARAify ist CC0 (§ 3.4):
       prüfen, ob dort Android-Hashes mit Regel-Treffern exportierbar sind. Abnahme: Antwort bzw. Lizenz-Beleg in ANTIVIRUS.md.
 - [x] Ursprünglicher Prüfauftrag, abgearbeitet am 2026-11-02 (Liste aus 33939df: § 18 MStV, DPF-Status GitHub,
       Rolle als Verantwortlicher, § 25 TDDDG, Haftung/Apache-2.0, Aufsichtsbehörde-Adresse, § 202a StGB-Hinweis, Art. 13
