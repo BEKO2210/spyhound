@@ -127,10 +127,10 @@
     <string name="dns_tracker_match">Tracker- oder Werbe-Domain</string>
     <string name="dns_filter_phishing">Phishing- und Betrugsseiten</string>
     <string name="dns_filter_tracker">Tracker und Werbung</string>
-    <string name="dns_filter_warn">Warnen</string>
-    <string name="dns_filter_block">Blockieren (Antwort „gibt es nicht“)</string>
+    <string name="dns_filter_warn">Melden, wenn eine App sie aufruft</string>
+    <string name="dns_filter_block">Sperren – die Seite lädt dann nicht</string>
     <string name="dns_hit_blocked">blockiert</string>
-    <string name="dns_filter_note">Spyware-Treffer warnen immer und werden nie blockiert, damit die Spur als Beweis erhalten bleibt. Tracker-Treffer erscheinen nur in der Liste, ohne Benachrichtigung. Blockieren kann dazu führen, dass Seiten oder Apps nicht laden.</string>
+    <string name="dns_filter_note">Spyware-Treffer werden immer gemeldet und nie gesperrt, damit die Spur als Beweis erhalten bleibt. Tracker-Treffer stehen nur in der Liste, ohne Benachrichtigung. Sperren kann dazu führen, dass manche Seiten oder Apps nicht richtig laden.</string>
     <string name="vm_connecting">Verbinde …</string>
     <string name="vm_sources_loaded">Alle %1$d Quellen aktuell – %2$d neu geladen und geprüft.</string>
     <string name="vm_sources_failed">%1$d geladen, %2$d fehlgeschlagen: %3$s</string>

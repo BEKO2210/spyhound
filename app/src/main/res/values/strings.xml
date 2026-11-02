@@ -127,10 +127,10 @@
     <string name="dns_tracker_match">Tracker or advertising domain</string>
     <string name="dns_filter_phishing">Phishing and fraud sites</string>
     <string name="dns_filter_tracker">Trackers and advertising</string>
-    <string name="dns_filter_warn">Warn</string>
-    <string name="dns_filter_block">Block (answer \"does not exist\")</string>
+    <string name="dns_filter_warn">Tell me when an app contacts one</string>
+    <string name="dns_filter_block">Block – the site will not load</string>
     <string name="dns_hit_blocked">blocked</string>
-    <string name="dns_filter_note">Spyware matches always warn and are never blocked, so the trace stays as evidence. Tracker matches are only listed here, without a notification. Blocking can stop pages or apps from loading.</string>
+    <string name="dns_filter_note">Spyware matches are always reported and never blocked, so the trace stays as evidence. Tracker matches are only listed here, without a notification. Blocking can stop some sites or apps from loading properly.</string>
     <string name="vm_connecting">Connecting…</string>
     <string name="vm_sources_loaded">All %1$d sources up to date – %2$d downloaded and checked.</string>
     <string name="vm_sources_failed">%1$d loaded, %2$d failed: %3$s</string>
