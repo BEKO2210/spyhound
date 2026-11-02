@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="info_whats_new_items">
+        <item>Deeper check without a PC (wireless debugging on the phone)</item>
+        <item>Two-column layout on tablets and smooth Start – Scan – Result transitions</item>
+        <item>Secure your phone checklist with shortcuts to settings</item>
+        <item>Checked time range in results and shared reports</item>
+        <item>Who can do what: permission audit with changes since last check</item>
+        <item>Optional weekly background scan with alerts for new findings</item>
+        <item>Guidance when SMS permission is blocked</item>
+    </string-array>
+</resources>

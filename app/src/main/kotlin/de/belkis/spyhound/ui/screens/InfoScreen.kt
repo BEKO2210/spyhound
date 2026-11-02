@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.R
@@ -69,30 +70,30 @@ fun InfoScreen(
                 .verticalScroll(scroll),
             verticalArrangement = Arrangement.spacedBy(SpySpacing.Section),
         ) {
-            // 0..3: Core explanation sections
+            WhatsNewSection(modifier = staggeredAppear(0))
             InfoSection(
                 title = R.string.info_section_what,
                 body = R.string.info_what_body,
-                modifier = staggeredAppear(0),
+                modifier = staggeredAppear(1),
             )
             InfoSection(
                 title = R.string.info_section_limits,
                 body = R.string.info_limits_body,
-                modifier = staggeredAppear(1),
+                modifier = staggeredAppear(2),
             )
             InfoSection(
                 title = R.string.info_section_depths,
                 body = R.string.info_depths_body,
-                modifier = staggeredAppear(2),
+                modifier = staggeredAppear(3),
             )
             InfoSection(
                 title = R.string.info_section_privacy,
                 body = R.string.info_privacy_body,
-                modifier = staggeredAppear(3),
+                modifier = staggeredAppear(4),
             )
 
-            // 4: Legal notices (unchanged texts inside a surface card)
-            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(4))) {
+            // Legal notices (unchanged texts inside a surface card)
+            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(5))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_legal),
                     hint = stringResource(R.string.info_hint_legal),
@@ -112,8 +113,8 @@ fun InfoScreen(
                 }
             }
 
-            // 5: Indicator sources
-            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(5))) {
+            // Indicator sources
+            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(6))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_sources),
                     hint = stringResource(R.string.info_hint_sources),
@@ -131,7 +132,7 @@ fun InfoScreen(
             }
 
             // 6: Specialist help
-            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(6))) {
+            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(7))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_help),
                     hint = stringResource(R.string.info_hint_help),
@@ -156,7 +157,7 @@ fun InfoScreen(
 
             // 7+: Support, language, and app metadata (clamped at MaxStagger = 8)
             Column(
-                modifier = Modifier.fillMaxWidth().then(staggeredAppear(7)),
+                modifier = Modifier.fillMaxWidth().then(staggeredAppear(8)),
                 verticalArrangement = Arrangement.spacedBy(SpySpacing.Section),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -258,6 +259,39 @@ private fun LegalSection(title: Int, body: Int) {
             },
             modifier = Modifier.fillMaxWidth(),
         )
+    }
+}
+
+@Composable
+private fun WhatsNewSection(modifier: Modifier = Modifier) {
+    val items = stringArrayResource(R.array.info_whats_new_items)
+    val version = BuildConfig.VERSION_NAME
+    Column(modifier = modifier.fillMaxWidth()) {
+        SectionHeader(
+            label = stringResource(R.string.info_section_whats_new),
+            hint = stringResource(R.string.info_hint_whats_new, version),
+        )
+        SpySurface(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(SpySpacing.Unit * 4),
+                verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 2),
+            ) {
+                Text(
+                    stringResource(R.string.info_version, version),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = SpyColors.Ivory,
+                )
+                items.forEach { item ->
+                    Text(
+                        text = "\u2022 $item",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SpyColors.IvoryMuted,
+                    )
+                }
+            }
+        }
     }
 }
 

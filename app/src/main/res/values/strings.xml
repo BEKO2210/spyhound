@@ -69,7 +69,7 @@
     <string name="t_065">Alerts you to DNS requests for known indicator domains.</string>
     <string name="t_066">Recent matches</string>
     <string name="t_067">Bug report</string>
-    <string name="t_068">Logs and app lists from a ZIP — checked offline on your phone only.</string>
+    <string name="t_068">Logs and app lists from a ZIP – checked offline on your phone only.</string>
     <string name="t_069">Choose bug report</string>
     <string name="t_070">How to create one ▲</string>
     <string name="t_071">How to create one</string>
@@ -158,9 +158,9 @@
     <string name="intro_next">Next</string>
     <string name="intro_start">Let\'s go</string>
     <string name="intro_page1_title">What Spyhound does</string>
-    <string name="intro_page1_body">Spyhound looks for traces of known spyware (for example Pegasus or Predator) and stalkerware on your phone — using published indicators from Amnesty International, Citizen Lab, MVT, and ECHAP.</string>
+    <string name="intro_page1_body">Spyhound looks for traces of known spyware (for example Pegasus or Predator) and stalkerware on your phone – using published indicators from Amnesty International, Citizen Lab, MVT, and ECHAP.</string>
     <string name="intro_page2_title">What it cannot do</string>
-    <string name="intro_page2_body">This is not real-time antivirus. It only finds known traces. Nothing found does not mean you are safe. If you are genuinely worried, get help — for example from Access Now.</string>
+    <string name="intro_page2_body">This is not real-time antivirus. It only finds known traces. Nothing found does not mean you are safe. If you are genuinely worried, get help – for example from Access Now.</string>
     <string name="intro_page3_title">Your privacy</string>
     <string name="intro_page3_body">Checks stay on your device. No account, no telemetry. The app uses the internet only when you load updated indicator lists.</string>
     <string name="intro_page4_title">Three check depths</string>
@@ -168,8 +168,10 @@
     <string name="info_title">About Spyhound</string>
     <string name="info_section_what">What it does</string>
     <string name="info_what_body">Spyhound searches your phone for traces of known spyware and stalkerware, matched against published indicators from research groups and MVT/ECHAP lists.</string>
+    <string name="info_section_whats_new">What\'s new</string>
+    <string name="info_hint_whats_new">Highlights from version 0.2.x (this build: %1$s).</string>
     <string name="info_section_limits">What it does not do</string>
-    <string name="info_limits_body">It is not live protection. It only knows published traces. A clear result covers the areas checked — not every risk. Seek expert help if you fear targeted surveillance.</string>
+    <string name="info_limits_body">It is not live protection. It only knows published traces. A clear result covers the areas checked – not every risk. Seek expert help if you fear targeted surveillance.</string>
     <string name="info_section_depths">Check depths</string>
     <string name="info_depths_body">Basic: apps, device settings, optional SMS and files. Deep: also processes and system logs – through wireless debugging on the phone itself (or Shizuku). Root: the same data with full access when available.</string>
     <string name="info_section_privacy">Privacy</string>
@@ -185,7 +187,7 @@
     <string name="info_repo_citizenlab">The Citizen Lab malware indicators</string>
     <string name="source_license_mit">MIT License</string>
     <string name="source_license_cc_by">CC BY 4.0</string>
-    <string name="source_license_device_only">no licence for redistribution — device download only</string>
+    <string name="source_license_device_only">no licence for redistribution – device download only</string>
     <string name="info_section_help">Help</string>
     <string name="info_help_body">If you may be targeted, contact specialists rather than relying on an app alone.</string>
     <string name="info_help_access_now">Access Now Digital Security Helpline</string>
@@ -194,7 +196,7 @@
     <string name="legal_imprint_title">Legal notice</string>
     <string name="legal_imprint_body">Information pursuant to § 5 DDG:\n\nBelkis Aslani\nVogelsangstraße 32\n71691 Freiberg am Neckar\nGermany\n\nResponsible for editorial content under § 18(2) MStV, where applicable: Belkis Aslani, address as above.\n\nSpyhound is a private, non-commercial open-source project. No advertising, no paid features.</string>
     <string name="legal_privacy_title">Privacy</string>
-    <string name="legal_privacy_body">Controller: Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, Germany (email below).\n\nAll check data — installed apps, device settings, SMS links, files, system logs, bug reports — is processed only on your device. The controller does not receive it. No accounts, no telemetry, no analytics, no advertising, no sharing with third parties. Results and DNS hits are stored locally only and deleted when you uninstall the app or clear its data.\n\nOnly network connection: if you trigger an indicator update, the app loads pinned files over HTTPS from raw.githubusercontent.com (GitHub, Inc., USA, a Microsoft company). GitHub receives your IP address and standard HTTP data. Legal basis: Art. 6(1)(b), alternatively (f) GDPR. USA transfer: to our knowledge GitHub/Microsoft is certified under the EU-US Data Privacy Framework. Without an update, no connection is made.\n\nDNS guard (optional): a local VPN on the device that only checks DNS queries against the indicator lists and forwards them unchanged to your network\'s DNS server. Only if Android reports none, 9.9.9.9 (Quad9) or 2606:4700:4700::1111 (Cloudflare) is used. Only hits are stored, locally. Other traffic is not touched.\n\nPermissions: installed apps (app list check), SMS (optional, link check), all files (optional, file name and checksum check), internet (indicator update only), VPN, foreground service and notifications (DNS guard). Optional ones can be revoked at any time.\n\n“Share report” hands the text to Android\'s share menu only when you ask for it. You decide the recipient.\n\nYour rights: access, rectification, erasure, restriction, portability, objection (Art. 15–21 GDPR) — contact the email below. Complaints: Der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg, Lautenschlagerstraße 20, 70173 Stuttgart.\n\nAs of 2026-11-01. Full text: docs/LEGAL.md in the project repository.</string>
+    <string name="legal_privacy_body">Controller: Belkis Aslani, Vogelsangstraße 32, 71691 Freiberg am Neckar, Germany (email below).\n\nAll check data – installed apps, device settings, SMS links, files, system logs, bug reports – is processed only on your device. The controller does not receive it. No accounts, no telemetry, no analytics, no advertising, no sharing with third parties. Results and DNS hits are stored locally only and deleted when you uninstall the app or clear its data.\n\nOnly network connection: if you trigger an indicator update, the app loads pinned files over HTTPS from raw.githubusercontent.com (GitHub, Inc., USA, a Microsoft company). GitHub receives your IP address and standard HTTP data. Legal basis: Art. 6(1)(b), alternatively (f) GDPR. USA transfer: to our knowledge GitHub/Microsoft is certified under the EU-US Data Privacy Framework. Without an update, no connection is made.\n\nDNS guard (optional): a local VPN on the device that only checks DNS queries against the indicator lists and forwards them unchanged to your network\'s DNS server. Only if Android reports none, 9.9.9.9 (Quad9) or 2606:4700:4700::1111 (Cloudflare) is used. Only hits are stored, locally. Other traffic is not touched.\n\nPermissions: installed apps (app list check), SMS (optional, link check), all files (optional, file name and checksum check), internet (indicator update only), VPN, foreground service and notifications (DNS guard). Optional ones can be revoked at any time.\n\n“Share report” hands the text to Android\'s share menu only when you ask for it. You decide the recipient.\n\nYour rights: access, rectification, erasure, restriction, portability, objection (Art. 15–21 GDPR) – contact the email below. Complaints: Der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg, Lautenschlagerstraße 20, 70173 Stuttgart.\n\nAs of 2026-11-01. Full text: docs/LEGAL.md in the project repository.</string>
     <string name="legal_disclaimer_title">Disclaimer</string>
     <string name="legal_disclaimer_body">Spyhound only detects published traces of known spyware and stalkerware. No result is a guarantee: “no known traces in the areas checked” does not mean “safe”, and a finding can be a false positive. This is not legal, forensic or security advice. If you suspect targeted surveillance, contact the specialists listed under Help.\n\nSpyhound is open source under the Apache License 2.0. Warranty and liability are as stated in the licence, to the extent permitted by law. Statutory liability remains unaffected in cases of intent, gross negligence and injury to life, body or health.\n\nCheck only devices you own or may check with the owner\'s permission.</string>
     <string name="info_section_language">Language</string>
@@ -204,12 +206,12 @@
     <string name="info_replay_intro">Show introduction again</string>
     <string name="start_help_indicators">Published domains, apps, and files used to spot known spyware and stalkerware traces.</string>
     <string name="start_help_dns">Watches DNS while active and warns if a known indicator domain is requested.</string>
-    <string name="start_help_bugreport">Imports an Android bug report ZIP for extra offline checks — no upload.</string>
+    <string name="start_help_bugreport">Imports an Android bug report ZIP for extra offline checks – no upload.</string>
     <string name="start_help_access">Basic needs nothing. The deep check (no PC) and root unlock more step by step.</string>
     <string name="start_card_depth">Check depth</string>
     <string name="start_depth_explain">A deep check finds more traces. Set it up once – no PC, no root.</string>
     <string name="start_indicators_from_sources">Entries from %1$d of %2$d sources</string>
-    <string name="start_update_error">No connection — try again later</string>
+    <string name="start_update_error">No connection – try again later</string>
     <string name="start_dns_state_on">On</string>
     <string name="start_dns_state_off">Off</string>
     <string name="start_permission_notifications">Notifications</string>
@@ -383,7 +385,7 @@
     <string name="adb_failed_connect">The connection did not work. Start again.</string>
     <string name="adb_failed_timeout">That took too long. Start again.</string>
     <string name="adb_failed_internal">Something went wrong inside Spyhound. Start again.</string>
-    <string name="adb_wizard_intro">Three short steps on this phone — no computer and no extra app.</string>
+    <string name="adb_wizard_intro">Three short steps on this phone – no computer and no extra app.</string>
     <string name="adb_wizard_step1_title">Turn on wireless debugging</string>
     <string name="adb_wizard_step1_body">In developer options, switch on “Wireless debugging”. Wi‑Fi must be connected.</string>
     <string name="adb_wizard_step1_action">Open developer options</string>
@@ -395,7 +397,7 @@
     <string name="adb_wizard_step3_title">Type the code in the notification</string>
     <string name="adb_wizard_step3_body">Spyhound shows a notification with a field for the six digits from the pairing screen.</string>
     <string name="adb_wizard_success_title">Deep check is active</string>
-    <string name="adb_wizard_success_body">You can run the deeper scan now. After a phone restart, turn wireless debugging on again — no new code needed.</string>
+    <string name="adb_wizard_success_body">You can run the deeper scan now. After a phone restart, turn wireless debugging on again – no new code needed.</string>
     <string name="adb_wizard_scan_now">Scan now</string>
     <string name="adb_wizard_splitscreen">Use split screen</string>
     <string name="adb_wizard_splitscreen_hint">Open Settings and Spyhound side by side: long-press the app icon → Split screen, or use the recent-apps split control.</string>

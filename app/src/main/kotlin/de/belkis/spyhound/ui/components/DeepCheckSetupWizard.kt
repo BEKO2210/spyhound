@@ -98,7 +98,7 @@ fun DeepCheckSetupWizard(
         }
         Text(
             stringResource(R.string.t_011),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             color = SpyColors.Ivory,
         )
         Spacer(Modifier.height(8.dp))

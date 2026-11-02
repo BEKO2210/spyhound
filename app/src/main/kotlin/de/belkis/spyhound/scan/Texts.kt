@@ -98,16 +98,16 @@ object TextsEn : Texts {
         "DNS-Wächter / System" to "DNS watch / System",
         "Anfrage zu bekannter Indikator-Domain (nur Demo)." to "Request to a known indicator domain (demo only).",
         "Bootloader-Status konnte nicht ausgelesen werden." to "Bootloader status could not be read.",
-        "Ein offener Bootloader erleichtert persistente Spyware — hier nur ein Demo-Hinweis." to
+        "Ein offener Bootloader erleichtert persistente Spyware – hier nur ein Demo-Hinweis." to
             "An unlocked bootloader can help spyware persist. This is a demo item.",
-        "SMS-Berechtigung fehlt — Links in Nachrichten wurden nicht gelesen." to "SMS permission is missing. Links in messages were not checked.",
+        "SMS-Berechtigung fehlt – Links in Nachrichten wurden nicht gelesen." to "SMS permission is missing. Links in messages were not checked.",
         "Prozesse und Systemprotokolle ohne Shizuku nicht geprüft (Demo-Lücke)." to
             "Processes and system logs were not checked without Shizuku (demo).",
         "Demo-Gerät, Android 14 (Patch 2024-09-05)" to "Demo device, Android 14 (patch 2024-09-05)",
         "Verbinde …" to "Connecting…", "Verbinde mit Shizuku …" to "Connecting to Shizuku…",
         "Frage Root-Zugriff an … (Root-Manager bestätigen)" to "Requesting root access… (confirm in root manager)",
         "Geteilte Datei ist kein Fehlerbericht (bugreport….zip)." to "Shared file is not a bug report (bugreport….zip).",
-        "Indikatoren werden noch geladen — bitte kurz warten." to "Indicators are still loading. Please wait.",
+        "Indikatoren werden noch geladen – bitte kurz warten." to "Indicators are still loading. Please wait.",
         "Keine gültige Fehlerbericht-ZIP (bugreport….zip)." to "No valid bug report ZIP (bugreport….zip).",
         "Fehlerbericht wird ausgewertet …" to "Checking bug report…",
         "Fehlerbericht konnte nicht gelesen werden." to "Bug report could not be read.",

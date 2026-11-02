@@ -176,6 +176,8 @@ object Parsers {
                 }
                 i++
             }
+            // A quote that never closes means the row is malformed; drop it rather than guess a value.
+            if (quoted) continue
             fields += cur.toString()
             rows += fields
         }
