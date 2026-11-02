@@ -14,7 +14,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
-## Release 0.3.5 (2026-11-02) – erstes vollständig reproduzierbares Release (verify-reproducible: 464 Dateien gleich), Positivliste Pixel + Samsung (10830), ruhigere Scan-Zeile. Startprobe Release-APK Pixel 9 ohne Absturz; Pixel 11 (Positivliste) vorher abgenommen. Abnahme durch Belkis offen.
+## Release 0.3.5 (2026-11-02) – erstes vollständig reproduzierbares Release (verify-reproducible: 464 Dateien gleich), Positivliste Pixel + Samsung (10830), ruhigere Scan-Zeile. Startprobe Release-APK Pixel 9 ohne Absturz; Abgenommen von Belkis auf dem Pixel 11 Pro XL („Funktioniert“).
 
 ## Release 0.3.4 (2026-11-02) – abgenommen von Belkis auf dem Pixel 11 Pro XL („funktioniert“): einheitliche Quellenzahl in der Aktualisierungsmeldung, DNS-Schalter in einfacher Sprache.
 
