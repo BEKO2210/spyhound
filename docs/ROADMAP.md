@@ -158,7 +158,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       auf Pixel.
 - [x] Rechte-Prüfer „Wer darf was“: 11 Rechte-Gruppen, Systemapps ausblendbar, Verlauf lokal, „neu seit letzter Prüfung“.
       Beleg: PermissionAuditTest, Screenshots audit_*. Offen: Abnahme auf dem Pixel.
-- [ ] Netzwerk-Wächter ausbauen (DNS-Wächter → auch Tracker/Phishing-Listen, optional blockieren).
+- [~] Netzwerk-Wächter ausbauen – gebaut (Tracker/Phishing, Warnen/Blockieren je Kategorie, Lizenzen geprüft). **Gerätetest offen**: DNS an, Phishing-Testdomain → Warnung; Blockieren → NXDOMAIN; Aus → normales DNS (Lehre vom 2026-11-01!). Erst danach Release.
 - [x] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (491530d) (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [x] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund (295ff6d).
 
