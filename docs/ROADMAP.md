@@ -14,6 +14,11 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
+## Offen (Tagesrunde 2026-11-02)
+- [ ] Screenshot-Test der Info-Seite hängt von der Versionsnummer ab (jede Version = 4 neue Bilder). Abnahme: Version im
+      Test fest „0.0.0-test“, Bilder ändern sich beim Hochzählen nicht.
+- [ ] Virenschutz: Positivliste, Gerätetest A3/A5/A6 (Test-APK in Downloads, Flugmodus, Leistung Pixel 9).
+
 ## Offen nach der Nacht (2026-11-02, 02:45)
 - [x] **Gerätetest Pixel 9/11** (Pixel 9: Release-Start ohne Absturz; Pixel 11: Belkis „Läuft“, 2026-11-02) für alles aus den Nachtrunden 1–5 (Assistent ohne PC, Querformat, Übergänge, Handy
       absichern, Zeitraum, Wer darf was, Hintergrundprüfung). Danach Release 0.2.0 (APK + Notizen liegen bereit in
