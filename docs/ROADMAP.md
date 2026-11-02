@@ -14,13 +14,20 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
-## Nachtrunde 3 (2026-11-02, ab 01:50)
-- [ ] Barrierefreiheit-Durchgang (s. u.). Abnahme: TalkBack-Labels aller Bedienelemente, Tippflächen ≥ 48 dp, Kontrast AA
+## Nachtrunde 4 (2026-11-02, ab 02:00)
+- [ ] Rechte-Prüfer „Wer darf was“: Apps je Recht-Gruppe, lokaler Verlauf „seit letzter Prüfung neu“. Abnahme: reine
+      Auswertung + Tests, Bildschirm DE/EN, Screenshot-Test.
+- [ ] Prüfung im Hintergrund (WorkManager, wöchentlich, nur Basis, Standard aus), Benachrichtigung nur bei neuem Fund.
+      Abnahme: Worker-Test, Schalter DE/EN, keine Netzwerkzugriffe.
+- [ ] Release 0.2.0 vorbereiten – veröffentlichen erst nach Gerätetest auf Pixel 9/11.
+
+## Nachtrunde 3 (2026-11-02, ab 01:50) – Beleg 491530d: 156 Tests, verifyRoborazzi + Release grün, Gerätetest offen
+- [x] Barrierefreiheit-Durchgang (s. u.). Abnahme: TalkBack-Labels aller Bedienelemente, Tippflächen ≥ 48 dp, Kontrast AA
       (Liste mit Messwerten), Screenshots unverändert oder bewusst neu aufgenommen.
 - [x] Geräte-Härtung „Handy absichern“ (Gerätetest offen): Checkliste mit Direkt-Knöpfen (Bildschirmsperre, USB-/WLAN-Debugging aus wenn
       nicht genutzt, Apps mit Erlaubnis „unbekannte Apps installieren“, Sicherheitspatch-Alter, Entwickleroptionen).
       Abnahme: reine Bewertungsfunktion mit Tests, Karte auf dem Start, DE/EN, Screenshot-Test.
-- [ ] Zeitreichweite (Stufe 3): wie weit reichen SMS/Logs/Dateien zurück; im Ergebnis ehrlich anzeigen. Abnahme: reine
+- [x] Zeitreichweite (Stufe 3): wie weit reichen SMS/Logs/Dateien zurück; im Ergebnis ehrlich anzeigen. Abnahme: reine
       Funktion + Tests, Zeile „Geprüfter Zeitraum“ im Ergebnis und im geteilten Bericht.
 
 ## Nachtrunde 2 (2026-11-02, ab 01:35) – Beleg a8bcc48: 139 Tests, verifyRoborazzi grün, Release-Build grün
@@ -130,7 +137,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Abnahme: Pixel ohne installierte Shizuku-App erreicht Stufe „Tief“; nach Neustart ein Tipp zum Neustarten.
 
 ## Stufe 3 – Qualität und Reichweite
-- [ ] „Zeitreichweite“ wie im Toolkit: wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
+- [x] „Zeitreichweite“ wie im Toolkit (491530d): wie weit reichen SMS/Logs zurück, überlappt das die Kampagnenzeit?
 - [x] Signierte Release-APK + SHA256SUMS (v0.1.0, 2026-11-02). Offen: Reproduzierbarkeit.
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
 
@@ -140,7 +147,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       auf Pixel.
 - [ ] Rechte-Prüfer: welche App darf was (Kamera, Mikro, Standort, Bedienungshilfe), mit Verlauf über Zeit.
 - [ ] Netzwerk-Wächter ausbauen (DNS-Wächter → auch Tracker/Phishing-Listen, optional blockieren).
-- [ ] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
+- [x] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (491530d) (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [ ] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund.
 
 - [x] Finanzierung ohne Bezahlschranke – entschieden von Belkis 2026-11-01: Spenden über GitHub Sponsors (FUNDING.yml,
