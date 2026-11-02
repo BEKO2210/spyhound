@@ -17,7 +17,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Release 0.3.1 (2026-11-02) – offiziell nach Abnahme durch Belkis auf dem Pixel 11 Pro XL („funktioniert“): Virenschutz Schritt 1, DNS-Tracker/Phishing, Quellenzähler-Fix.
 
 ## Offen (Tagesrunde 2026-11-02)
-- [ ] Screenshot-Test der Info-Seite hängt von der Versionsnummer ab (jede Version = 4 neue Bilder). Abnahme: Version im
+- [x] Screenshot-Test der Info-Seite hängt von der Versionsnummer ab (behoben: Test zeigt fest 0.0.0, Beleg versionName 9.9.9 → verify grün) (jede Version = 4 neue Bilder). Abnahme: Version im
       Test fest „0.0.0-test“, Bilder ändern sich beim Hochzählen nicht.
 - [x] Virenschutz-Gerätetest A3/A5/A6: APK in Downloads erkannt, Scan im Flugmodus, 25 s (Emulator) – Belege in docs/ANTIVIRUS.md. Positivliste: läuft (Copilot, weitere Quellen).
 
