@@ -53,6 +53,18 @@ class ScanIocEdgeCasesTest {
         assertTrue(leads.single().detail.contains("Geräteadministrator"))
     }
 
+    @Test fun samsungSystemUpdatersAreNotSideloading() {
+        // Found on a Galaxy Tab S9 Ultra: Clock and the Buds plugins came through these and showed up as leads.
+        val apps = listOf(
+            AppRecord("com.sec.android.app.clockpackage", installer = "com.samsung.android.app.updatecenter", notificationAccess = true),
+            AppRecord("com.samsung.accessory.zenithmgr", installer = "com.samsung.accessory.budsunitemgr", notificationAccess = true),
+            AppRecord("sideloaded", installer = "com.sec.android.app.sbrowser", notificationAccess = true),
+        )
+        val leads = AppAnalyzer.analyze(apps, IocSet(emptyList()), "self").leads
+        assertEquals(listOf(LeadKind.SIDELOADED_APP), leads.map { it.kind })
+        assertTrue(leads.single().detail.contains("sbrowser"))
+    }
+
     @Test fun devicePatchBoundaryAndMalformedValues() {
         fun check(patch: String) = DeviceAnalyzer.analyze(
             DeviceState(emptyMap(), patch, 35, null, null, null, emptyList(), emptyList(), null),

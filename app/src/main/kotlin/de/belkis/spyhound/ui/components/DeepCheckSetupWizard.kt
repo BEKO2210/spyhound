@@ -93,7 +93,7 @@ fun DeepCheckSetupWizard(
     ) {
         SpyNavigateBack(onClick = onDismiss)
         if (snapshot.allDone) {
-            DonePanel(onScanNow = onScanNow)
+            DonePanel(builtinAdb = snapshot.builtinAdbActive, onScanNow = onScanNow)
             return@Column
         }
         Text(
@@ -430,7 +430,7 @@ private fun ShizukuSetupSteps(
 }
 
 @Composable
-private fun DonePanel(onScanNow: () -> Unit) {
+private fun DonePanel(builtinAdb: Boolean, onScanNow: () -> Unit) {
     Column(
         Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -451,7 +451,8 @@ private fun DonePanel(onScanNow: () -> Unit) {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            stringResource(R.string.t_034),
+            // Spyhound's own connection needs wireless debugging on; only Shizuku keeps running without it.
+            stringResource(if (builtinAdb) R.string.adb_wizard_success_body else R.string.t_034),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )

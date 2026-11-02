@@ -40,6 +40,9 @@ object AppAnalyzer {
         "com.huawei.appmarket", "com.xiaomi.market", "com.xiaomi.mipicks", "com.heytap.market",
         "com.oppo.market", "com.vivo.appstore", "com.looker.droidify", "com.machiav3lli.fdroid",
         "dev.imranr.obtainium", "com.google.android.packageinstaller.system",
+        // Samsung's own update paths: the preinstalled app updater (Clock, Calendar …) and the Galaxy Buds plugin
+        // installer. Both are system apps, so no other app can carry their names.
+        "com.samsung.android.app.updatecenter", "com.samsung.accessory.budsunitemgr",
     )
 
     val POWERS = linkedMapOf(
