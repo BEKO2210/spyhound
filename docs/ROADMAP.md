@@ -14,6 +14,8 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
+## Release 0.3.1 (2026-11-02) – offiziell nach Abnahme durch Belkis auf dem Pixel 11 Pro XL („funktioniert“): Virenschutz Schritt 1, DNS-Tracker/Phishing, Quellenzähler-Fix.
+
 ## Offen (Tagesrunde 2026-11-02)
 - [ ] Screenshot-Test der Info-Seite hängt von der Versionsnummer ab (jede Version = 4 neue Bilder). Abnahme: Version im
       Test fest „0.0.0-test“, Bilder ändern sich beim Hochzählen nicht.
