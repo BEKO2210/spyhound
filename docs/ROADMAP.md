@@ -18,11 +18,11 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] **Gerätetest Pixel 9/11** (Pixel 9: Release-Start ohne Absturz; Pixel 11: Belkis „Läuft“, 2026-11-02) für alles aus den Nachtrunden 1–5 (Assistent ohne PC, Querformat, Übergänge, Handy
       absichern, Zeitraum, Wer darf was, Hintergrundprüfung). Danach Release 0.2.0 (APK + Notizen liegen bereit in
       ~/StudioProjects/spyhound-release/v0.2.0/).
-- [ ] Tablet-Start: linke Spalte zeigt Radar und Panel klein oben, darunter leer. Abnahme: Radar skaliert mit der
+- [x] Tablet-Start: linke Spalte zeigt Radar und Panel klein oben, darunter leer. Abnahme: Radar skaliert mit der
       Spaltenhöhe, Inhalt vertikal zentriert, keine leere Hälfte (Screenshot start_de_tablet).
-- [ ] Tablet-Scan: viel Leerfläche (handoff-polish.md). Abnahme wie oben.
-- [ ] Assistent-Titel kleiner als andere Bildschirmtitel; Gedankenstriche uneinheitlich (– vs —).
-- [ ] Test `ReviewFixesTest.timeoutEndsReadEvenIfAChildKeepsThePipeOpen` einmal zeitabhängig rot. Abnahme: 20 Läufe
+- [x] Tablet-Scan: viel Leerfläche (handoff-polish.md). Abnahme wie oben.
+- [x] Assistent-Titel kleiner als andere Bildschirmtitel; Gedankenstriche uneinheitlich (– vs —). Beleg: Tagesrunde 1.
+- [x] Test `ReviewFixesTest.timeoutEndsReadEvenIfAChildKeepsThePipeOpen` einmal zeitabhängig rot. Abnahme: 20 Läufe
       grün oder Test deterministisch gemacht.
 
 ## Nachtrunde 4 (2026-11-02, ab 02:00) – Beleg 295ff6d: 173 Tests, verifyRoborazzi + Release grün, Gerätetest offen
