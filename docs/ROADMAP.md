@@ -21,7 +21,8 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       (Android 17, CD1A.261005.003), Asset `iocs/knowngood-pixel.sha256` (166 KB). Eine Quelle, die eine davon listet,
       fliegt ganz raus. Beleg: 0 Überschneidung mit den 161 Malware-Hashes; 243 Tests grün; Release auf Pixel 11:
       Start ohne Absturz, 44/44 Quellen gültig, Tief-Scan 26 s, 0 Funde, 0 Zeilen im Crash-Log.
-- [ ] Scan-Schritt-Text: Beim Wechsel überlagern sich alter und neuer Untertitel sichtbar („Checking file fingerprints…“
+- [x] Scan-Schritt-Text (behoben: erst aus, dann ein, je 80 ms; Wechsel höchstens alle 400 ms. Beleg Pixel 11: 40
+      Serienaufnahmen ohne Überlagerung, verifyRoborazzi grün, 0 Abstürze): Beim Wechsel überlagern sich alter und neuer Untertitel sichtbar („Checking file fingerprints…“
       über „File list…“, Screenshot Pixel 11, 17:38). Abnahme: Überblendung ohne lesbare Überlagerung (alter Text erst
       aus, dann neuer ein, ≤ 200 ms), Screenshot-Test unverändert.
 - [ ] Positivliste für weitere Geräte (Pixel 9, Samsung) ergänzen – nur mit Gerät, nur Systempartitionen.
@@ -198,6 +199,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- **Vor jedem Tipp und jeder Aufnahme am Gerät `mCurrentFocus` prüfen – auch mit Freigabe.** Steht Spyhound nicht vorne:
+  abbrechen. Am 2026-11-02 ging ein Tipp in eine fremde App und die Serienaufnahmen zeigten private Inhalte (sofort gelöscht).
 - **Release erst committen und taggen, dann bauen.** AGP schreibt die Git-Revision in `META-INF/version-control-info.textproto`;
   0.3.4 wurde aus dem Arbeitsbaum vor dem Commit gebaut und ist darum nur inhaltlich, nicht vollständig reproduzierbar (2026-11-02).
 - Hängende Agentenläufe nach jeder Runde prüfen (`pgrep -af cursor-agent`): ein Lauf hing 14 h auf einem gelöschten Worktree.

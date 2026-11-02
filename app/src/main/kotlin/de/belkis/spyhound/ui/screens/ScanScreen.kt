@@ -116,7 +116,7 @@ fun ScanScreen(
     var shownDetail by remember { mutableStateOf(progress.detail) }
     LaunchedEffect(Unit) {
         snapshotFlow { liveDetail }
-            .sample(125)
+            .sample(400) // each line stays readable; faster updates would only flicker
             .collect { shownDetail = it }
     }
 
@@ -314,6 +314,8 @@ private fun ScanPercent(pct: Int) {
     }
 }
 
+private const val DetailFade = 80
+
 @Composable
 private fun ScanNow(step: String, detail: String, motion: Boolean) {
     Box(
@@ -337,7 +339,8 @@ private fun ScanNow(step: String, detail: String, motion: Boolean) {
             if (!motion) {
                 EnterTransition.None togetherWith ExitTransition.None
             } else {
-                (fadeIn(tween(SpyMotion.Micro)) togetherWith fadeOut(tween(SpyMotion.Micro))).using(
+                // Sequential, not a crossfade: two lines on top of each other read as garbage.
+                (fadeIn(tween(DetailFade, delayMillis = DetailFade)) togetherWith fadeOut(tween(DetailFade))).using(
                     SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(0) }),
                 )
             }
