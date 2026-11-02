@@ -128,3 +128,15 @@ geprüft; nur exakte Treffer. Die Positivliste aus 2.4 ist noch nicht gebaut.
 
 Abnahme: A1, A2, A3 (JVM-Teil), A7 (Textcheck bleibt grün), A8 per `AntivirusTest`/`testDebugUnitTest`. Gerätetest offen: A3
 (EICAR-Test-APK im Download-Ordner), A4 (0 Falschtreffer auf echtem Gerät), A5 (Flugmodus-Lauf), A6 (Leistung Pixel 9).
+
+## Gerätetest Schritt 1 (2026-11-02)
+Aufbau: Emulator API 34, Debug-Build, Dateizugriff erteilt; die harmlose Test-App „Testspy“ nur als Datei
+`Download/rechnung.apk` (nicht installiert); als einziger Indikator deren SHA-256 (`debug-test.tsv`, nur Debug);
+**Flugmodus an** (kein Netz, `ping` → „Network is unreachable“).
+
+| Kriterium | Ergebnis |
+|---|---|
+| A3 – APK in Downloads wird erkannt | ✅ 1 Fund „Datei /storage/emulated/0/Download/rechnung.apk“ (Bild `docs/shots/av-file-finding-airplane.png`); mit zusätzlich installierter Test-App 2 Funde (installierte APK + Datei) |
+| A4 – 0 Falschtreffer auf echtem Gerät | ✅ Pixel 9: 703 APK-Dateien gegen 79 ESET-Hashes, 0 Treffer |
+| A5 – Prüfung offline | ✅ kompletter Scan im Flugmodus, 0 Abstürze |
+| A6 – Leistung | Emulator: Basis-Scan inkl. Datei-Fingerabdrücken 25 s (768 geprüft). Pixel 9 (Release, tiefe Prüfung): 58 s gesamt; der Hash-Abgleich selbst ist eine Binärsuche und fällt nicht ins Gewicht. |

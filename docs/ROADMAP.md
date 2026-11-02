@@ -19,7 +19,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Offen (Tagesrunde 2026-11-02)
 - [ ] Screenshot-Test der Info-Seite hängt von der Versionsnummer ab (jede Version = 4 neue Bilder). Abnahme: Version im
       Test fest „0.0.0-test“, Bilder ändern sich beim Hochzählen nicht.
-- [ ] Virenschutz: Positivliste, Gerätetest A3/A5/A6 (Test-APK in Downloads, Flugmodus, Leistung Pixel 9).
+- [x] Virenschutz-Gerätetest A3/A5/A6: APK in Downloads erkannt, Scan im Flugmodus, 25 s (Emulator) – Belege in docs/ANTIVIRUS.md. Positivliste: läuft (Copilot, weitere Quellen).
 
 ## Offen nach der Nacht (2026-11-02, 02:45)
 - [x] **Gerätetest Pixel 9/11** (Pixel 9: Release-Start ohne Absturz; Pixel 11: Belkis „Läuft“, 2026-11-02) für alles aus den Nachtrunden 1–5 (Assistent ohne PC, Querformat, Übergänge, Handy
