@@ -134,7 +134,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
         pixelgleich (nichts wandert), Querformat mit Radar links.
 - [ ] Shell-Probe schlägt fehl → einmal automatisch trennen und neu verbinden (Shizuku-Dienst), erst dann Lücke melden.
       Fund: Pixel 2026-11-01, veralteter Dienst nach App-Update; App-Neustart behob es. Abnahme: Update der App bei
-      laufendem Shizuku → Tiefenprüfung läuft ohne Neustart.
+      laufendem Shizuku → Tiefenprüfung läuft ohne Neustart. Code fertig (281c49b, `probeWithReconnect` + Test),
+      offen nur die Abnahme auf dem Pixel 11 (Shizuku läuft dort), sobald Belkis das Gerät freigibt.
 
 ## Stufe 2 – Tiefe ohne Root
 - [x] Fehlerbericht-Import, Analyse-Schicht: `bugreport/` liest bugreport-*.zip (Prozesse, Pakete inkl.
