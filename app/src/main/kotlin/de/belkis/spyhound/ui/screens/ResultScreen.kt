@@ -89,6 +89,7 @@ import de.belkis.spyhound.ui.design.SpyMotion
 import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.design.SpyTypeScale
 import de.belkis.spyhound.ui.design.countUp
+import de.belkis.spyhound.ui.formatCount
 import de.belkis.spyhound.ui.design.rememberReducedMotion
 import de.belkis.spyhound.ui.design.staggeredAppear
 
@@ -100,6 +101,7 @@ fun ResultScreen(
     onGapFix: (GapFix) -> Unit,
     onBugreport: () -> Unit,
     onHelp: () -> Unit,
+    heroSymbolModifier: Modifier = Modifier,
 ) {
     val tablet = LocalConfiguration.current.screenWidthDp >= 600
     val listState = rememberLazyListState()
@@ -114,14 +116,20 @@ fun ResultScreen(
     Column(Modifier.fillMaxSize()) {
         if (tablet) {
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
-                ResultSummary(report, examined, Modifier.weight(1f), onGapFix)
+                ResultSummary(report, examined, Modifier.weight(1f), onGapFix, heroSymbolModifier)
                 Column(Modifier.weight(1f)) {
                     ScrollEdge(scrolled)
                     ResultList(report, listState, onGapFix, onHelp, Modifier.weight(1f))
                 }
             }
         } else {
-            ResultSummary(report, examined, Modifier.fillMaxWidth().padding(bottom = SpySpacing.Section), onGapFix)
+            ResultSummary(
+                report = report,
+                examined = examined,
+                modifier = Modifier.fillMaxWidth().padding(bottom = SpySpacing.Section),
+                onGapFix = onGapFix,
+                heroSymbolModifier = heroSymbolModifier,
+            )
             ScrollEdge(scrolled)
             ResultList(report, listState, onGapFix, onHelp, Modifier.weight(1f))
         }
@@ -136,9 +144,15 @@ fun ResultScreen(
 }
 
 @Composable
-private fun ResultSummary(report: Report, examined: Int, modifier: Modifier, onGapFix: (GapFix) -> Unit) {
+private fun ResultSummary(
+    report: Report,
+    examined: Int,
+    modifier: Modifier,
+    onGapFix: (GapFix) -> Unit,
+    heroSymbolModifier: Modifier = Modifier,
+) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
-        ResultHero(report)
+        ResultHero(report = report, symbolModifier = heroSymbolModifier)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CountCell(report.findings.size, stringResource(R.string.result_findings), SpyColors.Danger)
             CountCell(report.leads.size, stringResource(R.string.result_leads), SpyColors.Amber)
@@ -195,7 +209,7 @@ private fun ResultSummary(report: Report, examined: Int, modifier: Modifier, onG
 }
 
 @Composable
-private fun ResultHero(report: Report) {
+private fun ResultHero(report: Report, symbolModifier: Modifier = Modifier) {
     val reduced = rememberReducedMotion()
     val danger = report.findings.isNotEmpty()
     val tint = if (danger) SpyColors.Danger else if (report.leads.isNotEmpty()) SpyColors.Amber else SpyColors.Clear
@@ -244,7 +258,7 @@ private fun ResultHero(report: Report) {
                 painterResource(if (danger) R.drawable.ic_result_finding else R.drawable.ic_result_clear),
                 contentDescription = null,
                 tint = tint,
-                modifier = Modifier.size(48.dp),
+                modifier = symbolModifier.size(48.dp),
             )
             Spacer(Modifier.height(8.dp))
             Text(
@@ -273,10 +287,11 @@ private fun CountCell(value: Int, label: String, color: Color) {
     var target by remember(value) { mutableIntStateOf(0) }
     LaunchedEffect(value) { target = value }
     val number = countUp(target)
-    val width = maxOf(4, value.toString().length)
+    val locale = LocalConfiguration.current.locales[0]
+    val width = maxOf(4, formatCount(value, locale).length)
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.widthIn(min = 56.dp)) {
         Text(
-            number.toString().padStart(width, ' '),
+            formatCount(number, locale).padStart(width, ' '),
             style = SpyTypographyExtras.tabularHeadline.copy(color = color, fontSize = SpyTypeScale.Heading),
             maxLines = 1,
             modifier = Modifier.semantics { contentDescription = "$value $label" },

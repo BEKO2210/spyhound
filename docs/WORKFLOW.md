@@ -46,6 +46,11 @@ Verteilung als APK, kein Play Store. Logik nach dem Zero Breach Toolkit (Apache-
   nach seinem OK wird nach `main` gemergt.
 - Ohne Gerät sieht man UI nur über JVM-Screenshot-Tests (Roborazzi + Robolectric). Jede sichtbare Änderung braucht
   einen aktualisierten Screenshot-Test (DE und EN), die PNGs werden committet und selbst angesehen.
+- Screenshot-Befehle (PNGs liegen in `app/src/test/screenshots/`, Test: `ScreenshotTest`):
+  ```
+  ./gradlew --max-workers=2 recordRoborazziDebug   # PNGs neu erzeugen (nach sichtbaren UI-Änderungen), dann ansehen und committen
+  ./gradlew --max-workers=2 verifyRoborazziDebug   # vergleicht gegen die committeten PNGs, schlägt bei Abweichung fehl
+  ```
 - Belkis ist ein Mann: „Anbieter“, „Verantwortlicher“, „Nutzer“ – keine -in-Formen über ihn.
 
 ## Architektur in Kürze

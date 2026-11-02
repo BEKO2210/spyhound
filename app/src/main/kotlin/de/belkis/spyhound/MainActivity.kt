@@ -14,16 +14,31 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import android.graphics.Color as AndroidColor
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.setup.debugDeepCheckSnapshot
@@ -42,15 +57,23 @@ import de.belkis.spyhound.scan.TextsEn
 import de.belkis.spyhound.scan.localized
 import androidx.compose.ui.platform.LocalContext
 import de.belkis.spyhound.ui.IntroPreferences
+import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.MainViewModel
 import de.belkis.spyhound.ui.SpyhoundScaffold
 import de.belkis.spyhound.ui.SpyhoundTheme
 import de.belkis.spyhound.ui.UiState
+import de.belkis.spyhound.ui.design.SpyMotion
+import de.belkis.spyhound.ui.navigation.RootScreen
+import de.belkis.spyhound.ui.navigation.TransitionDirection
+import de.belkis.spyhound.ui.navigation.TransitionStyle
+import de.belkis.spyhound.ui.navigation.overlayTransitionPlan
+import de.belkis.spyhound.ui.navigation.rootTransitionPlan
 import de.belkis.spyhound.ui.screens.ResultScreen
 import de.belkis.spyhound.ui.screens.ScanScreen
 import de.belkis.spyhound.ui.screens.InfoScreen
 import de.belkis.spyhound.ui.screens.IntroScreen
 import de.belkis.spyhound.ui.screens.StartScreen
+import androidx.compose.ui.unit.dp
 
 class MainActivity : AppCompatActivity() {
     private val vm: MainViewModel by viewModels()
@@ -167,8 +190,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
-                    if (showIntro && !showDeepCheckSetup) {
-                        BackHandler { finishIntro() }
+                    SpyhoundOverlay(visible = showIntro && !showDeepCheckSetup, onBack = finishIntro) {
                         SpyhoundScaffold {
                             IntroScreen(
                                 onFinished = finishIntro,
@@ -176,8 +198,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
-                    if (showInfo && !showDeepCheckSetup) {
-                        BackHandler { showInfo = false }
+                    SpyhoundOverlay(visible = showInfo && !showDeepCheckSetup, onBack = { showInfo = false }) {
                         SpyhoundScaffold {
                             InfoScreen(
                                 onBack = { showInfo = false },
@@ -189,7 +210,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
-                    if (showDeepCheckSetup) {
+                    SpyhoundOverlay(visible = showDeepCheckSetup, onBack = null) {
                         SpyhoundScaffold {
                             DeepCheckSetupWizard(
                                 snapshot = setupSnapshot,
@@ -238,56 +259,163 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
     private fun SpyhoundNav(
         state: UiState,
         onOpenDeepCheckSetup: () -> Unit,
         onOpenInfo: () -> Unit,
     ) {
-        when {
-            state.report != null -> {
-                BackHandler { vm.closeReport() }
-                ResultScreen(
-                report = state.report.localized(currentTexts()),
-                onShare = { shareReport(state.report) },
-                onRescan = {
-                    vm.closeReport()
-                    vm.startScan()
+        val motionEnabled = LocalMotionEnabled.current
+        val shift = with(LocalDensity.current) { 16.dp.roundToPx() }
+        val target = rootScreen(state)
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = target,
+                transitionSpec = {
+                    val plan = rootTransitionPlan(initialState, targetState, motionEnabled)
+                    if (plan.style == TransitionStyle.INSTANT) {
+                        EnterTransition.None togetherWith ExitTransition.None
+                    } else {
+                        val forward = plan.direction == TransitionDirection.FORWARD
+                        val enterOffset = if (forward) shift else -shift
+                        val exitOffset = -enterOffset
+                        (fadeIn(tween(SpyMotion.Screen, easing = SpyMotion.Enter)) +
+                            slideInVertically(
+                                animationSpec = tween(SpyMotion.Screen, easing = SpyMotion.Enter),
+                                initialOffsetY = { enterOffset },
+                            )) togetherWith
+                            (fadeOut(tween(SpyMotion.Screen, easing = SpyMotion.Exit)) +
+                                slideOutVertically(
+                                    animationSpec = tween(SpyMotion.Screen, easing = SpyMotion.Exit),
+                                    targetOffsetY = { exitOffset },
+                                ))
+                    }.using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ -> tween(0) }))
                 },
-                onGapFix = { fix -> handleGapFix(fix, onOpenDeepCheckSetup) },
-                onBugreport = { openBugreportPicker() },
-                onHelp = {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
-                },
-                )
+                label = "spyhound-nav",
+            ) { screen ->
+                val sharedRadar = sharedRadarModifier(this, motionEnabled)
+                when (screen) {
+                    RootScreen.RESULT -> {
+                        val report = state.report ?: return@AnimatedContent
+                        BackHandler { vm.closeReport() }
+                        ResultScreen(
+                            report = report.localized(currentTexts()),
+                            onShare = { shareReport(report) },
+                            onRescan = {
+                                vm.closeReport()
+                                vm.startScan()
+                            },
+                            onGapFix = { fix -> handleGapFix(fix, onOpenDeepCheckSetup) },
+                            onBugreport = { openBugreportPicker() },
+                            onHelp = {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
+                            },
+                            heroSymbolModifier = sharedRadar,
+                        )
+                    }
+                    RootScreen.SCAN -> {
+                        val progress = state.progress ?: return@AnimatedContent
+                        ScanScreen(
+                            progress = progress,
+                            onCancel = { vm.cancelScan() },
+                            radarModifier = sharedRadar,
+                        )
+                    }
+                    RootScreen.START -> StartScreen(
+                        state = state.copy(
+                            busy = state.busy?.let(currentTexts()::text),
+                            bannerMessage = state.bannerMessage?.let(currentTexts()::text),
+                            updateMessage = state.updateMessage?.let(currentTexts()::text),
+                        ),
+                        onScan = { vm.startScan() },
+                        onUpdateIndicators = { vm.updateIndicators() },
+                        onRequestRoot = { vm.requestRoot() },
+                        onRequestSms = {
+                            smsPermission.launch(Manifest.permission.READ_SMS)
+                        },
+                        onRequestFiles = { openAllFilesAccess() },
+                        onDnsToggle = { on -> toggleDns(on) },
+                        onPickBugreport = { openBugreportPicker() },
+                        onDismissBanner = { vm.clearBanner() },
+                        onDemoReport = {
+                            if (BuildConfig.DEBUG) vm.showDemoReport()
+                        },
+                        onDeepCheckSetup = onOpenDeepCheckSetup,
+                        onOpenInfo = onOpenInfo,
+                        radarModifier = sharedRadar,
+                    )
+                }
             }
-            state.progress != null -> ScanScreen(
-                progress = state.progress,
-                onCancel = { vm.cancelScan() },
-            )
-            else -> StartScreen(
-                state = state.copy(
-                    busy = state.busy?.let(currentTexts()::text),
-                    bannerMessage = state.bannerMessage?.let(currentTexts()::text),
-                    updateMessage = state.updateMessage?.let(currentTexts()::text),
-                ),
-                onScan = { vm.startScan() },
-                onUpdateIndicators = { vm.updateIndicators() },
-                onRequestRoot = { vm.requestRoot() },
-                onRequestSms = {
-                    smsPermission.launch(Manifest.permission.READ_SMS)
-                },
-                onRequestFiles = { openAllFilesAccess() },
-                onDnsToggle = { on -> toggleDns(on) },
-                onPickBugreport = { openBugreportPicker() },
-                onDismissBanner = { vm.clearBanner() },
-                onDemoReport = {
-                    if (BuildConfig.DEBUG) vm.showDemoReport()
-                },
-                onDeepCheckSetup = onOpenDeepCheckSetup,
-                onOpenInfo = onOpenInfo,
-            )
         }
+    }
+
+    @OptIn(ExperimentalSharedTransitionApi::class)
+    @Composable
+    private fun SharedTransitionScope.sharedRadarModifier(
+        animatedVisibilityScope: androidx.compose.animation.AnimatedVisibilityScope,
+        motionEnabled: Boolean,
+    ): Modifier {
+        if (!motionEnabled) return Modifier
+        return Modifier.sharedElement(
+            rememberSharedContentState(key = "main-radar-shared"),
+            animatedVisibilityScope = animatedVisibilityScope,
+        )
+    }
+
+    private fun rootScreen(state: UiState): RootScreen = when {
+        state.report != null -> RootScreen.RESULT
+        state.progress != null -> RootScreen.SCAN
+        else -> RootScreen.START
+    }
+
+    @Composable
+    private fun SpyhoundOverlay(
+        visible: Boolean,
+        onBack: (() -> Unit)?,
+        content: @Composable () -> Unit,
+    ) {
+        val motionEnabled = LocalMotionEnabled.current
+        val shift = with(LocalDensity.current) { 16.dp.roundToPx() }
+        val enterPlan = overlayTransitionPlan(opening = true, motionEnabled = motionEnabled)
+        val exitPlan = overlayTransitionPlan(opening = false, motionEnabled = motionEnabled)
+        AnimatedVisibility(
+            visible = visible,
+            enter = visibilityEnterTransition(enterPlan.direction, enterPlan.style, shift),
+            exit = visibilityExitTransition(exitPlan.direction, exitPlan.style, shift),
+            label = "overlay-screen",
+        ) {
+            if (onBack != null) BackHandler { onBack() }
+            Box(Modifier.fillMaxSize()) { content() }
+        }
+    }
+
+    private fun visibilityEnterTransition(
+        direction: TransitionDirection,
+        style: TransitionStyle,
+        shiftPx: Int,
+    ): EnterTransition {
+        if (style == TransitionStyle.INSTANT) return EnterTransition.None
+        val offset = if (direction == TransitionDirection.FORWARD) shiftPx else -shiftPx
+        return fadeIn(tween(SpyMotion.Screen, easing = SpyMotion.Enter)) +
+            slideInVertically(
+                animationSpec = tween(SpyMotion.Screen, easing = SpyMotion.Enter),
+                initialOffsetY = { offset },
+            )
+    }
+
+    private fun visibilityExitTransition(
+        direction: TransitionDirection,
+        style: TransitionStyle,
+        shiftPx: Int,
+    ): ExitTransition {
+        if (style == TransitionStyle.INSTANT) return ExitTransition.None
+        val offset = if (direction == TransitionDirection.FORWARD) -shiftPx else shiftPx
+        return fadeOut(tween(SpyMotion.Screen, easing = SpyMotion.Exit)) +
+            slideOutVertically(
+                animationSpec = tween(SpyMotion.Screen, easing = SpyMotion.Exit),
+                targetOffsetY = { offset },
+            )
     }
 
     private fun openBugreportPicker() {

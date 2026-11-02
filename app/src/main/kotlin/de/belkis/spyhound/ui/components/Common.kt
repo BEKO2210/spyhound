@@ -92,6 +92,7 @@ fun SpyButton(
     accent: Boolean = false,
     enabled: Boolean = true,
     fillWidth: Boolean = true,
+    singleLine: Boolean = false,
     style: SpyButtonStyle = if (accent) SpyButtonStyle.PRIMARY else SpyButtonStyle.SECONDARY,
 ) {
     val bg = when (style) { SpyButtonStyle.PRIMARY -> SpyColors.Amber; SpyButtonStyle.SECONDARY -> SpyColors.SurfaceRaised; SpyButtonStyle.TEXT -> Color.Transparent }
@@ -129,6 +130,8 @@ fun SpyButton(
                 style = MaterialTheme.typography.labelLarge,
                 color = fg,
                 textAlign = TextAlign.Center,
+                maxLines = if (singleLine) 1 else Int.MAX_VALUE,
+                softWrap = !singleLine,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             )
         }

@@ -99,6 +99,7 @@ private val ScanCancelReserve = 64.dp
 fun ScanScreen(
     progress: Progress,
     onCancel: () -> Unit,
+    radarModifier: Modifier = Modifier,
 ) {
     val texts = if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
     val motion = LocalMotionEnabled.current
@@ -177,7 +178,7 @@ fun ScanScreen(
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        ScanRadar(radar)
+                        ScanRadar(radar = radar, modifier = radarModifier)
                         RadarLegend(legend = radar?.legend ?: RadarLegendCounts(), modifier = Modifier.padding(top = 8.dp))
                         Spacer(Modifier.height(16.dp))
                         ScanPercent(pct)
@@ -202,7 +203,7 @@ fun ScanScreen(
                     modifier = Modifier.height(ScanRadarBlockHeight),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ScanRadar(radar)
+                    ScanRadar(radar = radar, modifier = radarModifier)
                     RadarLegend(
                         legend = radar?.legend ?: RadarLegendCounts(),
                         modifier = Modifier.padding(top = 8.dp),
@@ -262,11 +263,12 @@ private fun ScanHeading() {
 }
 
 @Composable
-private fun ScanRadar(radar: RadarProgress?) {
+private fun ScanRadar(radar: RadarProgress?, modifier: Modifier = Modifier) {
     val radarLabel = stringResource(R.string.scan_radar_cd)
     RadarCanvas(
         radar = radar,
         modifier = Modifier
+            .then(modifier)
             .size(ScanRadarSize)
             .clearAndSetSemantics { contentDescription = radarLabel },
         sweepTrail = true,

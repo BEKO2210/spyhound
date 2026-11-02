@@ -347,31 +347,27 @@ private fun AdbWizardStepCard(
                     )
                 }
             }
-            Box(
-                Modifier
-                    .width(112.dp)
-                    .heightIn(min = 48.dp),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                if (done) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_wizard_step_done),
-                        contentDescription = doneCd,
-                        tint = SpyColors.Clear,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .graphicsLayer { alpha = doneAlpha },
-                    )
-                } else if (active && actionLabel != null && onAction != null) {
-                    SpyButton(
-                        text = actionLabel,
-                        onClick = onAction,
-                        enabled = enabled,
-                        fillWidth = false,
-                        accent = true,
-                    )
-                }
+            if (done) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_wizard_step_done),
+                    contentDescription = doneCd,
+                    tint = SpyColors.Clear,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .graphicsLayer { alpha = doneAlpha },
+                )
             }
+        }
+        if (!done && active && actionLabel != null && onAction != null) {
+            SpyButton(
+                text = actionLabel,
+                onClick = onAction,
+                enabled = enabled,
+                fillWidth = false,
+                singleLine = true,
+                accent = true,
+                modifier = Modifier.padding(start = 44.dp, top = 12.dp),
+            )
         }
     }
 }

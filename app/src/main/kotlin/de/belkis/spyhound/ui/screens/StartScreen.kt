@@ -88,9 +88,8 @@ import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.design.countUp
 import de.belkis.spyhound.ui.design.staggeredAppear
 import java.text.DateFormat
-import java.text.NumberFormat
 import java.util.Date
-import java.util.Locale
+import de.belkis.spyhound.ui.formatCount
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -107,6 +106,7 @@ fun StartScreen(
     onDemoReport: () -> Unit = {},
     onDeepCheckSetup: () -> Unit,
     onOpenInfo: () -> Unit,
+    radarModifier: Modifier = Modifier,
 ) {
     var showBugreportSteps by remember { mutableStateOf(false) }
     val scroll = rememberScrollState()
@@ -126,16 +126,12 @@ fun StartScreen(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp),
-            ) {
+            // The half-width tablet column is too narrow for toggle, logo and info button side by side.
+            val brand: @Composable (Modifier) -> Unit = { brandModifier ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
+                    modifier = brandModifier
                         .combinedClickable(
                             onClick = {},
                             onLongClick = onDemoReport,
@@ -155,6 +151,14 @@ fun StartScreen(
                         modifier = Modifier.padding(start = 8.dp),
                     )
                 }
+            }
+            if (tablet) brand(Modifier)
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+            ) {
+                if (!tablet) brand(Modifier.align(Alignment.Center))
                 LanguageToggle(
                     modifier = Modifier.align(Alignment.CenterStart),
                 )
@@ -167,6 +171,7 @@ fun StartScreen(
             RadarScanButton(
                 onClick = onScan,
                 enabled = state.iocs != null && state.progress == null,
+                modifier = radarModifier,
                 lastRadar = state.lastRadar,
             )
             Spacer(Modifier.height(12.dp))
@@ -310,9 +315,8 @@ fun StartScreen(
                         hint = stringResource(R.string.start_help_indicators),
                     )
                     val animatedCount = countUp(loaded.set.size)
-                    val formattedCount = remember(animatedCount, Locale.getDefault()) {
-                        NumberFormat.getNumberInstance(Locale.getDefault()).format(animatedCount)
-                    }
+                    val locale = LocalConfiguration.current.locales[0]
+                    val formattedCount = remember(animatedCount, locale) { formatCount(animatedCount, locale) }
                     Text(
                         formattedCount,
                         style = SpyTypographyExtras.tabularHeadline,
@@ -437,8 +441,13 @@ fun StartScreen(
     Box(Modifier.fillMaxSize()) {
         if (tablet) {
             Row(Modifier.fillMaxSize().padding(horizontal = SpySpacing.TabletEdge), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
-                Column(Modifier.weight(5f).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, content = headerContent)
-                Column(Modifier.weight(7f).fillMaxHeight(), content = cardsContent)
+                Column(
+                    Modifier.weight(1f).fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    content = headerContent,
+                )
+                Column(Modifier.weight(1f).fillMaxHeight(), content = cardsContent)
             }
         } else {
             Column(Modifier.fillMaxSize()) {
