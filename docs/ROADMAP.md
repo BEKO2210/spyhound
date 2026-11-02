@@ -16,6 +16,16 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 
 ## Release 0.3.4 (2026-11-02) – abgenommen von Belkis auf dem Pixel 11 Pro XL („funktioniert“): einheitliche Quellenzahl in der Aktualisierungsmeldung, DNS-Schalter in einfacher Sprache.
 
+## Tagesrunde 2026-11-02 (17:40)
+- [x] Positivliste um echte Systemdateien erweitert: 1450 SHA-256 aller APK/JAR/ODEX/VDEX/.so eines Pixel 11 Pro XL
+      (Android 17, CD1A.261005.003), Asset `iocs/knowngood-pixel.sha256` (166 KB). Eine Quelle, die eine davon listet,
+      fliegt ganz raus. Beleg: 0 Überschneidung mit den 161 Malware-Hashes; 243 Tests grün; Release auf Pixel 11:
+      Start ohne Absturz, 44/44 Quellen gültig, Tief-Scan 26 s, 0 Funde, 0 Zeilen im Crash-Log.
+- [ ] Scan-Schritt-Text: Beim Wechsel überlagern sich alter und neuer Untertitel sichtbar („Checking file fingerprints…“
+      über „File list…“, Screenshot Pixel 11, 17:38). Abnahme: Überblendung ohne lesbare Überlagerung (alter Text erst
+      aus, dann neuer ein, ≤ 200 ms), Screenshot-Test unverändert.
+- [ ] Positivliste für weitere Geräte (Pixel 9, Samsung) ergänzen – nur mit Gerät, nur Systempartitionen.
+
 ## Release 0.3.2 (2026-11-02) – Virenschutz Schritt 2: 161 Malware-Hashes (ESET 14 Kampagnen + Meta), Positivliste, 0 Falschtreffer auf 703 APKs (Pixel 9), Datei-Fund offline belegt (Emulator, Flugmodus). Offen: abuse.ch/YARAify anfragen, Positivliste um echte Systembibliotheken erweitern.
 
 ## Release 0.3.1 (2026-11-02) – offiziell nach Abnahme durch Belkis auf dem Pixel 11 Pro XL („funktioniert“): Virenschutz Schritt 1, DNS-Tracker/Phishing, Quellenzähler-Fix.

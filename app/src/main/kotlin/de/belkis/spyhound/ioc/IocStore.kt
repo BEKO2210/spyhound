@@ -58,6 +58,7 @@ class IocStore(private val context: Context) {
 
     suspend fun load(): LoadedIocs = withContext(Dispatchers.IO) {
         val sources = catalog()
+        KnownGood.useSystemList(context.assets.open("iocs/$KNOWN_GOOD").bufferedReader().use { it.readText() })
         val all = ArrayList<Indicator>()
         // Curated files first, so their more precise attribution wins on duplicates.
         for (name in CURATED) {
@@ -150,6 +151,7 @@ class IocStore(private val context: Context) {
 
     companion object {
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
+        const val KNOWN_GOOD = "knowngood-pixel.sha256"
         private const val MAX_DOWNLOAD = 64 shl 20
         internal const val DEBUG_TEST_FILE = "debug-test.tsv"
 

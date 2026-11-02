@@ -245,4 +245,28 @@ class AntivirusTest {
         }
         assertTrue(esetIocs.all(IocType.SHA256).none { KnownGood.contains(it.value) })
     }
+
+    @Test fun pixelSystemListParsesAndProtectsAgainstPoisonedSources() {
+        val text = File(dir, IocStore.KNOWN_GOOD).readText()
+        val list = KnownGood.parseList(text)
+        assertTrue(list.size > 1000, "system list too small: ${list.size}")
+        assertEquals(text.lines().count { it.isNotBlank() && !it.startsWith("#") }, list.size)
+        KnownGood.useSystemList(text)
+        val systemFile = list.first()
+        assertTrue(KnownGood.contains(systemFile.uppercase()))
+        val poisoned = Indicator(systemFile, IocType.SHA256, Category.MALWARE, "X", "evil")
+        assertEquals(1, KnownGood.conflicts(listOf(poisoned)).size)
+        assertNull(IocSet(listOf(poisoned)).lookup(IocType.SHA256, systemFile))
+        // A shipped malware hash must never be on the list, or the scan would silently lose it.
+        assertTrue(esetIocs.all(IocType.SHA256).none { KnownGood.contains(it.value) })
+        for (s in sources.filter { it.format == "hashlist" || it.format == "typed-csv-android-sha256" }) {
+            assertTrue(KnownGood.conflicts(load(s)).isEmpty(), s.id)
+        }
+    }
+
+    @Test fun systemListSkipsCommentsAndMalformedLines() {
+        val h = "a".repeat(64)
+        val parsed = KnownGood.parseList("# comment\n$h  /system/lib64/x.so\n${"b".repeat(63)}\nnot a hash\n\n${h.uppercase()}")
+        assertEquals(setOf(h), parsed)
+    }
 }
