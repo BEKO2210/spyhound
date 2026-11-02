@@ -10,6 +10,14 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 3. **Root-Stufe** – nie auf echtem Root gelaufen; Emulator mit Magisk.
 4. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
+## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
+- [ ] „Wer darf was“ zeigt ~12 s nur „Apps werden gelesen …“. Abnahme: Fortschritt sichtbar (n von m Apps), zweiter
+      Aufruf aus Zwischenspeicher < 1 s.
+- [ ] „Wer darf was“: normale Rechte und auffällige Kombinationen klar trennen. Abnahme: auffällige oben, eigene
+      Überschrift; normale Rechte ohne Warnfarbe.
+- [ ] „Über Spyhound“: Quellen und Lizenzen aufklappbar. Abnahme: Seite passt zusammengeklappt auf zwei Bildschirme.
+- [x] Grenze „findet nur bekannte Spuren“ steht im Onboarding, im Ergebnis („Keine Spuren“, nie „sauber“) und als Lücke.
+
 ## Galaxy-Test (2026-11-02, Tab S9 Ultra, One UI 8 / Android 16, X910XXS6EZI2)
 - [x] Alle 8 Knöpfe der Anleitungen lösen auf die richtige One-UI-Seite auf (`scripts/check-settings-intents.sh`, 812537e).
 - [x] Eingebaute Kopplung ohne PC: Code in die Benachrichtigung, „Spyhound – Derzeit verbunden“; tiefe Prüfung „Tief“
