@@ -153,7 +153,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
 
 ## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
-- [ ] Antivirus offline: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
+- [~] Antivirus offline – Schritt 1 erledigt (ESET-Hashlisten, 79 Hashes, 0 Falschtreffer auf 703 APKs Pixel 9). Offen: Gerätetest A3/A5/A6, Positivliste, weitere lizenzklare Quellen (abuse.ch anfragen, YARAify prüfen). Ursprünglich: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
       YARA-Regeln prüfen; Lizenz jeder Quelle prüfen. Abnahme: EICAR-ähnliche Test-APK wird erkannt, 0 Falschtreffer
       auf Pixel.
 - [x] Rechte-Prüfer „Wer darf was“: 11 Rechte-Gruppen, Systemapps ausblendbar, Verlauf lokal, „neu seit letzter Prüfung“.
