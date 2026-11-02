@@ -86,6 +86,14 @@ Dateien, Quellen, DNS-Wächter).
 
 ### Außerdem dabei
 
+- **Wer darf was** – jede App mit Zugriff auf Kamera, Mikrofon, Standort, SMS, Bedienungshilfe und mehr, nach Recht
+  sortiert; seit der letzten Prüfung neu hinzugekommene Rechte sind markiert.
+- **Handy absichern** – eine kurze Checkliste (Bildschirmsperre, Debugging, Sicherheitspatch, Apps, die Apps
+  installieren dürfen) mit Knopf direkt zur richtigen Einstellung.
+- **Geprüfter Zeitraum** – das Ergebnis sagt, wie weit Nachrichten, Systemprotokolle und Dateien zurückreichen, damit
+  du weißt, was eine Prüfung sehen konnte und was nicht.
+- **Wöchentliche Prüfung im Hintergrund** (freiwillig, standardmäßig aus) – nur Basis-Prüfungen, kein Netzwerk, und
+  eine Benachrichtigung nur bei einem neuen Fund.
 - **DNS-Wächter** – ein optionaler, lokaler Filter (kein VPN-Server), der warnt, wenn eine App auf deinem Handy eine
   Domain kontaktiert, die von Spyware bekannt ist.
 - **Fehlerbericht-Analyse** – liest einen Android-Fehlerbericht (ZIP) offline, für Prüfungen, die Systemdaten brauchen.

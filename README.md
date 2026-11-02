@@ -84,6 +84,14 @@ sources, DNS watch).
 
 ### Also included
 
+- **Who can do what** – every app with access to camera, microphone, location, SMS, accessibility and more, grouped
+  by right; rights that appeared since your last check are marked.
+- **Secure your phone** – a short checklist (screen lock, debugging, security patch, apps allowed to install apps)
+  with a button straight to the right setting.
+- **Checked time range** – the result says how far back messages, system logs and files reach, so you know what a
+  scan could and could not see.
+- **Weekly background check** (optional, off by default) – basic checks only, no network, and a notification only
+  when something new is found.
 - **DNS watch** – an optional local filter (no VPN server) that warns when an app on your phone contacts a domain
   known from spyware.
 - **Bug report analysis** – read an Android bug report ZIP offline, for checks that need system data you cannot grant

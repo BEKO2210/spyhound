@@ -14,10 +14,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 4. ~~**Übergänge Start → Scan → Ergebnis**~~ – gebaut (a8bcc48), Gerätetest offen. (Radar wandert, gemeinsame Elemente). Abnahme: kein Sprung, reduzierte
    Bewegung respektiert, 60 fps auf Pixel 9.
 
-## Nachtrunde 4 (2026-11-02, ab 02:00)
-- [ ] Rechte-Prüfer „Wer darf was“: Apps je Recht-Gruppe, lokaler Verlauf „seit letzter Prüfung neu“. Abnahme: reine
+## Nachtrunde 4 (2026-11-02, ab 02:00) – Beleg 295ff6d: 173 Tests, verifyRoborazzi + Release grün, Gerätetest offen
+- [x] Rechte-Prüfer „Wer darf was“: Apps je Recht-Gruppe, lokaler Verlauf „seit letzter Prüfung neu“. Abnahme: reine
       Auswertung + Tests, Bildschirm DE/EN, Screenshot-Test.
-- [ ] Prüfung im Hintergrund (WorkManager, wöchentlich, nur Basis, Standard aus), Benachrichtigung nur bei neuem Fund.
+- [x] Prüfung im Hintergrund (WorkManager, wöchentlich, nur Basis, Standard aus), Benachrichtigung nur bei neuem Fund.
       Abnahme: Worker-Test, Schalter DE/EN, keine Netzwerkzugriffe.
 - [ ] Release 0.2.0 vorbereiten – veröffentlichen erst nach Gerätetest auf Pixel 9/11.
 
@@ -149,7 +149,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Beleg: PermissionAuditTest, Screenshots audit_*. Offen: Abnahme auf dem Pixel.
 - [ ] Netzwerk-Wächter ausbauen (DNS-Wächter → auch Tracker/Phishing-Listen, optional blockieren).
 - [x] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (491530d) (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
-- [ ] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund.
+- [x] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund (295ff6d).
 
 - [x] Finanzierung ohne Bezahlschranke – entschieden von Belkis 2026-11-01: Spenden über GitHub Sponsors (FUNDING.yml,
       README, Info-Bildschirm). Später optional „Pro“. Ursprünglicher Vorschlag: Prüfung immer kostenlos; Spenden
