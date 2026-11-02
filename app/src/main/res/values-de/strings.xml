@@ -27,7 +27,7 @@
     <string name="t_023">Kopplungscode wird nicht angenommen: Benachrichtigung von Shizuku muss erlaubt sein.\u0020</string>
     <string name="t_024">Nutze den geteilten Bildschirm – Einstellungen und Benachrichtigung gleichzeitig sehen.\u0020</string>
     <string name="t_025">Samsung: Auto Blocker aus. Bleibt „Suche nach Kopplungsdienst“ stehen: Shizuku darf im Hintergrund laufen\u0020</string>
-    <string name="t_026">(Akku: uneingeschränkt).</string>
+    <string name="t_026">(Akku: „Nicht eingeschränkt“).</string>
     <string name="t_027">Shizuku öffnen</string>
     <string name="t_028">Entwickleroptionen öffnen</string>
     <string name="t_029">Spyhound braucht deine Erlaubnis, Shizuku zu nutzen. Tippe auf Erlauben, wenn Android fragt.</string>

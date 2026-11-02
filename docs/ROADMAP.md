@@ -4,11 +4,29 @@
 Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien verständlich, für Profis tief. Start mit
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 19:00)
-1. **Samsung-Anleitungen auf echtem Galaxy prüfen** (S24 Ultra / Tab S9 Ultra, nur mit Freigabe des Besitzers):
-   Assistent, Auto Blocker, SMS-Rechte. Abnahme: jeder Knopf öffnet die richtige One-UI-Seite.
-2. **Laientest Assistent** – eine Person ohne Technikwissen schafft die Einrichtung allein (braucht Belkis).
-3. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 23:30)
+1. **Laientest Assistent** – eine Person ohne Technikwissen schafft die Einrichtung allein (braucht Belkis).
+2. **Testmatrix ältere Android-Versionen** – API 29 (minSdk), 31, 34 im Emulator; bisher nur Android 16/17 belegt.
+3. **Root-Stufe** – nie auf echtem Root gelaufen; Emulator mit Magisk.
+4. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+
+## Galaxy-Test (2026-11-02, Tab S9 Ultra, One UI 8 / Android 16, X910XXS6EZI2)
+- [x] Alle 8 Knöpfe der Anleitungen lösen auf die richtige One-UI-Seite auf (`scripts/check-settings-intents.sh`, 812537e).
+- [x] Eingebaute Kopplung ohne PC: Code in die Benachrichtigung, „Spyhound – Derzeit verbunden“; tiefe Prüfung „Tief“
+      in 64 s, 58.161 geprüft, 0 Funde · 8 Hinweise · 4 Lücken, kein Absturz.
+- [x] Fund: Deutsche Namen stimmten weder auf Samsung noch auf Pixel: „Debugging über WLAN“ und „Gerät über einen
+      Kopplungscode koppeln“ (aus SettingsGoogle- und SecSettings-Ressourcen belegt). Behoben 0b1a176.
+- [x] Fund: Samsung-Uhr und Galaxy-Buds-Plugins als „nicht aus App-Store“ gemeldet – Installer `updatecenter` und
+      `budsunitemgr` (System-Apps) fehlten. Behoben dc7fc24, Test `samsungSystemUpdatersAreNotSideloading`.
+- [x] Fund: Fertig-Seite nach eingebauter Kopplung sprach von Shizuku. Behoben dc7fc24.
+- [x] Fund: Samsung nennt die Akku-Stufe „Nicht eingeschränkt“, nicht „uneingeschränkt“. Behoben.
+- [x] Auto Blocker, „Sicherheit und Datenschutz“, „Eingeschränkte Einstellungen zulassen“: Bezeichnungen stimmen (SecSettings de).
+- [ ] Assistent wartet nur 5 Min. auf den Kopplungscode; danach ehrlich „Das hat zu lange gedauert“. Beim Laientest messen,
+      ob 5 Min. reichen. Abnahme: Laie schafft es ohne Timeout, sonst Frist verlängern.
+- [ ] Kopplungs-Benachrichtigung wird alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
+- [ ] Tablet-Kopf: „Spyhound“ steht links über DE/EN statt in einer Zeile wie am Handy. Abnahme: Kopf einzeilig, bündig
+      mit der rechten Spalte.
+- [ ] SMS-Rechte: Tab ohne Telefonie – SMS-Pfad braucht ein Galaxy-Handy (S24 Ultra, nur mit Freigabe der Besitzerin).
 
 ## Tagesrunde 2026-11-02 (17:40)
 - [x] Positivliste um echte Systemdateien erweitert: 1450 SHA-256 aller APK/JAR/ODEX/VDEX/.so eines Pixel 11 Pro XL
@@ -163,8 +181,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] Root: Emulator mit Magisk (rootAVD), Stufe ROOT inkl. /data/data-, Tombstone-, packages.xml-Prüfung.
 - [ ] Testfund: Emulator mit installierter harmloser Test-APK, deren Paketname/Zertifikat als Test-Indikator geladen
       ist → Fund erscheint rot (Ende-zu-Ende-Beweis, nur Debug-Build).
-- Lücke: Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – Anleitungstexte bleiben
-  ungetestet, bis ein Samsung-Gerät verfügbar ist.
+- Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – auf dem Tab S9 Ultra geprüft
+  (2026-11-02, siehe Galaxy-Test); SMS-Pfad offen.
 
 - [x] Eingebauter Prüf-Dienst statt separater Shizuku-App (erledigt: 8cc3f73, Pixel 9 + 11): Kopplung per WLAN-Debugging direkt in Spyhound (libadb-android,
       Apache-2.0/GPL-3.0 dual; Shizuku Apache-2.0, API MIT → NOTICE), eigener Dienst per app_process mit ADB-Rechten.
@@ -214,6 +232,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Bezeichnungen von Einstellungen nie aus dem Gedächtnis schreiben: aus den Ressourcen der Settings-APK des Geräts lesen (`aapt2 dump resources`, Sprache `(de)`). „WLAN-Debugging“ stand monatelang falsch in der App (2026-11-02).
+- Benachrichtigungsleiste nie abfotografieren: Sie zeigt fremde Inhalte. Nur per uiautomator lesen (2026-11-02).
 - Fokus-Prüfung und Aktion nie in einem Befehl verketten, wenn die Aktion selbst die App wechselt: Erst prüfen, Ergebnis lesen, dann handeln. Sonst landet ein App-Start über der App, in der Belkis gerade schreibt (2026-11-02).
 - Ein einmal gekoppeltes Gerät verbindet adb per mDNS von selbst wieder. Fremde Geräte nach dem Lesen trennen und den
   Besitzer bitten, WLAN-Debugging auszuschalten und pop-os unter „Gekoppelte Geräte“ zu entfernen.
