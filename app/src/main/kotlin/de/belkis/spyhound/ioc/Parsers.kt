@@ -24,6 +24,7 @@ object Parsers {
         "domains-txt" -> domainsTxt(text, ctx)
         "csv-domain-ip" -> csvDomainIp(text, ctx)
         "curated-tsv" -> curatedTsv(text, ctx)
+        "hashlist" -> hashlist(text, ctx)
         else -> throw IocFormatException("unknown indicator format: $format")
     }
 
@@ -130,6 +131,13 @@ object Parsers {
             Indicator(value, inferType(value), ctx.category, family, cols.getOrNull(3)?.trim().orEmpty().ifEmpty { ctx.sourceId })
         }.toList()
 
+    /** One SHA-256 per line, `#` comments allowed. Lines that are not exactly 64 hex digits are dropped. */
+    fun hashlist(text: String, ctx: SourceContext): List<Indicator> =
+        text.lineSequence().map { it.substringBefore('#').trim().lowercase() }
+            .filter { SHA256_LOWER_RE.matches(it) }
+            .map { Indicator(it, IocType.SHA256, ctx.category, ctx.family, ctx.sourceId) }.toList()
+
+    private val SHA256_LOWER_RE = Regex("[0-9a-f]{64}")
     private val APP_ID_RE = Regex("""^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]+)+$""")
 
     /** Debug-only test list: package names become APP_ID; SHA-256 stays SHA256 (Toolkit TSV columns). */
@@ -215,11 +223,12 @@ object FeedCatalog {
     val ALLOWED_REPOS = setOf(
         "mvt-project/mvt-indicators", "AmnestyTech/investigations",
         "AssoEchap/stalkerware-indicators", "citizenlab/malware-indicators",
+        "eset/malware-ioc",
     )
 
-    // Redistribution: MVT (MIT) and ECHAP (CC BY 4.0) ship inside the app; the others carry no
-    // licence and are fetched on the device from the pinned commit instead.
-    private val BUNDLED_REPOS = setOf("mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators")
+    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0) and ESET (BSD-2-Clause) ship inside the app; the others
+    // carry no licence and are fetched on the device from the pinned commit instead.
+    private val BUNDLED_REPOS = setOf("mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators", "eset/malware-ioc")
 
     // Sources that document iPhone spyware only: their domains still count everywhere, their
     // app ids, process names and paths do not describe anything on Android.
@@ -236,7 +245,11 @@ object FeedCatalog {
         FeedSource(
             id = s("id"), name = s("name"), repo = repo, commit = s("commit"), path = s("path"),
             format = s("format"), cite = s("cite"),
-            category = if (s("category") == "stalkerware") Category.STALKERWARE else Category.MERCENARY,
+            category = when (s("category")) {
+                "stalkerware" -> Category.STALKERWARE
+                "malware" -> Category.MALWARE
+                else -> Category.MERCENARY
+            },
             family = s("family"), sha256 = s("sha256").lowercase(),
             bundled = repo in BUNDLED_REPOS, androidArtifacts = s("id") !in IOS_ONLY,
         ).also { require(SAFE_FILE_NAME.matches(it.fileName)) { "unsafe file name: ${it.fileName}" } }

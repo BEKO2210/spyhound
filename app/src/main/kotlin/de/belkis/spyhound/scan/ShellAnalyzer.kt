@@ -1,5 +1,7 @@
 package de.belkis.spyhound.scan
 
+import de.belkis.spyhound.ioc.Category
+import de.belkis.spyhound.ioc.Indicator
 import de.belkis.spyhound.ioc.IocSet
 import de.belkis.spyhound.ioc.IocType
 
@@ -135,13 +137,21 @@ object ShellAnalyzer {
                 val path = line.substringAfter(' ').trim().removePrefix("*")
                 r.examined++
                 iocs.lookup(IocType.SHA256, hash)?.let {
-                    r.hit("Datei $path", "Die Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe.", it)
+                    r.hit("Datei $path", fileHashText(it), it)
                 }
             }
         }
         r.finish(ok, "Die Liste der Fingerabdrücke")
         return r
     }
+
+    private fun fileHashText(ind: Indicator): String =
+        if (ind.category == Category.MALWARE) {
+            "Die Datei hat den Fingerabdruck einer bekannten Schadsoftware-Probe" +
+                (if (ind.family.isBlank()) "" else " (${ind.family})") + ", Quelle: ${AppAnalyzer.sourceName(ind)}."
+        } else {
+            "Die Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe."
+        }
 
     /** A check counts as run only if it examined something; a failed or empty command is a gap. */
     private fun CheckResult.finish(ok: Boolean, what: String) {

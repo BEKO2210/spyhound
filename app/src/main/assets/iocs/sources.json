@@ -346,5 +346,65 @@
   "category": "mercenary",
   "family": "Pegasus",
   "sha256": "87cd4cb85b4a3808ff231f6c22e79f387328ba1b36ab576b61b455562f8afbc2"
+ },
+ {
+  "id": "eset-aridspy",
+  "name": "AridSpy (Arid Viper)",
+  "repo": "eset/malware-ioc",
+  "commit": "59745502656e813f9f79fc8005243edbc04f9397",
+  "path": "aridspy/samples.sha256",
+  "format": "hashlist",
+  "cite": "ESET Research",
+  "category": "malware",
+  "family": "AridSpy",
+  "sha256": "502a679a55bae4dda6004079c6a63068af19917877890d36460c041413d66c5f"
+ },
+ {
+  "id": "eset-vajraspy",
+  "name": "VajraSpy",
+  "repo": "eset/malware-ioc",
+  "commit": "59745502656e813f9f79fc8005243edbc04f9397",
+  "path": "vajraspy/samples.sha256",
+  "format": "hashlist",
+  "cite": "ESET Research",
+  "category": "malware",
+  "family": "VajraSpy",
+  "sha256": "f1e7f11b1b630984c65244e69290c9be4e439c428480f1393f2edfc200995321"
+ },
+ {
+  "id": "eset-spyloan",
+  "name": "SpyLoan predatory loan apps",
+  "repo": "eset/malware-ioc",
+  "commit": "59745502656e813f9f79fc8005243edbc04f9397",
+  "path": "spyloan/samples.sha256",
+  "format": "hashlist",
+  "cite": "ESET Research",
+  "category": "malware",
+  "family": "SpyLoan",
+  "sha256": "b66597c697a5618a64f8904578e7c0630fb103c8c9c1dc0cfceb0b6edffc4923"
+ },
+ {
+  "id": "eset-ngate",
+  "name": "NGate (NFC relay banking trojan)",
+  "repo": "eset/malware-ioc",
+  "commit": "59745502656e813f9f79fc8005243edbc04f9397",
+  "path": "ngate/samples.sha256",
+  "format": "hashlist",
+  "cite": "ESET Research",
+  "category": "malware",
+  "family": "NGate",
+  "sha256": "189f666874639eaf3a504617988a7a250534c24b922bddc2b38604757f4f70b8"
+ },
+ {
+  "id": "eset-promptspy",
+  "name": "PromptSpy",
+  "repo": "eset/malware-ioc",
+  "commit": "59745502656e813f9f79fc8005243edbc04f9397",
+  "path": "promptspy/samples.sha256",
+  "format": "hashlist",
+  "cite": "ESET Research",
+  "category": "malware",
+  "family": "PromptSpy",
+  "sha256": "0069af7209a245ea3491347d15246e7d195e962f38ecd7ce4cd237c05d2d5d59"
  }
 ]

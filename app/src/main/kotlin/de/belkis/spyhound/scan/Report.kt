@@ -14,6 +14,7 @@ data class Finding(
     val indicator: Indicator,
 ) {
     val isStalkerware: Boolean get() = indicator.category == Category.STALKERWARE
+    val isMalware: Boolean get() = indicator.category == Category.MALWARE
 }
 
 /** Worth a look: a combination that spyware needs, but harmless apps often have too. Never a finding. */
@@ -41,7 +42,7 @@ enum class LeadKind {
     UNKNOWN_SOURCES, OLD_BUGREPORT,
 }
 
-enum class GapKind { OTHER, APP_FILES, CERTIFICATES, READ_FAILED, BUGREPORT_PART, LARGE_FILES }
+enum class GapKind { OTHER, APP_FILES, CERTIFICATES, READ_FAILED, BUGREPORT_PART, LARGE_FILES, MALWARE_COVERAGE }
 
 enum class GapFix { NONE, PERMISSION_SMS, PERMISSION_FILES, SHIZUKU, ROOT, UPDATE_INDICATORS, RESTART_BUILTIN_ADB }
 
@@ -73,6 +74,8 @@ class CheckResult(sourceName: String, private val texts: Texts = TextsDe) {
 enum class Verdict {
     /** At least one indicator from a mercenary-spyware report matched. */
     SPYWARE_INDICATOR,
+    /** A file hash from a published malware campaign list matched (exact SHA-256 only). */
+    MALWARE,
     /** A known stalkerware / monitoring app matched. */
     STALKERWARE,
     /** Nothing matched, but there are things worth a look. */
@@ -100,7 +103,8 @@ data class Report(
 
     val verdict: Verdict
         get() = when {
-            findings.any { !it.isStalkerware } -> Verdict.SPYWARE_INDICATOR
+            findings.any { !it.isStalkerware && !it.isMalware } -> Verdict.SPYWARE_INDICATOR
+            findings.any { it.isMalware } -> Verdict.MALWARE
             findings.isNotEmpty() -> Verdict.STALKERWARE
             leads.isNotEmpty() -> Verdict.LEADS_ONLY
             else -> Verdict.NOTHING_FOUND

@@ -107,11 +107,13 @@ object ReportText {
 
     fun verdictText(v: Verdict, texts: Texts = TextsDe) = if (texts === TextsEn) when (v) {
         Verdict.SPYWARE_INDICATOR -> "Known spyware trace found"
+        Verdict.MALWARE -> "Known malware file found"
         Verdict.STALKERWARE -> "Known monitoring app found"
         Verdict.LEADS_ONLY -> "No known traces. Some items are worth a look"
         Verdict.NOTHING_FOUND -> "No known traces in checked areas"
     } else when (v) {
         Verdict.SPYWARE_INDICATOR -> "Spuren bekannter Spionage-Software gefunden"
+        Verdict.MALWARE -> "Bekannte Schadsoftware-Datei gefunden"
         Verdict.STALKERWARE -> "Bekannte Überwachungs-App gefunden"
         Verdict.LEADS_ONLY -> "Keine bekannten Spuren, aber Hinweise zum Anschauen"
         Verdict.NOTHING_FOUND -> "Keine bekannten Spuren im geprüften Bereich"

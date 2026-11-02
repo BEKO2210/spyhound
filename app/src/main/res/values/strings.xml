@@ -120,6 +120,7 @@
     <string name="dns_active">DNS watch is active</string>
     <string name="dns_active_description">Watching DNS requests for indicator domains</string>
     <string name="dns_spyware_match">Spyware domain match</string>
+    <string name="dns_malware_match">Malware domain match</string>
     <string name="dns_stalkerware_match">Stalkerware domain match</string>
     <string name="vm_connecting">Connecting…</string>
     <string name="vm_sources_loaded">%1$d sources loaded and checked.</string>
@@ -178,6 +179,7 @@
     <string name="info_privacy_body">Scans are offline. No analytics or ads. Indicator updates download pinned files from allowed repositories only; hashes must match before use.</string>
     <string name="info_section_sources">Indicator sources</string>
     <string name="info_sources_notice">Toolkit-curated lists (CC0) from the Zero Breach Toolkit are merged into the bundled sets. Amnesty and Citizen Lab feeds have no redistribution licence and load on the device only.</string>
+    <string name="info_malware_coverage">The malware hash list only covers selected campaigns (AridSpy, VajraSpy, SpyLoan, NGate, PromptSpy). Only exact fingerprint matches count. It is not a virus scanner and no replacement for Play Protect.</string>
     <string name="info_sources_bundled">shipped in the app</string>
     <string name="info_sources_on_device">loaded on your device</string>
     <string name="info_sources_cite">Cite: %1$s</string>
@@ -186,6 +188,8 @@
     <string name="info_repo_amnesty">Amnesty International investigations</string>
     <string name="info_repo_citizenlab">The Citizen Lab malware indicators</string>
     <string name="source_license_mit">MIT License</string>
+    <string name="source_license_bsd2">BSD 2-Clause License</string>
+    <string name="info_repo_eset">ESET malware indicators (eset/malware-ioc)</string>
     <string name="source_license_cc_by">CC BY 4.0</string>
     <string name="source_license_device_only">no licence for redistribution – device download only</string>
     <string name="info_section_help">Help</string>
@@ -248,6 +252,10 @@
     <string name="guide_finding_link_stalkerware_meaning">An address that belongs to a known monitoring app shows up on your phone. This does not mean the app is installed. A false match is possible.</string>
     <string name="guide_finding_link_stalkerware_steps">1. Do not open the link. Do not remove anything on your own: someone watching you may notice.\n2. If you feel unsafe, get help, for example from a local helpline for domestic abuse.</string>
 
+    <string name="guide_finding_malware_meaning">The fingerprint (SHA-256) of an app or file on your phone exactly matches a sample that security researchers (ESET) published as known malware. Such apps can spy on you, steal logins or take over banking. A match of this kind is exact, but the list only covers a few named campaigns.</string>
+    <string name="guide_finding_malware_steps">1. Uninstall the app: Settings > Apps > the app > Uninstall. If it cannot be removed, first turn off device admin and accessibility access for it. Delete a file you downloaded yourself.\n2. Change the passwords of your important accounts (email, bank, messengers) from another device, and turn on two-factor sign-in.\n3. If you used banking or payment apps while it was installed, contact your bank.\n4. Scan again afterwards. If you fear targeted surveillance, contact a specialist helpline.</string>
+    <string name="guide_gap_malware_coverage_meaning">The malware list only contains selected campaigns (AridSpy, VajraSpy, SpyLoan, NGate, PromptSpy from ESET). It is not a general virus scanner and does not replace Play Protect.</string>
+    <string name="guide_gap_malware_coverage_steps">1. You do not need to do anything.\n2. Keep Play Protect on and install apps from trusted stores only.</string>
     <string name="guide_lead_sideloaded_app_meaning">This app did not come from an app store and has far-reaching permissions. It is only a hint, not a finding: many harmless apps are installed this way.</string>
     <string name="guide_lead_sideloaded_app_steps">1. Do you recognise the app and did you install it yourself? Then all is well.\n2. If not, open App info and check what it is allowed to do.\n3. Do not need it? Uninstall it. If you feel watched, get help first: removing it can be noticed.</string>
     <string name="guide_lead_app_powers_meaning">This app can read your screen or resist being removed. Trusted apps such as password managers need this too. It is a hint, not a finding.</string>

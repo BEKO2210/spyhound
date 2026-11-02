@@ -319,6 +319,7 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
     val repoTitle = when (group.repo) {
         "mvt-project/mvt-indicators" -> stringResource(R.string.info_repo_mvt)
         "AssoEchap/stalkerware-indicators" -> stringResource(R.string.info_repo_echap)
+        "eset/malware-ioc" -> stringResource(R.string.info_repo_eset)
         "AmnestyTech/investigations" -> stringResource(R.string.info_repo_amnesty)
         "citizenlab/malware-indicators" -> stringResource(R.string.info_repo_citizenlab)
         else -> group.repo
@@ -326,6 +327,7 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
     val license = when (group.license) {
         SourceLicenseKind.MIT -> stringResource(R.string.source_license_mit)
         SourceLicenseKind.CC_BY_4 -> stringResource(R.string.source_license_cc_by)
+        SourceLicenseKind.BSD_2 -> stringResource(R.string.source_license_bsd2)
         SourceLicenseKind.DEVICE_ONLY -> stringResource(R.string.source_license_device_only)
     }
     val bundled = if (group.bundled) {
@@ -355,6 +357,14 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
                     stringResource(R.string.info_sources_cite, group.cites.joinToString("; ")),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.IvoryMuted,
+                )
+            }
+            if (group.repo == "eset/malware-ioc") {
+                Text(
+                    stringResource(R.string.info_malware_coverage),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SpyColors.IvoryMuted,
+                    modifier = Modifier.padding(top = SpySpacing.Unit),
                 )
             }
         }

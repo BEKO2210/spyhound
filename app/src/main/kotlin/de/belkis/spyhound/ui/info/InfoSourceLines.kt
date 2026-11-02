@@ -5,6 +5,7 @@ import de.belkis.spyhound.ioc.FeedSource
 enum class SourceLicenseKind {
     MIT,
     CC_BY_4,
+    BSD_2,
     DEVICE_ONLY,
 }
 
@@ -20,6 +21,7 @@ fun infoSourceGroups(sources: List<FeedSource>): List<InfoSourceGroup> {
     val order = listOf(
         "mvt-project/mvt-indicators",
         "AssoEchap/stalkerware-indicators",
+        "eset/malware-ioc",
         "AmnestyTech/investigations",
         "citizenlab/malware-indicators",
     )
@@ -31,6 +33,7 @@ fun infoSourceGroups(sources: List<FeedSource>): List<InfoSourceGroup> {
                 license = when (repo) {
                     "mvt-project/mvt-indicators" -> SourceLicenseKind.MIT
                     "AssoEchap/stalkerware-indicators" -> SourceLicenseKind.CC_BY_4
+                    "eset/malware-ioc" -> SourceLicenseKind.BSD_2
                     else -> SourceLicenseKind.DEVICE_ONLY
                 },
                 bundled = entries.any { it.bundled },

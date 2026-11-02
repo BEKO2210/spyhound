@@ -35,9 +35,40 @@ Bundled with the app:
 3. Zero Breach Toolkit, curated lists (CC0 1.0)
    https://github.com/interplains/Zero-Breach-Toolkit
 
+4. ESET, eset/malware-ioc (BSD 2-Clause License)
+   https://github.com/eset/malware-ioc
+   Android sample SHA-256 lists (folders aridspy, vajraspy, spyloan, ngate,
+   promptspy), pinned to commit 59745502656e813f9f79fc8005243edbc04f9397
+   (2026-10-21). Cite: ESET Research. Copy of each samples.sha256 is in
+   app/src/main/assets/iocs/eset-<folder>.sha256, unmodified.
+
+   Copyright (c) 2014-2018 ESET spol. s r.o.
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+   FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 Not bundled, loaded onto the device only when the user updates indicators:
 
-4. Amnesty International, AmnestyTech/investigations
+5. Amnesty International, AmnestyTech/investigations
    https://github.com/AmnestyTech/investigations
    Cites: Amnesty International (2021); Amnesty International, Google
    (Android campaign 2023); Amnesty International (Wintego Helios, 2024;
@@ -46,7 +77,7 @@ Not bundled, loaded onto the device only when the user updates indicators:
    Citizen Lab, Amnesty International (2021-12-16); Amnesty International
    (2020-09-25), FinSpy for Windows, Android and Linux.
 
-5. The Citizen Lab, citizenlab/malware-indicators
+6. The Citizen Lab, citizenlab/malware-indicators
    https://github.com/citizenlab/malware-indicators
    Cites: The Citizen Lab, 'The Million Dollar Dissident' (2016-08);
    'Champing at the Cyberbit' (2017-12); 'The Kingdom Came to Canada'

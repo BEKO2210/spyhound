@@ -23,6 +23,10 @@ internal fun guidanceStringId(key: String): Int = when (key) {
     "guide_finding_link_mercenary_steps" -> R.string.guide_finding_link_mercenary_steps
     "guide_finding_link_stalkerware_meaning" -> R.string.guide_finding_link_stalkerware_meaning
     "guide_finding_link_stalkerware_steps" -> R.string.guide_finding_link_stalkerware_steps
+    "guide_finding_malware_meaning" -> R.string.guide_finding_malware_meaning
+    "guide_finding_malware_steps" -> R.string.guide_finding_malware_steps
+    "guide_gap_malware_coverage_meaning" -> R.string.guide_gap_malware_coverage_meaning
+    "guide_gap_malware_coverage_steps" -> R.string.guide_gap_malware_coverage_steps
     "guide_lead_sideloaded_app_meaning" -> R.string.guide_lead_sideloaded_app_meaning
     "guide_lead_sideloaded_app_steps" -> R.string.guide_lead_sideloaded_app_steps
     "guide_lead_app_powers_meaning" -> R.string.guide_lead_app_powers_meaning

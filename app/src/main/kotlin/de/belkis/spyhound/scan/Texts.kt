@@ -138,6 +138,12 @@ object TextsEn : Texts {
             "A known monitoring app is installed${m.groupValues[1]}. Some are sold openly as parental control apps." },
         Regex("^Eine App, die Forscher einer Spionagesoftware zuordnen, ist installiert(.*)\\.$") to { m: MatchResult ->
             "An app linked to spyware by researchers is installed${m.groupValues[1]}." },
+        Regex("^Die App-Datei hat den Fingerabdruck einer bekannten Schadsoftware-Probe(.*), Quelle: (.*)\\.$") to { m: MatchResult ->
+            "This app file matches the fingerprint of a known malware sample${m.groupValues[1]}, source: ${m.groupValues[2]}." },
+        Regex("^Die Datei hat den Fingerabdruck einer bekannten Schadsoftware-Probe(.*), Quelle: (.*)\\.$") to { m: MatchResult ->
+            "This file matches the fingerprint of a known malware sample${m.groupValues[1]}, source: ${m.groupValues[2]}." },
+        Regex("^Die Schadsoftware-Liste enthält (\\d+) Fingerabdrücke aus ausgewählten Kampagnen \\((.*)\\)\\. Alles andere erkennt sie nicht\\. Kein Ersatz für Play Protect\\.$") to { m: MatchResult ->
+            "The malware list holds ${m.groupValues[1]} fingerprints from selected campaigns (${m.groupValues[2]}). It does not detect anything else. No replacement for Play Protect." },
         Regex("^Die App-Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe(.*)\\.$") to { m: MatchResult ->
             "This app file matches a published spyware sample${m.groupValues[1]}." },
         Regex("^Die App ist mit einem Zertifikat signiert, das Forscher einer Spyware zuordnen(.*)\\.$") to { m: MatchResult ->

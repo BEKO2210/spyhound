@@ -44,6 +44,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.ui.screens.HardeningCard
 import de.belkis.spyhound.scan.AppRecord
+import de.belkis.spyhound.scan.ApkFile
+import de.belkis.spyhound.scan.AppAnalyzer
+import de.belkis.spyhound.scan.Report
+import de.belkis.spyhound.scan.TextsDe
+import de.belkis.spyhound.scan.TextsEn
+import de.belkis.spyhound.ioc.Parsers
+import de.belkis.spyhound.ioc.SourceContext
 import de.belkis.spyhound.scan.PermissionAudit
 import de.belkis.spyhound.scan.AuditSnapshot
 import de.belkis.spyhound.scan.RightGroup
@@ -175,6 +182,29 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     fun result() = shot("result", twoColumn = true) {
         ResultScreen(
             report = DemoReport.withFinding(LocalContext.current),
+            onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {},
+        )
+    }
+
+    @Test
+    fun resultMalware() = shot("result_malware", twoColumn = true) {
+        val dir = java.io.File("src/main/assets/iocs")
+        val src = de.belkis.spyhound.ioc.FeedCatalog.parse(java.io.File(dir, "sources.json").readText()).first { it.id == "eset-aridspy" }
+        val set = IocSet(
+            Parsers.parse(src.format, java.io.File(dir, src.fileName).readText(), SourceContext(src.id, src.category, src.family, true)),
+        )
+        val apps = AppAnalyzer.analyze(
+            listOf(
+                AppRecord(
+                    "com.example.video", "Video Chat",
+                    apks = listOf(ApkFile("/data/app/x/base.apk", "0cb41557841ff6f314c398250a165706e0b18f93674a7c12f4489018a1661673")),
+                ),
+            ),
+            set, "de.belkis.spyhound", if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn,
+        )
+        val now = System.currentTimeMillis()
+        ResultScreen(
+            report = Report(now - 30_000, now, AccessLevel.APP, set.size, 1, 0, listOf(apps), "Pixel"),
             onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {},
         )
     }

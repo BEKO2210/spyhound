@@ -247,6 +247,7 @@ class DnsGuardService : VpnService() {
         val title = when (hit.category) {
             Category.MERCENARY -> localizedString(R.string.dns_spyware_match)
             Category.STALKERWARE -> localizedString(R.string.dns_stalkerware_match)
+            Category.MALWARE -> localizedString(R.string.dns_malware_match)
         }
         val text = "${hit.domain} · ${hit.family}"
         val id = (hit.domain.hashCode() xor hit.family.hashCode()) and 0x7fffffff

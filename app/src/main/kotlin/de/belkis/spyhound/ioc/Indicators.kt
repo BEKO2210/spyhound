@@ -5,8 +5,8 @@ enum class IocType {
     DOMAIN, IP, URL, SHA256, APP_ID, APP_CERT, PROCESS, FILE_PATH, FILE_NAME, ANDROID_PROP, EMAIL
 }
 
-/** Mercenary spyware (state-grade) or commercial stalkerware: they read very differently to a user. */
-enum class Category { MERCENARY, STALKERWARE }
+/** Mercenary spyware (state-grade), commercial stalkerware or other known malware: they read very differently to a user. */
+enum class Category { MERCENARY, STALKERWARE, MALWARE }
 
 data class Indicator(
     val value: String,

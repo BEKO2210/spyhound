@@ -1,6 +1,7 @@
 package de.belkis.spyhound.scan
 
 import de.belkis.spyhound.ioc.Category
+import de.belkis.spyhound.ioc.Indicator
 import de.belkis.spyhound.ioc.IocSet
 import de.belkis.spyhound.ioc.IocType
 
@@ -84,7 +85,7 @@ object AppAnalyzer {
                 val sha = apk.sha256
                 if (sha == null) { if (!app.isSystem) unhashed++; continue }
                 iocs.lookup(IocType.SHA256, sha)?.let {
-                    r.hit("$where – ${apk.path}", "Die App-Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe${family(it.family)}.", it)
+                    r.hit("$where – ${apk.path}", hashText(it), it)
                 }
             }
             if (app.certSha1.isEmpty() && app.certSha256.isEmpty() && !app.isSystem) noCert++
@@ -110,6 +111,7 @@ object AppAnalyzer {
                 r.lead(where, "Hat " + what.joinToString(" und ") + ".", WHY_POWER, LeadKind.APP_POWERS)
             }
         }
+        malwareCoverage(iocs)?.let { r.gap(it, kind = GapKind.MALWARE_COVERAGE) }
         if (unhashed > 0) r.gap("$unhashed App-Datei(en) konnten nicht gelesen und daher nicht mit den Fingerabdrücken verglichen werden.", kind = GapKind.APP_FILES)
         if (noCert > 0) r.gap("Bei $noCert App(s) war das Signatur-Zertifikat nicht lesbar.", kind = GapKind.CERTIFICATES)
         r.ran = true
@@ -121,6 +123,25 @@ object AppAnalyzer {
         if (app.notificationAccess) add("alle Benachrichtigungen lesen")
         if (app.accessibility) add("Bedienungshilfe (kann den Bildschirm lesen)")
         if (app.deviceAdmin) add("Geräteadministrator (erschwert Deinstallation)")
+    }
+
+    /** Detail text for an APK fingerprint match; malware lists get their own wording and source. */
+    fun hashText(ind: Indicator): String =
+        if (ind.category == Category.MALWARE) {
+            "Die App-Datei hat den Fingerabdruck einer bekannten Schadsoftware-Probe${family(ind.family)}, Quelle: ${sourceName(ind)}."
+        } else {
+            "Die App-Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe${family(ind.family)}."
+        }
+
+    fun sourceName(ind: Indicator) = if (ind.sourceId.startsWith("eset-")) "ESET" else ind.sourceId
+
+    /** Honest limit of the malware hash list, shown whenever it is loaded. */
+    fun malwareCoverage(iocs: IocSet): String? {
+        val malware = iocs.all(IocType.SHA256).filter { it.category == Category.MALWARE }
+        if (malware.isEmpty()) return null
+        val families = malware.map { it.family }.filter { it.isNotBlank() }.distinct().sorted()
+        return "Die Schadsoftware-Liste enthält ${malware.size} Fingerabdrücke aus ausgewählten Kampagnen (${families.joinToString(", ")}). " +
+            "Alles andere erkennt sie nicht. Kein Ersatz für Play Protect."
     }
 
     private fun family(f: String) = if (f.isBlank()) "" else " ($f)"
