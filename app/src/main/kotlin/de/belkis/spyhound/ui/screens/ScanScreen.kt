@@ -167,30 +167,31 @@ fun ScanScreen(
                 Row(
                     Modifier
                         .weight(1f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = SpySpacing.TabletEdge),
                     horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section),
                 ) {
                     Column(
                         Modifier
-                            .weight(1f)
+                            .weight(5f)
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         ScanRadar(radar)
+                        RadarLegend(legend = radar?.legend ?: RadarLegendCounts(), modifier = Modifier.padding(top = 8.dp))
                         Spacer(Modifier.height(16.dp))
                         ScanPercent(pct)
                         Spacer(Modifier.height(8.dp))
                         ThinProgressLine(shown, Modifier.padding(horizontal = 4.dp))
-                        Spacer(Modifier.height(16.dp))
-                        ScanNow(texts.text(progress.step), texts.text(shownDetail), motion)
                         Spacer(Modifier.weight(1f))
                     }
                     Column(
                         Modifier
-                            .weight(1f)
+                            .weight(7f)
                             .fillMaxHeight(),
                     ) {
-                        RadarLegend(legend = radar?.legend ?: RadarLegendCounts())
+                        ScanNow(texts.text(progress.step), texts.text(shownDetail), motion)
+                        Spacer(Modifier.height(16.dp))
                         Spacer(Modifier.height(12.dp))
                         ScanSteps(progress, current, shimmer, motion)
                         Spacer(Modifier.weight(1f))
@@ -218,14 +219,25 @@ fun ScanScreen(
                 Spacer(Modifier.weight(1f))
             }
         }
-        SpyButton(
-            text = stringResource(R.string.scan_cancel),
-            onClick = onCancel,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp)
-                .fillMaxWidth(),
-        )
+        if (wide) {
+            SpyButton(
+                text = stringResource(R.string.scan_cancel),
+                onClick = onCancel,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = SpySpacing.TabletEdge, bottom = 8.dp)
+                    .fillMaxWidth(7f / 12f),
+            )
+        } else {
+            SpyButton(
+                text = stringResource(R.string.scan_cancel),
+                onClick = onCancel,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 8.dp)
+                    .fillMaxWidth(),
+            )
+        }
     }
 }
 

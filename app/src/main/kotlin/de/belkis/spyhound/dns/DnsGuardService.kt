@@ -22,8 +22,6 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.net.DatagramPacket
 import java.net.DatagramSocket
-import java.net.Inet4Address
-import java.net.Inet6Address
 import java.net.InetAddress
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -150,11 +148,7 @@ class DnsGuardService : VpnService() {
     }
 
     private fun forwardQuery(parsed: DnsPacket.Parsed): ByteArray? {
-        // Same address family first, the other one as fallback: a v6 query may still be answered by a v4 resolver.
-        // Link-local resolvers (fe80::1 on many routers) often do not answer, so they come last.
-        val servers = upstreamDnsServers().sortedWith(
-            compareBy<InetAddress> { it.isLinkLocalAddress }.thenBy { if (parsed.isIpv6 == (it is Inet6Address)) 0 else 1 },
-        )
+        val servers = DnsUpstream.order(upstreamDnsServers(), parsed.isIpv6)
         for (dns in servers) {
             try {
                 DatagramSocket().use { socket ->
@@ -186,9 +180,7 @@ class DnsGuardService : VpnService() {
             val caps = cm.getNetworkCapabilities(network) ?: continue
             if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) continue
             if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) continue
-            val servers = cm.getLinkProperties(network)?.dnsServers
-                ?.filter { (it is Inet4Address || it is Inet6Address) && !isOwnResolver(it) }
-                .orEmpty()
+            val servers = DnsUpstream.usable(cm.getLinkProperties(network)?.dnsServers.orEmpty(), ownResolvers)
             if (servers.isNotEmpty()) return servers
         }
         return FALLBACK_DNS
@@ -196,8 +188,6 @@ class DnsGuardService : VpnService() {
 
     // Numeric literals: getByName parses them without a lookup, and equality ignores v6 notation.
     private val ownResolvers by lazy { setOf(InetAddress.getByName(VIRTUAL_DNS_V4), InetAddress.getByName(VIRTUAL_DNS_V6)) }
-
-    private fun isOwnResolver(address: InetAddress) = address in ownResolvers
 
     private fun openTunnel(): ParcelFileDescriptor? {
         return Builder()

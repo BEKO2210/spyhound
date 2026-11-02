@@ -196,6 +196,8 @@ class MainActivity : AppCompatActivity() {
                                 onDismiss = { showDeepCheckSetup = false },
                                 onAllowSpyhound = { vm.connectShizuku() },
                                 builtinAdb = state.builtinAdb,
+                                adbWirelessOn = state.adbWirelessOn,
+                                adbPairingPort = state.adbPairingPort,
                                 onSetupWithoutPc = { startBuiltinSetup() },
                                 onScanNow = {
                                     showDeepCheckSetup = false

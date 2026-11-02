@@ -369,6 +369,25 @@
     <string name="adb_failed_connect">The connection did not work. Start again.</string>
     <string name="adb_failed_timeout">That took too long. Start again.</string>
     <string name="adb_failed_internal">Something went wrong inside Spyhound. Start again.</string>
+    <string name="adb_wizard_intro">Three short steps on this phone — no computer and no extra app.</string>
+    <string name="adb_wizard_step1_title">Turn on wireless debugging</string>
+    <string name="adb_wizard_step1_body">In developer options, switch on “Wireless debugging”. Wi‑Fi must be connected.</string>
+    <string name="adb_wizard_step1_action">Open developer options</string>
+    <string name="adb_wizard_dev_hint">Developer options are still off. Tap the build number seven times first.</string>
+    <string name="adb_wizard_dev_action">About phone</string>
+    <string name="adb_wizard_step2_title">Show the pairing code</string>
+    <string name="adb_wizard_step2_body">Tap “Pair device with pairing code” and leave that screen open.</string>
+    <string name="adb_wizard_step2_action">Open developer options</string>
+    <string name="adb_wizard_step3_title">Type the code in the notification</string>
+    <string name="adb_wizard_step3_body">Spyhound shows a notification with a field for the six digits from the pairing screen.</string>
+    <string name="adb_wizard_success_title">Deep check is active</string>
+    <string name="adb_wizard_success_body">You can run the deeper scan now. After a phone restart, turn wireless debugging on again — no new code needed.</string>
+    <string name="adb_wizard_scan_now">Scan now</string>
+    <string name="adb_wizard_splitscreen">Use split screen</string>
+    <string name="adb_wizard_splitscreen_hint">Open Settings and Spyhound side by side: long-press the app icon → Split screen, or use the recent-apps split control.</string>
+    <string name="adb_wizard_retry">Try again</string>
+    <string name="adb_wizard_shizuku_section">Alternative: Shizuku</string>
+    <string name="adb_wizard_step_done_cd">Step completed</string>
     <string name="guide_gap_builtin_adb_meaning">The deeper check was not available this time. After a restart of the phone, wireless debugging is switched off. This is a gap, not a result.</string>
     <string name="guide_gap_builtin_adb_steps">1. Turn “Wireless debugging” back on in the developer options (Wi-Fi must be on).\n2. Restart the deeper check in Spyhound. No new code is needed.\n3. Scan again afterwards.</string>
 </resources>

@@ -249,6 +249,9 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawSectorLabels(
     }
 }
 
+// Inconspicuous entries on the start radar: a faint shimmer, never above 15 % opacity.
+private const val QUIET_CLEAN_ALPHA = 0.15f
+
 private fun statusColor(status: ElementStatus, alpha: Float): Color = when (status) {
     ElementStatus.CLEAN -> SpyColors.IvoryMuted.copy(alpha = alpha * 0.75f)
     ElementStatus.LEAD -> SpyColors.Amber.copy(alpha = alpha)
@@ -323,6 +326,7 @@ fun RadarCanvas(
     sweepLeadAlpha: Float = 0.55f,
     sweepTrail: Boolean = false,
     blipFlash: Boolean = false,
+    quietClean: Boolean = false,
 ) {
     val english = LocalContext.current.resources.configuration.locales[0].language != "de"
     val sectorLabels = RadarSector.entries.map { if (english) TextsEn.text(it.label) else it.label }
@@ -428,8 +432,9 @@ fun RadarCanvas(
                     c.y + sin(rad).toFloat() * r * b.radiusFraction,
                 )
                 val pulseScale = if (motion && b.status != ElementStatus.CLEAN) pulse else 1f
-                val core = 3.2.dp.toPx() * pulseScale
-                val alpha = if (b.status == ElementStatus.CLEAN) 0.9f else 1f
+                val quiet = quietClean && b.status == ElementStatus.CLEAN
+                val core = (if (quiet) 1.6.dp else 3.2.dp).toPx() * pulseScale
+                val alpha = if (quiet) QUIET_CLEAN_ALPHA else if (b.status == ElementStatus.CLEAN) 0.9f else 1f
                 drawCircle(color = statusColor(b.status, alpha), radius = core, center = p)
                 if (b.status != ElementStatus.CLEAN) {
                     drawCircle(
@@ -549,6 +554,7 @@ fun RadarScanButton(
                     radar = lastRadar,
                     showLabels = false,
                     sweepLeadAlpha = if (lastRadar == null) 0.25f else 0.2f,
+                    quietClean = true,
                 )
                 Box(
                     modifier = Modifier

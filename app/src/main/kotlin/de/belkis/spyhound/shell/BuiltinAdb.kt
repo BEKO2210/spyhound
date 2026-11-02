@@ -167,6 +167,10 @@ object BuiltinAdb {
     /** Wireless debugging is a setting, readable without any permission. */
     fun wirelessDebuggingOn(context: Context): Boolean =
         runCatching { Settings.Global.getInt(context.contentResolver, "adb_wifi_enabled", 0) == 1 }.getOrDefault(false)
+
+    /** mDNS port of the open pairing dialog, if known. */
+    val pairingPort: Int?
+        get() = synchronized(lock) { setup.pairingPort }
 }
 
 /** The notification that carries the code field, so the user never has to leave the Settings screen. */

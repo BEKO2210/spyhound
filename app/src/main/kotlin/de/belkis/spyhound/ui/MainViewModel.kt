@@ -67,6 +67,8 @@ data class UiState(
     /** Null until the user starts "set up without a PC". */
     val builtinAdb: AdbSetupState? = null,
     val builtinAdbActive: Boolean = false,
+    val adbWirelessOn: Boolean = false,
+    val adbPairingPort: Int? = null,
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -99,7 +101,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun startBuiltinAdb() {
         if (!builtinAdbStarted) {
             builtinAdbStarted = true
-            viewModelScope.launch { BuiltinAdb.state.collect { st -> _state.update { it.copy(builtinAdb = st) } } }
+            viewModelScope.launch {
+                BuiltinAdb.state.collect { st ->
+                    val ctx = getApplication<Application>()
+                    _state.update {
+                        it.copy(
+                            builtinAdb = st,
+                            adbWirelessOn = BuiltinAdb.wirelessDebuggingOn(ctx),
+                            adbPairingPort = BuiltinAdb.pairingPort,
+                        )
+                    }
+                }
+            }
         }
         BuiltinAdb.start(getApplication()) { adb ->
             viewModelScope.launch {

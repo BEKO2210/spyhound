@@ -170,6 +170,8 @@ object TextsEn : Texts {
             "Security patch is ${m.groupValues[1]} days old." },
         Regex("^Der Fehlerbericht ist vom (.*) und damit (\\d+) Tage alt\\.$") to { m: MatchResult ->
             "Bug report is from ${m.groupValues[1]} and is ${m.groupValues[2]} days old." },
+        Regex("^(.+) · (\\d+) Zeilen$") to { m: MatchResult ->
+            "${m.groupValues[1]} · ${m.groupValues[2]} lines" },
         Regex("^(.+) konnte nicht gelesen werden\\.$") to { m: MatchResult ->
             "${text(m.groupValues[1])} could not be read." },
         Regex("^(.+) wurde nur teilweise gelesen \\(Zeitüberschreitung oder Abbruch\\)\\.$") to { m: MatchResult ->

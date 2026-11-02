@@ -215,8 +215,8 @@ class ScanEngine(
         val logCommands = LOG_COMMANDS + if (root) ROOT_LOG_COMMANDS else emptyList()
         val logSources = logCommands.mapIndexed { i, (label, cmd) ->
             label to ShellAnalyzer.LineSource { onLine ->
-                emit("Systemprotokolle", label, 0.72f + 0.17f * i / logCommands.size.coerceAtLeast(1), RadarSector.DEEP)
-                shell.readLines(cmd, 32 shl 20, 180, onLine)
+                val fraction = 0.72f + 0.17f * i / logCommands.size.coerceAtLeast(1)
+                LogSource.read(shell, label, cmd, onLine, onProgress = { detail -> emit("Systemprotokolle", detail, fraction, RadarSector.DEEP) })
             }
         }
         val logs = ShellAnalyzer.logs(logSources, iocs.set, installed)

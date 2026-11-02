@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +41,6 @@ import de.belkis.spyhound.ui.components.SpyButton
 import de.belkis.spyhound.ui.components.TextActionLink
 import de.belkis.spyhound.ui.design.SpyColors
 import de.belkis.spyhound.ui.design.SpyMotion
-import de.belkis.spyhound.ui.design.SpyRadii
 import de.belkis.spyhound.ui.design.SpySpacing
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -201,35 +201,37 @@ private fun IntroPageIndicators(
     motion: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        for (i in 0 until pageCount) {
-            val active = pagerState.currentPage == i
-            val animatedFraction by animateFloatAsState(
-                targetValue = if (active) 1f else 0f,
-                animationSpec = if (motion) {
-                    tween(durationMillis = SpyMotion.Element, easing = SpyMotion.Enter)
-                } else {
-                    tween(durationMillis = 0)
-                },
-                label = "pill indicator",
-            )
-            // Fixed layout slot prevents any layout jump; active width is drawn on the canvas.
-            Canvas(
-                modifier = Modifier.size(width = IndicatorSlotWidth, height = IndicatorSlotHeight),
-            ) {
+    val fractions = List(pageCount) { i ->
+        val active = pagerState.currentPage == i
+        animateFloatAsState(
+            targetValue = if (active) 1f else 0f,
+            animationSpec = if (motion) {
+                tween(durationMillis = SpyMotion.Element, easing = SpyMotion.Enter)
+            } else {
+                tween(durationMillis = 0)
+            },
+            label = "pill indicator",
+        ).value
+    }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        // One canvas with fixed slots: dot centres are exactly one slot apart; only the drawn width changes.
+        Canvas(
+            modifier = Modifier.size(
+                width = IndicatorSlotWidth * pageCount,
+                height = IndicatorSlotHeight,
+            ),
+        ) {
+            val slot = IndicatorSlotWidth.toPx()
+            val pillH = IndicatorPillHeight.toPx()
+            val radius = pillH / 2f
+            for (i in 0 until pageCount) {
+                val f = fractions[i]
                 val pillW = IndicatorInactiveWidth.toPx() +
-                    (IndicatorActiveWidth.toPx() - IndicatorInactiveWidth.toPx()) * animatedFraction
-                val pillH = IndicatorPillHeight.toPx()
-                val left = (size.width - pillW) / 2f
-                val top = (size.height - pillH) / 2f
-                val radius = SpyRadii.Pill.toPx()
+                    (IndicatorActiveWidth.toPx() - IndicatorInactiveWidth.toPx()) * f
+                val centerX = slot * (i + 0.5f)
                 drawRoundRect(
-                    color = lerp(SpyColors.Border, SpyColors.Amber, animatedFraction),
-                    topLeft = Offset(left, top),
+                    color = lerp(SpyColors.Border, SpyColors.Amber, f),
+                    topLeft = Offset(centerX - pillW / 2f, (size.height - pillH) / 2f),
                     size = Size(pillW, pillH),
                     cornerRadius = CornerRadius(radius, radius),
                 )

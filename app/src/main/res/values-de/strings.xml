@@ -369,6 +369,25 @@
     <string name="adb_failed_connect">Die Verbindung hat nicht geklappt. Starte neu.</string>
     <string name="adb_failed_timeout">Das hat zu lange gedauert. Starte neu.</string>
     <string name="adb_failed_internal">In Spyhound ist etwas schiefgelaufen. Starte neu.</string>
+    <string name="adb_wizard_intro">Drei kurze Schritte auf diesem Telefon — ohne Computer und ohne Extra-App.</string>
+    <string name="adb_wizard_step1_title">WLAN-Debugging einschalten</string>
+    <string name="adb_wizard_step1_body">Schalte in den Entwickleroptionen „WLAN-Debugging“ ein. WLAN muss verbunden sein.</string>
+    <string name="adb_wizard_step1_action">Entwickleroptionen öffnen</string>
+    <string name="adb_wizard_dev_hint">Entwickleroptionen sind noch aus. Tippe zuerst siebenmal auf die Build-Nummer.</string>
+    <string name="adb_wizard_dev_action">Über das Telefon</string>
+    <string name="adb_wizard_step2_title">Kopplungscode anzeigen lassen</string>
+    <string name="adb_wizard_step2_body">Tippe auf „Gerät mit Kopplungscode koppeln“ und lasse den Bildschirm offen.</string>
+    <string name="adb_wizard_step2_action">Entwickleroptionen öffnen</string>
+    <string name="adb_wizard_step3_title">Code in die Benachrichtigung tippen</string>
+    <string name="adb_wizard_step3_body">Spyhound zeigt eine Benachrichtigung mit einem Feld für die sechs Ziffern vom Kopplungsbildschirm.</string>
+    <string name="adb_wizard_success_title">Tiefe Prüfung ist aktiv</string>
+    <string name="adb_wizard_success_body">Du kannst jetzt die tiefere Prüfung starten. Nach einem Neustart WLAN-Debugging wieder einschalten — kein neuer Code nötig.</string>
+    <string name="adb_wizard_scan_now">Jetzt prüfen</string>
+    <string name="adb_wizard_splitscreen">Splitscreen nutzen</string>
+    <string name="adb_wizard_splitscreen_hint">Einstellungen und Spyhound nebeneinander: App-Symbol lange drücken → Splitscreen, oder Teilung in den letzten Apps.</string>
+    <string name="adb_wizard_retry">Erneut versuchen</string>
+    <string name="adb_wizard_shizuku_section">Alternative: Shizuku</string>
+    <string name="adb_wizard_step_done_cd">Schritt erledigt</string>
     <string name="guide_gap_builtin_adb_meaning">Die tiefere Prüfung war diesmal nicht verfügbar. Nach einem Neustart des Telefons ist das WLAN-Debugging ausgeschaltet. Das ist eine Lücke, kein Ergebnis.</string>
     <string name="guide_gap_builtin_adb_steps">1. Schalte „WLAN-Debugging“ in den Entwickleroptionen wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
 </resources>

@@ -23,10 +23,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,6 +54,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -117,8 +120,8 @@ fun StartScreen(
     val notificationsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         notificationsGranted = granted || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
     }
-    Box(Modifier.fillMaxSize()) {
-    Column(Modifier.fillMaxSize()) {
+    val tablet = LocalConfiguration.current.screenWidthDp >= 600
+    val headerContent: @Composable ColumnScope.() -> Unit = {
         Column(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -231,6 +234,8 @@ fun StartScreen(
                 ),
             ))
         }
+    }
+    val cardsContent: @Composable ColumnScope.() -> Unit = {
         val scrolled by remember { derivedStateOf { scroll.value > 0 } }
         Spacer(Modifier.height(10.dp))
         ScrollEdge(scrolled)
@@ -429,6 +434,18 @@ fun StartScreen(
             Spacer(Modifier.height(4.dp))
         }
     }
+    Box(Modifier.fillMaxSize()) {
+        if (tablet) {
+            Row(Modifier.fillMaxSize().padding(horizontal = SpySpacing.TabletEdge), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
+                Column(Modifier.weight(5f).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, content = headerContent)
+                Column(Modifier.weight(7f).fillMaxHeight(), content = cardsContent)
+            }
+        } else {
+            Column(Modifier.fillMaxSize()) {
+                headerContent()
+                cardsContent()
+            }
+        }
         // Status messages float above the list instead of being inserted into the header, which used to
         // push the whole screen down and back up again.
         StatusToast(
