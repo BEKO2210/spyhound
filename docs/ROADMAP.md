@@ -29,7 +29,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       allen 44 Quellen (3675 Hashes mitgeliefert + 7 aus 14 Download-Quellen, am gepinnten Commit geladen), Tests grün.
 - [x] Positivliste um Samsung ergänzt: Galaxy S24 Ultra (One UI, Android 16, +3615) und Galaxy Tab S9 Ultra (+4330) →
       10830 Hashes, Asset umbenannt in `knowngood-system.sha256` (1,2 MB, im APK 0,5 MB). Beleg: 0 Überschneidung mit allen
-      44 Quellen, Tests grün, Release-Start Pixel 9 ohne Absturz. Geräte nur lesend per adb, danach getrennt.
+      44 Quellen, Tests grün, Release-Start Pixel 9 ohne Absturz; Pixel 11: 44/44 Quellen, Tief-Scan 0 Funde · 5 Hinweise · 2 Lücken (wie vorher), 0 Abstürze. Geräte nur lesend per adb, danach getrennt.
 - [ ] Positivliste: weitere Hersteller (Xiaomi, OnePlus, Motorola) und je Gerät neue Builds nach Updates. Abnahme wie oben.
 
 ## Release 0.3.2 (2026-11-02) – Virenschutz Schritt 2: 161 Malware-Hashes (ESET 14 Kampagnen + Meta), Positivliste, 0 Falschtreffer auf 703 APKs (Pixel 9), Datei-Fund offline belegt (Emulator, Flugmodus). Offen: abuse.ch/YARAify anfragen, Positivliste um echte Systembibliotheken erweitern.
