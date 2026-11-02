@@ -8,3 +8,9 @@
 -keep class sun.security.** { *; }
 -keep class io.github.muntashirakon.adb.** { *; }
 -dontwarn com.android.org.conscrypt.**
+
+# WorkManager (weekly background check) creates its Room database by reflection; R8 removed the
+# generated constructor and the release build crashed at start-up.
+-keep class * extends androidx.room.RoomDatabase { <init>(); }
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-keep class * extends androidx.work.ListenableWorker { public <init>(android.content.Context, androidx.work.WorkerParameters); }
