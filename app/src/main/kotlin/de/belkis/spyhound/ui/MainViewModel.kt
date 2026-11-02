@@ -229,7 +229,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update {
             it.copy(
                 iocs = loaded, updating = null,
-                updateMessage = if (failed.isEmpty()) s(R.string.vm_sources_loaded, ok) else s(R.string.vm_sources_failed, ok, failed.size, failed.first()),
+                // Lead with the total so the message matches the "x of y sources" line above it.
+                updateMessage = if (failed.isEmpty()) s(R.string.vm_sources_loaded, loaded.status.available, ok) else s(R.string.vm_sources_failed, ok, failed.size, failed.first()),
             )
         }
     }
