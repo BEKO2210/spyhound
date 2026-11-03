@@ -10,10 +10,12 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 3. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
-- [ ] „Wer darf was“ zeigt ~12 s nur „Apps werden gelesen …“. Abnahme: Fortschritt sichtbar (n von m Apps), zweiter
-      Aufruf aus Zwischenspeicher < 1 s.
-- [ ] „Wer darf was“: normale Rechte und auffällige Kombinationen klar trennen. Abnahme: auffällige oben, eigene
-      Überschrift; normale Rechte ohne Warnfarbe.
+- [~] „Wer darf was“ zeigt ~12 s nur „Apps werden gelesen …“. Ursache: hashte jede APK (GB). Behoben in a1751f2: ohne
+      APK-Hashes, Fortschritt „n von m“. Zwischenspeicher entfällt, falls die Messung auf dem Pixel < 1 s ergibt.
+      Abnahme: Messung auf dem Pixel 11 (offen, Belkis unterwegs).
+- [x] „Wer darf was“: auffällige Kombinationen oben unter „Genauer ansehen“ (Regeltabelle `LookRule`, Amber, Text nennt
+      harmlose Träger wie Uhr-/Auto-Apps), normale Rechte darunter ohne Warnfarbe; alles an einer Textkante.
+      Beleg: 44a0aad, 5418521, PermissionAuditTest, audit_*.png.
 - [ ] „Über Spyhound“: Quellen und Lizenzen aufklappbar. Abnahme: Seite passt zusammengeklappt auf zwei Bildschirme.
 - [x] Grenze „findet nur bekannte Spuren“ steht im Onboarding, im Ergebnis („Keine Spuren“, nie „sauber“) und als Lücke.
 
@@ -31,7 +33,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] Assistent wartet 5 Min. auf den Kopplungscode. Beleg: Belkis hat die Einrichtung rund zehnmal durchlaufen, ohne
       Timeout (2026-11-03). Nur bei echten Rückmeldungen wieder öffnen.
 - [~] Kopplungs-Benachrichtigung wird alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
-      Code: f07529f (postet nur bei neuem Text oder wenn weggewischt). Offen: auf dem Gerät mit dumpsys prüfen.
+      Code: f07529f, Test ceec635 (5 Fälle, Robolectric). Offen: einmal auf dem Pixel durchkoppeln.
 - [x] Tablet-Kopf einzeilig: Logo, DE/EN und Info in einer Zeile, sobald die Spalte ≥ 320 dp breit ist. Beleg:
       start_de_tablet.png, verifyRoborazziDebug grün.
 - [ ] SMS-Rechte: Tab ohne Telefonie – SMS-Pfad braucht ein Galaxy-Handy (S24 Ultra, nur mit Freigabe der Besitzerin).
