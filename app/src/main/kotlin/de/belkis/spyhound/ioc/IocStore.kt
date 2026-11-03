@@ -60,13 +60,12 @@ class IocStore(private val context: Context) {
         val sources = catalog()
         KnownGood.useSystemList(context.assets.open("iocs/$KNOWN_GOOD").bufferedReader().use { it.readText() })
         val all = ArrayList<Indicator>()
-        // Curated files first, so their more precise attribution wins on duplicates.
-        for (name in CURATED) {
-            val text = context.assets.open("iocs/$name").bufferedReader().use { it.readText() }
-            all += Parsers.curatedTsv(text, SourceContext(name.substringBefore('.'), Category.MERCENARY))
-        }
         val missing = ArrayList<FeedSource>()
         val corrupt = ArrayList<FeedSource>()
+        // Curated files first, so their more precise attribution wins on duplicates.
+        appendCuratedIndicators(all, corrupt) { name ->
+            context.assets.open("iocs/$name").use { it.readBytes() }
+        }
         for (s in sources) {
             val bytes = readSource(s)
             if (bytes == null) { missing += s; continue }
@@ -79,7 +78,10 @@ class IocStore(private val context: Context) {
             }.onFailure { corrupt += s }
         }
         IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
-        LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - corrupt.size, missing, corrupt))
+        // The curated lists belong to the toolkit, not to the catalog count shown as "44/44"; a broken one is still
+        // listed in [corrupt] so the start screen reports it.
+        val catalogBroken = corrupt.count { it in sources }
+        LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt))
     }
 
     fun domainCatalog(): List<FeedSource> =
@@ -151,9 +153,35 @@ class IocStore(private val context: Context) {
 
     companion object {
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
+        private val CURATED_SHA256 = mapOf(
+            "adfection_iocs.txt" to "42bff7164687f1faf6ab5691738e156f72684cadbf63e403150e02acc65ad518",
+            "curated_mercenary.txt" to "2508f48565144b9b63d47f916379f7c829a5541cdd63cd42d8bd225b4cc29e21",
+        )
         const val KNOWN_GOOD = "knowngood-system.sha256"
         private const val MAX_DOWNLOAD = 64 shl 20
         internal const val DEBUG_TEST_FILE = "debug-test.tsv"
+
+        internal fun appendCuratedIndicators(
+            all: MutableList<Indicator>,
+            corrupt: MutableList<FeedSource>,
+            readAsset: (String) -> ByteArray,
+        ) {
+            for (name in CURATED) {
+                // Local-only descriptors let corrupt assets use the same reporting path as catalog sources.
+                val source = FeedSource(
+                    id = name.substringBefore('.'), name = name, repo = "", commit = "", path = name,
+                    format = "curated-tsv", cite = "", category = Category.MERCENARY, family = "",
+                    sha256 = CURATED_SHA256.getValue(name), bundled = true, androidArtifacts = true,
+                )
+                runCatching {
+                    val bytes = readAsset(name)
+                    if (sha256(bytes) != source.sha256) throw IocFormatException("curated source hash mismatch")
+                    val indicators = Parsers.curatedTsv(bytes.toString(Charsets.UTF_8), SourceContext(source.id, source.category))
+                    if (KnownGood.conflicts(indicators).isNotEmpty()) throw IocFormatException("curated source conflicts with known-good list")
+                    indicators
+                }.onSuccess { all += it }.onFailure { corrupt += source }
+            }
+        }
 
         internal fun appendDebugTestIndicators(all: MutableList<Indicator>, iocDir: File, debugBuild: Boolean) {
             if (!debugBuild) return
