@@ -1,0 +1,1 @@
+Nur ein Build-Fix: Die APK enthält Googles verschlüsselten Abhängigkeitsbericht im Signaturblock nicht mehr, den F-Droid nicht annimmt. Keine Änderung an der App selbst.

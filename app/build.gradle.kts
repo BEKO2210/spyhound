@@ -26,8 +26,8 @@ android {
         // Sideload-only app (no Play Store): QUERY_ALL_PACKAGES, READ_SMS and
         // MANAGE_EXTERNAL_STORAGE are used without Play policy constraints.
         targetSdk = 36
-        versionCode = 14
-        versionName = "0.3.9"
+        versionCode = 15
+        versionName = "0.3.10"
         // Shizuku reuses a running user service while this number stays the same. Derive it from the
         // service's interface and code, so a changed service is always restarted after an update.
         val shellSources = listOf("src/main/aidl/de/belkis/spyhound/shell/IShellService.aidl", "src/main/kotlin/de/belkis/spyhound/shell/Shell.kt")
@@ -52,6 +52,11 @@ android {
             // Phones are ARM; the x86 builds of the native libraries only serve emulators and doubled the APK.
             ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
         }
+    }
+    dependenciesInfo {
+        // Google's encrypted dependency report in the signing block is unreadable for anyone else; F-Droid rejects it.
+        includeInApk = false
+        includeInBundle = false
     }
     buildFeatures {
         compose = true

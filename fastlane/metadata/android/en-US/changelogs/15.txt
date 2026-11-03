@@ -1,0 +1,1 @@
+Build fix only: the APK no longer carries Google's encrypted dependency report in its signing block, which F-Droid does not accept. No change in the app itself.
