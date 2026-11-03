@@ -24,4 +24,8 @@
         <item quantity="one">%d source</item>
         <item quantity="other">%d sources</item>
     </plurals>
+    <plurals name="info_licences_summary">
+        <item quantity="one">%d licence text</item>
+        <item quantity="other">%d licence texts</item>
+    </plurals>
 </resources>

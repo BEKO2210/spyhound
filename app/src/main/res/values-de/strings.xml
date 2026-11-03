@@ -510,4 +510,10 @@
     <string name="audit_g_device_admin_d">Kann die App schwer löschbar machen und das Handy sperren.</string>
     <string name="audit_g_overlay">Über anderen Apps</string>
     <string name="audit_g_overlay_d">Darf über anderen Apps zeichnen, zum Beispiel falsche Anmeldeseiten.</string>
+    <string name="info_section_licences">Lizenzen</string>
+    <string name="info_hint_licences">Originaltexte der Lizenzen von Spyhound, seinen Quellen, Bibliotheken und Schriften.</string>
+    <string name="info_licence_app">Spyhound – Apache License 2.0</string>
+    <string name="info_licence_notice">NOTICE – Quellen und Bibliotheken</string>
+    <string name="info_licence_inter">Schrift Inter – SIL Open Font License 1.1</string>
+    <string name="info_licence_space_grotesk">Schrift Space Grotesk – SIL Open Font License 1.1</string>
 </resources>

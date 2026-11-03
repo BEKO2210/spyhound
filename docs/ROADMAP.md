@@ -18,9 +18,9 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       Beleg: 44a0aad, 5418521, PermissionAuditTest, audit_*.png.
 - [x] „Über Spyhound“: Quellen zugeklappt („44 Quellen“), gleiche Karte und Zeile wie „Rechtliches“. Beleg: info_*.png,
       info_expanded_*.png.
-- [ ] Lizenzhinweise in der App: OFL-Texte von Inter und Space Grotesk liegen in assets/licenses, werden aber nicht
-      angezeigt; libadb-android/Shizuku stehen nur in NOTICE. Abnahme: aufklappbarer Abschnitt mit den Original-Texten
-      (keine eigenen Zusammenfassungen von Lizenzbedingungen), gegen NOTICE geprüft.
+- [x] Lizenzhinweise in der App: „Über Spyhound“ → „Lizenzen“ (zugeklappt, „4 Lizenztexte“) zeigt LICENSE, NOTICE
+      (Quellen, libadb-android, Shizuku, Conscrypt) und die OFL-Texte von Inter und Space Grotesk wortgetreu.
+      LicenceAssetsTest hält die Kopien in assets/licenses gleich mit LICENSE/NOTICE im Repo. Beleg: info_licences_*.png.
 - [x] Grenze „findet nur bekannte Spuren“ steht im Onboarding, im Ergebnis („Keine Spuren“, nie „sauber“) und als Lücke.
 
 ## Galaxy-Test (2026-11-02, Tab S9 Ultra, One UI 8 / Android 16, X910XXS6EZI2)

@@ -1,0 +1,152 @@
+Spyhound
+Copyright 2026 Belkis Aslani
+Licensed under the Apache License, Version 2.0.
+
+== Origin of the logic ==
+
+Spyhound is a Kotlin reimplementation of the detection logic of the
+Zero Breach Toolkit (Apache License 2.0):
+https://github.com/interplains/Zero-Breach-Toolkit
+
+== Indicator sources ==
+
+The indicators are listed in app/src/main/assets/iocs/sources.json. Each
+source is pinned to a fixed commit and verified by SHA-256 before use.
+
+Bundled with the app:
+
+1. MVT project, mvt-indicators (MIT License)
+   https://github.com/mvt-project/mvt-indicators
+   Indicators credited to: Meta, Amnesty International, Citizen Lab, Cisco,
+   Inside Story, iVerify (Intellexa Predator); Google, Lookout (RCS Lab);
+   Citizen Lab, Microsoft (QuaDream KingSpawn); Kaspersky Lab (Operation
+   Triangulation); Lookout (WyrmSpy and DragonEgg; EagleMsgSpy); Microsoft,
+   Recorded Future (Candiru); Reporters Without Borders, RESIDENT.NGO
+   (ResidentBat); Citizen Lab (Cellebrite); Google Threat Intelligence
+   Group, iVerify, Lookout (DarkSword); Google Threat Intelligence Group,
+   iVerify (Coruna); Osservatorio Nessuno (Morpheus, Spyrtacus); ESET,
+   Cyble Research, Zimperium (BTMOB).
+
+2. ECHAP stalkerware-indicators (Creative Commons Attribution 4.0)
+   https://github.com/AssoEchap/stalkerware-indicators
+   Cite: ECHAP
+   License: https://creativecommons.org/licenses/by/4.0/
+
+3. Zero Breach Toolkit, curated lists (CC0 1.0)
+   https://github.com/interplains/Zero-Breach-Toolkit
+
+4. ESET, eset/malware-ioc (BSD 2-Clause License)
+   https://github.com/eset/malware-ioc
+   Android sample SHA-256 lists (folders aridspy, vajraspy, spyloan, ngate,
+   promptspy, callphantom, evilvideo, ghostchat, gravityrat, gref, kamran,
+   prospytospy, pwa_phishing, virtual_invaders), pinned to commit 59745502656e813f9f79fc8005243edbc04f9397
+   (2026-10-21). Cite: ESET Research. Copy of each samples.sha256 is in
+   app/src/main/assets/iocs/eset-<folder>.sha256, unmodified.
+
+   Copyright (c) 2014-2018 ESET spol. s r.o.
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+   FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+   Meta Platforms, meta/threat-research (MIT License)
+   https://github.com/meta/threat-research
+   One file, indicators/csv/2021_04_taking_action_against_hackers_in_palestine.csv,
+   pinned to commit 2d664e985e55fb754de7b1175f713e11f73cf8c8 (2026-08-27).
+   Cite: Meta Platforms. Copy in app/src/main/assets/iocs/meta-pss-android-2021.csv,
+   unmodified; only its sha256 rows labelled "PSS Android Malware Hash" are used.
+
+   MIT License
+   Copyright (c) Meta Platforms, Inc. and its affiliates.
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+Not bundled, loaded onto the device only when the user updates indicators:
+
+5. Amnesty International, AmnestyTech/investigations
+   https://github.com/AmnestyTech/investigations
+   Cites: Amnesty International (2021); Amnesty International, Google
+   (Android campaign 2023); Amnesty International (Wintego Helios, 2024;
+   NoviSpy, 2024); Amnesty International (2018-08-01), NSO Group
+   infrastructure; Amnesty International (2019-10-10), Morocco; Meta,
+   Citizen Lab, Amnesty International (2021-12-16); Amnesty International
+   (2020-09-25), FinSpy for Windows, Android and Linux.
+
+6. The Citizen Lab, citizenlab/malware-indicators
+   https://github.com/citizenlab/malware-indicators
+   Cites: The Citizen Lab, 'The Million Dollar Dissident' (2016-08);
+   'Champing at the Cyberbit' (2017-12); 'The Kingdom Came to Canada'
+   (2018-10); 'Reckless Exploit' (2017-06), Mexico; 'Reckless Redux'
+   (2017-06), Mexico; 'Insider Information' (2017-07), Mexico.
+
+These two repositories are not shipped inside the app; the app downloads
+their data directly from the original repositories at the pinned commits.
+Amnesty's README states "These indicators are shared under the license CC-BY"
+(version 2.0 link); the Citizen Lab README states Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0, whose NonCommercial and ShareAlike
+terms do not fit redistribution inside an Apache-2.0 package. Spyhound
+therefore leaves both out of the APK.
+
+7. DNS watcher domain lists (separate from the spyware indicators; assets/iocs/domainlists.json,
+   each pinned to a commit and verified by SHA-256). All three are MIT licensed:
+   Permission is hereby granted, free of charge, to any person obtaining a copy of the data and associated
+   files, to deal in them without restriction, subject to the copyright notices below being included and
+   THE DATA BEING PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+   - Perflyst/PiHoleBlocklist, android-tracking.txt, commit
+     ad5020ba0e0a979970486b57b883aba0925f2801 (bundled)
+     Copyright (c) 2018 Perflyst
+   - StevenBlack/hosts, data/StevenBlack/hosts (only this MIT file, not the unified hosts file), commit
+     6d56ab44f2b3d27de062b5194eb51bcd8115a773 (bundled)
+     Copyright (c) Steven Black
+   - Phishing-Database/Phishing.Database, phishing-domains-ACTIVE.txt, commit
+     12a20bf8dd2b7e78d9d38fc12b3e5c970f79d1a7 (downloaded on the device only)
+     Copyright (c) 2018-2025 Mitchell Krog, Nissar Chababy, Phishing.Database Contributors
+
+== Libraries ==
+
+Shizuku API and provider (Apache License 2.0)
+https://github.com/RikkaApps/Shizuku-API
+
+libadb-android 3.1.1 (Muntashir Al-Islam), used for the built-in ADB
+connection to this phone's own wireless debugging. Dual licensed under
+GPL-3.0-or-later or Apache-2.0; Spyhound uses it under Apache-2.0.
+https://github.com/MuntashirAkon/libadb-android
+It is not on Maven Central; it is resolved from JitPack at build time only
+(see settings.gradle.kts). Its dependency spake2-android (MuntashirAkon/
+spake2-java, Apache-2.0 per its repository) and Conscrypt (Apache-2.0,
+https://github.com/google/conscrypt) are packaged with the app.

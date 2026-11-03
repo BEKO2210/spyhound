@@ -510,4 +510,10 @@
         <item quantity="one">The weekly background check found %1$d new finding. Tap to open the result.</item>
         <item quantity="other">The weekly background check found %1$d new findings. Tap to open the result.</item>
     </plurals>
+    <string name="info_section_licences">Licences</string>
+    <string name="info_hint_licences">Original licence texts of Spyhound, its sources, libraries and fonts.</string>
+    <string name="info_licence_app">Spyhound – Apache License 2.0</string>
+    <string name="info_licence_notice">NOTICE – sources and libraries</string>
+    <string name="info_licence_inter">Font Inter – SIL Open Font License 1.1</string>
+    <string name="info_licence_space_grotesk">Font Space Grotesk – SIL Open Font License 1.1</string>
 </resources>

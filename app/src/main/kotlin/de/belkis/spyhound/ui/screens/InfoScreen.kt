@@ -43,6 +43,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.R
@@ -63,6 +64,8 @@ import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.design.rememberReducedMotion
 import de.belkis.spyhound.ui.design.staggeredAppear
 import de.belkis.spyhound.ui.info.InfoSourceGroup
+import de.belkis.spyhound.ui.info.LicenceText
+import de.belkis.spyhound.ui.info.licenceTexts
 import de.belkis.spyhound.ui.info.SourceLicenseKind
 import de.belkis.spyhound.ui.info.infoSourceGroups
 
@@ -73,6 +76,7 @@ fun InfoScreen(
     modifier: Modifier = Modifier,
     displayVersion: String = BuildConfig.VERSION_NAME,
     sourcesSectionExpanded: Boolean = false,
+    licencesSectionExpanded: Boolean = false,
     testInitialScrollPx: Int = 0,
 ) {
     val context = LocalContext.current
@@ -177,8 +181,32 @@ fun InfoScreen(
                 }
             }
 
-            // Specialist help
             Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(7))) {
+                SectionHeader(
+                    label = stringResource(R.string.info_section_licences),
+                    hint = stringResource(R.string.info_hint_licences),
+                )
+                SpySurface(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = SpySpacing.Unit * 4, vertical = SpySpacing.Unit * 2),
+                    ) {
+                        CollapsibleSection(
+                            title = pluralStringResource(R.plurals.info_licences_summary, licenceTexts.size, licenceTexts.size),
+                            initiallyExpanded = licencesSectionExpanded,
+                        ) {
+                            licenceTexts.forEachIndexed { i, licence ->
+                                if (i > 0) SpyDivider()
+                                LicenceBlock(licence)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Specialist help
+            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(8))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_help),
                     hint = stringResource(R.string.info_hint_help),
@@ -283,6 +311,22 @@ fun InfoScreen(
                 Spacer(Modifier.height(SpySpacing.Unit * 3))
             }
         }
+    }
+}
+
+/** The licence file word for word; it is read only when opened. */
+@Composable
+private fun LicenceBlock(licence: LicenceText) {
+    val context = LocalContext.current
+    CollapsibleSection(title = stringResource(licence.title)) {
+        val text = remember(licence.asset) {
+            context.assets.open(licence.asset).bufferedReader().use { it.readText() }
+        }
+        Text(
+            text,
+            style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+            color = SpyColors.IvoryMuted,
+        )
     }
 }
 

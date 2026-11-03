@@ -255,6 +255,17 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         )
     }
 
+    @Test
+    fun infoLicences() = shot("info_licences") {
+        InfoScreen(
+            onBack = {},
+            onReplayIntro = {},
+            displayVersion = "0.0.0",
+            licencesSectionExpanded = true,
+            testInitialScrollPx = if (device == Device.PHONE) 3_400 else 2_800,
+        )
+    }
+
     private fun auditResult(): AuditResult {
         val cam = "android.permission.CAMERA"
         val mic = "android.permission.RECORD_AUDIO"
