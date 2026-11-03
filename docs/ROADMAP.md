@@ -4,8 +4,28 @@
 Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien verständlich, für Profis tief. Start mit
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
+## Weg zu 1.0 (festgelegt 2026-11-03)
+1.0 heißt: Ein Laie kann Spyhound ohne Hilfe installieren, prüfen und das Ergebnis richtig verstehen, auf den
+verbreiteten Geräten, ohne Falschalarm, und jeder kann nachprüfen, dass die APK aus dem Quellcode stammt.
+- [x] Kern: Basis/Tief/Root-Prüfung, eingebaute Kopplung ohne PC, ehrliche Funde/Hinweise/Lücken, DNS-Wächter, „Wer
+      darf was“, Fehlerbericht-Import, Hintergrundprüfung, DE/EN (Belege: Releases 0.1–0.3.7).
+- [x] Vertrauen: reproduzierbare Builds ab 0.3.5, gepinnte Quellen, Positivliste Pixel/Samsung/Xiaomi, Sicherheits-
+      Review mit 14 Befunden behoben (0.3.7), Laientest (~10 Durchläufe, Belkis).
+- [ ] Gerätebreite: Tief-Scan ohne Absturz und ohne Falschalarm auf je einem Gerät von Google, Samsung (Handy mit
+      SIM, inkl. SMS-Pfad), Xiaomi/Redmi und einem Android-10/11-Altgerät. Stand: Pixel 11, Pixel 9, Tab S9 Ultra.
+- [ ] Bedienhilfen: einmal komplett mit TalkBack durch Start → Prüfung → Ergebnis → Hilfe auf dem Pixel (A11Y.md hat
+      Kontraste; TalkBack-Durchgang fehlt). Abnahme: jeder Knopf vorgelesen, keine Sackgasse.
+- [ ] Verteilung: Aufnahme bei F-Droid beantragt (reproduzierbarer Build passt dazu; Metadaten fastlane/ fehlen) und
+      README mit Schritt-für-Schritt-Installation inkl. Prüfsumme. Abnahme: Merge-Request bei fdroiddata offen.
+- [ ] Feldtest: 3 Personen außer Belkis installieren aus dem Release und melden das Ergebnis (Fehlerbericht-Anleitung
+      liegt bereit). Abnahme: 3 Rückmeldungen, alle Befunde in der Roadmap.
+- [ ] Release-Kandidat 1.0.0-rc: eine Woche ohne neuen Absturz/Falschalarm, dann 1.0.0.
+Schätzung: Arbeit im Repo ~3–5 Tage (TalkBack, F-Droid-Metadaten, README, Fixes aus dem Feldtest). Den Takt geben
+Geräte und Menschen vor: SMS-Gerät, Altgerät, 3 Tester, dazu die Woche rc → realistisch 2–3 Wochen bis 1.0.0.
+
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
-1. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
+2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Release 0.3.7 (2026-11-03) – Sicherheits-Review (Falschtreffer URL/DNS/STIX/CSV, gepinnte kuratierte Listen), Positivliste + Xiaomi (20.841), robuster Fehlerbericht-Import und DNS-Wächter, fette Begriffe in Anleitungen, einfache Sprache, Lizenztexte, „1 Fund“. verify-reproducible: 466 Dateien gleich. Pixel 11: Update über 0.3.6, „Tief“ blieb, Tief-Scan 42 s, 0 Funde · 5 Hinweise · 2 Lücken (wie vorher), „Wer darf was“ < 3 s, 0 Abstürze. Download geprüft. Tab S9 Ultra (One UI 8): Update über 0.3.6, „Tief“ blieb, Tief-Scan 79 s, 58.105 geprüft, 0 Funde · 5 Hinweise · 2 Lücken (vorher 8 Hinweise · 4 Lücken vor den Samsung-Korrekturen), 0 Abstürze. Belkis: „es funktioniert“.
 
@@ -218,7 +238,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [x] PR #31 „Android: package names in <queries> declarations are not install traces“: Fix ist upstream in 2.0.0
       und 2.0.1 ausgeliefert, mit Nennung im Changelog; der Betreuer hat ihn als eigenen signierten Commit übernommen
       und den PR geschlossen (gh, 2026-11-03). Signierte Commits sind damit für uns kein Blocker mehr.
-- [ ] Issue: Spyhound als Begleit-App vorschlagen – erst nach öffentlichem, signiertem Release.
+- [x] Issue: Spyhound als Begleit-App vorgeschlagen: interplains/Zero-Breach-Toolkit#40 (2026-11-03), Antwort offen.
 
 ## Testmatrix (Emulatoren, strikt nacheinander – RAM 15 GB)
 - [x] Pixel 11 Pro XL, Android 17, echt: Basis + Shizuku. Beleg: siehe Stufe 1.
