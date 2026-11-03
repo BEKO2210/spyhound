@@ -15,8 +15,11 @@ verbreiteten Geräten, ohne Falschalarm, und jeder kann nachprüfen, dass die AP
       SIM, inkl. SMS-Pfad), Xiaomi/Redmi und einem Android-10/11-Altgerät. Stand: Pixel 11, Pixel 9, Tab S9 Ultra.
 - [ ] Bedienhilfen: einmal komplett mit TalkBack durch Start → Prüfung → Ergebnis → Hilfe auf dem Pixel (A11Y.md hat
       Kontraste; TalkBack-Durchgang fehlt). Abnahme: jeder Knopf vorgelesen, keine Sackgasse.
-- [ ] Verteilung: Aufnahme bei F-Droid beantragt (reproduzierbarer Build passt dazu; Metadaten fastlane/ fehlen) und
-      README mit Schritt-für-Schritt-Installation inkl. Prüfsumme. Abnahme: Merge-Request bei fdroiddata offen.
+- [~] Verteilung: fastlane/-Metadaten DE/EN (Texte, Icon, 6 Screenshots, Changelog 12) und README-Installation mit
+      Prüfsumme sind drin (2026-11-03). F-Droid erlaubt JitPack.io als vertrauenswürdige Maven-Quelle (Inclusion Policy,
+      an der Quelle geprüft), libadb/spake2 sind also kein Hindernis, sofern frei lizenziert. Entwurf
+      `metadata/de.belkis.spyhound.yml` mit Binaries/AllowedAPKSigningKeys liegt in docs/fdroid/. Offen: Merge-Request
+      bei gitlab.com/fdroid/fdroiddata (braucht Belkis' GitLab-Konto). Abnahme: MR offen, Build-Bot grün.
 - [ ] Feldtest: 3 Personen außer Belkis installieren aus dem Release und melden das Ergebnis (Fehlerbericht-Anleitung
       liegt bereit). Abnahme: 3 Rückmeldungen, alle Befunde in der Roadmap.
 - [ ] Release-Kandidat 1.0.0-rc: eine Woche ohne neuen Absturz/Falschalarm, dann 1.0.0.
