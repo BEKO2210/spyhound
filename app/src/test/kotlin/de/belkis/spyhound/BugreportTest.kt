@@ -148,6 +148,104 @@ class BugreportTest {
         assertTrue(checks.flatMap { it.gaps }.any { it.detail.contains("32 MB") })
     }
 
+    @Test fun rejectedZipSlipEntryOverByteBudgetStopsParse() {
+        val marker = "MARKER_PS_fservernetd"
+        val bytes = ByteArrayOutputStream()
+        ZipOutputStream(bytes).use { zos ->
+            zos.putNextEntry(ZipEntry("../bomb"))
+            var remaining = BugreportParser.MAX_TOTAL_BYTES + 1
+            val chunk = ByteArray(8192)
+            while (remaining > 0) {
+                val n = minOf(remaining, chunk.size.toLong()).toInt()
+                zos.write(chunk, 0, n)
+                remaining -= n
+            }
+            zos.closeEntry()
+            zos.putNextEntry(ZipEntry("bugreport-after-bomb.txt"))
+            zos.write(
+                dumpstate(
+                    date = "${LocalDate.now()} 00:00:00",
+                    includeProcesses = true,
+                    includePackages = false,
+                    includeLogs = false,
+                    includeProps = false,
+                ).replace("fservernetd", marker).toByteArray(Charsets.UTF_8),
+            )
+            zos.closeEntry()
+        }
+        val parsed = BugreportParser.parse(ByteArrayInputStream(bytes.toByteArray()))
+        assertTrue(
+            parsed.warnings.any { it.contains("entpackte Größe") },
+            parsed.warnings.toString(),
+        )
+        assertTrue(parsed.psText.isEmpty(), parsed.psText)
+    }
+
+    @Test fun manyLogSectionsRespectRetainedTextBudget() {
+        val sectionBody = "I/log: " + "x".repeat(1024) + "\n"
+        val linesPerSection = (1024 * 1024) / sectionBody.length + 1
+        val section = buildString(linesPerSection * sectionBody.length) { repeat(linesPerSection) { append(sectionBody) } }
+        val sections = 100
+        val body = buildString {
+            appendLine("========================================================")
+            appendLine("== dumpstate: ${LocalDate.now()} 00:00:00")
+            appendLine("========================================================")
+            appendLine("Build: test")
+            repeat(sections) { i ->
+                appendLine("------ SYSTEM LOG (logcat part $i) ------")
+                append(section)
+                appendLine("------ 0.001s was the duration of 'SYSTEM LOG' ------")
+            }
+        }
+        val zip = zipOf("bugreport-many-logs.txt" to body)
+        val parsed = BugreportParser.parse(ByteArrayInputStream(zip))
+        assertTrue(parsed.truncated, "expected retained-text cap to set truncated")
+        assertTrue(
+            parsed.logcat.toByteArray(Charsets.UTF_8).size <= BugreportParser.MAX_RETAINED_TEXT_BYTES + 64 * 1024,
+            "logcat bytes=${parsed.logcat.toByteArray(Charsets.UTF_8).size}",
+        )
+    }
+
+    @Test fun manyDumpsysSectionsRespectRetainedTextBudget() {
+        val chunk = "x\n".repeat(512 * 1024)
+        val body = buildString {
+            appendLine("========================================================")
+            appendLine("== dumpstate: ${LocalDate.now()} 00:00:00")
+            appendLine("========================================================")
+            appendLine("Build: test")
+            repeat(100) { i ->
+                appendLine("-------------------------------------------------------------------------------")
+                appendLine("DUMP OF SERVICE svc$i:")
+                append(chunk)
+            }
+        }
+        val zip = zipOf("bugreport-many-dumpsys.txt" to body)
+        val parsed = BugreportParser.parse(ByteArrayInputStream(zip))
+        assertTrue(parsed.truncated)
+        val kept = parsed.dumpsys.values.sumOf { it.toByteArray(Charsets.UTF_8).size.toLong() }
+        assertTrue(
+            kept <= BugreportParser.MAX_RETAINED_TEXT_BYTES + 64 * 1024,
+            "kept dumpsys bytes=$kept",
+        )
+    }
+
+    @Test fun overlongLineSetsTruncated() {
+        val longLine = "I/tag: " + "z".repeat(BugreportParser.MAX_LINE_BYTES + 500)
+        val body = """
+            ========================================================
+            == dumpstate: ${LocalDate.now()} 00:00:00
+            ========================================================
+            Build: test
+
+            ------ SYSTEM LOG (logcat -v threadtime -d *:v) ------
+            $longLine
+            I/after: ok
+        """.trimIndent() + "\n"
+        val zip = zipOf("bugreport-long-line.txt" to body)
+        val parsed = BugreportParser.parse(ByteArrayInputStream(zip))
+        assertTrue(parsed.truncated, "expected overlong line to set truncated")
+    }
+
     @Test fun zipSlipPathsAreIgnored() {
         val zip = zipOf(
             "../tmp/pwned" to "nope",
