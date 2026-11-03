@@ -28,4 +28,16 @@
         <item quantity="one">%d licence text</item>
         <item quantity="other">%d licence texts</item>
     </plurals>
+    <plurals name="count_findings">
+        <item quantity="one">Finding</item>
+        <item quantity="other">Findings</item>
+    </plurals>
+    <plurals name="count_leads">
+        <item quantity="one">Lead</item>
+        <item quantity="other">Leads</item>
+    </plurals>
+    <plurals name="count_gaps">
+        <item quantity="one">Gap</item>
+        <item quantity="other">Gaps</item>
+    </plurals>
 </resources>

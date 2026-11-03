@@ -155,9 +155,9 @@ private fun ResultSummary(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
         ResultHero(report = report, symbolModifier = heroSymbolModifier)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CountCell(report.findings.size, stringResource(R.string.result_findings), SpyColors.Danger)
-            CountCell(report.leads.size, stringResource(R.string.result_leads), SpyColors.Amber)
-            CountCell(report.gaps.size, stringResource(R.string.result_gaps), SpyColors.IvoryMuted)
+            CountCell(report.findings.size, pluralStringResource(R.plurals.count_findings, report.findings.size), SpyColors.Danger)
+            CountCell(report.leads.size, pluralStringResource(R.plurals.count_leads, report.leads.size), SpyColors.Amber)
+            CountCell(report.gaps.size, pluralStringResource(R.plurals.count_gaps, report.gaps.size), SpyColors.IvoryMuted)
             CountCell(examined, stringResource(R.string.result_checked), SpyColors.Ivory)
         }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -299,10 +299,12 @@ private fun CountCell(value: Int, label: String, color: Color) {
     LaunchedEffect(value) { target = value }
     val number = countUp(target)
     val locale = LocalConfiguration.current.locales[0]
-    val width = maxOf(4, formatCount(value, locale).length)
+    // Pad only to the final value's length, with figure spaces (as wide as a digit): the number counts up in place
+    // and still sits centred over its label at the end.
+    val width = formatCount(value, locale).length
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.widthIn(min = 56.dp)) {
         Text(
-            formatCount(number, locale).padStart(width, ' '),
+            formatCount(number, locale).padStart(width, '\u2007'),
             style = SpyTypographyExtras.tabularHeadline.copy(color = color, fontSize = SpyTypeScale.Heading),
             maxLines = 1,
             modifier = Modifier.semantics { contentDescription = "$value $label" },

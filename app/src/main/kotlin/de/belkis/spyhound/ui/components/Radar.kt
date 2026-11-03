@@ -1,6 +1,7 @@
 package de.belkis.spyhound.ui.components
 
 import de.belkis.spyhound.R
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 
 import androidx.compose.animation.core.Animatable
@@ -462,8 +463,8 @@ fun RadarLegend(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         LegendItem(stringResource(R.string.t_039), SpyColors.IvoryMuted, legend.clean, countStyle, Modifier.weight(1f))
-        LegendItem(stringResource(R.string.t_040), SpyColors.Amber, legend.lead, countStyle, Modifier.weight(1f))
-        LegendItem(stringResource(R.string.t_041), SpyColors.Danger, legend.finding, countStyle, Modifier.weight(1f))
+        LegendItem(pluralStringResource(R.plurals.count_leads, legend.lead), SpyColors.Amber, legend.lead, countStyle, Modifier.weight(1f))
+        LegendItem(pluralStringResource(R.plurals.count_findings, legend.finding), SpyColors.Danger, legend.finding, countStyle, Modifier.weight(1f))
     }
 }
 
