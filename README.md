@@ -119,6 +119,10 @@ Spyhound is distributed as an APK on GitHub, not in the Play Store.
 2. Open the file. Android asks whether to allow installs from this source – allow it for this one install.
 3. Install, then switch that permission off again.
 
+Optionally, before installing, check the file on a computer with `sha256sum -c SHA256SUMS`, or compare the APK signing
+certificate SHA-256 to the fingerprint on the release page (full value under [Verify the APK](#verify-the-apk)). A newer
+version installs over the one you already have – you do not need to uninstall first.
+
 Requires Android 10 or newer. The deep check without a PC needs Android 11 or newer.
 
 ## Verify the APK
