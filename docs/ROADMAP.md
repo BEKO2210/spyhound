@@ -249,6 +249,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Die Liste „Was ist neu“ (arrays.xml `info_whats_new_items`) war bis 0.3.6 auf dem Stand von 0.3.0. Sie gehört zu jedem Release-Schritt, vor dem Tag; Screenshot info_top_* zeigt sie.
 - `am start`/`install` holt Spyhound auch über eine gerade benutzte App nach vorne. Auf dem Pixel 11 ist das erlaubt (Belkis, 2026-11-03: „du darfst mein Handy benutzen, auch wenn ich es benutze“). Vor Bildschirmfotos trotzdem den Fokus prüfen, damit nie Privates im Bild landet.
 - Bezeichnungen von Einstellungen nie aus dem Gedächtnis schreiben: aus den Ressourcen der Settings-APK des Geräts lesen (`aapt2 dump resources`, Sprache `(de)`). „WLAN-Debugging“ stand monatelang falsch in der App (2026-11-02).
 - Benachrichtigungsleiste nie abfotografieren: Sie zeigt fremde Inhalte. Nur per uiautomator lesen (2026-11-02).

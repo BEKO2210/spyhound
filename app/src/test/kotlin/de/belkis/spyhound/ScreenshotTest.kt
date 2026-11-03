@@ -256,6 +256,11 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     }
 
     @Test
+    fun infoTop() = shot("info_top") {
+        InfoScreen(onBack = {}, onReplayIntro = {}, displayVersion = "0.0.0")
+    }
+
+    @Test
     fun infoLicences() = shot("info_licences") {
         InfoScreen(
             onBack = {},

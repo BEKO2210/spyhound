@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>„Wer darf was“ öffnet in etwa 2 s und zeigt auffällige Rechte-Kombinationen unter „Genauer ansehen“</item>
+        <item>Lizenztexte von App, Quellen und Schriften unter „Über Spyhound“</item>
+        <item>Ruhigere Kopplungs-Benachrichtigung beim Eintippen des Codes</item>
+        <item>Samsungs eigene Updater gelten nicht mehr als Fremdinstallation</item>
         <item>Tiefere Prüfung ohne PC (Debugging über WLAN direkt auf dem Handy)</item>
-        <item>Querformat mit zwei Spalten und weiche Übergänge Start – Scan – Ergebnis</item>
-        <item>Handy absichern: Checkliste mit Direkt-Knöpfen in die Einstellungen</item>
-        <item>Geprüfter Zeitraum im Ergebnis und im geteilten Bericht</item>
-        <item>Wer darf was: Rechte-Prüfer mit „neu seit letzter Prüfung“</item>
         <item>Optionale wöchentliche Hintergrundprüfung mit Hinweis bei neuem Fund</item>
-        <item>Hilfe, wenn die SMS-Berechtigung blockiert ist</item>
     </string-array>
 </resources>

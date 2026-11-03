@@ -68,6 +68,7 @@ Verteilung als APK, kein Play Store. Logik nach dem Zero Breach Toolkit (Apache-
 - Kleine Commits, Nachricht englisch, sagt *warum*.
 - Nichts veröffentlichen, das nicht nachweisbar etwas bringt (Release-Gate). Öffentliche Schritte (Release, Issues,
   PRs bei Fremdprojekten) nur nach Rückfrage bei Belkis.
+- Vor dem Tag: „Was ist neu“ (`res/values*/arrays.xml`, `info_whats_new_items`) auf die neue Version bringen.
 - Release-APK **nur aus dem sauberen, getaggten Commit** bauen (erst committen + taggen, dann `assembleRelease`), danach
   `scripts/verify-reproducible.sh <tag> <apk>` → muss `REPRODUCIBLE` melden. Die APK trägt die Git-Revision in sich.
 - Upstream: PR interplains/Zero-Breach-Toolkit#31 – braucht signierte Commits (siehe Roadmap).
