@@ -407,7 +407,7 @@
     <string name="adb_wizard_step1_title">Turn on wireless debugging</string>
     <string name="adb_wizard_step1_body">In developer options, switch on “Wireless debugging”. Wi‑Fi must be connected.</string>
     <string name="adb_wizard_step1_action">Open developer options</string>
-    <string name="adb_wizard_dev_hint">Developer options are still off. Tap the build number seven times first.</string>
+    <string name="adb_wizard_dev_hint">Developer options are still off. Tap the build number seven times first (Samsung: under “Software information”).</string>
     <string name="adb_wizard_dev_action">About phone</string>
     <string name="adb_wizard_step2_title">Show the pairing code</string>
     <string name="adb_wizard_step2_body">Tap “Pair device with pairing code” and leave that screen open.</string>

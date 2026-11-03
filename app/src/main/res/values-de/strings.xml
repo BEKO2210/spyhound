@@ -407,7 +407,7 @@
     <string name="adb_wizard_step1_title">Debugging über WLAN einschalten</string>
     <string name="adb_wizard_step1_body">Schalte in den Entwickleroptionen „Debugging über WLAN“ ein. WLAN muss verbunden sein.</string>
     <string name="adb_wizard_step1_action">Entwickleroptionen öffnen</string>
-    <string name="adb_wizard_dev_hint">Entwickleroptionen sind noch aus. Tippe zuerst siebenmal auf die Build-Nummer.</string>
+    <string name="adb_wizard_dev_hint">Entwickleroptionen sind noch aus. Tippe zuerst siebenmal auf die Build-Nummer (Samsung: unter „Softwareinformationen“).</string>
     <string name="adb_wizard_dev_action">Über das Telefon</string>
     <string name="adb_wizard_step2_title">Kopplungscode anzeigen lassen</string>
     <string name="adb_wizard_step2_body">Tippe auf „Gerät über einen Kopplungscode koppeln“ und lasse den Bildschirm offen.</string>
