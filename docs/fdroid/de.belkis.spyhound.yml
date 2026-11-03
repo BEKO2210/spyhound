@@ -14,9 +14,9 @@ Repo: https://github.com/BEKO2210/spyhound.git
 Binaries: https://github.com/BEKO2210/spyhound/releases/download/v%v/spyhound-%v.apk
 
 Builds:
-  - versionName: 0.3.9
-    versionCode: 14
-    commit: 85f5bc409de19b83ec2f615ce55f8080ed01be25
+  - versionName: 0.3.10
+    versionCode: 15
+    commit: 764e79a9077b39743dd91e4a56863191480be9b3
     subdir: app
     sudo:
       - apt-get update
@@ -30,5 +30,5 @@ AllowedAPKSigningKeys: 2ae3bd1b9201739c330197c300706bedb8005147010642026752f9298
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.3.9
-CurrentVersionCode: 14
+CurrentVersion: 0.3.10
+CurrentVersionCode: 15
