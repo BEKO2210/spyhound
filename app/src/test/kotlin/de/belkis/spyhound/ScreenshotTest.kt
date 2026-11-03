@@ -251,7 +251,6 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             onReplayIntro = {},
             displayVersion = "0.0.0",
             sourcesSectionExpanded = true,
-            licencesSectionExpanded = true,
             testInitialScrollPx = if (device == Device.PHONE) 2_800 else 2_200,
         )
     }

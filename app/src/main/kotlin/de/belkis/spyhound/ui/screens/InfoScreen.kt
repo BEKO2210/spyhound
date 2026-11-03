@@ -62,11 +62,8 @@ import de.belkis.spyhound.ui.design.SpyMotion
 import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.design.rememberReducedMotion
 import de.belkis.spyhound.ui.design.staggeredAppear
-import de.belkis.spyhound.ui.info.InfoLicenceEntry
-import de.belkis.spyhound.ui.info.LicenceBody
 import de.belkis.spyhound.ui.info.InfoSourceGroup
 import de.belkis.spyhound.ui.info.SourceLicenseKind
-import de.belkis.spyhound.ui.info.infoLicenceEntries
 import de.belkis.spyhound.ui.info.infoSourceGroups
 
 @Composable
@@ -76,7 +73,6 @@ fun InfoScreen(
     modifier: Modifier = Modifier,
     displayVersion: String = BuildConfig.VERSION_NAME,
     sourcesSectionExpanded: Boolean = false,
-    licencesSectionExpanded: Boolean = false,
     testInitialScrollPx: Int = 0,
 ) {
     val context = LocalContext.current
@@ -91,8 +87,6 @@ fun InfoScreen(
     }
     val sourceGroups = remember(indicatorFeeds) { infoSourceGroups(indicatorFeeds) }
     val sourceCount = indicatorFeeds.size
-    val licenceEntries = remember(indicatorFeeds) { infoLicenceEntries(context, indicatorFeeds) }
-    val licenceCount = licenceEntries.size
 
     Column(modifier = modifier.fillMaxSize()) {
         SpyNavigateBack(onClick = onBack)
@@ -157,46 +151,34 @@ fun InfoScreen(
                     label = stringResource(R.string.info_section_sources),
                     hint = stringResource(R.string.info_hint_sources),
                 )
-                InfoCollapsibleCard(
-                    sectionLabel = stringResource(R.string.info_section_sources),
-                    summary = pluralStringResource(R.plurals.info_sources_summary, sourceCount, sourceCount),
-                    initiallyExpanded = sourcesSectionExpanded,
-                    testTag = "info_sources_collapsible",
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 3)) {
-                        sourceGroups.forEach { group ->
-                            SourceGroupBlock(group)
-                        }
-                        Text(
-                            stringResource(R.string.info_sources_notice),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = SpyColors.IvoryMuted,
-                        )
-                    }
-                }
-            }
-
-            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(7))) {
-                SectionHeader(
-                    label = stringResource(R.string.info_section_licences),
-                    hint = stringResource(R.string.info_hint_licences),
-                )
-                InfoCollapsibleCard(
-                    sectionLabel = stringResource(R.string.info_section_licences),
-                    summary = pluralStringResource(R.plurals.info_licences_summary, licenceCount, licenceCount),
-                    initiallyExpanded = licencesSectionExpanded,
-                    testTag = "info_licences_collapsible",
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 3)) {
-                        licenceEntries.forEach { entry ->
-                            LicenceNoticeBlock(entry)
+                // Same card and row as the legal section above, so both line up.
+                SpySurface(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = SpySpacing.Unit * 4, vertical = SpySpacing.Unit * 2),
+                    ) {
+                        CollapsibleSection(
+                            title = pluralStringResource(R.plurals.info_sources_summary, sourceCount, sourceCount),
+                            initiallyExpanded = sourcesSectionExpanded,
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 3)) {
+                                sourceGroups.forEach { group ->
+                                    SourceGroupBlock(group)
+                                }
+                                Text(
+                                    stringResource(R.string.info_sources_notice),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = SpyColors.IvoryMuted,
+                                )
+                            }
                         }
                     }
                 }
             }
 
             // Specialist help
-            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(8))) {
+            Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(7))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_help),
                     hint = stringResource(R.string.info_hint_help),
@@ -379,37 +361,6 @@ private fun InfoSection(title: Int, body: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun LicenceNoticeBlock(entry: InfoLicenceEntry) {
-    SpySurface(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(SpySpacing.Unit * 4),
-        ) {
-            Text(
-                stringResource(entry.titleRes),
-                style = MaterialTheme.typography.labelLarge,
-                color = SpyColors.Ivory,
-            )
-            when (val body = entry.body) {
-                is LicenceBody.Resource -> Text(
-                    stringResource(body.res),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SpyColors.IvoryMuted,
-                    modifier = Modifier.padding(top = SpySpacing.Unit),
-                )
-                is LicenceBody.AssetText -> Text(
-                    body.text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SpyColors.IvoryMuted,
-                    modifier = Modifier.padding(top = SpySpacing.Unit),
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun SourceGroupBlock(group: InfoSourceGroup) {
     val repoTitle = when (group.repo) {
         "mvt-project/mvt-indicators" -> stringResource(R.string.info_repo_mvt)
@@ -477,63 +428,4 @@ private fun HelpLink(label: String, url: String) {
         },
         modifier = Modifier.fillMaxWidth(),
     )
-}
-
-@Composable
-private fun InfoCollapsibleCard(
-    sectionLabel: String,
-    summary: String,
-    initiallyExpanded: Boolean,
-    modifier: Modifier = Modifier,
-    testTag: String,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    var open by remember(initiallyExpanded) { mutableStateOf(initiallyExpanded) }
-    val reduced = rememberReducedMotion()
-    val stateLabel = stringResource(if (open) R.string.result_collapse else R.string.result_expand)
-    val headerCd = "$sectionLabel. $summary. $stateLabel"
-    val chevronRotation by animateFloatAsState(
-        if (open) 180f else 0f,
-        tween(if (reduced) 0 else SpyMotion.Element, easing = SpyMotion.Enter),
-        label = "info section chevron",
-    )
-    SpyCard(modifier) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 48.dp)
-                .clickable(role = Role.Button) { open = !open }
-                .semantics {
-                    contentDescription = headerCd
-                    stateDescription = stateLabel
-                },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                summary,
-                style = MaterialTheme.typography.bodyLarge,
-                color = SpyColors.Ivory,
-                modifier = Modifier
-                    .weight(1f)
-                    .testTag(testTag),
-            )
-            Spacer(Modifier.width(SpySpacing.Unit * 2))
-            Icon(
-                painterResource(R.drawable.ic_chevron_down),
-                contentDescription = null,
-                tint = SpyColors.Amber,
-                modifier = Modifier
-                    .size(24.dp)
-                    .graphicsLayer { rotationZ = chevronRotation },
-            )
-        }
-        AnimatedVisibility(visible = open) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = SpySpacing.Unit * 2),
-                content = content,
-            )
-        }
-    }
 }

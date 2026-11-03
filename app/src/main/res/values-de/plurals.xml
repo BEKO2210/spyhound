@@ -24,8 +24,4 @@
         <item quantity="one">%d Quelle</item>
         <item quantity="other">%d Quellen</item>
     </plurals>
-    <plurals name="info_licences_summary">
-        <item quantity="one">%d Lizenztext</item>
-        <item quantity="other">%d Lizenztexte</item>
-    </plurals>
 </resources>
