@@ -91,9 +91,10 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         scrollToEnd: Boolean = false,
         scrollSwipes: Int = 6,
         twoColumn: Boolean = false,
+        qualifiers: String = device.qualifiers,
         content: @Composable () -> Unit,
     ) {
-        RuntimeEnvironment.setQualifiers("+$language-${device.qualifiers}")
+        RuntimeEnvironment.setQualifiers("+$language-$qualifiers")
         runComposeUiTest {
             mainClock.autoAdvance = false
             setContent { SpyhoundTheme { SpyhoundScaffold(maxContentWidth = if (twoColumn) SpySpacing.TwoColumnMaxWidth else 640.dp) { content() } } }
@@ -123,6 +124,20 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             onDnsToggle = {}, onWeeklyBackgroundToggle = {}, onPickBugreport = {}, onDismissBanner = {},
             onDeepCheckSetup = {}, onOpenInfo = {},
         )
+    }
+
+    /** A short phone, or a phone with large display zoom: the radar shrinks and the whole page scrolls. */
+    @Test
+    fun startCompact() {
+        if (device != Device.PHONE) return
+        shot("start_compact", twoColumn = true, qualifiers = "w360dp-h600dp-xhdpi") {
+            StartScreen(
+                state = UiState(iocs = iocs()),
+                onScan = {}, onUpdateIndicators = {}, onRequestRoot = {}, onRequestSms = {}, onRequestFiles = {},
+                onDnsToggle = {}, onWeeklyBackgroundToggle = {}, onPickBugreport = {}, onDismissBanner = {},
+                onDeepCheckSetup = {}, onOpenInfo = {},
+            )
+        }
     }
 
     @Test

@@ -1,5 +1,7 @@
 package de.belkis.spyhound.ui.components
 
+import kotlin.math.roundToInt
+import androidx.compose.ui.layout.layout
 import androidx.compose.foundation.clickable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -198,7 +200,7 @@ private fun StatusKind.iconRes(): Int = when (this) {
  * SMS, files and DNS read "on/off"; depth and sources show their own value.
  */
 @Composable
-private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier) {
+private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier, collapse: () -> Float = { 0f }) {
     var open by remember { mutableStateOf(false) }
     val tint by animateColorAsState(
         when (item.state) {
@@ -255,7 +257,7 @@ private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier) {
             color = if (item.state == StatusState.OFF) SpyColors.IvoryMuted else tint,
             maxLines = 1,
             softWrap = false,
-            modifier = Modifier.padding(top = 10.dp),
+            modifier = Modifier.padding(top = 10.dp).graphicsLayer { alpha = textAlpha(collapse()) },
         )
         Text(
             name,
@@ -263,7 +265,7 @@ private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier) {
             maxLines = 1,
             softWrap = false,
             overflow = TextOverflow.Clip,
-            modifier = Modifier.padding(top = 2.dp),
+            modifier = Modifier.padding(top = 2.dp).graphicsLayer { alpha = textAlpha(collapse()) },
         )
     }
     if (open) AlertDialog(
@@ -289,12 +291,24 @@ private fun StatusCell(item: StatusItem, modifier: Modifier = Modifier) {
  * Separate pills read as five buttons of different sizes; a panel reads as one calm status.
  */
 @Composable
-fun StatusStrip(items: List<StatusItem>, modifier: Modifier = Modifier) {
+fun StatusStrip(
+    items: List<StatusItem>,
+    modifier: Modifier = Modifier,
+    /** 0 = full, 1 = icons only. Read during layout and drawing, so scrolling never recomposes the strip. */
+    collapse: () -> Float = { 0f },
+) {
     val shape = RoundedCornerShape(20.dp)
     Row(
         modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                val f = collapse().coerceIn(0f, 1f)
+                val iconsOnly = minOf(StatusIconsOnlyHeight.roundToPx(), placeable.height)
+                val height = (placeable.height + (iconsOnly - placeable.height) * f).roundToInt()
+                layout(placeable.width, height) { placeable.place(0, 0) }
+            }
             .clip(shape)
             .background(SpyColors.Surface)
             .drawWithContent {
@@ -309,7 +323,7 @@ fun StatusStrip(items: List<StatusItem>, modifier: Modifier = Modifier) {
             }
             .border(1.dp, SpyColors.Border, shape),
     ) {
-        items.forEach { StatusCell(it, Modifier.weight(1f).fillMaxHeight()) }
+        items.forEach { StatusCell(it, Modifier.weight(1f).fillMaxHeight(), collapse) }
     }
 }
 
@@ -366,3 +380,9 @@ fun SmsBlockedDialog(onOpenAppInfo: () -> Unit, onDismiss: () -> Unit) {
         textContentColor = SpyColors.Ivory,
     )
 }
+
+/** Height of the status strip when only the icons show: top padding, icon and the same space below. */
+private val StatusIconsOnlyHeight = 56.dp
+
+/** The labels are gone before the strip has shrunk half way, so they never get cut through the middle. */
+private fun textAlpha(collapse: Float): Float = (1f - collapse * 2f).coerceIn(0f, 1f)

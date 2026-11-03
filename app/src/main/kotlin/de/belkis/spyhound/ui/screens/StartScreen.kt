@@ -1,5 +1,8 @@
 package de.belkis.spyhound.ui.screens
 
+import kotlin.math.roundToInt
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import de.belkis.spyhound.ui.components.emphasizeLabels
 import de.belkis.spyhound.ui.design.SpyMotion
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -136,7 +139,7 @@ fun StartScreen(
         notificationsGranted = granted || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
     }
     val tablet = LocalConfiguration.current.screenWidthDp >= 600
-    val headerContent: @Composable ColumnScope.(radarDiameter: Dp) -> Unit = { radarDiameter ->
+    val headerContent: @Composable ColumnScope.(radarDiameter: Dp, stripCollapse: () -> Float) -> Unit = { radarDiameter, stripCollapse ->
         Column(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -189,13 +192,30 @@ fun StartScreen(
                 }
             }
             Spacer(Modifier.height(12.dp))
-            RadarScanButton(
-                onClick = onScan,
-                enabled = state.iocs != null && state.progress == null,
-                modifier = radarModifier,
-                lastRadar = state.lastRadar,
-                diameter = radarDiameter,
-            )
+            // While the cards scroll, the radar shrinks with the finger to about half its size and grows back on
+            // the way up. Scale and height follow the scroll position directly, so nothing jumps.
+            Box(
+                Modifier
+                    .layout { measurable, constraints ->
+                        val placeable = measurable.measure(constraints)
+                        val shrink = RadarScrollShrink * stripCollapse().coerceIn(0f, 1f)
+                        val height = (placeable.height * (1f - shrink)).roundToInt()
+                        layout(placeable.width, height) { placeable.place(0, (height - placeable.height) / 2) }
+                    }
+                    .graphicsLayer {
+                        val scale = 1f - RadarScrollShrink * stripCollapse().coerceIn(0f, 1f)
+                        scaleX = scale
+                        scaleY = scale
+                    },
+            ) {
+                RadarScanButton(
+                    onClick = onScan,
+                    enabled = state.iocs != null && state.progress == null,
+                    modifier = radarModifier,
+                    lastRadar = state.lastRadar,
+                    diameter = radarDiameter,
+                )
+            }
             Spacer(Modifier.height(12.dp))
             val depth = when (state.access) {
                 AccessLevel.APP -> stringResource(R.string.depth_basic)
@@ -264,33 +284,13 @@ fun StartScreen(
                 ),
                 ),
                 modifier = Modifier.fillMaxWidth(),
+                collapse = stripCollapse,
             )
         }
     }
     val defaultRadarDiameter = 176.dp
-    val cardsContent: @Composable ColumnScope.() -> Unit = {
-        val scrolled by remember { derivedStateOf { scroll.value > 0 } }
-        Spacer(Modifier.height(10.dp))
-        ScrollEdge(scrolled)
+    val cardsBody: @Composable ColumnScope.() -> Unit = {
         var staggerIndex = 0
-        Column(
-            Modifier
-                .weight(1f)
-                .drawWithContent {
-                    drawContent()
-                    if (scrolled) {
-                        drawRect(
-                            Brush.verticalGradient(
-                                listOf(SpyColors.Ink, SpyColors.Ink.copy(alpha = 0f)),
-                                endY = 28.dp.toPx(),
-                            ),
-                            size = androidx.compose.ui.geometry.Size(size.width, 28.dp.toPx()),
-                        )
-                    }
-                }
-                .verticalScroll(scroll),
-            verticalArrangement = Arrangement.spacedBy(SpySpacing.Section),
-        ) {
             Text(
                 stringResource(R.string.t_061),
                 style = MaterialTheme.typography.bodyMedium,
@@ -461,6 +461,30 @@ fun StartScreen(
             )
             if (state.hardening.isNotEmpty()) HardeningCard(state.hardening, Modifier.then(staggeredAppear(staggerIndex++)))
             Spacer(Modifier.height(4.dp))
+    }
+    val cardsContent: @Composable ColumnScope.() -> Unit = {
+        val scrolled by remember { derivedStateOf { scroll.value > 0 } }
+        Spacer(Modifier.height(10.dp))
+        ScrollEdge(scrolled)
+        Column(
+            Modifier
+                .weight(1f)
+                .drawWithContent {
+                    drawContent()
+                    if (scrolled) {
+                        drawRect(
+                            Brush.verticalGradient(
+                                listOf(SpyColors.Ink, SpyColors.Ink.copy(alpha = 0f)),
+                                endY = 28.dp.toPx(),
+                            ),
+                            size = androidx.compose.ui.geometry.Size(size.width, 28.dp.toPx()),
+                        )
+                    }
+                }
+                .verticalScroll(scroll),
+            verticalArrangement = Arrangement.spacedBy(SpySpacing.Section),
+        ) {
+            cardsBody()
         }
     }
     Box(Modifier.fillMaxSize()) {
@@ -475,15 +499,31 @@ fun StartScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        headerContent(radarDiameter)
+                        headerContent(radarDiameter) { 0f }
                     }
                 }
                 Column(Modifier.weight(1f).fillMaxHeight(), content = cardsContent)
             }
         } else {
-            Column(Modifier.fillMaxSize()) {
-                headerContent(defaultRadarDiameter)
-                cardsContent()
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                // The radar takes about a quarter of the height, so on small screens, with large text or display
+                // zoom it shrinks instead of pushing the cards into a sliver at the bottom.
+                val radarDiameter = (maxHeight * 0.24f).coerceIn(120.dp, defaultRadarDiameter)
+                if (maxHeight < CompactHeight) {
+                    // Too short for a fixed header: everything scrolls as one page.
+                    Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
+                        headerContent(radarDiameter) { 0f }
+                        Spacer(Modifier.height(10.dp))
+                        Column(verticalArrangement = Arrangement.spacedBy(SpySpacing.Section), content = cardsBody)
+                    }
+                } else {
+                    // Scrolling the cards folds the status strip down to its icons; scrolling back up unfolds it.
+                    val collapseDistance = with(LocalDensity.current) { 120.dp.toPx() }
+                    Column(Modifier.fillMaxSize()) {
+                        headerContent(radarDiameter) { scroll.value / collapseDistance }
+                        cardsContent()
+                    }
+                }
             }
         }
         // Status messages float above the list instead of being inserted into the header, which used to
@@ -904,3 +944,9 @@ private fun StatusToast(message: String?, busy: Boolean, onDismiss: (() -> Unit)
         if (onDismiss != null) TextActionLink(text = stringResource(R.string.t_060), onClick = onDismiss, modifier = Modifier.padding(start = 12.dp))
     }
 }
+
+/** Below this height the start screen header scrolls with the cards instead of staying fixed. */
+private val CompactHeight = 700.dp
+
+/** How much of its size the radar gives up when the cards are scrolled (0.45 = shrinks to 55 %). */
+private const val RadarScrollShrink = 0.45f
