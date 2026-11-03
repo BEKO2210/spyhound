@@ -470,6 +470,7 @@
     <string name="audit_system_hide">Systemapps ausblenden</string>
     <string name="audit_system_label">Systemapps</string>
     <string name="audit_loading">Apps werden gelesen …</string>
+    <string name="audit_loading_progress">Apps werden gelesen … %1$s von %2$s</string>
     <string name="audit_none">Keine App hat dieses Recht.</string>
     <string name="audit_count">%1$s Apps</string>
     <string name="audit_count_one">1 App</string>

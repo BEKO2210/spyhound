@@ -463,6 +463,7 @@
     <string name="audit_system_hide">Hide system apps</string>
     <string name="audit_system_label">System apps</string>
     <string name="audit_loading">Reading apps…</string>
+    <string name="audit_loading_progress">Reading apps… %1$s of %2$s</string>
     <string name="audit_none">No app has this right.</string>
     <string name="audit_count">%1$s apps</string>
     <string name="audit_count_one">1 app</string>

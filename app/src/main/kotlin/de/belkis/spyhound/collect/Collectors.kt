@@ -25,8 +25,12 @@ import java.security.MessageDigest
 class AppCollector(private val context: Context) {
     private val pm = context.packageManager
 
+    /**
+     * Reads every installed package. [hashApks] fingerprints each APK file, which the scan needs for its hash
+     * indicators; the rights overview leaves it out, as reading gigabytes of APKs is what made it slow.
+     */
     @Suppress("DEPRECATION")
-    fun collect(onProgress: (done: Int, total: Int, label: String) -> Unit): List<AppRecord> {
+    fun collect(hashApks: Boolean = true, onProgress: (done: Int, total: Int, label: String) -> Unit): List<AppRecord> {
         val flags = PackageManager.GET_PERMISSIONS or PackageManager.GET_SIGNING_CERTIFICATES or
             PackageManager.MATCH_DISABLED_COMPONENTS or PackageManager.MATCH_UNINSTALLED_PACKAGES
         val packages = pm.getInstalledPackages(flags)
@@ -50,7 +54,7 @@ class AppCollector(private val context: Context) {
             AppRecord(
                 packageName = p.packageName,
                 label = label,
-                apks = apkPaths.map { ApkFile(it, sha256Of(File(it))) },
+                apks = apkPaths.map { ApkFile(it, if (hashApks) sha256Of(File(it)) else null) },
                 certSha1 = sha1,
                 certSha256 = sha256,
                 installer = installer(p.packageName),

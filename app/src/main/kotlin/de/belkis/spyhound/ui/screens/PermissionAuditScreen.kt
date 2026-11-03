@@ -71,22 +71,25 @@ data class AuditResult(val groups: List<AuditGroup>, val previousAt: Long?)
 @Composable
 fun PermissionAuditRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    var progress by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     val result by produceState<AuditResult?>(null, context) {
-        value = withContext(Dispatchers.IO) { runAudit(context) }
+        value = withContext(Dispatchers.IO) { runAudit(context) { done, total -> progress = done to total } }
     }
     PermissionAuditScreen(
         result = result,
+        progress = progress,
         onBack = onBack,
         onAppInfo = { openAppInfo(context, it) },
         modifier = modifier,
     )
 }
 
-private fun runAudit(context: Context): AuditResult {
+private fun runAudit(context: Context, onProgress: (done: Int, total: Int) -> Unit): AuditResult {
     val store = PermissionAuditStore(context)
     val history = store.load()
     val previous = history.lastOrNull()
-    val apps = AppCollector(context).collect { _, _, _ -> }
+    // Rights and status only: no APK fingerprints, which the scan needs but this overview does not.
+    val apps = AppCollector(context).collect(hashApks = false) { done, total, _ -> onProgress(done + 1, total) }
     val groups = PermissionAudit.evaluate(apps, context.packageName, previous)
     store.save(PermissionAudit.appendSnapshot(history, PermissionAudit.snapshot(groups, System.currentTimeMillis())))
     return AuditResult(groups, previous?.takenAt)
@@ -108,6 +111,7 @@ fun PermissionAuditScreen(
     onAppInfo: (String) -> Unit,
     modifier: Modifier = Modifier,
     initialShowSystem: Boolean = false,
+    progress: Pair<Int, Int>? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val scroll = rememberScrollState()
@@ -127,7 +131,10 @@ fun PermissionAuditScreen(
             verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 4),
         ) {
             if (result == null) {
-                Text(stringResource(R.string.audit_loading), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+                val loading = progress?.let { (done, total) ->
+                    stringResource(R.string.audit_loading_progress, formatCount(done, locale), formatCount(total, locale))
+                } ?: stringResource(R.string.audit_loading)
+                Text(loading, style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
                 return@Column
             }
             val newCount = PermissionAudit.totalNew(result.groups, showSystem)
