@@ -423,7 +423,7 @@
     <string name="adb_wizard_shizuku_section">Alternative: Shizuku</string>
     <string name="adb_wizard_step_done_cd">Schritt erledigt</string>
     <string name="guide_gap_builtin_adb_meaning">Die tiefere Prüfung war diesmal nicht verfügbar. Nach einem Neustart des Telefons ist das Debugging über WLAN ausgeschaltet. Das ist eine Lücke, kein Ergebnis.</string>
-    <string name="guide_gap_builtin_adb_steps">1. Schalte „Debugging über WLAN“ in „Entwickleroptionen“ wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
+    <string name="guide_gap_builtin_adb_steps">1. Schalte „Debugging über WLAN“ in den „Entwickleroptionen“ wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
     <string name="harden_title">Handy absichern</string>
     <string name="harden_hint">Eine kurze Liste von Einstellungen, die Angriffe erschweren. Spyhound liest sie nur; ändern kannst du sie in den Systemeinstellungen.</string>
     <string name="harden_open">Öffnen</string>
