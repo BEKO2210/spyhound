@@ -47,6 +47,8 @@ import de.belkis.spyhound.collect.AppCollector
 import de.belkis.spyhound.collect.PermissionAuditStore
 import de.belkis.spyhound.scan.AuditApp
 import de.belkis.spyhound.scan.AuditGroup
+import de.belkis.spyhound.scan.LookCloserApp
+import de.belkis.spyhound.scan.LookRule
 import de.belkis.spyhound.scan.PermissionAudit
 import de.belkis.spyhound.scan.RightGroup
 import de.belkis.spyhound.ui.components.CardRowIconBadge
@@ -168,10 +170,50 @@ fun PermissionAuditScreen(
                     onClick = { showSystem = !showSystem },
                 )
             }
+            LookCloserSection(
+                PermissionAudit.lookCloser(result.groups),
+                onAppInfo,
+                Modifier.then(staggeredAppear(1)),
+            )
+            Text(
+                stringResource(R.string.audit_common_note),
+                style = MaterialTheme.typography.bodyMedium,
+                color = SpyColors.IvoryMuted,
+            )
             result.groups.forEachIndexed { i, group ->
-                GroupCard(group, showSystem, onAppInfo, Modifier.then(staggeredAppear(i + 1)))
+                GroupCard(group, showSystem, onAppInfo, Modifier.then(staggeredAppear(i + 2)))
             }
             Spacer(Modifier.height(SpySpacing.Unit * 4))
+        }
+    }
+}
+
+private fun LookRule.reasonRes() = when (this) {
+    LookRule.ACCESSIBILITY_PLUS_DATA -> R.string.audit_look_accessibility_data
+    LookRule.NOTIFICATION_ACCESS_PLUS_DATA -> R.string.audit_look_notification_data
+    LookRule.DEVICE_ADMIN_PLUS_DATA -> R.string.audit_look_admin_data
+    LookRule.BACKGROUND_LOCATION_PLUS_MICROPHONE -> R.string.audit_look_bg_mic
+    LookRule.OVERLAY_PLUS_ACCESSIBILITY -> R.string.audit_look_overlay_accessibility
+}
+
+/** Calm top section: apps whose mix of rights deserves a closer look (a hint, amber, never an alarm). */
+@Composable
+private fun LookCloserSection(flagged: List<LookCloserApp>, onAppInfo: (String) -> Unit, modifier: Modifier = Modifier) {
+    SpyCard(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CardRowIconBadge(iconRes = R.drawable.ic_right_audit, active = false)
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
+                Text(stringResource(R.string.audit_look_title), style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
+                Text(
+                    stringResource(if (flagged.isEmpty()) R.string.audit_look_none else R.string.audit_look_body),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (flagged.isEmpty()) SpyColors.Clear else SpyColors.IvoryMuted,
+                )
+            }
+        }
+        flagged.forEach { f ->
+            HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            AppRow(f.app, onAppInfo, reasons = f.rules.map { stringResource(it.reasonRes()) })
         }
     }
 }
@@ -271,7 +313,7 @@ private fun GroupCard(group: AuditGroup, showSystem: Boolean, onAppInfo: (String
 }
 
 @Composable
-private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit) {
+private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit, reasons: List<String> = emptyList()) {
     val infoLabel = stringResource(R.string.audit_app_info)
     val infoDesc = stringResource(R.string.audit_app_info_for, app.label)
     val newDesc = stringResource(R.string.audit_new_desc, app.label)
@@ -299,6 +341,9 @@ private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit) {
                 color = SpyColors.IvoryMuted,
                 maxLines = 2,
             )
+            reasons.forEach {
+                Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
+            }
         }
         Text(
             infoLabel,

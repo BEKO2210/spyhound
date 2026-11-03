@@ -479,6 +479,15 @@
     <string name="audit_app_info">App-Info</string>
     <string name="audit_app_info_for">App-Info für %1$s</string>
     <string name="audit_new_desc">%1$s, neu seit der letzten Prüfung</string>
+    <string name="audit_look_title">Genauer ansehen</string>
+    <string name="audit_look_body">Diese Apps haben eine Mischung an Rechten, die bei normalen Apps selten ist. Das ist ein Hinweis, kein Urteil: Vielleicht kennst und willst du sie.</string>
+    <string name="audit_look_none">Keine ungewöhnlichen Rechte-Kombinationen gefunden.</string>
+    <string name="audit_look_accessibility_data">Kann deinen Bildschirm lesen und auch Nachrichten, Anrufe, Standort oder Ton.</string>
+    <string name="audit_look_notification_data">Kann deine Benachrichtigungen lesen und auch Nachrichten, Anrufe, Standort oder Ton.</string>
+    <string name="audit_look_admin_data">Lässt sich schwer entfernen und erreicht auch Nachrichten, Anrufe, Standort oder Ton.</string>
+    <string name="audit_look_bg_mic">Kann deinen Standort im Hintergrund verfolgen und auch Ton aufnehmen.</string>
+    <string name="audit_look_overlay_accessibility">Kann über anderen Apps zeichnen und auch deinen Bildschirm lesen.</string>
+    <string name="audit_common_note">Die Rechte unten sind üblich und bei Apps, die du nutzt, in Ordnung. Schau nur in eine Liste, wenn dich eine App überrascht.</string>
     <string name="audit_g_camera">Kamera</string>
     <string name="audit_g_camera_d">Darf Fotos und Videos aufnehmen.</string>
     <string name="audit_g_microphone">Mikrofon</string>

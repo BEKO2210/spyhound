@@ -84,4 +84,47 @@ class PermissionAuditTest {
         assertEquals(PermissionAudit.MAX_SNAPSHOTS, h.size)
         assertEquals(39L, h.last().takenAt)
     }
+
+    private val sms = "android.permission.READ_SMS"
+    private val contacts = "android.permission.READ_CONTACTS"
+    private val fine = "android.permission.ACCESS_FINE_LOCATION"
+
+    private fun hints(vararg list: AppRecord) =
+        PermissionAudit.lookCloser(PermissionAudit.evaluate(list.toList(), "me"))
+
+    @Test fun messengerWithCameraMicContactsIsNotHinted() {
+        assertTrue(hints(app("chat", "Chat", false, cam, mic, contacts)).isEmpty())
+    }
+
+    @Test fun accessibilityPlusSmsIsHintedWithReason() {
+        val h = hints(app("x.app", "X", false, sms, acc = true)).single()
+        assertEquals("x.app", h.app.packageName)
+        assertEquals(listOf(de.belkis.spyhound.scan.LookRule.ACCESSIBILITY_PLUS_DATA), h.rules)
+    }
+
+    @Test fun systemAppWithSameRightsIsNotHinted() {
+        assertTrue(hints(app("sys.app", "Sys", true, sms, acc = true)).isEmpty())
+    }
+
+    @Test fun deviceAdminPlusLocationIsHinted() {
+        val h = hints(app("adm", "Adm", false, fine, admin = true)).single()
+        assertEquals(listOf(de.belkis.spyhound.scan.LookRule.DEVICE_ADMIN_PLUS_DATA), h.rules)
+    }
+
+    @Test fun backgroundLocationPlusMicAndOverlayPlusAccessibility() {
+        val bg = "android.permission.ACCESS_BACKGROUND_LOCATION"
+        val ov = "android.permission.SYSTEM_ALERT_WINDOW"
+        assertEquals(
+            listOf(de.belkis.spyhound.scan.LookRule.BACKGROUND_LOCATION_PLUS_MICROPHONE),
+            hints(app("bg", "Bg", false, bg, mic)).single().rules,
+        )
+        assertEquals(
+            listOf(de.belkis.spyhound.scan.LookRule.OVERLAY_PLUS_ACCESSIBILITY),
+            hints(app("ov", "Ov", false, ov, acc = true)).single().rules,
+        )
+    }
+
+    @Test fun singleRightsAndOwnAppAreNotHinted() {
+        assertTrue(hints(app("a", "A", false, sms), app("b", "B", false, acc = true), app("me", "Me", false, sms, acc = true)).isEmpty())
+    }
 }

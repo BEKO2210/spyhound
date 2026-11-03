@@ -45,7 +45,47 @@ data class AuditGroup(val group: RightGroup, val apps: List<AuditApp>) {
 /** What each right group was held by at one check: group -> package names. */
 data class AuditSnapshot(val takenAt: Long, val holders: Map<RightGroup, Set<String>>)
 
+/**
+ * One reviewable rule for "worth a look": an app is hinted when it holds at least one right from [first] AND at least
+ * one from [second]. A hint is never a verdict: many legitimate apps (a password manager, a launcher) do the same.
+ */
+enum class LookRule(val first: Set<RightGroup>, val second: Set<RightGroup>) {
+    ACCESSIBILITY_PLUS_DATA(setOf(RightGroup.ACCESSIBILITY), PRIVATE_DATA),
+    NOTIFICATION_ACCESS_PLUS_DATA(setOf(RightGroup.NOTIFICATION_ACCESS), PRIVATE_DATA),
+    DEVICE_ADMIN_PLUS_DATA(setOf(RightGroup.DEVICE_ADMIN), PRIVATE_DATA),
+    BACKGROUND_LOCATION_PLUS_MICROPHONE(setOf(RightGroup.BACKGROUND_LOCATION), setOf(RightGroup.MICROPHONE)),
+    OVERLAY_PLUS_ACCESSIBILITY(setOf(RightGroup.OVERLAY), setOf(RightGroup.ACCESSIBILITY));
+
+    fun matches(held: Set<RightGroup>) = held.any { it in first } && held.any { it in second }
+}
+
+// Rights that expose messages, calls, whereabouts or sound: the data stalkerware is after.
+private val PRIVATE_DATA = setOf(
+    RightGroup.SMS, RightGroup.CALL_LOG, RightGroup.FINE_LOCATION, RightGroup.BACKGROUND_LOCATION, RightGroup.MICROPHONE,
+)
+
+/** A user-installed app whose rights match at least one [LookRule]. */
+data class LookCloserApp(val app: AuditApp, val rules: List<LookRule>)
+
 object PermissionAudit {
+    /**
+     * User-installed apps whose combination of rights matches a [LookRule], sorted by name. System apps are never
+     * hinted. Camera+microphone+contacts alone (a messenger) matches nothing.
+     */
+    fun lookCloser(groups: List<AuditGroup>): List<LookCloserApp> {
+        val held = mutableMapOf<String, MutableSet<RightGroup>>()
+        val apps = mutableMapOf<String, AuditApp>()
+        groups.forEach { g ->
+            g.userApps.forEach { a -> apps[a.packageName] = a; held.getOrPut(a.packageName) { mutableSetOf() } += g.group }
+        }
+        return apps.values
+            .mapNotNull { a ->
+                val rules = LookRule.entries.filter { it.matches(held.getValue(a.packageName)) }
+                if (rules.isEmpty()) null else LookCloserApp(a, rules)
+            }
+            .sortedWith(compareBy({ it.app.label.lowercase() }, { it.app.packageName }))
+    }
+
     /** Which apps hold which right. Own app is skipped; apps are sorted by name, groups keep their fixed order. */
     fun evaluate(apps: List<AppRecord>, ownPackage: String, previous: AuditSnapshot? = null): List<AuditGroup> {
         val candidates = apps.filter { it.packageName != ownPackage }

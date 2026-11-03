@@ -242,6 +242,8 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             AppRecord("com.example.newcam", "Neue Kamera", grantedPermissions = setOf(cam, mic)),
             AppRecord("com.google.android.GoogleCamera", "Camera", isSystem = true, grantedPermissions = setOf(cam)),
             AppRecord("com.example.helper", "Helper", accessibility = true),
+            AppRecord("com.example.sms.helper", "Nachrichten-Helfer", accessibility = true, grantedPermissions = setOf("android.permission.READ_SMS")),
+            AppRecord("com.example.tracker", "Standort-Begleiter mit sehr langem Namen", deviceAdmin = true, grantedPermissions = setOf("android.permission.ACCESS_FINE_LOCATION")),
         )
         val before = AuditSnapshot(
             1_793_000_000_000L,
