@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
-        <item>Who can do what opens in about 2 s and lists unusual combinations of rights under “Worth a look”</item>
+        <item>Fewer false alarms: stricter reading of trace lists, URLs and DNS names</item>
+        <item>Known-good list now also covers Xiaomi, Redmi and POCO system files</item>
+        <item>Setup guides show the words to look for in Settings in bold</item>
+        <item>Bug report import and DNS watcher hold up against broken or huge input</item>
         <item>Licence texts of the app, its sources and fonts under About</item>
-        <item>Calmer pairing notification while you type the code</item>
-        <item>Samsung’s own updaters no longer count as sideloaded</item>
-        <item>Deeper check without a PC (wireless debugging on the phone)</item>
-        <item>Optional weekly background scan with alerts for new findings</item>
+        <item>Who can do what opens in about 2 s and lists unusual combinations of rights</item>
     </string-array>
 </resources>
