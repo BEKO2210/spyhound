@@ -23,6 +23,15 @@ verbreiteten Geräten, ohne Falschalarm, und jeder kann nachprüfen, dass die AP
 Schätzung: Arbeit im Repo ~3–5 Tage (TalkBack, F-Droid-Metadaten, README, Fixes aus dem Feldtest). Den Takt geben
 Geräte und Menschen vor: SMS-Gerät, Altgerät, 3 Tester, dazu die Woche rc → realistisch 2–3 Wochen bis 1.0.0.
 
+## Nach 1.0 – es wächst weiter (Belkis, 2026-11-03: „nach 1.0 soll es organisch weitergehen“)
+1.0 ist ein Meilenstein, kein Ende. Danach gilt derselbe Kreislauf: Funde und Wünsche kommen am selben Tag mit
+Abnahme hinein, der Kompass wird jede Sitzung neu geordnet, jedes Release muss nachweisbar etwas bringen.
+Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
+- Jedes Release frische Spuren: `check-pins.py` + neue Quellen; Positivliste mit neuen Builds (`knowngood-from-ota.py`).
+- Virenschutz ausbauen (Stufe 4), sobald lizenzklare Quellen da sind (abuse.ch, YARA).
+- Weitere Sprachen nach Bedarf der Nutzer (Rückmeldungen aus dem Feldtest).
+- Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
+
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
@@ -316,6 +325,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Ein Meilenstein (z. B. 1.0) beendet die Roadmap nie; er ist ein Abnahmepunkt, danach wächst sie weiter (Belkis, 2026-11-03).
 - Xiaomis bigota-CDN lieferte hier 35 KB/s, derselbe Pfad im Xiaomi-Bucket `bkt-sgp-miui-ota-update-alisgp` 14 MB/s. Vor großen Downloads Tempo beider Hosts messen.
 - Für Gerätetests der eingebauten Kopplung erst prüfen, welcher Weg aktiv ist: Läuft Shizuku, nimmt Spyhound Shizuku und der Kopplungsweg wird gar nicht berührt. Benachrichtigungen zählt `logcat -b events | grep notification_enqueue`.
 - „Verbindung kommt nicht zustande“ erst glauben, wenn der Server-Prozess geprüft ist: Shizuku lief im Emulator die ganze Zeit, nur der Test bediente die App nicht wie ein Mensch. Testabläufe gehen den Weg des Nutzers.
