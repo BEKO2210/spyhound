@@ -10,7 +10,9 @@ import android.os.Build
 import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import de.belkis.spyhound.bugreport.BUGREPORT_STALL_TIMEOUT_MS
 import de.belkis.spyhound.bugreport.BugreportImport
+import de.belkis.spyhound.bugreport.readWithStallTimeout
 import de.belkis.spyhound.bugreport.analyzeBugreport
 import de.belkis.spyhound.background.BackgroundReportStore
 import de.belkis.spyhound.background.BackgroundScanPreferences
@@ -394,13 +396,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             return
         }
         _state.update { it.copy(busy = s(R.string.vm_checking_bugreport), bannerMessage = null) }
-        val checks = withContext(Dispatchers.IO) {
-            runCatching {
-                ctx.contentResolver.openInputStream(uri)?.use { stream ->
-                    analyzeBugreport(stream, loaded.set, installedPackageNames())
-                }
-            }.getOrNull()
-        }
+        val packages = withContext(Dispatchers.IO) { installedPackageNames() }
+        val checks = readWithStallTimeout(
+            BUGREPORT_STALL_TIMEOUT_MS,
+            { ctx.contentResolver.openInputStream(uri) },
+        ) { stream -> analyzeBugreport(stream, loaded.set, packages) }
         _state.update { it.copy(busy = null) }
         if (checks.isNullOrEmpty()) {
             _state.update { it.copy(bannerMessage = s(R.string.vm_bugreport_unreadable)) }
