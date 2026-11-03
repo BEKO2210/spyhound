@@ -223,7 +223,6 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       vergiftete oder kaputte Liste könnte Falschtreffer erzeugen). Stattdessen prüft `scripts/check-pins.py`, ob eine
       gepinnte Datei upstream neuer ist (Git-Blob-Vergleich, ohne Download); `--apply` zieht Pin, SHA-256 und
       mitgelieferte Kopie nach. Frische Indikatoren kommen so mit jedem Release. Stand 2026-11-03: 47 von 47 aktuell.
-- [ ] Vor jedem Release `scripts/check-pins.py` laufen lassen (steht in WORKFLOW.md).
 
 ## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
 - [~] Antivirus offline – Schritt 1+2 erledigt (161 Hashes ESET+Meta, 0 Falschtreffer, Gerätetest A3/A5/A6, Positivliste 10830; Release 0.3.2/0.3.5). Offen: nur noch weitere lizenzklare Quellen (abuse.ch anfragen, YARAify prüfen). Ursprünglich: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
