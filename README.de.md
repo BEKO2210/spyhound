@@ -128,6 +128,11 @@ Signaturzertifikats mit dem auf der Release-Seite vergleichen (vollständiger We
 [APK prüfen](#apk-prüfen)). Eine neuere Version installiert sich über die bestehende – du musst nicht vorher
 deinstallieren.
 
+**Automatische Updates:** Mit [Obtainium](https://github.com/ImranR98/Obtainium) bekommst du jede neue Version direkt
+von GitHub. Trag in Obtainium `https://github.com/BEKO2210/spyhound` ein oder öffne auf dem Handy
+[obtainium://add/https://github.com/BEKO2210/spyhound](obtainium://add/https://github.com/BEKO2210/spyhound).
+Die Aufnahme bei F-Droid ist beantragt ([fdroiddata!55616](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/55616)).
+
 Ab Android 10. Die tiefe Prüfung ohne PC braucht Android 11 oder neuer.
 
 ## APK prüfen

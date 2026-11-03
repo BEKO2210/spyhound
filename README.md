@@ -123,6 +123,11 @@ Optionally, before installing, check the file on a computer with `sha256sum -c S
 certificate SHA-256 to the fingerprint on the release page (full value under [Verify the APK](#verify-the-apk)). A newer
 version installs over the one you already have – you do not need to uninstall first.
 
+**Automatic updates:** with [Obtainium](https://github.com/ImranR98/Obtainium) you get every new release straight
+from GitHub. Add `https://github.com/BEKO2210/spyhound` in Obtainium, or on the phone open
+[obtainium://add/https://github.com/BEKO2210/spyhound](obtainium://add/https://github.com/BEKO2210/spyhound).
+F-Droid inclusion is requested ([fdroiddata!55616](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/55616)).
+
 Requires Android 10 or newer. The deep check without a PC needs Android 11 or newer.
 
 ## Verify the APK
