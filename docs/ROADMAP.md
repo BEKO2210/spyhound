@@ -82,7 +82,12 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] Positivliste um Samsung ergänzt: Galaxy S24 Ultra (One UI, Android 16, +3615) und Galaxy Tab S9 Ultra (+4330) →
       10830 Hashes, Asset umbenannt in `knowngood-system.sha256` (1,2 MB, im APK 0,5 MB). Beleg: 0 Überschneidung mit allen
       44 Quellen, Tests grün, Release-Start Pixel 9 ohne Absturz; Pixel 11: 44/44 Quellen, Tief-Scan 0 Funde · 5 Hinweise · 2 Lücken (wie vorher), 0 Abstürze. Geräte nur lesend per adb, danach getrennt.
-- [ ] Positivliste: weitere Hersteller (Xiaomi, OnePlus, Motorola) und je Gerät neue Builds nach Updates. Abnahme wie oben.
+- [x] Positivliste um Xiaomi ergänzt, ohne Gerät: offizielle Voll-OTAs (EEA, HyperOS 3/Android 16) von Redmi Note 14
+      Pro+, Xiaomi 15, POCO F7, Xiaomi 14 über `scripts/knowngood-from-ota.py` (lädt per HTTP-Range nur die Partitionen,
+      prüft jede Operation und jedes Abbild gegen die Hashes im Payload-Manifest) → +10.011, gesamt 20.841. Beleg: 0
+      Überschneidung mit allen 44 Quellen (Test + 7 Hashes der Gerät-Quellen), Tests grün.
+- [ ] Positivliste OnePlus/Motorola: keine stabile Hersteller-Quelle (OnePlus-Links signiert und ablaufend, Motorola
+      nur per Login-Werkzeug/inoffizielle Spiegel). Abnahme: Hersteller-URL belegt oder echtes Gerät per adb.
 
 ## Release 0.3.2 (2026-11-02) – Virenschutz Schritt 2: 161 Malware-Hashes (ESET 14 Kampagnen + Meta), Positivliste, 0 Falschtreffer auf 703 APKs (Pixel 9), Datei-Fund offline belegt (Emulator, Flugmodus). Offen: abuse.ch/YARAify anfragen, Positivliste um echte Systembibliotheken erweitern.
 
@@ -289,6 +294,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Xiaomis bigota-CDN lieferte hier 35 KB/s, derselbe Pfad im Xiaomi-Bucket `bkt-sgp-miui-ota-update-alisgp` 14 MB/s. Vor großen Downloads Tempo beider Hosts messen.
 - Für Gerätetests der eingebauten Kopplung erst prüfen, welcher Weg aktiv ist: Läuft Shizuku, nimmt Spyhound Shizuku und der Kopplungsweg wird gar nicht berührt. Benachrichtigungen zählt `logcat -b events | grep notification_enqueue`.
 - „Verbindung kommt nicht zustande“ erst glauben, wenn der Server-Prozess geprüft ist: Shizuku lief im Emulator die ganze Zeit, nur der Test bediente die App nicht wie ein Mensch. Testabläufe gehen den Weg des Nutzers.
 - Die Liste „Was ist neu“ (arrays.xml `info_whats_new_items`) war bis 0.3.6 auf dem Stand von 0.3.0. Sie gehört zu jedem Release-Schritt, vor dem Tag; Screenshot info_top_* zeigt sie.
