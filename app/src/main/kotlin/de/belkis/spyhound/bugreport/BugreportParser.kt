@@ -36,6 +36,8 @@ object BugreportParser {
     const val MAX_ENTRIES = 8_192
     const val MAX_TOTAL_BYTES = 512L * 1024 * 1024
     const val MAX_SECTION_BYTES = 32 * 1024 * 1024
+    // Three section caps (32 MiB each) fit in 96 MiB; bounds heap on reports with many log/dumpsys blocks.
+    const val MAX_RETAINED_TEXT_BYTES = 96 * 1024 * 1024
     internal const val MAX_LINE_BYTES = 1 * 1024 * 1024
 
     private val PROP = Regex("""^\[([^]]+)]:\s*\[(.*)]$""")
@@ -64,6 +66,10 @@ object BugreportParser {
                     val name = sanitizeName(entry.name)
                     if (name == null) {
                         drain(zis, acc)
+                        if (acc.overBudget) {
+                            acc.warn("Die entpackte Größe überschreitet die Grenze und wurde abgelehnt.")
+                            break
+                        }
                         continue
                     }
                     when {
@@ -105,10 +111,12 @@ object BugreportParser {
             collecting = true
             when (kind) {
                 Kind.HEADER -> acc.takeHeader(text)
-                Kind.PROCESSES -> if (acc.psText.isEmpty()) acc.psText = text
+                Kind.PROCESSES -> if (acc.psText.isEmpty()) acc.psText = acc.retainText(text)
                 Kind.PROPS -> acc.takeProps(text)
-                Kind.LOG -> acc.logcat.append(text)
-                Kind.DUMPSYS -> if (label.isNotEmpty()) acc.dumpsys.putIfAbsent(label, text)
+                Kind.LOG -> acc.logcat.append(acc.retainText(text))
+                Kind.DUMPSYS -> if (label.isNotEmpty()) {
+                    acc.retainText(text).takeIf { it.isNotEmpty() }?.let { acc.dumpsys.putIfAbsent(label, it) }
+                }
                 Kind.SKIP -> Unit
             }
         }
@@ -213,15 +221,16 @@ object BugreportParser {
     }
 
     private fun Acc.takeHeader(text: String) {
-        DUMPSTATE_DATE.find(text)?.groupValues?.get(1)?.let {
+        val kept = retainText(text)
+        DUMPSTATE_DATE.find(kept)?.groupValues?.get(1)?.let {
             createdAt = runCatching { LocalDateTime.parse(it, DATE_FMT) }.getOrNull()
         }
-        fingerprint = FINGERPRINT.find(text)?.groupValues?.get(1).orEmpty()
-        buildLine = BUILD_LINE.find(text)?.groupValues?.get(1).orEmpty()
+        fingerprint = FINGERPRINT.find(kept)?.groupValues?.get(1).orEmpty()
+        buildLine = BUILD_LINE.find(kept)?.groupValues?.get(1).orEmpty()
     }
 
     private fun Acc.takeProps(text: String) {
-        if (props.isEmpty()) props.putAll(parseGetprop(text))
+        if (props.isEmpty()) props.putAll(parseGetprop(retainText(text)))
     }
 
     private fun Acc.toBugreport(): Bugreport {
@@ -274,6 +283,24 @@ object BugreportParser {
         var boardText = ""
         var truncated = false
         val warnings = ArrayList<String>()
+        private var retainedBytes = 0
+
+        fun retainText(text: String): String {
+            if (text.isEmpty()) return text
+            val bytes = text.toByteArray(Charsets.UTF_8)
+            val room = MAX_RETAINED_TEXT_BYTES - retainedBytes
+            if (room <= 0) {
+                truncated = true
+                return ""
+            }
+            if (bytes.size <= room) {
+                retainedBytes += bytes.size
+                return text
+            }
+            truncated = true
+            retainedBytes = MAX_RETAINED_TEXT_BYTES
+            return String(bytes, 0, room, Charsets.UTF_8)
+        }
     }
 
     private enum class Kind { HEADER, PROCESSES, PROPS, LOG, DUMPSYS, SKIP }
@@ -311,6 +338,8 @@ object BugreportParser {
                 if (stored < MAX_LINE_BYTES) {
                     line.write(b)
                     stored++
+                } else {
+                    acc.truncated = true
                 }
             }
             return String(line.toByteArray(), Charsets.UTF_8)
@@ -335,7 +364,8 @@ object BugreportParser {
                 if (keep < n) acc.truncated = true
             }
         }
-        return out.toString(Charsets.UTF_8.name())
+        val raw = out.toString(Charsets.UTF_8.name())
+        return acc.retainText(raw)
     }
 
     private fun drain(input: InputStream, acc: Acc) {
