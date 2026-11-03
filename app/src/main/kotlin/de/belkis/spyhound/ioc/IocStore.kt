@@ -78,8 +78,10 @@ class IocStore(private val context: Context) {
             }.onFailure { corrupt += s }
         }
         IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
-        val totalSources = sources.size + CURATED.size
-        LoadedIocs(IocSet(all), IocStatus(totalSources, totalSources - missing.size - corrupt.size, missing, corrupt))
+        // The curated lists belong to the toolkit, not to the catalog count shown as "44/44"; a broken one is still
+        // listed in [corrupt] so the start screen reports it.
+        val catalogBroken = corrupt.count { it in sources }
+        LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt))
     }
 
     fun domainCatalog(): List<FeedSource> =
