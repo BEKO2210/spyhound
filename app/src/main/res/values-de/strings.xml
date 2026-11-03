@@ -15,7 +15,7 @@
     <string name="t_011">Tiefere Prüfung einrichten</string>
     <string name="t_012">Installiere die App Shizuku. Sie hilft Spyhound, tiefer zu schauen – wie ein Werkzeug von Android selbst.</string>
     <string name="t_013">Die Installation klappt nicht: Lade Shizuku von shizuku.rikka.app. Bei Samsung kann „Auto Blocker“\u0020</string>
-    <string name="t_014">Installationen blockieren – unter Sicherheit und Datenschutz kurz ausschalten.</string>
+    <string name="t_014">Installationen blockieren – unter „Sicherheit und Datenschutz“ kurz ausschalten.</string>
     <string name="t_015">Shizuku installieren</string>
     <string name="t_016">Öffne Einstellungen → „Über das Telefon“ und tippe siebenmal auf „Build-Nummer“.\u0020</string>
     <string name="t_017">Samsung: „Über das Telefon“ → „Softwareinformationen“ → „Buildnummer“.</string>
@@ -26,7 +26,7 @@
     <string name="t_022">Den Code in die Shizuku-Benachrichtigung eintippen. Danach in Shizuku auf „Starten“.</string>
     <string name="t_023">Kopplungscode wird nicht angenommen: Benachrichtigung von Shizuku muss erlaubt sein.\u0020</string>
     <string name="t_024">Nutze den geteilten Bildschirm – Einstellungen und Benachrichtigung gleichzeitig sehen.\u0020</string>
-    <string name="t_025">Samsung: Auto Blocker aus. Bleibt „Suche nach Kopplungsdienst“ stehen: Shizuku darf im Hintergrund laufen\u0020</string>
+    <string name="t_025">Samsung: „Auto Blocker“ aus. Bleibt „Suche nach Kopplungsdienst“ stehen: Shizuku darf im Hintergrund laufen\u0020</string>
     <string name="t_026">(Akku: „Nicht eingeschränkt“).</string>
     <string name="t_027">Shizuku öffnen</string>
     <string name="t_028">Entwickleroptionen öffnen</string>
@@ -244,7 +244,7 @@
     <string name="guide_finding_app_mercenary_meaning">Eine App auf deinem Handy stimmt mit einer Spur überein, die Forscher bei staatlicher Spionagesoftware gefunden haben. Das ist ein ernster Fund, aber kein Beweis – Falschtreffer sind selten, aber möglich.</string>
     <string name="guide_finding_app_mercenary_steps">1. Setz das Handy nicht zurück und lösche nichts, bevor eine Fachstelle es angesehen hat. Sonst gehen Beweise verloren.\n2. Wende dich an die Digital Security Helpline von Access Now (kostenlos): help@accessnow.org.\n3. Führe vertrauliche Gespräche vorerst von einem anderen Gerät aus.</string>
     <string name="guide_finding_app_stalkerware_meaning">Eine App auf deinem Handy stimmt mit einer bekannten Überwachungs-App überein. Solche Apps können Nachrichten, Standort und Fotos an eine andere Person schicken. Ein Falschtreffer ist möglich.</string>
-    <string name="guide_finding_app_stalkerware_steps">1. Entferne die App nicht sofort: Die Person, die dich überwacht, kann das bemerken. Hol dir zuerst Hilfe, zum Beispiel beim Hilfetelefon Gewalt gegen Frauen (116 016, kostenlos, rund um die Uhr).\n2. Nutze für vertrauliche Gespräche ein anderes Gerät, dem niemand sonst Zugriff hat.\n3. Wenn du in Sicherheit bist: App-Info öffnen und die App deinstallieren.</string>
+    <string name="guide_finding_app_stalkerware_steps">1. Entferne die App nicht sofort: Die Person, die dich überwacht, kann das bemerken. Hol dir zuerst Hilfe, zum Beispiel beim Hilfetelefon Gewalt gegen Frauen (116 016, kostenlos, rund um die Uhr).\n2. Nutze für vertrauliche Gespräche ein anderes Gerät, dem niemand sonst Zugriff hat.\n3. Wenn du in Sicherheit bist: „App-Info“ öffnen und auf „Deinstallieren“ tippen.</string>
     <string name="guide_finding_file_mercenary_meaning">Eine Datei auf deinem Handy stimmt mit einer Spur überein, die Forscher bei staatlicher Spionagesoftware gefunden haben. Das ist ein ernster Fund, aber kein Beweis.</string>
     <string name="guide_finding_file_mercenary_steps">1. Setz das Handy nicht zurück und lösche nichts, bevor eine Fachstelle es angesehen hat. Sonst gehen Beweise verloren.\n2. Wende dich an die Digital Security Helpline von Access Now (kostenlos): help@accessnow.org.\n3. Führe vertrauliche Gespräche vorerst von einem anderen Gerät aus.</string>
     <string name="guide_finding_file_stalkerware_meaning">Eine Datei auf deinem Handy gehört vermutlich zu einer bekannten Überwachungs-App. Solche Apps können Nachrichten, Standort und Fotos an eine andere Person schicken. Ein Falschtreffer ist möglich.</string>
@@ -263,17 +263,17 @@
     <string name="guide_finding_link_stalkerware_steps">1. Öffne den Link nicht. Entferne nichts auf eigene Faust: Eine überwachende Person kann das bemerken.\n2. Hol dir bei Unsicherheit Hilfe, zum Beispiel beim Hilfetelefon Gewalt gegen Frauen (116 016, kostenlos, rund um die Uhr).</string>
 
     <string name="guide_finding_malware_meaning">Der Fingerabdruck (SHA-256) einer App oder Datei auf deinem Handy stimmt exakt mit einer Probe überein, die Sicherheitsforscher (ESET, Meta) als bekannte Schadsoftware veröffentlicht haben. Solche Apps können dich ausspähen, Zugangsdaten stehlen oder Online-Banking übernehmen. Der Treffer ist exakt, die Liste deckt aber nur wenige benannte Kampagnen ab.</string>
-    <string name="guide_finding_malware_steps">1. Deinstalliere die App: Einstellungen > Apps > die App > Deinstallieren. Lässt sie sich nicht entfernen, entziehe ihr zuerst Geräteadministrator und Bedienungshilfe. Eine selbst heruntergeladene Datei löschst du.\n2. Ändere von einem anderen Gerät die Passwörter deiner wichtigen Konten (E-Mail, Bank, Messenger) und aktiviere die Zwei-Faktor-Anmeldung.\n3. Hast du währenddessen Banking- oder Bezahl-Apps benutzt, melde dich bei deiner Bank.\n4. Prüfe danach noch einmal. Befürchtest du gezielte Überwachung, wende dich an eine Beratungsstelle.</string>
+    <string name="guide_finding_malware_steps">1. Deinstalliere die App: Einstellungen > „Apps“ > die App > „Deinstallieren“. Lässt sie sich nicht entfernen, entziehe ihr zuerst Geräteadministrator und Bedienungshilfe. Eine selbst heruntergeladene Datei löschst du.\n2. Ändere von einem anderen Gerät die Passwörter deiner wichtigen Konten (E-Mail, Bank, Messenger) und aktiviere die Zwei-Faktor-Anmeldung.\n3. Hast du währenddessen Banking- oder Bezahl-Apps benutzt, melde dich bei deiner Bank.\n4. Prüfe danach noch einmal. Befürchtest du gezielte Überwachung, wende dich an eine Beratungsstelle.</string>
     <string name="guide_gap_malware_coverage_meaning">Die Schadsoftware-Liste enthält nur ausgewählte Kampagnen (veröffentlicht von ESET und Meta). Sie ist kein allgemeiner Virenscanner und ersetzt Play Protect nicht.</string>
     <string name="guide_gap_malware_coverage_steps">1. Du musst nichts tun.\n2. Lass Play Protect eingeschaltet und installiere Apps nur aus vertrauenswürdigen Stores.</string>
     <string name="guide_lead_sideloaded_app_meaning">Diese App stammt nicht aus einem App-Store und hat weitreichende Rechte. Das ist nur ein Hinweis, kein Fund: Viele harmlose Apps kommen so aufs Handy.</string>
-    <string name="guide_lead_sideloaded_app_steps">1. Erkennst du die App und hast du sie selbst installiert? Dann ist alles in Ordnung.\n2. Wenn nicht: Öffne die App-Info und prüfe, was sie darf.\n3. Du brauchst sie nicht? Deinstalliere sie. Fühlst du dich überwacht, hol dir vorher Hilfe – das Entfernen kann auffallen.</string>
+    <string name="guide_lead_sideloaded_app_steps">1. Erkennst du die App und hast du sie selbst installiert? Dann ist alles in Ordnung.\n2. Wenn nicht: Öffne „App-Info“ und prüfe, was sie darf.\n3. Du brauchst sie nicht? Deinstalliere sie. Fühlst du dich überwacht, hol dir vorher Hilfe – das Entfernen kann auffallen.</string>
     <string name="guide_lead_app_powers_meaning">Diese App darf den Bildschirm mitlesen oder sich gegen das Löschen wehren. Das brauchen auch seriöse Apps, zum Beispiel Passwortmanager. Es ist ein Hinweis, kein Fund.</string>
-    <string name="guide_lead_app_powers_steps">1. Öffne die Bedienungshilfen und sieh nach, welche Apps dort eingeschaltet sind.\n2. Schalte aus, was du nicht kennst oder nicht brauchst.\n3. Lässt sich eine App nicht ausschalten oder deinstallieren, hol dir Hilfe.</string>
+    <string name="guide_lead_app_powers_steps">1. Öffne in den Einstellungen „Bedienungshilfen“ und sieh nach, welche Apps dort eingeschaltet sind.\n2. Schalte aus, was du nicht kennst oder nicht brauchst.\n3. Lässt sich eine App nicht ausschalten oder deinstallieren, hol dir Hilfe.</string>
     <string name="guide_lead_old_patch_meaning">Dein Handy hat schon lange kein Sicherheitsupdate mehr bekommen. Das ist kein Fund, aber Spionagesoftware nutzt gern bekannte Lücken aus.</string>
     <string name="guide_lead_old_patch_steps">1. Suche in den Einstellungen nach Systemupdates und installiere sie.\n2. Gibt es keine mehr, ist das Handy vom Hersteller aufgegeben. Plane dann ein neueres Gerät ein.</string>
     <string name="guide_lead_debugging_meaning">Eine Entwickler-Funktion ist an, über die ein Computer ohne Entsperren auf dein Handy zugreifen kann. Das ist kein Fund und für Entwickler normal.</string>
-    <string name="guide_lead_debugging_steps">1. Hast du sie nicht selbst eingeschaltet, öffne die Entwickleroptionen und schalte USB- und WLAN-Debugging aus.\n2. Sperre das Handy immer mit PIN und gib es nicht aus der Hand.</string>
+    <string name="guide_lead_debugging_steps">1. Hast du sie nicht selbst eingeschaltet, öffne „Entwickleroptionen“ und schalte „USB-Debugging“ und „Debugging über WLAN“ aus.\n2. Sperre das Handy immer mit PIN und gib es nicht aus der Hand.</string>
     <string name="guide_lead_bootloader_meaning">Der Startschutz deines Handys ist gelockert (entsperrter Bootloader). Das haben Technikfans oft selbst gemacht. Es ist ein Hinweis, kein Fund.</string>
     <string name="guide_lead_bootloader_steps">1. Hast du das selbst eingerichtet, ist alles gut.\n2. Wenn nicht, überlege, wer das Handy zuvor hatte, und frag eine Fachstelle um Rat.\n3. Ein gebrauchtes Handy solltest du neu aufsetzen lassen, wenn du ihm nicht traust.</string>
     <string name="guide_lead_system_build_meaning">Auf deinem Handy läuft eine Test-Version von Android, die weniger geschützt ist. Das ist ein Hinweis, kein Fund.</string>
@@ -391,7 +391,7 @@
     <string name="adb_setup_button">Ohne PC einrichten</string>
     <string name="gap_fix_restart_builtin_adb">Tiefe Prüfung wieder starten</string>
     <string name="adb_setup_hint">Keine zweite App und kein Computer nötig. Spyhound koppelt sich mit dem Debugging über WLAN dieses Telefons. WLAN muss an sein.</string>
-    <string name="adb_state_dev_options">Schalte zuerst die Entwickleroptionen ein (Einstellungen → Über das Telefon → siebenmal auf die Build-Nummer tippen).</string>
+    <string name="adb_state_dev_options">Schalte zuerst die Entwickleroptionen ein (Einstellungen → „Über das Telefon“ → siebenmal auf „Build-Nummer“ tippen).</string>
     <string name="adb_state_wireless">Schalte in den Entwickleroptionen „Debugging über WLAN“ ein.</string>
     <string name="adb_state_waiting">Tippe auf „Gerät über einen Kopplungscode koppeln“ und gib den Code in die Spyhound-Benachrichtigung ein.</string>
     <string name="adb_state_pairing">Kopplung läuft …</string>
@@ -423,7 +423,7 @@
     <string name="adb_wizard_shizuku_section">Alternative: Shizuku</string>
     <string name="adb_wizard_step_done_cd">Schritt erledigt</string>
     <string name="guide_gap_builtin_adb_meaning">Die tiefere Prüfung war diesmal nicht verfügbar. Nach einem Neustart des Telefons ist das Debugging über WLAN ausgeschaltet. Das ist eine Lücke, kein Ergebnis.</string>
-    <string name="guide_gap_builtin_adb_steps">1. Schalte „Debugging über WLAN“ in den Entwickleroptionen wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
+    <string name="guide_gap_builtin_adb_steps">1. Schalte „Debugging über WLAN“ in „Entwickleroptionen“ wieder ein (WLAN muss an sein).\n2. Starte die tiefere Prüfung in Spyhound neu. Einen neuen Code brauchst du nicht.\n3. Prüfe danach noch einmal.</string>
     <string name="harden_title">Handy absichern</string>
     <string name="harden_hint">Eine kurze Liste von Einstellungen, die Angriffe erschweren. Spyhound liest sie nur; ändern kannst du sie in den Systemeinstellungen.</string>
     <string name="harden_open">Öffnen</string>

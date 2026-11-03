@@ -421,7 +421,7 @@ fun AccessLevelBar(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    stringResource(R.string.t_005),
+                    emphasizeLabels(stringResource(R.string.t_005)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.IvoryMuted,
                 )
@@ -439,7 +439,7 @@ fun AccessLevelBar(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    stringResource(R.string.t_005),
+                    emphasizeLabels(stringResource(R.string.t_005)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = SpyColors.IvoryMuted,
                 )

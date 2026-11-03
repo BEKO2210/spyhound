@@ -14,8 +14,8 @@
     <string name="t_010">Set it up once – no PC, no root.</string>
     <string name="t_011">Set up deep check</string>
     <string name="t_012">Install Shizuku. It lets Spyhound check more of your phone.</string>
-    <string name="t_013">Installation failed? Download Shizuku from shizuku.rikka.app. On Samsung, Auto Blocker may\u0020</string>
-    <string name="t_014">block installation. You can turn it off in Security and privacy.</string>
+    <string name="t_013">Installation failed? Download Shizuku from shizuku.rikka.app. On Samsung, “Auto Blocker” may\u0020</string>
+    <string name="t_014">block installation. You can turn it off in “Security and privacy”.</string>
     <string name="t_015">Install Shizuku</string>
     <string name="t_016">Open Settings → “About phone” and tap “Build number” seven times.\u0020</string>
     <string name="t_017">Samsung: “About phone” → “Software information” → “Build number”.</string>
@@ -26,8 +26,8 @@
     <string name="t_022">Enter code in Shizuku notification. Then tap “Start” in Shizuku.</string>
     <string name="t_023">Pairing code rejected? Check that Shizuku notifications are allowed.\u0020</string>
     <string name="t_024">Use split screen to see Settings and notification together.\u0020</string>
-    <string name="t_025">Samsung: turn off Auto Blocker. If Shizuku keeps searching for pairing service, allow it to run in background\u0020</string>
-    <string name="t_026">(Battery: Unrestricted).</string>
+    <string name="t_025">Samsung: turn off “Auto Blocker”. If Shizuku keeps searching for pairing service, allow it to run in background\u0020</string>
+    <string name="t_026">(Battery: “Unrestricted”).</string>
     <string name="t_027">Open Shizuku</string>
     <string name="t_028">Open Developer options</string>
     <string name="t_029">Spyhound needs your permission to use Shizuku. Tap “Allow” when Android asks.</string>
@@ -35,7 +35,7 @@
     <string name="t_031">Allow Spyhound</string>
     <string name="t_032">Have root? Tap “Request root” on the start screen.</string>
     <string name="t_033">Deep check is ready</string>
-    <string name="t_034">You can turn off Wireless debugging afterward. Shizuku keeps running until next restart.</string>
+    <string name="t_034">You can turn off “Wireless debugging” afterward. Shizuku keeps running until next restart.</string>
     <string name="t_035">Scan now</string>
     <string name="t_036">Help ▲</string>
     <string name="t_037">Help</string>
@@ -244,7 +244,7 @@
     <string name="guide_finding_app_mercenary_meaning">An app on your phone matches a trace that researchers found in government-grade spyware. This is serious, but not proof. False matches are rare, but possible.</string>
     <string name="guide_finding_app_mercenary_steps">1. Do not reset your phone or delete anything until an expert has looked at it. Otherwise evidence is lost.\n2. Contact the Access Now Digital Security Helpline (free): help@accessnow.org.\n3. Have private conversations from another device for now.</string>
     <string name="guide_finding_app_stalkerware_meaning">An app on your phone matches a known monitoring app. Such apps can send messages, location and photos to another person. A false match is possible.</string>
-    <string name="guide_finding_app_stalkerware_steps">1. Do not remove the app right away: the person watching you may notice. Get help first, for example from a local helpline for domestic abuse.\n2. Have private conversations from another device that nobody else can access.\n3. Once you are safe: open App info and uninstall the app.</string>
+    <string name="guide_finding_app_stalkerware_steps">1. Do not remove the app right away: the person watching you may notice. Get help first, for example from a local helpline for domestic abuse.\n2. Have private conversations from another device that nobody else can access.\n3. Once you are safe: open “App info” and tap “Uninstall”.</string>
     <string name="guide_finding_file_mercenary_meaning">A file on your phone matches a trace that researchers found in government-grade spyware. This is serious, but not proof.</string>
     <string name="guide_finding_file_mercenary_steps">1. Do not reset your phone or delete anything until an expert has looked at it. Otherwise evidence is lost.\n2. Contact the Access Now Digital Security Helpline (free): help@accessnow.org.\n3. Have private conversations from another device for now.</string>
     <string name="guide_finding_file_stalkerware_meaning">A file on your phone probably belongs to a known monitoring app. Such apps can send messages, location and photos to another person. A false match is possible.</string>
@@ -263,17 +263,17 @@
     <string name="guide_finding_link_stalkerware_steps">1. Do not open the link. Do not remove anything on your own: someone watching you may notice.\n2. If you feel unsafe, get help, for example from a local helpline for domestic abuse.</string>
 
     <string name="guide_finding_malware_meaning">The fingerprint (SHA-256) of an app or file on your phone exactly matches a sample that security researchers (ESET, Meta) published as known malware. Such apps can spy on you, steal logins or take over banking. A match of this kind is exact, but the list only covers a few named campaigns.</string>
-    <string name="guide_finding_malware_steps">1. Uninstall the app: Settings > Apps > the app > Uninstall. If it cannot be removed, first turn off device admin and accessibility access for it. Delete a file you downloaded yourself.\n2. Change the passwords of your important accounts (email, bank, messengers) from another device, and turn on two-factor sign-in.\n3. If you used banking or payment apps while it was installed, contact your bank.\n4. Scan again afterwards. If you fear targeted surveillance, contact a specialist helpline.</string>
+    <string name="guide_finding_malware_steps">1. Uninstall the app: Settings > “Apps” > the app > “Uninstall”. If it cannot be removed, first turn off device admin and accessibility access for it. Delete a file you downloaded yourself.\n2. Change the passwords of your important accounts (email, bank, messengers) from another device, and turn on two-factor sign-in.\n3. If you used banking or payment apps while it was installed, contact your bank.\n4. Scan again afterwards. If you fear targeted surveillance, contact a specialist helpline.</string>
     <string name="guide_gap_malware_coverage_meaning">The malware list only contains selected campaigns (published by ESET and Meta). It is not a general virus scanner and does not replace Play Protect.</string>
     <string name="guide_gap_malware_coverage_steps">1. You do not need to do anything.\n2. Keep Play Protect on and install apps from trusted stores only.</string>
     <string name="guide_lead_sideloaded_app_meaning">This app did not come from an app store and has far-reaching permissions. It is only a hint, not a finding: many harmless apps are installed this way.</string>
-    <string name="guide_lead_sideloaded_app_steps">1. Do you recognise the app and did you install it yourself? Then all is well.\n2. If not, open App info and check what it is allowed to do.\n3. Do not need it? Uninstall it. If you feel watched, get help first: removing it can be noticed.</string>
+    <string name="guide_lead_sideloaded_app_steps">1. Do you recognise the app and did you install it yourself? Then all is well.\n2. If not, open “App info” and check what it is allowed to do.\n3. Do not need it? Uninstall it. If you feel watched, get help first: removing it can be noticed.</string>
     <string name="guide_lead_app_powers_meaning">This app can read your screen or resist being removed. Trusted apps such as password managers need this too. It is a hint, not a finding.</string>
-    <string name="guide_lead_app_powers_steps">1. Open Accessibility settings and see which apps are switched on.\n2. Switch off what you do not know or need.\n3. If an app cannot be switched off or uninstalled, get help.</string>
+    <string name="guide_lead_app_powers_steps">1. Open “Accessibility” in Settings and see which apps are switched on.\n2. Switch off what you do not know or need.\n3. If an app cannot be switched off or uninstalled, get help.</string>
     <string name="guide_lead_old_patch_meaning">Your phone has not had a security update for a long time. This is not a finding, but spyware likes to use known flaws.</string>
     <string name="guide_lead_old_patch_steps">1. Look for system updates in Settings and install them.\n2. If there are none, the maker has dropped support. Plan for a newer phone.</string>
     <string name="guide_lead_debugging_meaning">A developer feature is on that lets a computer reach your phone without unlocking it. This is not a finding and is normal for developers.</string>
-    <string name="guide_lead_debugging_steps">1. If you did not switch it on yourself, open Developer options and turn off USB and wireless debugging.\n2. Always lock your phone with a PIN and keep it with you.</string>
+    <string name="guide_lead_debugging_steps">1. If you did not switch it on yourself, open “Developer options” and turn off “USB debugging” and “Wireless debugging”.\n2. Always lock your phone with a PIN and keep it with you.</string>
     <string name="guide_lead_bootloader_meaning">The start-up protection of your phone is loosened (unlocked bootloader). Tech fans often do this themselves. It is a hint, not a finding.</string>
     <string name="guide_lead_bootloader_steps">1. If you set this up yourself, all is well.\n2. If not, think about who had the phone before and ask an expert for advice.\n3. If you do not trust a second-hand phone, have it set up again.</string>
     <string name="guide_lead_system_build_meaning">Your phone runs a test version of Android that is less protected. It is a hint, not a finding.</string>
@@ -391,7 +391,7 @@
     <string name="adb_setup_button">Set up without a PC</string>
     <string name="gap_fix_restart_builtin_adb">Restart deep check</string>
     <string name="adb_setup_hint">No second app and no computer needed. Spyhound pairs with this phone’s own wireless debugging. Wi-Fi must be on.</string>
-    <string name="adb_state_dev_options">Turn on developer options first (Settings → About phone → tap the build number seven times).</string>
+    <string name="adb_state_dev_options">Turn on developer options first (Settings → “About phone” → tap “Build number” seven times).</string>
     <string name="adb_state_wireless">Turn on “Wireless debugging” in the developer options.</string>
     <string name="adb_state_waiting">Tap “Pair device with pairing code” and type the code into the Spyhound notification.</string>
     <string name="adb_state_pairing">Pairing …</string>
@@ -423,7 +423,7 @@
     <string name="adb_wizard_shizuku_section">Alternative: Shizuku</string>
     <string name="adb_wizard_step_done_cd">Step completed</string>
     <string name="guide_gap_builtin_adb_meaning">The deeper check was not available this time. After a restart of the phone, wireless debugging is switched off. This is a gap, not a result.</string>
-    <string name="guide_gap_builtin_adb_steps">1. Turn “Wireless debugging” back on in the developer options (Wi-Fi must be on).\n2. Restart the deeper check in Spyhound. No new code is needed.\n3. Scan again afterwards.</string>
+    <string name="guide_gap_builtin_adb_steps">1. Turn “Wireless debugging” back on in “Developer options” (Wi-Fi must be on).\n2. Restart the deeper check in Spyhound. No new code is needed.\n3. Scan again afterwards.</string>
     <string name="harden_title">Secure your phone</string>
     <string name="harden_hint">A short checklist of phone settings that make it harder to attack. Spyhound only reads them; you change them in the system settings.</string>
     <string name="harden_open">Open</string>
