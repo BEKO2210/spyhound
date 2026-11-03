@@ -83,10 +83,18 @@ class IocSet(indicators: Iterable<Indicator>) {
                 IocType.DOMAIN -> v.lowercase().trimEnd('.').removePrefix("*.").takeIf { '.' in it }
                 IocType.SHA256 -> v.lowercase().takeIf { SHA256.matches(it) }
                 IocType.APP_CERT -> v.replace(":", "").lowercase().takeIf { SHA1.matches(it) || SHA256.matches(it) }
-                IocType.IP, IocType.EMAIL, IocType.URL -> v.lowercase()
+                IocType.IP, IocType.EMAIL -> v.lowercase()
+                IocType.URL -> normaliseUrl(v)
                 IocType.FILE_PATH -> v.trimEnd('/').ifEmpty { "/" } // directory indicators carry a trailing slash
                 else -> v
             }
+        }
+
+        /** Lowercases scheme and host of a URL while keeping path, query and fragment case intact. */
+        fun normaliseUrl(raw: String): String {
+            val schemeEnd = raw.indexOf("://").let { if (it >= 0) it + 3 else 0 }
+            val hostEnd = raw.indexOfAny(charArrayOf('/', '?', '#'), schemeEnd).let { if (it >= 0) it else raw.length }
+            return raw.substring(0, hostEnd).lowercase() + raw.substring(hostEnd)
         }
 
         private val SHA256 = Regex("[0-9a-f]{64}")

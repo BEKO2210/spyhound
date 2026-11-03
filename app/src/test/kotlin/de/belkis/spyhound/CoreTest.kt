@@ -153,4 +153,34 @@ class CoreTest {
         val onlyDeclared = ShellAnalyzer.logs(mapOf("dumpsys package" to dump.lines().first()), iocs)
         assertEquals(0, onlyDeclared.findings.size)
     }
+
+    @Test fun urlCaseFoldingKeepsPathAndQueryCase() {
+        val urlIocs = IocSet(
+            listOf(
+                de.belkis.spyhound.ioc.Indicator("HTTPS://Example.ORG/AbC", IocType.URL, Category.MERCENARY, "TestSpy", "test"),
+                de.belkis.spyhound.ioc.Indicator("https://example.org/p?Key=Val", IocType.URL, Category.MERCENARY, "TestSpy", "test"),
+                de.belkis.spyhound.ioc.Indicator("evil.example", IocType.DOMAIN, Category.MERCENARY, "TestSpy", "test"),
+            ),
+        )
+        assertEquals("https://example.org/AbC?Key=Val", IocSet.normalise(IocType.URL, "HTTPS://Example.ORG/AbC?Key=Val"))
+        assertNull(urlIocs.lookup(IocType.URL, "https://example.org/abc"))
+        assertNull(urlIocs.lookup(IocType.URL, "https://example.org/p?key=val"))
+        assertEquals("TestSpy", urlIocs.lookup(IocType.URL, "https://EXAMPLE.org/AbC")?.family)
+        assertEquals("TestSpy", urlIocs.lookup(IocType.URL, "https://EXAMPLE.org/p?Key=Val")?.family)
+
+        val benignSms = MessageAnalyzer.analyze(
+            listOf(Message("+49", 0, "See https://example.org/abc and https://example.org/p?key=val")),
+            urlIocs,
+        )
+        assertEquals(0, benignSms.findings.size)
+
+        val matchingSms = MessageAnalyzer.analyze(
+            listOf(Message("+49", 0, "See HTTPS://EXAMPLE.ORG/AbC and HTTPS://EXAMPLE.ORG/p?Key=Val")),
+            urlIocs,
+        )
+        assertEquals(2, matchingSms.findings.size)
+
+        val domainSms = MessageAnalyzer.analyze(listOf(Message("+49", 0, "See https://EVIL.EXAMPLE/abc")), urlIocs)
+        assertEquals(1, domainSms.findings.size)
+    }
 }

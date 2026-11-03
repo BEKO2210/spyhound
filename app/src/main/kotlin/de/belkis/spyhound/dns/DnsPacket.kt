@@ -92,6 +92,7 @@ object DnsPacket {
         var jumped = false
         val visited = HashSet<Int>()
         var steps = 0
+        var wireBytes = 0
         var terminated = false
         while (off < message.size) {
             if (++steps > message.size + 8) return null
@@ -99,6 +100,7 @@ object DnsPacket {
             when {
                 len == 0 -> {
                     off++
+                    if (++wireBytes > 255) return null
                     if (!jumped) endOffset = off
                     terminated = true
                     break
@@ -119,6 +121,8 @@ object DnsPacket {
                 else -> {
                     off++
                     if (off + len > message.size) return null
+                    wireBytes += 1 + len
+                    if (wireBytes > 255 || !isValidLabel(message, off, len)) return null
                     labels += String(message, off, len, Charsets.US_ASCII)
                     off += len
                 }
@@ -126,6 +130,17 @@ object DnsPacket {
         }
         if (!terminated || labels.isEmpty()) return null // a name cut off before its end is no name
         return labels.joinToString(".") to endOffset
+    }
+
+    private fun isValidLabel(message: ByteArray, offset: Int, len: Int): Boolean {
+        if (len !in 1..63) return false
+        if (message[offset] == '-'.code.toByte() || message[offset + len - 1] == '-'.code.toByte()) return false
+        for (i in offset until offset + len) {
+            val b = message[i].toInt() and 0xff
+            val ok = b in 'a'.code..'z'.code || b in 'A'.code..'Z'.code || b in '0'.code..'9'.code || b == '-'.code
+            if (!ok) return false
+        }
+        return true
     }
 
     // --- builders for tests ---

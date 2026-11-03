@@ -115,6 +115,50 @@ class DnsPacketTest {
         assertTrue(fakeAnswer.contentEquals(reply.payload))
     }
 
+    @Test
+    fun rejectsDotInLabelInvalidHostnameBytesAndOverlongNames() {
+        fun rawQueryWithWireName(wireName: ByteArray): ByteArray {
+            val out = ByteArray(12 + wireName.size + 4)
+            writeU16(out, 0, 0x1234)
+            writeU16(out, 2, 0x0100)
+            writeU16(out, 4, 1)
+            wireName.copyInto(out, 12)
+            writeU16(out, 12 + wireName.size, 1)
+            writeU16(out, 12 + wireName.size + 2, 1)
+            return out
+        }
+
+        // Single label containing a dot ("evil.example" as one 12-byte label) must not become "evil.example".
+        val singleLabelWithDot = byteArrayOf(12) + "evil.example".toByteArray(Charsets.US_ASCII) + byteArrayOf(0)
+        val dotQuery = rawQueryWithWireName(singleLabelWithDot)
+        assertNull(DnsPacket.questionNames(dotQuery))
+        val spyware = de.belkis.spyhound.ioc.IocSet(
+            listOf(de.belkis.spyhound.ioc.Indicator("evil.example", de.belkis.spyhound.ioc.IocType.DOMAIN, de.belkis.spyhound.ioc.Category.MERCENARY, "Spy", "t")),
+        )
+        val verdict = de.belkis.spyhound.dns.DnsFilter.evaluate(
+            DnsPacket.questionNames(dotQuery).orEmpty(),
+            spyware,
+            de.belkis.spyhound.ioc.DomainLists.EMPTY,
+            de.belkis.spyhound.dns.DnsFilterSettings(),
+        )
+        assertTrue(verdict.matches.isEmpty() && !verdict.block)
+
+        // Labels with bytes outside valid hostname characters must be rejected.
+        for (badLabel in listOf("evil/example", "evil example", "evil\u0000x", "-evil", "evil-", "evil\u0080")) {
+            val bytes = badLabel.toByteArray(Charsets.ISO_8859_1)
+            val wire = byteArrayOf(bytes.size.toByte()) + bytes + byteArrayOf(2, 'i'.code.toByte(), 'o'.code.toByte(), 0)
+            assertNull(DnsPacket.questionNames(rawQueryWithWireName(wire)), "expected null for label $badLabel")
+        }
+
+        // 255-byte total wire name length (253 dotted chars) is the maximum valid DNS name; 256+ bytes must be rejected.
+        val label63 = "a".repeat(63)
+        val maxValid = "$label63.$label63.$label63.${"b".repeat(61)}" // 64*3 + 62 + 1 = 255 wire bytes
+        assertEquals(listOf(maxValid), DnsPacket.questionNames(DnsPacket.buildDnsQuery(maxValid)))
+
+        val tooLong256 = "$label63.$label63.$label63.${"b".repeat(62)}" // 64*3 + 63 + 1 = 256 wire bytes
+        assertNull(DnsPacket.questionNames(DnsPacket.buildDnsQuery(tooLong256)))
+    }
+
     private fun writeU16(buf: ByteArray, offset: Int, value: Int) {
         buf[offset] = (value shr 8).toByte()
         buf[offset + 1] = (value and 0xff).toByte()
