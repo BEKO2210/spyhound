@@ -158,7 +158,7 @@ class ReviewFixesTest {
     // 8: file names and atomic replacement
 
     private fun feed(id: String, path: String) =
-        """[{"id":"$id","name":"n","repo":"AmnestyTech/investigations","commit":"c","path":"$path","format":"stix2","cite":"","category":"mercenary","family":"f","sha256":"$sha"}]"""
+        """[{"id":"$id","name":"n","repo":"AmnestyTech/investigations","commit":"${"a".repeat(40)}","path":"$path","format":"stix2","cite":"","category":"mercenary","family":"f","sha256":"$sha"}]"""
 
     @Test fun sourceFileNamesCannotLeaveTheFolder() {
         assertEquals("ok-1.stix2", FeedCatalog.parse(feed("ok-1", "a/b.stix2")).single().fileName)
