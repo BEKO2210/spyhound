@@ -5,9 +5,9 @@ Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
-1. **Release 0.3.6** – Galaxy-Korrekturen, Benachrichtigung, Tablet-Kopf, „Wer darf was“ (~2 s statt ~12 s);
-   offen nur noch: Kopplungs-Benachrichtigung auf dem Pixel prüfen.
-2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+1. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+
+## Release 0.3.6 (2026-11-03) – „Wer darf was“ ~2 s statt ~12 s mit Fortschritt und „Genauer ansehen“, ruhigere Kopplungs-Benachrichtigung, Samsung-Korrekturen (Updater, Einstellungsnamen, Akku), Kopfzeile in einer Reihe, Quellen in „Über“ zugeklappt. verify-reproducible: 464 Dateien gleich. Pixel 11: Test-Build als Update über 0.3.5, Kopplung blieb, tiefe Prüfung 42 s ohne Absturz; 0.3.6 installiert und startet. Offen: Flacker-Test der Benachrichtigung nach Neukopplung (Unit-Tests grün), Release auf Belkis' Go.
 
 ## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
 - [x] „Wer darf was“ zeigte ~12 s nur „Apps werden gelesen …“. Ursache: hashte jede APK (GB). Behoben in a1751f2: ohne
@@ -249,6 +249,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Nie `am start` oder `install` auf einem Gerät, dessen Vordergrund eine andere App ist: Das holt Spyhound mitten in seine Arbeit (Pixel, Chrome im Vordergrund, 2026-11-03). Erst Fokus prüfen, sonst warten.
 - Bezeichnungen von Einstellungen nie aus dem Gedächtnis schreiben: aus den Ressourcen der Settings-APK des Geräts lesen (`aapt2 dump resources`, Sprache `(de)`). „WLAN-Debugging“ stand monatelang falsch in der App (2026-11-02).
 - Benachrichtigungsleiste nie abfotografieren: Sie zeigt fremde Inhalte. Nur per uiautomator lesen (2026-11-02).
 - Fokus-Prüfung und Aktion nie in einem Befehl verketten, wenn die Aktion selbst die App wechselt: Erst prüfen, Ergebnis lesen, dann handeln. Sonst landet ein App-Start über der App, in der Belkis gerade schreibt (2026-11-02).
