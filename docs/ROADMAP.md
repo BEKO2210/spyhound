@@ -31,15 +31,19 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       (jetzt 96 MiB), Zeilen > 1 MiB still gekürzt (jetzt Lücke). Beleg: 4 neue BugreportTest-Fälle.
 - [x] Englische Analyse-Texte: 3 blieben teils deutsch (Fremdinstallation/„Darf:“, „Diese Apps dürfen …“, WLAN-
       Debugging). TextsEnCoverageTest treibt die echten Analyzer (169 Texte) und schlägt bei Deutsch fehl.
-- [ ] STIX: `AND`-Ausdrücke werden zu Einzel-Indikatoren, widerrufene Indikatoren zählen (Parsers.kt:56). Abnahme:
+- [x] STIX: `AND`-Ausdrücke werden zu Einzel-Indikatoren, widerrufene Indikatoren zählen (Parsers.kt:56). Abnahme:
       Test mit `domain AND hash` → kein Domain-Treffer allein; `revoked: true` → ignoriert.
-- [ ] MISP-CSV: mehrzeilige Kommentare in Anführungszeichen werden zeilenweise als Indikator gelesen (Parsers.kt:185).
-- [ ] Kuratierte Toolkit-Listen werden ohne SHA-256 und ohne KnownGood-Ablehnung geladen (IocStore.kt:64).
-- [ ] Katalog: `commit` muss 40-stelliger Hex-Wert sein (sonst wäre ein Branch-Name möglich).
-- [ ] Parser-Speicher: Felder/Zeilen vor dem Anlegen begrenzen (CSV mit Millionen Kommas).
-- [ ] Fehlerbericht-Import ohne Zeitlimit (hängende Content-Provider-Pipe).
-- [ ] DNS-Wächter: unbegrenzte Arbeitswarteschlange (DnsGuardService.kt:104); DnsHitStore-Schreibkonflikt bei
+- [x] MISP-CSV: mehrzeilige Kommentare in Anführungszeichen werden zeilenweise als Indikator gelesen (Parsers.kt:185).
+- [x] Kuratierte Toolkit-Listen werden ohne SHA-256 und ohne KnownGood-Ablehnung geladen (IocStore.kt:64).
+- [x] Katalog: `commit` muss 40-stelliger Hex-Wert sein (sonst wäre ein Branch-Name möglich).
+- [x] Parser-Speicher: Felder/Zeilen vor dem Anlegen begrenzen (CSV mit Millionen Kommas).
+- [x] Fehlerbericht-Import ohne Zeitlimit (hängende Content-Provider-Pipe).
+- [x] DNS-Wächter: unbegrenzte Arbeitswarteschlange (DnsGuardService.kt:104); DnsHitStore-Schreibkonflikt bei
       gleichzeitigen Treffern (DnsHitStore.kt:31).
+      Beleg zu den sieben Punkten oben: IocHardeningTest (9 Fälle, vorher rot; 8.296 mitgelieferte Indikatoren je Quelle
+      unverändert gepinnt), Robustness2Test (Warteschlange 256, 60 gleichzeitige Treffer, Stillstand > 60 s statt
+      Gesamtlimit, damit große Berichte nicht als „unlesbar“ enden). Quellenzahl bleibt 44 (kuratierte Listen gehören
+      zum Toolkit). Gerätetest offen.
 - [x] DNS-Wächter leitet nicht blockierte Anfragen an das Netz weiter (notfalls Quad9/Cloudflare): gewollt und in
       LEGAL.md 2.4 DE/EN genau so beschrieben (Code DnsGuardService.FALLBACK_DNS stimmt überein); SPEC nennt die Ausnahme.
 
