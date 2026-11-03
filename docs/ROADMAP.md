@@ -44,8 +44,8 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 
 ## Ergebnis auf kleinen Handys (2026-11-03)
 - [~] Zusammenfassung scrollt als erstes Listenelement mit; Kopfbereich blendet leicht aus, Fußbuttons bleiben fest.
-      Tablet unverändert. Abnahme offen: Tests, aktualisierte Ergebnisbilder DE/EN samt Sichtprüfung und Debug-Build.
-      Lokaler Prüflauf vor Build-Start durch gesperrte Sockets blockiert (`Operation not permitted`).
+      Tablet unverändert. Unit-Tests + verifyRoborazzi grün, 4 Ergebnisbilder (DE/EN, Fund/Hinweis) neu, nichts abgeschnitten
+      (ea9ef8d). Signiert aufs Pixel 11 installiert. Abnahme: Belkis prüft echtes Ergebnis auf dem Handy.
 
 ## Release 0.3.9–0.3.11 (2026-11-03) – 0.3.9/0.3.10 nur Build-Fixes für F-Droid (verification-metadata für leeren Gradle-Home, kein „Dependency metadata“-Signaturblock); F-Droid-Pipeline 0.3.10 grün, „compared built binary to supplied reference binary successfully“. 0.3.11: Startbildschirm passt auf kleine/gezoomte Handys (Radar skaliert mit Höhe, < 700 dp scrollt alles, beim Scrollen schrumpft Radar auf 55 % und Statusleiste auf Icons, fingergeführt), 3 ungenutzte Rechte aus libadb entfernt, LEGAL/App-Text nennen jede Netzwerknutzung. Belkis auf Samsung-Handy mit Anzeigezoom: „läuft super“. Reproduzierbar (466) + apksigcopier lokal bestanden.
 
