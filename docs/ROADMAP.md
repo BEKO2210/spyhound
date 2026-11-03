@@ -333,6 +333,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- F-Droid-Probe vor jedem Antrag lokal: frischer Klon des Tags, leerer Gradle-Home (`-g`), ohne gradle-wrapper.jar und ohne Schlüssel bauen, dann `apksigcopier compare`. Ein warmer Cache verdeckt fehlende Einträge in verification-metadata.xml (0.3.9).
+- AGP legt standardmäßig einen verschlüsselten „Dependency metadata“-Block in die Signatur; F-Droids Scanner lehnt ihn ab → `dependenciesInfo { includeInApk = false }` (0.3.10).
 - uiautomator meldet Elemente unter fest stehenden Leisten mit abgeschnittenen Grenzen: eine „zu kleine“ Fläche erst prüfen, ob sie am Rand klebt. Und Knöpfe nie nur über ihren Text suchen („Öffnen“ gibt es mehrfach; einmal öffnete das die Entwickleroptionen).
 - Ein Meilenstein (z. B. 1.0) beendet die Roadmap nie; er ist ein Abnahmepunkt, danach wächst sie weiter (Belkis, 2026-11-03).
 - Xiaomis bigota-CDN lieferte hier 35 KB/s, derselbe Pfad im Xiaomi-Bucket `bkt-sgp-miui-ota-update-alisgp` 14 MB/s. Vor großen Downloads Tempo beider Hosts messen.
