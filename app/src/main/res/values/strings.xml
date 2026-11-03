@@ -473,7 +473,7 @@
     <string name="audit_app_info_for">App info for %1$s</string>
     <string name="audit_new_desc">%1$s, new since the last check</string>
     <string name="audit_look_title">Worth a look</string>
-    <string name="audit_look_body">These apps hold a mix of rights that is rare for normal apps. That is a hint, not a verdict: you may know and want them.</string>
+    <string name="audit_look_body">These apps hold a mix of rights that spying apps also use. Smartwatch, car and accessibility apps often need it for normal reasons. A hint, not a verdict: just check that you know the app.</string>
     <string name="audit_look_none">No unusual combinations of rights found.</string>
     <string name="audit_look_accessibility_data">Can read your screen and also your messages, calls, location or sound.</string>
     <string name="audit_look_notification_data">Can read your notifications and also your messages, calls, location or sound.</string>

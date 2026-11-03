@@ -480,7 +480,7 @@
     <string name="audit_app_info_for">App-Info für %1$s</string>
     <string name="audit_new_desc">%1$s, neu seit der letzten Prüfung</string>
     <string name="audit_look_title">Genauer ansehen</string>
-    <string name="audit_look_body">Diese Apps haben eine Mischung an Rechten, die bei normalen Apps selten ist. Das ist ein Hinweis, kein Urteil: Vielleicht kennst und willst du sie.</string>
+    <string name="audit_look_body">Diese Apps haben eine Mischung an Rechten, die auch Spionage-Apps nutzen. Smartwatch-, Auto- und Bedienhilfe-Apps brauchen sie oft ganz normal. Ein Hinweis, kein Urteil: Prüf nur, ob du die App kennst.</string>
     <string name="audit_look_none">Keine ungewöhnlichen Rechte-Kombinationen gefunden.</string>
     <string name="audit_look_accessibility_data">Kann deinen Bildschirm lesen und auch Nachrichten, Anrufe, Standort oder Ton.</string>
     <string name="audit_look_notification_data">Kann deine Benachrichtigungen lesen und auch Nachrichten, Anrufe, Standort oder Ton.</string>

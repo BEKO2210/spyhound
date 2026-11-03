@@ -196,13 +196,19 @@ private fun LookRule.reasonRes() = when (this) {
     LookRule.OVERLAY_PLUS_ACCESSIBILITY -> R.string.audit_look_overlay_accessibility
 }
 
+/** Left edge of the header text next to the 40 dp icon; rows, dividers and notes below line up with it. */
+private val TextRail = 40.dp + 14.dp
+
+/** Moves the title line down so its middle meets the middle of the 40 dp icon. */
+private val TitleInset = 10.dp
+
 /** Calm top section: apps whose mix of rights deserves a closer look (a hint, amber, never an alarm). */
 @Composable
 private fun LookCloserSection(flagged: List<LookCloserApp>, onAppInfo: (String) -> Unit, modifier: Modifier = Modifier) {
     SpyCard(modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.Top) {
             CardRowIconBadge(iconRes = R.drawable.ic_right_audit, active = false)
-            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp, top = TitleInset)) {
                 Text(stringResource(R.string.audit_look_title), style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
                 Text(
                     stringResource(if (flagged.isEmpty()) R.string.audit_look_none else R.string.audit_look_body),
@@ -212,7 +218,7 @@ private fun LookCloserSection(flagged: List<LookCloserApp>, onAppInfo: (String) 
             }
         }
         flagged.forEach { f ->
-            HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            HorizontalDivider(Modifier.padding(start = TextRail), color = SpyColors.Border, thickness = 1.dp)
             AppRow(f.app, onAppInfo, reasons = f.rules.map { stringResource(it.reasonRes()) })
         }
     }
@@ -268,13 +274,13 @@ private fun GroupCard(group: AuditGroup, showSystem: Boolean, onAppInfo: (String
     val system = if (showSystem) group.systemApps else emptyList()
     val newCount = visible.count { it.isNew }
     SpyCard(modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.Top) {
             CardRowIconBadge(iconRes = group.group.iconRes(), active = false)
-            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp, top = TitleInset)) {
                 Text(stringResource(group.group.titleRes()), style = MaterialTheme.typography.labelLarge, color = SpyColors.Ivory)
                 Text(stringResource(group.group.bodyRes()), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
             }
-            Column(horizontalAlignment = Alignment.End) {
+            Column(Modifier.padding(top = TitleInset), horizontalAlignment = Alignment.End) {
                 Text(
                     if (visible.size == 1) stringResource(R.string.audit_count_one)
                     else stringResource(R.string.audit_count, formatCount(visible.size, locale)),
@@ -291,21 +297,27 @@ private fun GroupCard(group: AuditGroup, showSystem: Boolean, onAppInfo: (String
             }
         }
         if (visible.isEmpty()) {
-            Text(stringResource(R.string.audit_none), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Clear)
+            Text(
+                stringResource(R.string.audit_none),
+                style = MaterialTheme.typography.bodyMedium,
+                color = SpyColors.Clear,
+                modifier = Modifier.padding(start = TextRail),
+            )
         }
         users.forEach { app ->
-            HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            HorizontalDivider(Modifier.padding(start = TextRail), color = SpyColors.Border, thickness = 1.dp)
             AppRow(app, onAppInfo)
         }
         if (system.isNotEmpty()) {
-            HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+            HorizontalDivider(Modifier.padding(start = TextRail), color = SpyColors.Border, thickness = 1.dp)
             Text(
                 stringResource(R.string.audit_system_label).uppercase(),
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 12.sp),
                 color = SpyColors.IvoryMuted,
+                modifier = Modifier.padding(start = TextRail),
             )
             system.forEach { app ->
-                HorizontalDivider(color = SpyColors.Border, thickness = 1.dp)
+                HorizontalDivider(Modifier.padding(start = TextRail), color = SpyColors.Border, thickness = 1.dp)
                 AppRow(app, onAppInfo)
             }
         }
@@ -317,23 +329,25 @@ private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit, reasons: List<Str
     val infoLabel = stringResource(R.string.audit_app_info)
     val infoDesc = stringResource(R.string.audit_app_info_for, app.label)
     val newDesc = stringResource(R.string.audit_new_desc, app.label)
+    // Name, badge and "App info" share the first line; everything below hangs from it.
     Row(
         Modifier
             .fillMaxWidth()
+            .padding(start = TextRail)
             .defaultMinSize(minHeight = 48.dp)
             .semantics { if (app.isNew) contentDescription = newDesc },
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         Column(Modifier.weight(1f).widthIn(min = 0.dp).padding(end = 8.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     app.label,
                     style = MaterialTheme.typography.labelLarge,
                     color = SpyColors.Ivory,
                     maxLines = 2,
-                    modifier = Modifier.weight(1f, fill = false),
+                    modifier = Modifier.weight(1f, fill = false).alignByBaseline(),
                 )
-                if (app.isNew) NewBadge()
+                if (app.isNew) NewBadge(Modifier.alignByBaseline())
             }
             Text(
                 app.packageName,
@@ -345,28 +359,26 @@ private fun AppRow(app: AuditApp, onAppInfo: (String) -> Unit, reasons: List<Str
                 Text(it, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Amber)
             }
         }
-        Text(
-            infoLabel,
-            style = MaterialTheme.typography.labelLarge,
-            color = SpyColors.Amber,
-            maxLines = 1,
-            modifier = Modifier
+        Box(
+            Modifier
                 .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = { onAppInfo(app.packageName) },
                 )
-                .semantics { contentDescription = infoDesc }
-                .padding(vertical = 14.dp),
-        )
+                .semantics { contentDescription = infoDesc },
+            contentAlignment = Alignment.TopEnd,
+        ) {
+            Text(infoLabel, style = MaterialTheme.typography.labelLarge, color = SpyColors.Amber, maxLines = 1)
+        }
     }
 }
 
 @Composable
-private fun NewBadge() {
+private fun NewBadge(modifier: Modifier = Modifier) {
     val shape = RoundedCornerShape(50)
-    Box(Modifier.border(1.dp, SpyColors.Amber, shape).padding(horizontal = 8.dp, vertical = 2.dp)) {
+    Box(modifier.border(1.dp, SpyColors.Amber, shape).padding(horizontal = 8.dp, vertical = 2.dp)) {
         Text(
             stringResource(R.string.audit_new_badge),
             style = MaterialTheme.typography.labelLarge.copy(fontSize = 12.sp),
@@ -389,9 +401,9 @@ fun PermissionAuditEntryCard(onOpen: () -> Unit, modifier: Modifier = Modifier) 
             )
             .semantics { contentDescription = title },
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.Top) {
             CardRowIconBadge(iconRes = R.drawable.ic_right_audit, active = false)
-            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
+            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp, top = TitleInset)) {
                 Text(title.uppercase(), style = SpyTypographyExtras.sectionLabel)
                 Spacer(Modifier.height(SpySpacing.Unit))
                 Text(stringResource(R.string.audit_entry_body), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
@@ -401,6 +413,7 @@ fun PermissionAuditEntryCard(onOpen: () -> Unit, modifier: Modifier = Modifier) 
                 style = MaterialTheme.typography.labelLarge,
                 color = SpyColors.Amber,
                 maxLines = 1,
+                modifier = Modifier.padding(top = TitleInset),
             )
         }
     }
