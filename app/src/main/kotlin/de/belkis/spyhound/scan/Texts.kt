@@ -148,10 +148,14 @@ object TextsEn : Texts {
             "This app file matches a published spyware sample${m.groupValues[1]}." },
         Regex("^Die App ist mit einem Zertifikat signiert, das Forscher einer Spyware zuordnen(.*)\\.$") to { m: MatchResult ->
             "This app is signed with a certificate linked to spyware by researchers${m.groupValues[1]}." },
-        Regex("^Nicht aus einem App-Store installiert \\(Installiert von: (.*)\\)(.*)$") to { m: MatchResult ->
+        Regex("^Nicht aus einem App-Store installiert \\(Installiert von: (.*?)\\)(?:\\. Darf: (.*?))?(\\. Hat kein Symbol im App-Menü)?$") to { m: MatchResult ->
             "Installed outside an app store (installer: ${text(m.groupValues[1])})" +
-                m.groupValues[2].replace(". Darf: ", ". Can: ").replace(". Hat kein Symbol im App-Menü", ". No launcher icon")
-                    .split(", ").joinToString(", ") { text(it) } },
+                (if (m.groupValues[2].isEmpty()) "" else ". Can: " + m.groupValues[2].split(", ").joinToString(", ") { text(it) }) +
+                (if (m.groupValues[3].isEmpty()) "" else ". No launcher icon") },
+        Regex("^Debugging über WLAN ist eingeschaltet\\.( \\(wird für Shizuku gebraucht\\))?$") to { m: MatchResult ->
+            "Wireless debugging is on" + (if (m.groupValues[1].isEmpty()) "." else " (needed for Shizuku).") },
+        Regex("^Diese Apps dürfen andere Apps installieren: (.*)$") to { m: MatchResult ->
+            "These apps can install other apps: ${m.groupValues[1]}" },
         Regex("^Hat (.*)\\.$") to { m: MatchResult ->
             "Has " + m.groupValues[1].split(" und ").joinToString(" and ") { text(it) } + "." },
         Regex("^Die Nachricht enthält einen Link zu (.*), einer Adresse, die Forscher einer Spyware zuordnen\\. Wurde der Link geöffnet, kann das Gerät infiziert worden sein\\.$") to { m: MatchResult ->
@@ -224,7 +228,6 @@ object TextsEn : Texts {
             .replace("die IP-Adresse ", "IP address ")
             .replace("Root-Werkzeugen: ", "root tools: ")
             .replace("Spuren von ", "Traces of ")
-            .replace("Diese Apps dürfen andere Apps installieren: ", "These apps can install other apps: ")
             .replace(" (wird für Shizuku gebraucht)", " (needed for Shizuku)")
             .replace("Verified Boot meldet „", "Verified Boot reports “")
             .replace("“. ", "”. ")
