@@ -23,6 +23,26 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       LicenceAssetsTest hält die Kopien in assets/licenses gleich mit LICENSE/NOTICE im Repo. Beleg: info_licences_*.png.
 - [x] Grenze „findet nur bekannte Spuren“ steht im Onboarding, im Ergebnis („Keine Spuren“, nie „sauber“) und als Lücke.
 
+## Sicherheits-Review 2026-11-03 (ioc/, bugreport/, dns/; 14 Befunde, jeder vor dem Fix selbst am Code geprüft)
+- [x] Falschtreffer: URL-Pfad wurde kleingeschrieben (/AbC traf /abc) und ein DNS-Label „evil.example“ (ein Label mit
+      Punkt) traf evil.example. Jetzt nur Schema+Host klein, Labels nur [A-Za-z0-9-], Name ≤ 255 Byte. Beleg: CoreTest,
+      DnsPacketTest (beide vor dem Fix rot), Merge 2026-11-03.
+- [x] Fehlerbericht-ZIP: abgelehnter Eintrag umging das Byte-Budget, viele Log-/dumpsys-Abschnitte ohne Gesamtgrenze
+      (jetzt 96 MiB), Zeilen > 1 MiB still gekürzt (jetzt Lücke). Beleg: 4 neue BugreportTest-Fälle.
+- [x] Englische Analyse-Texte: 3 blieben teils deutsch (Fremdinstallation/„Darf:“, „Diese Apps dürfen …“, WLAN-
+      Debugging). TextsEnCoverageTest treibt die echten Analyzer (169 Texte) und schlägt bei Deutsch fehl.
+- [ ] STIX: `AND`-Ausdrücke werden zu Einzel-Indikatoren, widerrufene Indikatoren zählen (Parsers.kt:56). Abnahme:
+      Test mit `domain AND hash` → kein Domain-Treffer allein; `revoked: true` → ignoriert.
+- [ ] MISP-CSV: mehrzeilige Kommentare in Anführungszeichen werden zeilenweise als Indikator gelesen (Parsers.kt:185).
+- [ ] Kuratierte Toolkit-Listen werden ohne SHA-256 und ohne KnownGood-Ablehnung geladen (IocStore.kt:64).
+- [ ] Katalog: `commit` muss 40-stelliger Hex-Wert sein (sonst wäre ein Branch-Name möglich).
+- [ ] Parser-Speicher: Felder/Zeilen vor dem Anlegen begrenzen (CSV mit Millionen Kommas).
+- [ ] Fehlerbericht-Import ohne Zeitlimit (hängende Content-Provider-Pipe).
+- [ ] DNS-Wächter: unbegrenzte Arbeitswarteschlange (DnsGuardService.kt:104); DnsHitStore-Schreibkonflikt bei
+      gleichzeitigen Treffern (DnsHitStore.kt:31).
+- [ ] DNS-Wächter leitet nicht blockierte Anfragen an das Netz (notfalls öffentliche Resolver) weiter: gewollt, aber
+      prüfen, dass LEGAL.md/App-Text das so offen sagen. Abnahme: Satz in LEGAL.md DE/EN + Info-Text belegt.
+
 ## Galaxy-Test (2026-11-02, Tab S9 Ultra, One UI 8 / Android 16, X910XXS6EZI2)
 - [x] Alle 8 Knöpfe der Anleitungen lösen auf die richtige One-UI-Seite auf (`scripts/check-settings-intents.sh`, 812537e).
 - [x] Eingebaute Kopplung ohne PC: Code in die Benachrichtigung, „Spyhound – Derzeit verbunden“; tiefe Prüfung „Tief“
