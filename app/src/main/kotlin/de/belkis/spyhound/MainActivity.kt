@@ -37,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -193,8 +194,10 @@ class MainActivity : AppCompatActivity() {
                 val setupSnapshot = screenshotKey?.let { debugDeepCheckSnapshot(it) } ?: state.deepCheckSnapshot()
                 LaunchedEffect(Unit) { vm.refreshDnsGuard() }
                 Box(Modifier.fillMaxSize()) {
+                    val overlayOpen = showIntro || showInfo || showAudit || showDeepCheckSetup
                     SpyhoundScaffold(maxContentWidth = SpySpacing.TwoColumnMaxWidth) {
-                        Box(Modifier.fillMaxSize()) {
+                        // Under an open page the main screen stays composed; screen readers must not reach it there.
+                        Box(Modifier.fillMaxSize().then(if (overlayOpen) Modifier.clearAndSetSemantics {} else Modifier)) {
                             SpyhoundNav(
                                 state = state,
                                 onOpenDeepCheckSetup = { showDeepCheckSetup = true },
