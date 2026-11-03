@@ -110,11 +110,12 @@ kein Netzwerk und meldet sich per Benachrichtigung nur bei einem neuen Fund. Erg
 | Alle installierten Apps sehen (`QUERY_ALL_PACKAGES`) | App-Liste mit Indikatoren abgleichen |
 | SMS lesen (`READ_SMS`), optional | Links in SMS mit Indikatoren abgleichen; Inhalt bleibt auf dem Gerät |
 | Zugriff auf alle Dateien (`MANAGE_EXTERNAL_STORAGE`), optional | Dateinamen und Prüfsummen im Speicher mit Indikatoren abgleichen |
-| Internet (`INTERNET`) | nur Laden der Indikator- und Domainlisten (Abschnitt 2.3) |
+| Internet (`INTERNET`) | Laden der Indikator- und Domainlisten (Abschnitt 2.3), Verbindung zum eigenen Gerät für die tiefe Prüfung ohne PC (2.5), Weiterleitung von DNS-Anfragen durch den DNS-Wächter (2.4) |
 | VPN-Dienst, Vordergrunddienst | DNS-Wächter (Abschnitt 2.4) und dessen Statusanzeige |
 | Netzwerkstatus (`ACCESS_NETWORK_STATE`) | DNS-Server des aktuellen Netzwerks für den DNS-Wächter ermitteln |
 | Benachrichtigungen (`POST_NOTIFICATIONS`) | Kopplungscode (2.5), neuer Fund im Hintergrund (2.6), DNS-Wächter |
 | Vibration (`VIBRATE`) | kurzes spürbares Feedback während der Prüfung |
+| Wachhalten, Start nach Neustart (`WAKE_LOCK`, `RECEIVE_BOOT_COMPLETED`) | nur für die optionale wöchentliche Hintergrundprüfung (2.6): Android-Dienst WorkManager plant sie und hält den Plan über einen Neustart |
 
 Optionale Berechtigungen werden nur auf Deinen Wunsch angefragt und können jederzeit in den Android-Einstellungen
 widerrufen werden. Ohne sie läuft die Prüfung eingeschränkt weiter und die App zeigt das offen als Lücke an.
@@ -277,11 +278,12 @@ you only about a new finding. Results stay on the device.
 | See all installed apps (`QUERY_ALL_PACKAGES`) | Match the app list against indicators |
 | Read SMS (`READ_SMS`), optional | Match links in SMS against indicators; content stays on the device |
 | All files access (`MANAGE_EXTERNAL_STORAGE`), optional | Match file names and checksums in storage against indicators |
-| Internet (`INTERNET`) | Only loading the indicator and domain lists (section 2.3) |
+| Internet (`INTERNET`) | Loading the indicator and domain lists (section 2.3), connecting to this phone itself for the deep check without a PC (2.5), passing on DNS queries in the DNS guard (2.4) |
 | VPN service, foreground service | DNS guard (section 2.4) and its status display |
 | Network state (`ACCESS_NETWORK_STATE`) | Find the current network's DNS server for the DNS guard |
 | Notifications (`POST_NOTIFICATIONS`) | Pairing code (2.5), new background finding (2.6), DNS guard |
 | Vibration (`VIBRATE`) | Short haptic feedback during the check |
+| Keep awake, start after reboot (`WAKE_LOCK`, `RECEIVE_BOOT_COMPLETED`) | Only for the optional weekly background check (2.6): Android's WorkManager schedules it and keeps the schedule across a reboot |
 
 Optional permissions are requested only at your wish and can be revoked at any time in Android settings. Without
 them the check continues with reduced scope and the app shows this openly as a gap. Shizuku and root are optional and

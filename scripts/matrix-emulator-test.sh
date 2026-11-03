@@ -591,8 +591,12 @@ run_release_test() {
 
 main() {
   mkdir -p "$SHOT_DIR" "$ARTIFACT_DIR"
-  [[ -f "$SPY_APK" && -f "$TEST_APK" ]] || { echo "Build APKs first" >&2; exit 1; }
   local only=${1:-all}
+  # Always test the checked-out code: a stale debug APK once made a run test an older build.
+  if [[ "$only" != "stop" ]]; then
+    (cd "$ROOT" && ./gradlew -q --max-workers=2 :app:assembleDebug :testapp:assembleDebug </dev/null) || { echo "build failed" >&2; exit 1; }
+  fi
+  [[ -f "$SPY_APK" && -f "$TEST_APK" ]] || { echo "Build APKs first" >&2; exit 1; }
   if [[ "$only" == "29" || "$only" == "all" ]]; then
     run_phone_test 29 29 "system-images;android-29;google_apis;x86_64" spyhound-matrix-29 || echo "FAIL API 29" >&2
   fi
