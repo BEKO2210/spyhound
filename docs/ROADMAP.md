@@ -202,8 +202,12 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Ressourcen `deep_step_*` DE/EN.
 - [x] Tablet-Profil (Pixel Tablet, API 36): Spalte zentriert ≤ 640 dp (868 px ≤ 1392 px), Testspy rot. Neu belegt 2026-11-03
       mit dem Stand nach 0.3.6. Beleg: api36-tablet-*.png.
-- [x] Root: Emulator mit Magisk (rootAVD), Stufe ROOT, Testspy rot. Neu belegt 2026-11-03. Offen bleibt der
-      Magisk-Freigabedialog auf echtem Root-Gerät.
+- [x] Root: Emulator mit Magisk (rootAVD), Stufe ROOT, Testspy rot. Neu belegt 2026-11-03.
+- [ ] Magisk-Freigabedialog: im Emulator nicht prüfbar. Versuch 2026-11-03: Magisk-App 31.1 nachinstalliert, „Zusätzliche
+      Einrichtung“ + Neustart, `root_access=3` – Magisk lehnt **jede** su-Anfrage nach ~10 ms ohne Dialog ab, auch die
+      aus der adb-Shell (`su: request rejected (2000)`), also kein Spyhound-Fehler. Spyhound fragt `su -c id` und wertet
+      `uid=0`; mit gesetzter Magisk-Freigabe läuft „Root“ (oben). Abnahme: echtes Root-Gerät zeigt den Dialog,
+      „Gewähren“ → Stufe Root. Braucht ein Gerät mit offenem Bootloader (Pixel 11 nicht, Entsperren löscht alles).
 - [x] Testfund: Emulator mit installierter harmloser Test-APK (`testapp`, Paketname/Zertifikat in `debug-test.tsv`) →
       „Testspy“ erscheint rot; Release-Build zeigt ihn nie. Beleg: matrix-emulator-test.sh (check_finding, release-Stufe),
       TESTMATRIX 2026-11-03: API 29/31/34 und Root rot.
