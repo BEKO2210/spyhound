@@ -36,8 +36,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] Auto Blocker, „Sicherheit und Datenschutz“, „Eingeschränkte Einstellungen zulassen“: Bezeichnungen stimmen (SecSettings de).
 - [x] Assistent wartet 5 Min. auf den Kopplungscode. Beleg: Belkis hat die Einrichtung rund zehnmal durchlaufen, ohne
       Timeout (2026-11-03). Nur bei echten Rückmeldungen wieder öffnen.
-- [~] Kopplungs-Benachrichtigung wird alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
-      Code: f07529f, Test ceec635 (5 Fälle, Robolectric). Offen: einmal auf dem Pixel durchkoppeln.
+- [x] Kopplungs-Benachrichtigung wurde alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
+      Code: f07529f, Test ceec635. Pixel 11 mit 0.3.6, 2026-11-03 (Mitschnitt `notification_enqueue`): 5 Posts in
+      ~2,5 min statt ~100 – 2 min Warten ohne Post, 18 s Code-Eingabe ohne Post, je ein Post nur beim Öffnen des
+      Kopplungsdialogs und beim Koppeln. Danach „Tief“ über die eingebaute Kopplung.
 - [x] Tablet-Kopf einzeilig: Logo, DE/EN und Info in einer Zeile, sobald die Spalte ≥ 320 dp breit ist. Beleg:
       start_de_tablet.png, verifyRoborazziDebug grün.
 - [ ] SMS-Rechte: Tab ohne Telefonie – SMS-Pfad braucht ein Galaxy-Handy (S24 Ultra, nur mit Freigabe der Besitzerin).
@@ -259,6 +261,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Für Gerätetests der eingebauten Kopplung erst prüfen, welcher Weg aktiv ist: Läuft Shizuku, nimmt Spyhound Shizuku und der Kopplungsweg wird gar nicht berührt. Benachrichtigungen zählt `logcat -b events | grep notification_enqueue`.
 - „Verbindung kommt nicht zustande“ erst glauben, wenn der Server-Prozess geprüft ist: Shizuku lief im Emulator die ganze Zeit, nur der Test bediente die App nicht wie ein Mensch. Testabläufe gehen den Weg des Nutzers.
 - Die Liste „Was ist neu“ (arrays.xml `info_whats_new_items`) war bis 0.3.6 auf dem Stand von 0.3.0. Sie gehört zu jedem Release-Schritt, vor dem Tag; Screenshot info_top_* zeigt sie.
 - `am start`/`install` holt Spyhound auch über eine gerade benutzte App nach vorne. Auf dem Pixel 11 ist das erlaubt (Belkis, 2026-11-03: „du darfst mein Handy benutzen, auch wenn ich es benutze“). Vor Bildschirmfotos trotzdem den Fokus prüfen, damit nie Privates im Bild landet.
