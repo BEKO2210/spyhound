@@ -1,0 +1,1 @@
+The start screen fits small phones and large display zoom: the radar scales with the screen, short screens scroll as one page, and scrolling shrinks the radar and folds the status strip to its icons. Three permissions the app never used are gone (phone state, legacy storage), and the privacy texts name every network use.

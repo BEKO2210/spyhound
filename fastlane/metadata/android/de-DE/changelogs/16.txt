@@ -1,0 +1,1 @@
+Der Startbildschirm passt auf kleine Handys und großen Anzeigezoom: Das Radar richtet sich nach dem Bildschirm, kurze Bildschirme scrollen als eine Seite, und beim Scrollen schrumpft das Radar und die Statusleiste zeigt nur noch Icons. Drei nie genutzte Rechte sind entfernt (Telefonstatus, alte Speicherrechte), und die Datenschutztexte nennen jede Netzwerknutzung.
