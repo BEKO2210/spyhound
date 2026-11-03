@@ -1,0 +1,1 @@
+Fewer false alarms from stricter indicator, DNS and bug-report parsing. Known-good list adds 10,011 Xiaomi system files (20,841 total). Sturdier bug report import and DNS watcher. Clearer setup guides; full English UI strings; licences shown in About. Reproducible build from v0.3.7 tag. Updates over 0.3.6 keep deep-check pairing.

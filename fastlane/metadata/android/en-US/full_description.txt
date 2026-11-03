@@ -1,0 +1,26 @@
+Spyhound checks your Android phone for traces of <b>known</b> spyware and stalkerware – Pegasus, Predator, stalkerware apps and related published indicators. It runs on the phone itself, in plain language, in English and German.
+
+<b>What it compares</b>
+Installed apps (names, APK hashes, signing certificates), device state (security patch, bootloader, debugging), optional SMS links and files in shared storage, plus optional deep checks (processes, logs, dumpsys) when you set up wireless debugging or Shizuku. Indicators come from pinned public sources (MVT, ECHAP, Citizen Lab, ESET campaign hashes and more). Exact hash matches only for bundled malware lists – not a general virus scan.
+
+<b>Check depth</b>
+• <b>Basic</b> – no setup; everything Android allows without special access.
+• <b>Deep</b> – wireless debugging (Android 11+) or Shizuku; adds processes, full package list, logs.
+• <b>Root</b> – on a rooted device, same as deep with root access.
+
+<b>Honest results</b>
+Never “your phone is clean” – only <i>no known traces in the checked areas</i>, with every skipped check listed as a gap. Findings match published indicators; leads are worth a look, not alarms on their own.
+
+<b>Privacy</b>
+The scan is offline. No telemetry, no ads, no account. Network use only when you tap <i>Update sources</i> (fixed repos, pinned commits, SHA-256 verified), and by the optional DNS watcher, which passes DNS queries on to your network's DNS server.
+
+<b>Limits</b>
+No real-time protection. Only published traces; new or unknown spyware is not detected. Spyhound does not remove malware.
+
+<b>Also included</b>
+Optional DNS watch, bug report ZIP analysis, permission audit, weekly background check (off by default), shareable plain-text report.
+
+<b>Build &amp; licence</b>
+Release builds are reproducible from the Git tag (see project README). Apache License 2.0.
+
+Requires Android 10+. Deep check without a PC needs Android 11+.

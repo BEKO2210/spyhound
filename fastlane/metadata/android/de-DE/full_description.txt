@@ -1,0 +1,26 @@
+Spyhound prüft dein Android-Handy auf Spuren <b>bekannter</b> Spyware und Stalkerware – Pegasus, Predator, Stalkerware-Apps und veröffentlichte Indikatoren. Direkt auf dem Handy, in verständlicher Sprache, auf Deutsch und Englisch.
+
+<b>Was verglichen wird</b>
+Installierte Apps (Namen, APK-Fingerabdrücke, Zertifikate), Gerätezustand (Sicherheitspatch, Bootloader, Debugging), optional Links in SMS und Dateien im Speicher, plus optionale tiefe Prüfungen (Prozesse, Protokolle, dumpsys), wenn du WLAN-Debugging oder Shizuku einrichtest. Indikatoren stammen aus fest gepinnten öffentlichen Quellen (MVT, ECHAP, Citizen Lab, ESET-Kampagnen-Hashes u. a.). Mitgelieferte Schadsoftware-Listen nur bei exakten Hash-Treffern – kein allgemeiner Virenscan.
+
+<b>Prüftiefe</b>
+• <b>Basis</b> – nichts einzurichten; alles, was Android ohne Sonderrechte erlaubt.
+• <b>Tief</b> – WLAN-Debugging (Android 11+) oder Shizuku; dazu Prozesse, volle Paketliste, Protokolle.
+• <b>Root</b> – auf einem gerooteten Gerät wie Tief, mit Root-Zugriff.
+
+<b>Ehrliche Ergebnisse</b>
+Nie „dein Handy ist sauber“, sondern <i>keine bekannten Spuren in den geprüften Bereichen</i> – und jede ausgelassene Prüfung als Lücke. Funde passen zu veröffentlichten Indikatoren; Hinweise sind prüfenswert, kein Alarm für sich allein.
+
+<b>Datenschutz</b>
+Die Prüfung ist offline. Keine Telemetrie, keine Werbung, kein Konto. Netzwerk nur, wenn du <i>Quellen aktualisieren</i> tippst (feste Repos, gepinnte Commits, SHA-256 geprüft), und beim optionalen DNS-Wächter, der DNS-Anfragen an den DNS-Server deines Netzes weiterreicht.
+
+<b>Grenzen</b>
+Kein Echtzeitschutz. Nur veröffentlichte Spuren; neue oder unbekannte Spyware wird nicht erkannt. Spyhound entfernt keine Schadsoftware.
+
+<b>Außerdem</b>
+Optional DNS-Wächter, Fehlerbericht-ZIP-Analyse, Rechte-Übersicht, wöchentliche Hintergrundprüfung (standardmäßig aus), teilbarer Textbericht.
+
+<b>Build &amp; Lizenz</b>
+Release-Builds sind vom Git-Tag aus reproduzierbar (siehe README). Apache License 2.0.
+
+Ab Android 10. Tiefe Prüfung ohne PC ab Android 11.

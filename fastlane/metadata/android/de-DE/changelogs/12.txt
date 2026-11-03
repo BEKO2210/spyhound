@@ -1,0 +1,1 @@
+Weniger Falschalarme durch strengere Indikator-, DNS- und Fehlerbericht-Auswertung. Known-good-Liste: 10.011 Xiaomi-Systemdateien mehr (20.841 gesamt). Robustere Fehlerbericht-Importe und DNS-Wächter. Klarere Anleitungen; vollständige englische UI-Texte; Lizenzen in Über. Reproduzierbarer Build ab Tag v0.3.7. Update über 0.3.6 behält Tief-Prüfung-Kopplung.
