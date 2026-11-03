@@ -196,8 +196,9 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [ ] Tablet-Profil (Pixel Tablet, ~Tab-S9-Format): Layout zentriert ≤ 640 dp.
 - [x] Root: Emulator mit Magisk (rootAVD), Stufe ROOT, Testspy rot. Neu belegt 2026-11-03. Offen bleibt der
       Magisk-Freigabedialog auf echtem Root-Gerät.
-- [ ] Testfund: Emulator mit installierter harmloser Test-APK, deren Paketname/Zertifikat als Test-Indikator geladen
-      ist → Fund erscheint rot (Ende-zu-Ende-Beweis, nur Debug-Build).
+- [x] Testfund: Emulator mit installierter harmloser Test-APK (`testapp`, Paketname/Zertifikat in `debug-test.tsv`) →
+      „Testspy“ erscheint rot; Release-Build zeigt ihn nie. Beleg: matrix-emulator-test.sh (check_finding, release-Stufe),
+      TESTMATRIX 2026-11-03: API 29/31/34 und Root rot.
 - Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – auf dem Tab S9 Ultra geprüft
   (2026-11-02, siehe Galaxy-Test); SMS-Pfad offen.
 
