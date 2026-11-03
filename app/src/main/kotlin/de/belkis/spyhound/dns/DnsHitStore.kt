@@ -13,6 +13,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.put
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 data class DnsHit(
     val atMillis: Long,
@@ -26,13 +28,20 @@ data class DnsHit(
 object DnsHitStore {
     private const val FILE = "dns_guard_hits.json"
     private const val MAX = 500
+    private val lock = Any()
     private val json = Json { ignoreUnknownKeys = true }
 
     suspend fun append(context: Context, hit: DnsHit) = withContext(Dispatchers.IO) {
         val file = File(context.filesDir, FILE)
-        val current = readLocked(file)
-        val next = trim(listOf(hit) + current, MAX)
-        file.writeText(encode(next))
+        synchronized(lock) {
+            val current = readLocked(file)
+            val next = trim(listOf(hit) + current, MAX)
+            val tmp = File(context.filesDir, "$FILE.tmp")
+            tmp.writeText(encode(next))
+            if (!tmp.renameTo(file)) {
+                Files.move(tmp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+        }
     }
 
     /**
@@ -52,8 +61,9 @@ object DnsHitStore {
 
     fun recent(context: Context, limit: Int = 50): List<DnsHit> {
         val file = File(context.filesDir, FILE)
-        if (!file.isFile) return emptyList()
-        return readLocked(file).take(limit)
+        return synchronized(lock) {
+            if (!file.isFile) emptyList() else readLocked(file).take(limit)
+        }
     }
 
     private fun readLocked(file: File): List<DnsHit> {

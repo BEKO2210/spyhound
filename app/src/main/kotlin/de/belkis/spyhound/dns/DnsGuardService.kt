@@ -25,7 +25,9 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -101,7 +103,7 @@ class DnsGuardService : VpnService() {
         }
         tun = iface
         DnsGuard.isRunning = true
-        val pool = Executors.newFixedThreadPool(LOOKUP_THREADS).also { lookups = it }
+        val pool = newLookupPool().also { lookups = it }
         val buf = ByteArray(32_767)
         FileInputStream(iface.fileDescriptor).use { input ->
             FileOutputStream(iface.fileDescriptor).use { output ->
@@ -280,6 +282,13 @@ class DnsGuardService : VpnService() {
         private const val REPEAT_QUIET_MS = 10 * 60_000L
         private const val LOOKUP_THREADS = 4
         private const val UPSTREAM_TIMEOUT_MS = 4_000
+        private const val LOOKUP_QUEUE = 256
+
+        /** Bounded queue, excess packets are dropped: the system resolver retries, memory stays flat in a flood. */
+        internal fun newLookupPool(): ExecutorService = ThreadPoolExecutor(
+            LOOKUP_THREADS, LOOKUP_THREADS, 0L, TimeUnit.MILLISECONDS,
+            ArrayBlockingQueue(LOOKUP_QUEUE), ThreadPoolExecutor.DiscardPolicy(),
+        )
 
         private const val VIRTUAL_DNS_V4 = "10.111.222.1"
         private const val VIRTUAL_DNS_V6 = "fd00:5ec::1"
