@@ -249,7 +249,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
-- Nie `am start` oder `install` auf einem Gerät, dessen Vordergrund eine andere App ist: Das holt Spyhound mitten in seine Arbeit (Pixel, Chrome im Vordergrund, 2026-11-03). Erst Fokus prüfen, sonst warten.
+- `am start`/`install` holt Spyhound auch über eine gerade benutzte App nach vorne. Auf dem Pixel 11 ist das erlaubt (Belkis, 2026-11-03: „du darfst mein Handy benutzen, auch wenn ich es benutze“). Vor Bildschirmfotos trotzdem den Fokus prüfen, damit nie Privates im Bild landet.
 - Bezeichnungen von Einstellungen nie aus dem Gedächtnis schreiben: aus den Ressourcen der Settings-APK des Geräts lesen (`aapt2 dump resources`, Sprache `(de)`). „WLAN-Debugging“ stand monatelang falsch in der App (2026-11-02).
 - Benachrichtigungsleiste nie abfotografieren: Sie zeigt fremde Inhalte. Nur per uiautomator lesen (2026-11-02).
 - Fokus-Prüfung und Aktion nie in einem Befehl verketten, wenn die Aktion selbst die App wechselt: Erst prüfen, Ergebnis lesen, dann handeln. Sonst landet ein App-Start über der App, in der Belkis gerade schreibt (2026-11-02).
