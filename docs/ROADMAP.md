@@ -31,12 +31,17 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
       (jetzt 96 MiB), Zeilen > 1 MiB still gekürzt (jetzt Lücke). Beleg: 4 neue BugreportTest-Fälle.
 - [x] Englische Analyse-Texte: 3 blieben teils deutsch (Fremdinstallation/„Darf:“, „Diese Apps dürfen …“, WLAN-
       Debugging). TextsEnCoverageTest treibt die echten Analyzer (169 Texte) und schlägt bei Deutsch fehl.
-- [ ] STIX: `AND`-Ausdrücke werden zu Einzel-Indikatoren, widerrufene Indikatoren zählen (Parsers.kt:56). Abnahme:
-      Test mit `domain AND hash` → kein Domain-Treffer allein; `revoked: true` → ignoriert.
-- [ ] MISP-CSV: mehrzeilige Kommentare in Anführungszeichen werden zeilenweise als Indikator gelesen (Parsers.kt:185).
-- [ ] Kuratierte Toolkit-Listen werden ohne SHA-256 und ohne KnownGood-Ablehnung geladen (IocStore.kt:64).
-- [ ] Katalog: `commit` muss 40-stelliger Hex-Wert sein (sonst wäre ein Branch-Name möglich).
-- [ ] Parser-Speicher: Felder/Zeilen vor dem Anlegen begrenzen (CSV mit Millionen Kommas).
+- [x] STIX: nur vollständige Einzelvergleiche/OR; `AND`, Sequenzen, Qualifizierer und widerrufene Einträge verworfen.
+      Beleg: IocHardeningTest (`stixRejectsCompoundConditionsAndQualifiers`, `stixSkipsRevokedIndicators`).
+- [x] MISP-CSV: mehrzeilige Felder als ganze Datensätze gelesen; fehlerhafte Datensätze vollständig verworfen.
+      Beleg: `mispQuotedNewlinesNeverBecomeIndicators`, `csvMalformedRecordsAreDroppedWhole`.
+- [x] Kuratierte Listen: SHA-256-Pins und KnownGood-Ablehnung der ganzen Quelle; Fehler im Quellenstatus sichtbar.
+      Beleg: `curatedHashMismatchRejectsWholeSourceAndReportsCorruption`, `curatedKnownGoodConflictRejectsWholeSource`.
+- [x] Katalog: `commit` exakt 40 kleine Hex-Zeichen. Beleg: `catalogRequiresFullLowercaseCommit`.
+- [x] Parser: höchstens 64 Felder, 8192 Zeichen pro Feld, 200.000 Indikatoren pro Quelle; übergroße Datensätze
+      verworfen, übergroße Quellen korrupt. Beleg: `oversizedRecordsAreSkippedWithoutLeakingMiddleLines`,
+      `indicatorLimitRejectsWholeSource`. Quellenzahlen unverändert (8.296), pro Quelle gepinnt.
+      Direkter JVM-Lauf: 60 Tests grün; vollständiger Build ausstehend, siehe docs/handoff/ioc-hardening.md.
 - [ ] Fehlerbericht-Import ohne Zeitlimit (hängende Content-Provider-Pipe).
 - [ ] DNS-Wächter: unbegrenzte Arbeitswarteschlange (DnsGuardService.kt:104); DnsHitStore-Schreibkonflikt bei
       gleichzeitigen Treffern (DnsHitStore.kt:31).
