@@ -72,7 +72,7 @@ class TextScanner(private val iocs: IocSet) {
         val seen = HashSet<String>()
         val out = ArrayList<Match>()
         for (m in URL.findAll(text)) {
-            val token = m.value.lowercase().trimEnd('.', ',', ';', ':', '!', '?')
+            val token = IocSet.normaliseUrl(m.value.trimEnd('.', ',', ';', ':', '!', '?'))
             if (!seen.add(token)) continue
             val ind = lookupUrl(token) ?: continue
             if (seen.add("ioc:" + ind.value)) out += Match(ind, token)
@@ -82,7 +82,12 @@ class TextScanner(private val iocs: IocSet) {
 
     private fun lookupUrl(token: String): Indicator? {
         val schemeEnd = token.indexOf("://") + 3
-        var cur = token.substringBefore('#').substringBefore('?')
+        val withoutFrag = token.substringBefore('#')
+        if ('?' in withoutFrag) {
+            iocs.lookup(IocType.URL, withoutFrag)?.let { return it }
+            iocs.lookup(IocType.URL, withoutFrag.substring(schemeEnd))?.let { return it }
+        }
+        var cur = withoutFrag.substringBefore('?')
         while (true) {
             val bare = cur.trimEnd('/')
             if (bare.length <= schemeEnd) return null

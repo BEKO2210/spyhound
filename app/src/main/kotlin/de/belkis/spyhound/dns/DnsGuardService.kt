@@ -131,7 +131,7 @@ class DnsGuardService : VpnService() {
     ) {
         val parsed = DnsPacket.parse(buf, length) ?: return
         if (!parsed.isDnsQuery) return
-        val names = DnsPacket.questionNames(parsed.payload) ?: return
+        val names = DnsPacket.questionNames(parsed.payload).orEmpty()
         val verdict = DnsFilter.evaluate(names, iocs, lists, DnsFilterPrefs.load(this))
         verdict.matches.forEach { recordHit(it) }
         val dnsResponse = (if (verdict.block) DnsPacket.buildNxdomain(parsed.payload) else forwardQuery(parsed)) ?: return
