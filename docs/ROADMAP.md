@@ -18,11 +18,11 @@ verbreiteten Geräten, ohne Falschalarm, und jeder kann nachprüfen, dass die AP
       Startbildschirm blieb unter offenen Seiten im Bedienbaum („Jetzt prüfen“ erreichbar) → clearAndSetSemantics.
       Offen: echter TalkBack-Durchgang (TalkBack darf ich nicht einschalten; Belkis ~5 Min). Abnahme: jeder Knopf
       vorgelesen, keine Sackgasse.
-- [~] Verteilung: fastlane/-Metadaten DE/EN (Texte, Icon, 6 Screenshots, Changelog 12) und README-Installation mit
-      Prüfsumme sind drin (2026-11-03). F-Droid erlaubt JitPack.io als vertrauenswürdige Maven-Quelle (Inclusion Policy,
-      an der Quelle geprüft), libadb/spake2 sind also kein Hindernis, sofern frei lizenziert. Entwurf
-      `metadata/de.belkis.spyhound.yml` mit Binaries/AllowedAPKSigningKeys liegt in docs/fdroid/. Offen: Merge-Request
-      bei gitlab.com/fdroid/fdroiddata (braucht Belkis' GitLab-Konto). Abnahme: MR offen, Build-Bot grün.
+- [~] Verteilung: F-Droid-Antrag offen: fdroiddata!55616 (2026-11-03, Fork BEKO2210/fdroiddata), Version 0.3.8,
+      reproduzierbar mit unserer Signatur (lokal: sauberer Klon von v0.3.8 ohne Schlüssel gebaut, `apksigcopier compare`
+      gegen die veröffentlichte APK bestanden). fastlane/ DE/EN, README-Installation. Offen: Pipeline/Review-Fragen
+      beantworten. IzzyOnDroid nimmt Anträge nur auf Codeberg an (Konto legt nur Belkis an). Google Play nicht
+      (SMS/Alle-Apps-Rechte, Konto mit Gebühr).
 - [ ] Feldtest: 3 Personen außer Belkis installieren aus dem Release und melden das Ergebnis (Fehlerbericht-Anleitung
       liegt bereit). Abnahme: 3 Rückmeldungen, alle Befunde in der Roadmap.
 - [ ] Release-Kandidat 1.0.0-rc: eine Woche ohne neuen Absturz/Falschalarm, dann 1.0.0.
@@ -41,6 +41,8 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+
+## Release 0.3.8 (2026-11-03) – Bedienhilfen: Startbildschirm unter offenen Seiten für Bildschirmleser ausgeblendet (Bedienbaum aller Hauptseiten auf dem Pixel ausgelesen), fastlane-Store-Texte DE/EN, README-Installation. verify-reproducible: 466 gleich; apksigcopier compare (F-Droid-Prüfung) bestanden. Tab S9 Ultra: Update + Start ohne Absturz; Fix vorher auf dem Pixel geprüft. Download geprüft.
 
 ## Release 0.3.7 (2026-11-03) – Sicherheits-Review (Falschtreffer URL/DNS/STIX/CSV, gepinnte kuratierte Listen), Positivliste + Xiaomi (20.841), robuster Fehlerbericht-Import und DNS-Wächter, fette Begriffe in Anleitungen, einfache Sprache, Lizenztexte, „1 Fund“. verify-reproducible: 466 Dateien gleich. Pixel 11: Update über 0.3.6, „Tief“ blieb, Tief-Scan 42 s, 0 Funde · 5 Hinweise · 2 Lücken (wie vorher), „Wer darf was“ < 3 s, 0 Abstürze. Download geprüft. Tab S9 Ultra (One UI 8): Update über 0.3.6, „Tief“ blieb, Tief-Scan 79 s, 58.105 geprüft, 0 Funde · 5 Hinweise · 2 Lücken (vorher 8 Hinweise · 4 Lücken vor den Samsung-Korrekturen), 0 Abstürze. Belkis: „es funktioniert“.
 
