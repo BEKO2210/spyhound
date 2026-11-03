@@ -478,7 +478,7 @@ private fun DeepCheckStepBlock(
             .fillMaxWidth()
             .padding(vertical = 10.dp),
     ) {
-        ScanStepRow(label = step.title, done = done, active = isActive)
+        ScanStepRow(label = stringResource(step.title), done = done, active = isActive)
         if (isActive || done) {
             Text(
                 body,

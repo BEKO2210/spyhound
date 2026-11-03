@@ -1,5 +1,6 @@
 package de.belkis.spyhound.setup
 
+import de.belkis.spyhound.R
 import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.shell.ShizukuShell
 
@@ -12,17 +13,18 @@ data class DeepCheckSetupSnapshot(
     val builtinAdbActive: Boolean = false,
 ) {
     val step1Done: Boolean get() = shizukuInstalled
-    val step2Done: Boolean get() = devOptionsEnabled
+    /** A running Shizuku proves debugging works, even where the developer-options flag reads off (emulators, some ROMs). */
+    val step2Done: Boolean get() = devOptionsEnabled || step3Done
     val step3Done: Boolean get() = shizukuStatus != ShizukuShell.Status.NOT_RUNNING
     val step4Done: Boolean get() = access >= AccessLevel.SHELL
     val allDone: Boolean get() = (builtinAdbActive && step4Done) || (step1Done && step2Done && step3Done && step4Done)
 }
 
-enum class DeepCheckSetupStep(val title: String) {
-    INSTALL_SHIZUKU("Shizuku installieren"),
-    DEV_OPTIONS("Entwickleroptionen einschalten"),
-    START_SHIZUKU("Shizuku starten"),
-    ALLOW_SPYHOUND("Spyhound erlauben"),
+enum class DeepCheckSetupStep(val title: Int) {
+    INSTALL_SHIZUKU(R.string.deep_step_install_shizuku),
+    DEV_OPTIONS(R.string.deep_step_dev_options),
+    START_SHIZUKU(R.string.deep_step_start_shizuku),
+    ALLOW_SPYHOUND(R.string.deep_step_allow_spyhound),
 }
 
 fun activeDeepCheckStep(snapshot: DeepCheckSetupSnapshot): DeepCheckSetupStep? = when {

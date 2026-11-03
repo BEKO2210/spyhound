@@ -182,17 +182,22 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       eigener Laientest entfällt auf seinen Entscheid. Echte Nutzer-Rückmeldungen ersetzen ihn.
 
 ## Upstream (Zero Breach Toolkit)
-- [ ] PR #31 „Android: package names in <queries> declarations are not install traces“ – offen seit 2026-11-01.
-      Abnahme: gemergt. Beleg lokal: 1959 Tests grün, build --check grün.
-      Blocker: Upstream verlangt signierte Commits. Belkis (am PC): `gh auth refresh -s admin:ssh_signing_key`,
-      `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`, dann Commit mit -S neu signieren + force-with-lease.
+- [x] PR #31 „Android: package names in <queries> declarations are not install traces“: Fix ist upstream in 2.0.0
+      und 2.0.1 ausgeliefert, mit Nennung im Changelog; der Betreuer hat ihn als eigenen signierten Commit übernommen
+      und den PR geschlossen (gh, 2026-11-03). Signierte Commits sind damit für uns kein Blocker mehr.
 - [ ] Issue: Spyhound als Begleit-App vorschlagen – erst nach öffentlichem, signiertem Release.
 
 ## Testmatrix (Emulatoren, strikt nacheinander – RAM 15 GB)
 - [x] Pixel 11 Pro XL, Android 17, echt: Basis + Shizuku. Beleg: siehe Stufe 1.
 - [x] API 29 (minSdk), 31, 34: Start, Scan Basis, Testspy rot, keine Abstürze. Neu belegt 2026-11-03 mit Assistent und
       eingebauter Kopplung (TESTMATRIX.md). API 37 im Emulator instabil, auf echten Pixeln belegt.
-- [ ] Shizuku im Emulator: Verbindung kommt nicht zustande (auf echten Geräten belegt).
+- [x] Shizuku im Emulator: Ursache war der Testablauf, nicht die Verbindung. Der Server lief, aber das Skript tippte nur
+      „Scan“ und fragte nie die Shizuku-Erlaubnis an; außerdem blockierte Schritt 2 („Entwickleroptionen“), weil das
+      Flag im Emulator aus ist. Behoben: Assistent zählt laufendes Shizuku als Schritt 2 erledigt (DeepCheckSetupTest),
+      Matrix geht wie ein Nutzer über „Alternative: Shizuku“ → „Spyhound erlauben“ → Shizuku-Dialog. Ergebnis API 34:
+      Tief, 1.360 geprüft, Testspy rot, keine Abstürze. Beleg: api34-shizuku-*.png.
+- [x] Fund dabei: Schritt-Titel im Shizuku-Teil des Assistenten waren hart deutsch (auch in englischer App). Jetzt
+      Ressourcen `deep_step_*` DE/EN.
 - [x] Tablet-Profil (Pixel Tablet, API 36): Spalte zentriert ≤ 640 dp (868 px ≤ 1392 px), Testspy rot. Neu belegt 2026-11-03
       mit dem Stand nach 0.3.6. Beleg: api36-tablet-*.png.
 - [x] Root: Emulator mit Magisk (rootAVD), Stufe ROOT, Testspy rot. Neu belegt 2026-11-03. Offen bleibt der
@@ -255,6 +260,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- „Verbindung kommt nicht zustande“ erst glauben, wenn der Server-Prozess geprüft ist: Shizuku lief im Emulator die ganze Zeit, nur der Test bediente die App nicht wie ein Mensch. Testabläufe gehen den Weg des Nutzers.
 - Die Liste „Was ist neu“ (arrays.xml `info_whats_new_items`) war bis 0.3.6 auf dem Stand von 0.3.0. Sie gehört zu jedem Release-Schritt, vor dem Tag; Screenshot info_top_* zeigt sie.
 - `am start`/`install` holt Spyhound auch über eine gerade benutzte App nach vorne. Auf dem Pixel 11 ist das erlaubt (Belkis, 2026-11-03: „du darfst mein Handy benutzen, auch wenn ich es benutze“). Vor Bildschirmfotos trotzdem den Fokus prüfen, damit nie Privates im Bild landet.
 - Bezeichnungen von Einstellungen nie aus dem Gedächtnis schreiben: aus den Ressourcen der Settings-APK des Geräts lesen (`aapt2 dump resources`, Sprache `(de)`). „WLAN-Debugging“ stand monatelang falsch in der App (2026-11-02).

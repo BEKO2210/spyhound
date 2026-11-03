@@ -22,6 +22,8 @@ Stand 2026-11-01. Belege: Screenshots unter `docs/shots/matrix/`, Gerätetests a
 | pixel_6 | 12 (31) | Basis | ✅ Testspy rot, 620 geprüft | `api31-*.png` |
 | pixel_6 | 14 (34) | Basis | ✅ Testspy rot, 755 geprüft | `api34-*.png` |
 | pixel_6 | 14 (34) | Root (Magisk) | ✅ Testspy rot | `api34-root-*.png` |
+| pixel_6 | 14 (34) | Shizuku (über den Assistenten) | ✅ Tief, 1.360 geprüft, Testspy rot, 0 Abstürze | `api34-shizuku-*.png` |
+| pixel_tablet | 16 (36) | Basis | ✅ Spalte 868 px ≤ 1392 px (640 dp), Testspy rot | `api36-tablet-*.png` |
 
 ## Echte Geräte (2026-11-02)
 | Gerät | Android | Build | Tiefe | Ergebnis |
@@ -36,6 +38,6 @@ Stand 2026-11-01. Belege: Screenshots unter `docs/shots/matrix/`, Gerätetests a
 - Shizuku v13.6.0 SHA-256 `6e273ab0e991c4e79bc8b1bbb9b9dd739ccac1a8712a541a214078886b7b790f`
 
 ## Offen
-- Shizuku im Emulator: Verbindung nicht hergestellt (Ursache offen); auf echtem Gerät belegt.
+- Shizuku im Emulator: seit 2026-11-03 belegt (Ursache war der Testablauf, siehe Roadmap).
 - Magisk-Freigabedialog erschien im Emulator nicht – auf echtem Root-Gerät prüfen.
 - Samsung One UI lässt sich nicht emulieren.

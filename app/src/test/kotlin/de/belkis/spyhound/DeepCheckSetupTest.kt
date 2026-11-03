@@ -46,4 +46,11 @@ class DeepCheckSetupTest {
         assertNull(activeDeepCheckStep(snap))
         assertTrue(snap.allDone)
     }
+
+    @Test
+    fun `running Shizuku counts as developer options on even when the flag reads off`() {
+        val snap = DeepCheckSetupSnapshot(true, false, ShizukuShell.Status.NEEDS_PERMISSION, AccessLevel.APP)
+        assertTrue(stepDone(DeepCheckSetupStep.DEV_OPTIONS, snap))
+        assertEquals(DeepCheckSetupStep.ALLOW_SPYHOUND, activeDeepCheckStep(snap))
+    }
 }

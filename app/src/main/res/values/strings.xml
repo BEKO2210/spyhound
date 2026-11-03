@@ -516,4 +516,8 @@
     <string name="info_licence_notice">NOTICE – sources and libraries</string>
     <string name="info_licence_inter">Font Inter – SIL Open Font License 1.1</string>
     <string name="info_licence_space_grotesk">Font Space Grotesk – SIL Open Font License 1.1</string>
+    <string name="deep_step_install_shizuku">Install Shizuku</string>
+    <string name="deep_step_dev_options">Turn on developer options</string>
+    <string name="deep_step_start_shizuku">Start Shizuku</string>
+    <string name="deep_step_allow_spyhound">Allow Spyhound</string>
 </resources>

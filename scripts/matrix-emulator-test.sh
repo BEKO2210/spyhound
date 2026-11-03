@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Spyhound matrix emulator runs (one AVD at a time). Sourced paths from repo root.
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)" # also right when sourced
 SDK="${ANDROID_HOME:-$HOME/Android/Sdk}"
 EMU="$SDK/emulator/emulator"
 AVM="$SDK/cmdline-tools/latest/bin/avdmanager"
@@ -429,6 +429,36 @@ run_tablet_test() {
   echo "OK Tablet"
 }
 
+# Taps the last on-screen text equal to $1 (the wizard repeats a step title on its button).
+click_last_text() {
+  local b x1 y1 x2 y2
+  b=$(ui_dump | grep -oE "text=\"$1\"[^>]*bounds=\"[^\"]+\"" | tail -1 | grep -oE '[0-9]+' | tail -4 | tr '\n' ' ')
+  [[ -z "$b" ]] && return 1
+  read -r x1 y1 x2 y2 <<<"$b"
+  $ADB shell input tap $(( (x1 + x2) / 2 )) $(( (y1 + y2) / 2 ))
+}
+
+# Grants Spyhound access through its own wizard, as a user would: Shizuku section, "Allow Spyhound", Shizuku's dialog.
+allow_spyhound_in_shizuku() {
+  local i
+  click_any "Set up deep check" "Tiefere Prüfung einrichten" || return 1
+  sleep 2
+  for i in 1 2 3 4; do
+    click_any "Alternative: Shizuku" && break
+    $ADB shell input swipe 540 1800 540 700 300; sleep 1
+  done
+  sleep 1
+  for i in 1 2 3 4 5; do
+    $ADB shell input swipe 540 1800 540 900 300; sleep 1
+    [[ $(ui_dump | grep -cE 'text="(Allow Spyhound|Spyhound erlauben)"') -ge 2 ]] && break
+  done
+  click_last_text "Allow Spyhound" || click_last_text "Spyhound erlauben" || return 1
+  sleep 3
+  grant_dialogs
+  ui_dump | grep -qE 'Deep check is ready|Tiefere Prüfung ist bereit' || { echo "Shizuku: wizard not done" >&2; return 1; }
+  click_any "Scan now" "Jetzt prüfen"
+}
+
 run_shizuku_test() {
   local avd=spyhound-matrix-shizuku-34
   echo "=== Shizuku API 34 ==="
@@ -441,9 +471,7 @@ run_shizuku_test() {
   install_apps
   launch_spyhound
   screenshot "$SHOT_DIR/api34-shizuku-start.png"
-  tap_scan
-  grant_dialogs
-  sleep 2
+  allow_spyhound_in_shizuku || { save_failure shizuku-allow; kill_emu; return 1; }
   grant_dialogs
   wait_scan_done shizuku || { kill_emu; return 1; }
   screenshot "$SHOT_DIR/api34-shizuku-result.png"
