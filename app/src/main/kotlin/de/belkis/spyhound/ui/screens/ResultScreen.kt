@@ -124,15 +124,23 @@ fun ResultScreen(
                 }
             }
         } else {
-            ResultSummary(
-                report = report,
-                examined = examined,
-                modifier = Modifier.fillMaxWidth().padding(bottom = SpySpacing.Section),
-                onGapFix = onGapFix,
-                heroSymbolModifier = heroSymbolModifier,
-            )
-            ScrollEdge(scrolled)
-            ResultList(report, listState, onGapFix, onHelp, Modifier.weight(1f))
+            val reduced = rememberReducedMotion()
+            ResultList(report, listState, onGapFix, onHelp, Modifier.weight(1f)) {
+                ResultSummary(
+                    report = report,
+                    examined = examined,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = SpySpacing.Section - 8.dp),
+                    onGapFix = onGapFix,
+                    heroSymbolModifier = heroSymbolModifier,
+                    heroModifier = Modifier.graphicsLayer {
+                        val progress = if (reduced) 0f else if (listState.firstVisibleItemIndex > 0) 1f
+                        else (listState.firstVisibleItemScrollOffset / 148.dp.toPx()).coerceIn(0f, 1f)
+                        alpha = 1f - 0.35f * progress
+                        scaleX = 1f - 0.06f * progress
+                        scaleY = scaleX
+                    },
+                )
+            }
         }
         Row(
             Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
@@ -151,9 +159,10 @@ private fun ResultSummary(
     modifier: Modifier,
     onGapFix: (GapFix) -> Unit,
     heroSymbolModifier: Modifier = Modifier,
+    heroModifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
-        ResultHero(report = report, symbolModifier = heroSymbolModifier)
+        ResultHero(report = report, symbolModifier = heroSymbolModifier, modifier = heroModifier)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CountCell(report.findings.size, pluralStringResource(R.plurals.count_findings, report.findings.size), SpyColors.Danger)
             CountCell(report.leads.size, pluralStringResource(R.plurals.count_leads, report.leads.size), SpyColors.Amber)
@@ -224,7 +233,7 @@ private fun ResultSummary(
 }
 
 @Composable
-private fun ResultHero(report: Report, symbolModifier: Modifier = Modifier) {
+private fun ResultHero(report: Report, symbolModifier: Modifier = Modifier, modifier: Modifier = Modifier) {
     val reduced = rememberReducedMotion()
     val danger = report.findings.isNotEmpty()
     val tint = if (danger) SpyColors.Danger else if (report.leads.isNotEmpty()) SpyColors.Amber else SpyColors.Clear
@@ -258,7 +267,7 @@ private fun ResultHero(report: Report, symbolModifier: Modifier = Modifier) {
         alpha
     } else 0.18f
     Box(
-        Modifier.fillMaxWidth().height(148.dp).drawBehind {
+        modifier.fillMaxWidth().height(148.dp).drawBehind {
             val center = Offset(size.width / 2f, 52.dp.toPx())
             if (danger) {
                 drawCircle(SpyColors.Danger.copy(alpha = if (reduced) 0.18f else glow), radius = 24.dp.toPx(), center = center)
@@ -333,6 +342,7 @@ private fun ResultList(
     onGapFix: (GapFix) -> Unit,
     onHelp: () -> Unit,
     modifier: Modifier,
+    summary: (@Composable () -> Unit)? = null,
 ) {
     val entries = buildList<ResultEntry> {
         if (report.findings.isNotEmpty()) {
@@ -367,6 +377,7 @@ private fun ResultList(
         state = state,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        if (summary != null) item(key = "summary") { summary() }
         itemsIndexed(entries, key = { index, _ -> index }) { index, entry ->
             when (entry) {
                 is ResultEntry.Header -> SectionHeader(stringResource(entry.label), stringResource(entry.hint))

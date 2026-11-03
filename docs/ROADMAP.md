@@ -42,6 +42,11 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
+## Ergebnis auf kleinen Handys (2026-11-03)
+- [~] Zusammenfassung scrollt als erstes Listenelement mit; Kopfbereich blendet leicht aus, Fußbuttons bleiben fest.
+      Tablet unverändert. Abnahme offen: Tests, aktualisierte Ergebnisbilder DE/EN samt Sichtprüfung und Debug-Build.
+      Lokaler Prüflauf vor Build-Start durch gesperrte Sockets blockiert (`Operation not permitted`).
+
 ## Release 0.3.9–0.3.11 (2026-11-03) – 0.3.9/0.3.10 nur Build-Fixes für F-Droid (verification-metadata für leeren Gradle-Home, kein „Dependency metadata“-Signaturblock); F-Droid-Pipeline 0.3.10 grün, „compared built binary to supplied reference binary successfully“. 0.3.11: Startbildschirm passt auf kleine/gezoomte Handys (Radar skaliert mit Höhe, < 700 dp scrollt alles, beim Scrollen schrumpft Radar auf 55 % und Statusleiste auf Icons, fingergeführt), 3 ungenutzte Rechte aus libadb entfernt, LEGAL/App-Text nennen jede Netzwerknutzung. Belkis auf Samsung-Handy mit Anzeigezoom: „läuft super“. Reproduzierbar (466) + apksigcopier lokal bestanden.
 
 ## Release 0.3.8 (2026-11-03) – Bedienhilfen: Startbildschirm unter offenen Seiten für Bildschirmleser ausgeblendet (Bedienbaum aller Hauptseiten auf dem Pixel ausgelesen), fastlane-Store-Texte DE/EN, README-Installation. verify-reproducible: 466 gleich; apksigcopier compare (F-Droid-Prüfung) bestanden. Tab S9 Ultra: Update + Start ohne Absturz; Fix vorher auf dem Pixel geprüft. Download geprüft.
