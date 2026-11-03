@@ -4,11 +4,10 @@
 Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien verständlich, für Profis tief. Start mit
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-02 23:30)
-1. **Laientest Assistent** – eine Person ohne Technikwissen schafft die Einrichtung allein (braucht Belkis).
-2. **Testmatrix ältere Android-Versionen** – API 29 (minSdk), 31, 34 im Emulator; bisher nur Android 16/17 belegt.
-3. **Root-Stufe** – nie auf echtem Root gelaufen; Emulator mit Magisk.
-4. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
+1. **Testmatrix ältere Android-Versionen** – API 29 (minSdk), 31, 34 im Emulator; bisher nur Android 16/17 belegt.
+2. **Root-Stufe** – nie auf echtem Root gelaufen; Emulator mit Magisk.
+3. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
 - [ ] „Wer darf was“ zeigt ~12 s nur „Apps werden gelesen …“. Abnahme: Fortschritt sichtbar (n von m Apps), zweiter
@@ -29,8 +28,8 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] Fund: Fertig-Seite nach eingebauter Kopplung sprach von Shizuku. Behoben dc7fc24.
 - [x] Fund: Samsung nennt die Akku-Stufe „Nicht eingeschränkt“, nicht „uneingeschränkt“. Behoben.
 - [x] Auto Blocker, „Sicherheit und Datenschutz“, „Eingeschränkte Einstellungen zulassen“: Bezeichnungen stimmen (SecSettings de).
-- [ ] Assistent wartet nur 5 Min. auf den Kopplungscode; danach ehrlich „Das hat zu lange gedauert“. Beim Laientest messen,
-      ob 5 Min. reichen. Abnahme: Laie schafft es ohne Timeout, sonst Frist verlängern.
+- [x] Assistent wartet 5 Min. auf den Kopplungscode. Beleg: Belkis hat die Einrichtung rund zehnmal durchlaufen, ohne
+      Timeout (2026-11-03). Nur bei echten Rückmeldungen wieder öffnen.
 - [ ] Kopplungs-Benachrichtigung wird alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
 - [ ] Tablet-Kopf: „Spyhound“ steht links über DE/EN statt in einer Zeile wie am Handy. Abnahme: Kopf einzeilig, bündig
       mit der rechten Spalte.
@@ -172,7 +171,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [x] DNS-Wächter gebaut (e91f5d7, 6 Tests). Offen: Abnahme auf Gerät mit Test-Domain.
       löst Warnung aus, kein Datenabfluss.
 - [x] Geführter Assistent „Tiefere Prüfung einrichten“ (Checkliste hakt sich selbst ab, Direkt-Knöpfe). Beleg: 6764331, e62c904.
-- [ ] Assistent mit echtem Laien testen (ohne Hilfe bis „bereit“). Abnahme: eine Person ohne Technikwissen schafft es allein.
+- [x] Assistent ohne Hilfe bis „bereit“. Beleg: Belkis rund zehn Durchläufe auf Pixel und Tab (2026-11-03); ein
+      eigener Laientest entfällt auf seinen Entscheid. Echte Nutzer-Rückmeldungen ersetzen ihn.
 
 ## Upstream (Zero Breach Toolkit)
 - [ ] PR #31 „Android: package names in <queries> declarations are not install traces“ – offen seit 2026-11-01.
