@@ -198,7 +198,7 @@ private fun BuiltinAdbWizardSection(
                 if (!devOptionsEnabled && !steps.step1Done) {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        stringResource(R.string.adb_wizard_dev_hint),
+                        emphasizeLabels(stringResource(R.string.adb_wizard_dev_hint)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = SpyColors.IvoryMuted,
                     )
@@ -265,7 +265,7 @@ private fun BuiltinAdbWizardSection(
     ) {
         if (splitHintOpen) {
             Text(
-                stringResource(R.string.adb_wizard_splitscreen_hint),
+                emphasizeLabels(stringResource(R.string.adb_wizard_splitscreen_hint)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = SpyColors.IvoryMuted,
             )
@@ -331,7 +331,7 @@ private fun AdbWizardStepCard(
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium, color = titleColor)
                 Spacer(Modifier.height(4.dp))
-                Text(body, style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+                Text(emphasizeLabels(body), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
                 extraContent?.invoke()
                 if (failed && failureMessage != null) {
                     Spacer(Modifier.height(8.dp))
@@ -481,7 +481,7 @@ private fun DeepCheckStepBlock(
         ScanStepRow(label = stringResource(step.title), done = done, active = isActive)
         if (isActive || done) {
             Text(
-                body,
+                emphasizeLabels(body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (isActive) SpyColors.Ivory else SpyColors.IvoryMuted,
                 modifier = Modifier.padding(start = 34.dp, top = 4.dp),
@@ -499,7 +499,7 @@ private fun DeepCheckStepBlock(
         )
         if (helpOpen) {
             Text(
-                help,
+                emphasizeLabels(help),
                 style = MaterialTheme.typography.bodyMedium,
                 color = SpyColors.IvoryMuted,
                 modifier = Modifier.padding(start = 34.dp, top = 4.dp, bottom = 4.dp),

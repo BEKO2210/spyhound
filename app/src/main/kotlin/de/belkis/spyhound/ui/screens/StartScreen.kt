@@ -1,5 +1,6 @@
 package de.belkis.spyhound.ui.screens
 
+import de.belkis.spyhound.ui.components.emphasizeLabels
 import de.belkis.spyhound.ui.design.SpyMotion
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
@@ -409,11 +410,11 @@ fun StartScreen(
                 )
                 AnimatedVisibility(showBugreportSteps) {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(stringResource(R.string.t_072), style = MaterialTheme.typography.bodyLarge)
-                        Text(stringResource(R.string.t_073), style = MaterialTheme.typography.bodyLarge)
-                        Text(stringResource(R.string.t_074), style = MaterialTheme.typography.bodyLarge)
+                        Text(emphasizeLabels(stringResource(R.string.t_072)), style = MaterialTheme.typography.bodyLarge)
+                        Text(emphasizeLabels(stringResource(R.string.t_073)), style = MaterialTheme.typography.bodyLarge)
+                        Text(emphasizeLabels(stringResource(R.string.t_074)), style = MaterialTheme.typography.bodyLarge)
                         Text(
-                            stringResource(R.string.t_075) + stringResource(R.string.t_076),
+                            emphasizeLabels(stringResource(R.string.t_075) + stringResource(R.string.t_076)),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     }
