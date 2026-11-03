@@ -25,6 +25,12 @@ Stand 2026-11-01. Belege: Screenshots unter `docs/shots/matrix/`, Gerätetests a
 | pixel_6 | 14 (34) | Shizuku (über den Assistenten) | ✅ Tief, 1.360 geprüft, Testspy rot, 0 Abstürze | `api34-shizuku-*.png` |
 | pixel_tablet | 16 (36) | Basis | ✅ Spalte 868 px ≤ 1392 px (640 dp), Testspy rot | `api36-tablet-*.png` |
 
+## Echte Geräte, Release 0.3.7 (2026-11-03)
+| Gerät | Android | Build | Tiefe | Ergebnis |
+|---|---|---|---|---|
+| Pixel 11 Pro XL | 17 | Release 0.3.7 (signiert) | Tief (eingebaut) | Update über 0.3.6, Kopplung blieb, 42 s, 18.437 geprüft, 0 Funde · 5 Hinweise · 2 Lücken, 0 Abstürze |
+| Galaxy Tab S9 Ultra (Belkis) | 16, One UI 8 | Release 0.3.7 (signiert) | Tief (eingebaut) | Update über 0.3.6, Kopplung blieb, 79 s, 58.105 geprüft, 0 Funde · 5 Hinweise · 2 Lücken, 0 Abstürze |
+
 ## Echte Geräte (2026-11-02)
 | Gerät | Android | Build | Tiefe | Ergebnis |
 |---|---|---|---|---|
