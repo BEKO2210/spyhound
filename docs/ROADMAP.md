@@ -13,8 +13,11 @@ verbreiteten Geräten, ohne Falschalarm, und jeder kann nachprüfen, dass die AP
       Review mit 14 Befunden behoben (0.3.7), Laientest (~10 Durchläufe, Belkis).
 - [ ] Gerätebreite: Tief-Scan ohne Absturz und ohne Falschalarm auf je einem Gerät von Google, Samsung (Handy mit
       SIM, inkl. SMS-Pfad), Xiaomi/Redmi und einem Android-10/11-Altgerät. Stand: Pixel 11, Pixel 9, Tab S9 Ultra.
-- [ ] Bedienhilfen: einmal komplett mit TalkBack durch Start → Prüfung → Ergebnis → Hilfe auf dem Pixel (A11Y.md hat
-      Kontraste; TalkBack-Durchgang fehlt). Abnahme: jeder Knopf vorgelesen, keine Sackgasse.
+- [~] Bedienhilfen: Bedienbaum auf dem Pixel ausgelesen (Start, Wer darf was, Über, Ergebnis): jedes antippbare
+      Element hat einen Text, Ziele ≥ 48 dp (Meldungen nur an Rändern unter Kopfzeile/Statusleiste). Fund behoben:
+      Startbildschirm blieb unter offenen Seiten im Bedienbaum („Jetzt prüfen“ erreichbar) → clearAndSetSemantics.
+      Offen: echter TalkBack-Durchgang (TalkBack darf ich nicht einschalten; Belkis ~5 Min). Abnahme: jeder Knopf
+      vorgelesen, keine Sackgasse.
 - [~] Verteilung: fastlane/-Metadaten DE/EN (Texte, Icon, 6 Screenshots, Changelog 12) und README-Installation mit
       Prüfsumme sind drin (2026-11-03). F-Droid erlaubt JitPack.io als vertrauenswürdige Maven-Quelle (Inclusion Policy,
       an der Quelle geprüft), libadb/spake2 sind also kein Hindernis, sofern frei lizenziert. Entwurf
@@ -328,6 +331,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- uiautomator meldet Elemente unter fest stehenden Leisten mit abgeschnittenen Grenzen: eine „zu kleine“ Fläche erst prüfen, ob sie am Rand klebt. Und Knöpfe nie nur über ihren Text suchen („Öffnen“ gibt es mehrfach; einmal öffnete das die Entwickleroptionen).
 - Ein Meilenstein (z. B. 1.0) beendet die Roadmap nie; er ist ein Abnahmepunkt, danach wächst sie weiter (Belkis, 2026-11-03).
 - Xiaomis bigota-CDN lieferte hier 35 KB/s, derselbe Pfad im Xiaomi-Bucket `bkt-sgp-miui-ota-update-alisgp` 14 MB/s. Vor großen Downloads Tempo beider Hosts messen.
 - Für Gerätetests der eingebauten Kopplung erst prüfen, welcher Weg aktiv ist: Läuft Shizuku, nimmt Spyhound Shizuku und der Kopplungsweg wird gar nicht berührt. Benachrichtigungen zählt `logcat -b events | grep notification_enqueue`.
