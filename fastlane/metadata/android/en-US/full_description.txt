@@ -12,7 +12,7 @@ Installed apps (names, APK hashes, signing certificates), device state (security
 Never “your phone is clean” – only <i>no known traces in the checked areas</i>, with every skipped check listed as a gap. Findings match published indicators; leads are worth a look, not alarms on their own.
 
 <b>Privacy</b>
-The scan is offline. No telemetry, no ads, no account. Network use only when you tap <i>Update sources</i> (fixed repos, pinned commits, SHA-256 verified).
+The scan is offline. No telemetry, no ads, no account. Network use only when you tap <i>Update sources</i> (fixed repos, pinned commits, SHA-256 verified), and by the optional DNS watcher, which passes DNS queries on to your network's DNS server.
 
 <b>Limits</b>
 No real-time protection. Only published traces; new or unknown spyware is not detected. Spyhound does not remove malware.

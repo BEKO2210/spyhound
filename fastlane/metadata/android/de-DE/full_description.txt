@@ -12,7 +12,7 @@ Installierte Apps (Namen, APK-Fingerabdrücke, Zertifikate), Gerätezustand (Sic
 Nie „dein Handy ist sauber“, sondern <i>keine bekannten Spuren in den geprüften Bereichen</i> – und jede ausgelassene Prüfung als Lücke. Funde passen zu veröffentlichten Indikatoren; Hinweise sind prüfenswert, kein Alarm für sich allein.
 
 <b>Datenschutz</b>
-Die Prüfung ist offline. Keine Telemetrie, keine Werbung, kein Konto. Netzwerk nur, wenn du <i>Quellen aktualisieren</i> tippst (feste Repos, gepinnte Commits, SHA-256 geprüft).
+Die Prüfung ist offline. Keine Telemetrie, keine Werbung, kein Konto. Netzwerk nur, wenn du <i>Quellen aktualisieren</i> tippst (feste Repos, gepinnte Commits, SHA-256 geprüft), und beim optionalen DNS-Wächter, der DNS-Anfragen an den DNS-Server deines Netzes weiterreicht.
 
 <b>Grenzen</b>
 Kein Echtzeitschutz. Nur veröffentlichte Spuren; neue oder unbekannte Spyware wird nicht erkannt. Spyhound entfernt keine Schadsoftware.
