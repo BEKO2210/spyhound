@@ -7,7 +7,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
 1. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
-## Release 0.3.6 (2026-11-03) – „Wer darf was“ ~2 s statt ~12 s mit Fortschritt und „Genauer ansehen“, ruhigere Kopplungs-Benachrichtigung, Samsung-Korrekturen (Updater, Einstellungsnamen, Akku), Kopfzeile in einer Reihe, Quellen in „Über“ zugeklappt. verify-reproducible: 464 Dateien gleich. Pixel 11: Test-Build als Update über 0.3.5, Kopplung blieb, tiefe Prüfung 42 s ohne Absturz; 0.3.6 installiert und startet. Offen: Flacker-Test der Benachrichtigung nach Neukopplung (Unit-Tests grün), Release auf Belkis' Go.
+## Release 0.3.6 (2026-11-03) – „Wer darf was“ ~2 s statt ~12 s mit Fortschritt und „Genauer ansehen“, ruhigere Kopplungs-Benachrichtigung, Samsung-Korrekturen (Updater, Einstellungsnamen, Akku), Kopfzeile in einer Reihe, Quellen in „Über“ zugeklappt. verify-reproducible: 464 Dateien gleich. Pixel 11: Test-Build als Update über 0.3.5, Kopplung blieb, tiefe Prüfung 42 s ohne Absturz; 0.3.6 installiert und startet. Offen: Flacker-Test der Benachrichtigung nach Neukopplung (Unit-Tests grün), veröffentlicht auf Belkis' Go: github.com/BEKO2210/spyhound/releases/tag/v0.3.6 (Download geprüft).
 
 ## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
 - [x] „Wer darf was“ zeigte ~12 s nur „Apps werden gelesen …“. Ursache: hashte jede APK (GB). Behoben in a1751f2: ohne
