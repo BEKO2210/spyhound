@@ -1,0 +1,1 @@
+Bedienhilfen: Bildschirmleser erreichen den Startbildschirm nicht mehr, solange eine andere Seite offen ist. Store-Texte und Screenshots für F-Droid, klarere Installationsanleitung mit Prüfsumme im README.

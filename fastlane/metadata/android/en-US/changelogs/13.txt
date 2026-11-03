@@ -1,0 +1,1 @@
+Accessibility: screen readers no longer reach the start screen while another page is open. Store descriptions and screenshots for F-Droid, clearer install steps with checksum check in the README.

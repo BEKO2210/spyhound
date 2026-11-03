@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>Bildschirmleser erreichen den Startbildschirm unter offenen Seiten nicht mehr</item>
         <item>Weniger Fehlalarme: Spuren-Listen, Links und DNS-Namen werden strenger gelesen</item>
         <item>Die Liste unbedenklicher Systemdateien kennt jetzt auch Xiaomi, Redmi und POCO</item>
         <item>Anleitungen zeigen die Begriffe aus den Einstellungen fett</item>
         <item>Fehlerbericht-Import und DNS-Wächter halten defekten oder riesigen Dateien stand</item>
         <item>Lizenztexte von App, Quellen und Schriften unter „Über Spyhound“</item>
-        <item>„Wer darf was“ öffnet in etwa 2 s und zeigt auffällige Rechte-Kombinationen</item>
     </string-array>
 </resources>
