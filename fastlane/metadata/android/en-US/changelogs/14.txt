@@ -1,0 +1,1 @@
+Build fix only: dependency verification now covers every file a clean build downloads, so the app builds reproducibly on F-Droid. No change in the app itself.
