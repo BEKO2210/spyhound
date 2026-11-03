@@ -40,8 +40,8 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [ ] Fehlerbericht-Import ohne Zeitlimit (hängende Content-Provider-Pipe).
 - [ ] DNS-Wächter: unbegrenzte Arbeitswarteschlange (DnsGuardService.kt:104); DnsHitStore-Schreibkonflikt bei
       gleichzeitigen Treffern (DnsHitStore.kt:31).
-- [ ] DNS-Wächter leitet nicht blockierte Anfragen an das Netz (notfalls öffentliche Resolver) weiter: gewollt, aber
-      prüfen, dass LEGAL.md/App-Text das so offen sagen. Abnahme: Satz in LEGAL.md DE/EN + Info-Text belegt.
+- [x] DNS-Wächter leitet nicht blockierte Anfragen an das Netz weiter (notfalls Quad9/Cloudflare): gewollt und in
+      LEGAL.md 2.4 DE/EN genau so beschrieben (Code DnsGuardService.FALLBACK_DNS stimmt überein); SPEC nennt die Ausnahme.
 
 ## Galaxy-Test (2026-11-02, Tab S9 Ultra, One UI 8 / Android 16, X910XXS6EZI2)
 - [x] Alle 8 Knöpfe der Anleitungen lösen auf die richtige One-UI-Seite auf (`scripts/check-settings-intents.sh`, 812537e).

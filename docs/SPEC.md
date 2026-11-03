@@ -9,6 +9,8 @@ Kotlin-Nachbau der Logik von github.com/interplains/Zero-Breach-Toolkit (Apache-
    (`FeedCatalog.ALLOWED_REPOS`), nur vom festgelegten Commit, SHA-256 muss passen, keine Redirects.
    Zusätzlich nur lokale Sockets zu `127.0.0.1` für die eingebaute ADB-Verbindung (`AdbShell`); die INTERNET-Permission
    wird dafür gebraucht (Loopback-Sockets) und im Manifest begründet. Nie ein Ziel außerhalb des eigenen Geräts.
+   Ausnahme, nur auf Anweisung: Der optionale DNS-Wächter reicht nicht blockierte DNS-Anfragen unverändert an den
+   DNS-Server des Netzes weiter (ersatzweise Quad9/Cloudflare), wie in LEGAL.md 2.4 beschrieben; der Scan bleibt offline.
 2. **Ehrlich.** Ein Ergebnis ohne Funde heißt „Keine bekannten Spuren im geprüften Bereich“, nie „sauber“. Jede Prüfung,
    die nicht lief, erscheint als `Gap` mit `GapFix` (was sie schließen würde).
 3. **Drei Stufen, jede addiert:** `AccessLevel.APP` (keine Sonderrechte, das maximal Mögliche), `SHELL` (Shizuku oder eingebaute ADB-Verbindung
