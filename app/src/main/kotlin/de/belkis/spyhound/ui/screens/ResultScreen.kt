@@ -76,6 +76,7 @@ import de.belkis.spyhound.scan.Verdict
 import de.belkis.spyhound.scan.guidanceFor
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
+import de.belkis.spyhound.ui.components.emphasizeLabels
 import de.belkis.spyhound.ui.components.ScrollEdge
 import de.belkis.spyhound.ui.components.SectionHeader
 import de.belkis.spyhound.ui.components.SpyButton
@@ -463,7 +464,7 @@ private fun GuidanceCard(entry: ResultEntry.Card, onGapFix: (GapFix) -> Unit, on
                     Text(stringResource(R.string.result_meaning), style = SpyTypographyExtras.sectionLabel)
                     Text(meaning, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
                     Text(stringResource(R.string.result_steps), style = SpyTypographyExtras.sectionLabel)
-                    Text(steps, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
+                    Text(emphasizeLabels(steps), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
                     entry.guidance.action?.let { action ->
                         SpyButton(
                             stringResource(

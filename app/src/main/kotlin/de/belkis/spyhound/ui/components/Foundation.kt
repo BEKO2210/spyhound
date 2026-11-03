@@ -350,9 +350,9 @@ fun SmsBlockedDialog(onOpenAppInfo: () -> Unit, onDismiss: () -> Unit) {
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.sms_blocked_intro))
-                Text(stringResource(R.string.sms_blocked_step1))
-                Text(stringResource(R.string.sms_blocked_step2))
-                Text(stringResource(R.string.sms_blocked_step3))
+                Text(emphasizeLabels(stringResource(R.string.sms_blocked_step1)))
+                Text(emphasizeLabels(stringResource(R.string.sms_blocked_step2)))
+                Text(emphasizeLabels(stringResource(R.string.sms_blocked_step3)))
             }
         },
         confirmButton = {

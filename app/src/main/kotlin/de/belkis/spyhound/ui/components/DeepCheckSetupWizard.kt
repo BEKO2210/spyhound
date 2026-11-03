@@ -103,7 +103,7 @@ fun DeepCheckSetupWizard(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            stringResource(R.string.deep_check_intro),
+            emphasizeLabels(stringResource(R.string.deep_check_intro)),
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.height(20.dp))
@@ -134,7 +134,7 @@ fun DeepCheckSetupWizard(
         }
         Spacer(Modifier.height(16.dp))
         Text(
-            stringResource(R.string.t_032),
+            emphasizeLabels(stringResource(R.string.t_032)),
             style = MaterialTheme.typography.bodyMedium,
             color = SpyColors.IvoryMuted,
         )
