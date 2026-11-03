@@ -104,7 +104,7 @@ object BuiltinAdb {
                     ))
                 }
                 when (s) {
-                    AdbSetupState.WaitingForPairingCode -> AdbPairingNotification.show(app, wrongCode = wrongCode)
+                    AdbSetupState.WaitingForPairingCode -> AdbPairingNotification.show(app, wrongCode = wrongCode, onlyIfChanged = true)
                     AdbSetupState.Paired -> { connect(app); return }
                     AdbSetupState.Connected, is AdbSetupState.Failed -> return
                     AdbSetupState.Pairing -> Unit
@@ -179,7 +179,15 @@ internal object AdbPairingNotification {
     private const val CHANNEL = "adb_pairing"
     private const val ID = 4712
 
-    fun show(context: Context, wrongCode: Boolean = false, pairing: Boolean = false, lost: Boolean = false) {
+    /** Text of the notification currently posted, or null after [cancel]. */
+    @Volatile private var shownBody: Int? = null
+
+    /**
+     * Posts the notification. With [onlyIfChanged] (the polling loop) it is left alone while the same text is still
+     * showing: reposting every poll would disturb a code being typed. A reply always reposts, since Android keeps a
+     * spinner on the reply field until the notification is updated.
+     */
+    fun show(context: Context, wrongCode: Boolean = false, pairing: Boolean = false, lost: Boolean = false, onlyIfChanged: Boolean = false) {
         val ctx = AppLanguage.localizedContext(context)
         val nm = context.getSystemService(NotificationManager::class.java) ?: return
         nm.createNotificationChannel(
@@ -191,6 +199,8 @@ internal object AdbPairingNotification {
             wrongCode -> R.string.adb_notif_wrong
             else -> R.string.adb_notif_text
         }
+        // Android 14+ lets the user swipe away even an ongoing notification; then it is posted again.
+        if (onlyIfChanged && shownBody == body && nm.activeNotifications.any { it.id == ID }) return
         val builder = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_launcher_monochrome)
             .setContentTitle(ctx.getString(R.string.adb_notif_title))
@@ -211,9 +221,11 @@ internal object AdbPairingNotification {
             )
         }
         runCatching { nm.notify(ID, builder.build()) } // without notification permission the app screen still guides
+        shownBody = body
     }
 
     fun cancel(context: Context) {
+        shownBody = null
         context.getSystemService(NotificationManager::class.java)?.cancel(ID)
     }
 }
