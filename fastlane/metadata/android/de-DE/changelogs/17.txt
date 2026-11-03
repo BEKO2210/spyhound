@@ -1,0 +1,1 @@
+Die Ergebnisseite auf dem Handy hat mehr Platz: Die Zusammenfassung (Ergebnis, Zähler, „Geprüft mit“, Zeitraum) scrollt jetzt mit weg und blendet dabei sanft aus, sodass die Funde, Hinweise und Anleitungen den ganzen Bildschirm bekommen. „Bericht teilen“ und „Neu prüfen“ bleiben unten. Tablets sind unverändert.

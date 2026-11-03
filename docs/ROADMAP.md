@@ -43,9 +43,9 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Ergebnis auf kleinen Handys (2026-11-03)
-- [~] Zusammenfassung scrollt als erstes Listenelement mit; Kopfbereich blendet leicht aus, Fußbuttons bleiben fest.
+- [x] Zusammenfassung scrollt als erstes Listenelement mit; Kopfbereich blendet leicht aus, Fußbuttons bleiben fest.
       Tablet unverändert. Unit-Tests + verifyRoborazzi grün, 4 Ergebnisbilder (DE/EN, Fund/Hinweis) neu, nichts abgeschnitten
-      (ea9ef8d). Signiert aufs Pixel 11 installiert. Abnahme: Belkis prüft echtes Ergebnis auf dem Handy.
+      (ea9ef8d). Signiert aufs Pixel 11 installiert. Belkis auf dem Pixel: „Läuft“ → Release 0.3.12.
 
 ## Release 0.3.9–0.3.11 (2026-11-03) – 0.3.9/0.3.10 nur Build-Fixes für F-Droid (verification-metadata für leeren Gradle-Home, kein „Dependency metadata“-Signaturblock); F-Droid-Pipeline 0.3.10 grün, „compared built binary to supplied reference binary successfully“. 0.3.11: Startbildschirm passt auf kleine/gezoomte Handys (Radar skaliert mit Höhe, < 700 dp scrollt alles, beim Scrollen schrumpft Radar auf 55 % und Statusleiste auf Icons, fingergeführt), 3 ungenutzte Rechte aus libadb entfernt, LEGAL/App-Text nennen jede Netzwerknutzung. Belkis auf Samsung-Handy mit Anzeigezoom: „läuft super“. Reproduzierbar (466) + apksigcopier lokal bestanden.
 

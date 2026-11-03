@@ -1,0 +1,1 @@
+The result page on phones has more room: the summary (verdict, counters, "Checked with", time range) now scrolls away and fades gently, so findings, leads and guides get the whole screen. "Share report" and "Scan again" stay at the bottom. Tablets are unchanged.

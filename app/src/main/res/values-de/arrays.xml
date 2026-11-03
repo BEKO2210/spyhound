@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>Ergebnis auf dem Handy: Zusammenfassung scrollt mit, die Hinweise bekommen den ganzen Bildschirm</item>
         <item>Startbildschirm passt auf kleine und gezoomte Handys; beim Scrollen klappen Radar und Leiste ein</item>
         <item>Drei ungenutzte Rechte entfernt; Datenschutztexte nennen jede Netzwerknutzung</item>
         <item>Bildschirmleser erreichen den Startbildschirm unter offenen Seiten nicht mehr</item>
         <item>Weniger Fehlalarme: Spuren-Listen, Links und DNS-Namen werden strenger gelesen</item>
         <item>Die Liste unbedenklicher Systemdateien kennt jetzt auch Xiaomi, Redmi und POCO</item>
-        <item>Anleitungen zeigen die Begriffe aus den Einstellungen fett</item>
     </string-array>
 </resources>
