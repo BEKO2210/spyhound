@@ -10,9 +10,9 @@ import android.os.Build
 import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import de.belkis.spyhound.bugreport.BUGREPORT_READ_TIMEOUT_MS
+import de.belkis.spyhound.bugreport.BUGREPORT_STALL_TIMEOUT_MS
 import de.belkis.spyhound.bugreport.BugreportImport
-import de.belkis.spyhound.bugreport.readWithTimeout
+import de.belkis.spyhound.bugreport.readWithStallTimeout
 import de.belkis.spyhound.bugreport.analyzeBugreport
 import de.belkis.spyhound.background.BackgroundReportStore
 import de.belkis.spyhound.background.BackgroundScanPreferences
@@ -396,9 +396,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             return
         }
         _state.update { it.copy(busy = s(R.string.vm_checking_bugreport), bannerMessage = null) }
-        val packages = installedPackageNames()
-        val checks = readWithTimeout(
-            BUGREPORT_READ_TIMEOUT_MS,
+        val packages = withContext(Dispatchers.IO) { installedPackageNames() }
+        val checks = readWithStallTimeout(
+            BUGREPORT_STALL_TIMEOUT_MS,
             { ctx.contentResolver.openInputStream(uri) },
         ) { stream -> analyzeBugreport(stream, loaded.set, packages) }
         _state.update { it.copy(busy = null) }

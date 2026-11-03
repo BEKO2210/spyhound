@@ -4,39 +4,54 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withTimeoutOrNull
-import java.io.Closeable
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
-
-/** Upper bound for reading a user-chosen bug report; a provider that stalls must not hang the import. */
-const val BUGREPORT_READ_TIMEOUT_MS = 120_000L
+import kotlinx.coroutines.delay
+import java.io.FilterInputStream
+import java.io.InputStream
+import java.util.concurrent.atomic.AtomicLong
 
 /**
- * Opens a resource and runs [block] on it, giving up after [timeoutMs] (null result). On timeout the resource is
- * closed so that a blocked read is released instead of leaking a stuck thread.
+ * A single read of a user-chosen bug report may block at most this long. Only a stalled read counts: parsing and
+ * analysing a large report can take minutes on a phone and must not be cut off.
  */
-suspend fun <C : Closeable, T> readWithTimeout(
-    timeoutMs: Long,
-    open: () -> C?,
-    block: (C) -> T?,
+const val BUGREPORT_STALL_TIMEOUT_MS = 60_000L
+
+/**
+ * Opens a stream and runs [block] on it. If one read() call blocks for longer than [stallMs], the stream is closed
+ * (which releases the blocked read) and the result is null.
+ */
+suspend fun <T> readWithStallTimeout(
+    stallMs: Long,
+    open: () -> InputStream?,
+    block: (InputStream) -> T?,
 ): T? {
-    val current = AtomicReference<Closeable?>()
-    val timedOut = AtomicBoolean(false)
+    // 0 = no read in progress, otherwise the time the current read started.
+    val readSince = AtomicLong(0)
+    var watched: InputStream? = null
     // Own scope: a read that ignores cancellation must not keep the caller waiting.
     val job = CoroutineScope(SupervisorJob() + Dispatchers.IO).async {
         runCatching {
-            val resource = open() ?: return@runCatching null
-            current.set(resource)
-            if (timedOut.get()) runCatching { resource.close() }
-            resource.use(block)
+            val raw = open() ?: return@runCatching null
+            val stream = object : FilterInputStream(raw) {
+                private inline fun <R> timed(read: () -> R): R {
+                    readSince.set(System.nanoTime())
+                    try { return read() } finally { readSince.set(0) }
+                }
+                override fun read(): Int = timed { super.read() }
+                override fun read(b: ByteArray, off: Int, len: Int): Int = timed { super.read(b, off, len) }
+            }
+            watched = stream
+            stream.use(block)
         }.getOrNull()
     }
-    val result = withTimeoutOrNull(timeoutMs) { job.await() }
-    if (!job.isCompleted) {
-        timedOut.set(true)
-        runCatching { current.get()?.close() }
-        job.cancel()
+    val tick = (stallMs / 4).coerceIn(10, 1_000)
+    while (job.isActive) {
+        val since = readSince.get()
+        if (since != 0L && (System.nanoTime() - since) / 1_000_000 > stallMs) {
+            runCatching { watched?.close() }
+            job.cancel()
+            return null
+        }
+        delay(tick)
     }
-    return result
+    return runCatching { job.await() }.getOrNull()
 }

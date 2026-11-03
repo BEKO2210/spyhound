@@ -2,7 +2,7 @@ package de.belkis.spyhound
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import de.belkis.spyhound.bugreport.readWithTimeout
+import de.belkis.spyhound.bugreport.readWithStallTimeout
 import de.belkis.spyhound.dns.DnsGuardService
 import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.dns.DnsHitStore
@@ -79,7 +79,7 @@ class Robustness2Test {
             }
         }
         val start = System.nanoTime()
-        val r = runBlocking { readWithTimeout(300, { stuck }) { it.read() } }
+        val r = runBlocking { readWithStallTimeout(300, { stuck }) { it.read() } }
         assertNull(r)
         assertTrue((System.nanoTime() - start) / 1_000_000 < 5_000)
         assertTrue(released.await(5, TimeUnit.SECONDS))
@@ -87,7 +87,16 @@ class Robustness2Test {
 
     @Test
     fun fastReadReturnsValue() {
-        val r = runBlocking { readWithTimeout(5_000, { "abc".byteInputStream() }) { it.readBytes().size } }
+        val r = runBlocking { readWithStallTimeout(5_000, { "abc".byteInputStream() }) { it.readBytes().size } }
+        assertEquals(3, r)
+    }
+
+    @Test
+    fun slowWorkAfterReadingIsNotCutOff() {
+        // Analysing a large report takes longer than the stall limit but reads nothing meanwhile.
+        val r = runBlocking {
+            readWithStallTimeout(200, { "abc".byteInputStream() }) { s -> s.readBytes().size.also { Thread.sleep(800) } }
+        }
         assertEquals(3, r)
     }
 }
