@@ -15,6 +15,14 @@ Stand 2026-11-01. Belege: Screenshots unter `docs/shots/matrix/`, Gerätetests a
 | Emulator pixel_6 | 14 (34) | Debug | Shizuku | ❌ Verbindung im Emulator nicht hergestellt, Scan lief als Basis | `api34-shizuku-*.png` |
 | Emulator pixel_6 | 14 (34) | Debug | Root (Magisk v31.1 via rootAVD @613caa4) | ✅ „Full (root)“, 22 s, 5.764 geprüft, Testspy rot. Hinweis: Magisk zeigte keinen Freigabe-Dialog (`su: request rejected`), Freigabe für den Test direkt als Magisk-Policy gesetzt (= „Grant“). Magisk-`su` liegt unter `/system_ext/bin/su` | `api34-root-*.png` |
 
+### Wiederholung 2026-11-03 (Stand mit Assistent und eingebauter Kopplung, Debug)
+| Emulator | Android (API) | Stufe | Ergebnis | Beleg |
+|---|---|---|---|---|
+| pixel_6 | 10 (29) | Basis | ✅ Testspy rot, 496 geprüft, 0 Abstürze | `api29-*.png` |
+| pixel_6 | 12 (31) | Basis | ✅ Testspy rot, 620 geprüft | `api31-*.png` |
+| pixel_6 | 14 (34) | Basis | ✅ Testspy rot, 755 geprüft | `api34-*.png` |
+| pixel_6 | 14 (34) | Root (Magisk) | ✅ Testspy rot | `api34-root-*.png` |
+
 ## Echte Geräte (2026-11-02)
 | Gerät | Android | Build | Tiefe | Ergebnis |
 |---|---|---|---|---|

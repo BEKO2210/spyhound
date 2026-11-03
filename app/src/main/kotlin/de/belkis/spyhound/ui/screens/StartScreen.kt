@@ -140,7 +140,6 @@ fun StartScreen(
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // The half-width tablet column is too narrow for toggle, logo and info button side by side.
             val brand: @Composable (Modifier) -> Unit = { brandModifier ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -166,20 +165,27 @@ fun StartScreen(
                     )
                 }
             }
-            if (tablet) brand(Modifier)
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp),
-            ) {
-                if (!tablet) brand(Modifier.align(Alignment.Center))
-                LanguageToggle(
-                    modifier = Modifier.align(Alignment.CenterStart),
-                )
-                InfoCircleButton(
-                    onClick = onOpenInfo,
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                )
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                // Toggle, logo and info button share one row whenever the column is as wide as a phone; only a
+                // narrower column puts the logo on its own line above them.
+                val oneRow = maxWidth >= 320.dp
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (!oneRow) brand(Modifier)
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp),
+                    ) {
+                        if (oneRow) brand(Modifier.align(Alignment.Center))
+                        LanguageToggle(
+                            modifier = Modifier.align(Alignment.CenterStart),
+                        )
+                        InfoCircleButton(
+                            onClick = onOpenInfo,
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                        )
+                    }
+                }
             }
             Spacer(Modifier.height(12.dp))
             RadarScanButton(

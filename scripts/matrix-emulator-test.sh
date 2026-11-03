@@ -402,6 +402,7 @@ run_phone_test() {
   sleep 2
   screenshot "$SHOT_DIR/api${nn}-scan.png"
   wait_scan_done "api${nn}" || { kill_emu; return 1; }
+  sleep 2 # let the counters finish counting up, or the picture catches them mid-way
   screenshot "$SHOT_DIR/api${nn}-result.png"
   check_finding || { echo "FAIL: no Testspy finding on API $api" >&2; save_failure "api${nn}-finding"; kill_emu; return 1; }
   check_logcat_fatal || { save_failure "api${nn}-fatal"; kill_emu; return 1; }

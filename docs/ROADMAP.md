@@ -5,8 +5,8 @@ Spyhound wird **die** Sicherheits-App für Android: ehrlich, offline, für Laien
 Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., siehe „Stufe 4“). (Belkis, 2026-11-01)
 
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
-1. **Testmatrix ältere Android-Versionen** – API 29 (minSdk), 31, 34 im Emulator; bisher nur Android 16/17 belegt.
-2. **Root-Stufe** – nie auf echtem Root gelaufen; Emulator mit Magisk.
+1. **„Wer darf was“ schneller und klarer** – Fortschritt + Cache, normale vs. auffällige Rechte (Video-Rückmeldung).
+2. **Release 0.3.6** – Galaxy-Korrekturen, Benachrichtigung, Tablet-Kopf; Benachrichtigung vorher auf dem Pixel prüfen.
 3. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
 
 ## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
@@ -30,9 +30,10 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] Auto Blocker, „Sicherheit und Datenschutz“, „Eingeschränkte Einstellungen zulassen“: Bezeichnungen stimmen (SecSettings de).
 - [x] Assistent wartet 5 Min. auf den Kopplungscode. Beleg: Belkis hat die Einrichtung rund zehnmal durchlaufen, ohne
       Timeout (2026-11-03). Nur bei echten Rückmeldungen wieder öffnen.
-- [ ] Kopplungs-Benachrichtigung wird alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
-- [ ] Tablet-Kopf: „Spyhound“ steht links über DE/EN statt in einer Zeile wie am Handy. Abnahme: Kopf einzeilig, bündig
-      mit der rechten Spalte.
+- [~] Kopplungs-Benachrichtigung wird alle 1,5 s neu gepostet (lautlos). Abnahme: nur bei Zustandswechsel neu posten.
+      Code: f07529f (postet nur bei neuem Text oder wenn weggewischt). Offen: auf dem Gerät mit dumpsys prüfen.
+- [x] Tablet-Kopf einzeilig: Logo, DE/EN und Info in einer Zeile, sobald die Spalte ≥ 320 dp breit ist. Beleg:
+      start_de_tablet.png, verifyRoborazziDebug grün.
 - [ ] SMS-Rechte: Tab ohne Telefonie – SMS-Pfad braucht ein Galaxy-Handy (S24 Ultra, nur mit Freigabe der Besitzerin).
 
 ## Tagesrunde 2026-11-02 (17:40)
@@ -183,10 +184,12 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 
 ## Testmatrix (Emulatoren, strikt nacheinander – RAM 15 GB)
 - [x] Pixel 11 Pro XL, Android 17, echt: Basis + Shizuku. Beleg: siehe Stufe 1.
-- [ ] API 29 (minSdk): Start, Scan Basis, Bericht. Abnahme: keine Abstürze, Screenshots.
-- [ ] API 31, API 34, API 37: dito + Shizuku (APK per adb, Start per libshizuku.so).
+- [x] API 29 (minSdk), 31, 34: Start, Scan Basis, Testspy rot, keine Abstürze. Neu belegt 2026-11-03 mit Assistent und
+      eingebauter Kopplung (TESTMATRIX.md). API 37 im Emulator instabil, auf echten Pixeln belegt.
+- [ ] Shizuku im Emulator: Verbindung kommt nicht zustande (auf echten Geräten belegt).
 - [ ] Tablet-Profil (Pixel Tablet, ~Tab-S9-Format): Layout zentriert ≤ 640 dp.
-- [ ] Root: Emulator mit Magisk (rootAVD), Stufe ROOT inkl. /data/data-, Tombstone-, packages.xml-Prüfung.
+- [x] Root: Emulator mit Magisk (rootAVD), Stufe ROOT, Testspy rot. Neu belegt 2026-11-03. Offen bleibt der
+      Magisk-Freigabedialog auf echtem Root-Gerät.
 - [ ] Testfund: Emulator mit installierter harmloser Test-APK, deren Paketname/Zertifikat als Test-Indikator geladen
       ist → Fund erscheint rot (Ende-zu-Ende-Beweis, nur Debug-Build).
 - Samsung One UI (Auto Blocker, eigene Menüs) lässt sich im Emulator nicht nachstellen – auf dem Tab S9 Ultra geprüft
@@ -257,6 +260,9 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - JVM-Screenshot-Tests fanden in der ersten Runde drei echte Fehler, die Unit-Tests nie zeigen: Knopf bricht mitten im
   Wort um, Tablet-Spalte schneidet das Statuspanel ab, Zahlen nach Systemsprache statt App-Sprache („4,200“ auf
   Deutsch). Lehre: Jede sichtbare Änderung bekommt ein Screenshot-Bild DE/EN × Telefon/Tablet, und jemand sieht es an.
+- Bildbelege nach Animationen erst aufnehmen, wenn sie ausgelaufen sind: Ein API-29-Bild zeigte „0 Funde“ neben einem
+  Fund, weil der Zähler noch hochzählte (2026-11-03). Ein Matrix-Skript nie per `source` mit gesetztem `$0` laden –
+  dann läuft sein `main` mit (ganze Matrix startete ungewollt).
   (2026-11-02)
 - Nachts ist das Testgerät gesperrt, Zugangsdaten werden nie automatisch eingegeben. Lehre: Gerätetests in Arbeitszeiten
   legen, nachts auf Screenshot-Tests und Release-Build stützen; offene Gerätetests in der Roadmap vermerken. (2026-11-02)
