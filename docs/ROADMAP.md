@@ -193,7 +193,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - [x] API 29 (minSdk), 31, 34: Start, Scan Basis, Testspy rot, keine Abstürze. Neu belegt 2026-11-03 mit Assistent und
       eingebauter Kopplung (TESTMATRIX.md). API 37 im Emulator instabil, auf echten Pixeln belegt.
 - [ ] Shizuku im Emulator: Verbindung kommt nicht zustande (auf echten Geräten belegt).
-- [ ] Tablet-Profil (Pixel Tablet, ~Tab-S9-Format): Layout zentriert ≤ 640 dp.
+- [x] Tablet-Profil (Pixel Tablet, API 36): Spalte zentriert ≤ 640 dp (868 px ≤ 1392 px), Testspy rot. Neu belegt 2026-11-03
+      mit dem Stand nach 0.3.6. Beleg: api36-tablet-*.png.
 - [x] Root: Emulator mit Magisk (rootAVD), Stufe ROOT, Testspy rot. Neu belegt 2026-11-03. Offen bleibt der
       Magisk-Freigabedialog auf echtem Root-Gerät.
 - [x] Testfund: Emulator mit installierter harmloser Test-APK (`testapp`, Paketname/Zertifikat in `debug-test.tsv`) →
@@ -213,7 +214,11 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       unsigniert (ohne Schlüssel). Einzige Abweichung: eingebettete Git-Revision, weil die veröffentlichte APK vor dem
       Commit gebaut wurde. Prüfskript `scripts/verify-reproducible.sh`, README DE/EN. Abnahme ab 0.3.5: Skript meldet
       REPRODUCIBLE.
-- [ ] Neueste Indikatoren (ungepinnt) optional, klar als „ungeprüft“ markiert.
+- [x] Neueste Indikatoren: entschieden, **keine** ungepinnten Downloads (bräche „nur fester Commit + SHA-256“; eine
+      vergiftete oder kaputte Liste könnte Falschtreffer erzeugen). Stattdessen prüft `scripts/check-pins.py`, ob eine
+      gepinnte Datei upstream neuer ist (Git-Blob-Vergleich, ohne Download); `--apply` zieht Pin, SHA-256 und
+      mitgelieferte Kopie nach. Frische Indikatoren kommen so mit jedem Release. Stand 2026-11-03: 47 von 47 aktuell.
+- [ ] Vor jedem Release `scripts/check-pins.py` laufen lassen (steht in WORKFLOW.md).
 
 ## Stufe 4 – Weitere Schutzfunktionen (Ideen, jeweils mit Abnahme vor Start präzisieren)
 - [~] Antivirus offline – Schritt 1+2 erledigt (161 Hashes ESET+Meta, 0 Falschtreffer, Gerätetest A3/A5/A6, Positivliste 10830; Release 0.3.2/0.3.5). Offen: nur noch weitere lizenzklare Quellen (abuse.ch anfragen, YARAify prüfen). Ursprünglich: APKs und Downloads gegen öffentliche Malware-Hashlisten (z. B. MalwareBazaar-Exporte) und
