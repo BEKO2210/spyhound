@@ -16,7 +16,11 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 - [x] „Wer darf was“: auffällige Kombinationen oben unter „Genauer ansehen“ (Regeltabelle `LookRule`, Amber, Text nennt
       harmlose Träger wie Uhr-/Auto-Apps), normale Rechte darunter ohne Warnfarbe; alles an einer Textkante.
       Beleg: 44a0aad, 5418521, PermissionAuditTest, audit_*.png.
-- [ ] „Über Spyhound“: Quellen und Lizenzen aufklappbar. Abnahme: Seite passt zusammengeklappt auf zwei Bildschirme.
+- [x] „Über Spyhound“: Quellen zugeklappt („44 Quellen“), gleiche Karte und Zeile wie „Rechtliches“. Beleg: info_*.png,
+      info_expanded_*.png.
+- [ ] Lizenzhinweise in der App: OFL-Texte von Inter und Space Grotesk liegen in assets/licenses, werden aber nicht
+      angezeigt; libadb-android/Shizuku stehen nur in NOTICE. Abnahme: aufklappbarer Abschnitt mit den Original-Texten
+      (keine eigenen Zusammenfassungen von Lizenzbedingungen), gegen NOTICE geprüft.
 - [x] Grenze „findet nur bekannte Spuren“ steht im Onboarding, im Ergebnis („Keine Spuren“, nie „sauber“) und als Lücke.
 
 ## Galaxy-Test (2026-11-02, Tab S9 Ultra, One UI 8 / Android 16, X910XXS6EZI2)
@@ -262,6 +266,9 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - JVM-Screenshot-Tests fanden in der ersten Runde drei echte Fehler, die Unit-Tests nie zeigen: Knopf bricht mitten im
   Wort um, Tablet-Spalte schneidet das Statuspanel ab, Zahlen nach Systemsprache statt App-Sprache („4,200“ auf
   Deutsch). Lehre: Jede sichtbare Änderung bekommt ein Screenshot-Bild DE/EN × Telefon/Tablet, und jemand sieht es an.
+- Fremde Agenten-Arbeit nie ungelesen mergen: Ein Auftrag „Lizenzen aufklappbar“ brachte eine neue Rubrik mit selbst
+  formulierten Lizenzzusammenfassungen („DNS-Listen stehen unter MIT“) – ungeprüfte Rechtsaussagen. Rechtstexte nur
+  im Original oder geprüft (2026-11-03).
 - Bildbelege nach Animationen erst aufnehmen, wenn sie ausgelaufen sind: Ein API-29-Bild zeigte „0 Funde“ neben einem
   Fund, weil der Zähler noch hochzählte (2026-11-03). Ein Matrix-Skript nie per `source` mit gesetztem `$0` laden –
   dann läuft sein `main` mit (ganze Matrix startete ungewollt).
