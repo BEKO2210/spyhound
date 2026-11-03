@@ -2,25 +2,48 @@ package de.belkis.spyhound.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.R
 import de.belkis.spyhound.ioc.FeedCatalog
@@ -29,12 +52,15 @@ import de.belkis.spyhound.ui.components.LanguagePicker
 import de.belkis.spyhound.ui.components.ScrollEdge
 import de.belkis.spyhound.ui.components.SectionHeader
 import de.belkis.spyhound.ui.components.SpyButton
+import de.belkis.spyhound.ui.components.SpyCard
 import de.belkis.spyhound.ui.components.SpyDivider
 import de.belkis.spyhound.ui.components.SpyNavigateBack
 import de.belkis.spyhound.ui.components.SpySurface
 import de.belkis.spyhound.ui.components.TextActionLink
 import de.belkis.spyhound.ui.design.SpyColors
+import de.belkis.spyhound.ui.design.SpyMotion
 import de.belkis.spyhound.ui.design.SpySpacing
+import de.belkis.spyhound.ui.design.rememberReducedMotion
 import de.belkis.spyhound.ui.design.staggeredAppear
 import de.belkis.spyhound.ui.info.InfoSourceGroup
 import de.belkis.spyhound.ui.info.SourceLicenseKind
@@ -46,14 +72,21 @@ fun InfoScreen(
     onReplayIntro: () -> Unit,
     modifier: Modifier = Modifier,
     displayVersion: String = BuildConfig.VERSION_NAME,
+    sourcesSectionExpanded: Boolean = false,
+    testInitialScrollPx: Int = 0,
 ) {
     val context = LocalContext.current
     val scroll = rememberScrollState()
-    val scrolled by remember { derivedStateOf { scroll.value > 0 } }
-    val sourceGroups = remember {
-        val json = context.assets.open("iocs/sources.json").bufferedReader().use { it.readText() }
-        infoSourceGroups(FeedCatalog.parse(json))
+    LaunchedEffect(testInitialScrollPx) {
+        if (testInitialScrollPx > 0) scroll.scrollTo(testInitialScrollPx)
     }
+    val scrolled by remember { derivedStateOf { scroll.value > 0 } }
+    val indicatorFeeds = remember {
+        val json = context.assets.open("iocs/sources.json").bufferedReader().use { it.readText() }
+        FeedCatalog.parse(json)
+    }
+    val sourceGroups = remember(indicatorFeeds) { infoSourceGroups(indicatorFeeds) }
+    val sourceCount = indicatorFeeds.size
 
     Column(modifier = modifier.fillMaxSize()) {
         SpyNavigateBack(onClick = onBack)
@@ -93,7 +126,6 @@ fun InfoScreen(
                 modifier = staggeredAppear(4),
             )
 
-            // Legal notices (unchanged texts inside a surface card)
             Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(5))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_legal),
@@ -114,25 +146,38 @@ fun InfoScreen(
                 }
             }
 
-            // Indicator sources
             Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(6))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_sources),
                     hint = stringResource(R.string.info_hint_sources),
                 )
-                Column(verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 3)) {
-                    sourceGroups.forEach { group ->
-                        SourceGroupBlock(group)
+                // Same card and row as the legal section above, so both line up.
+                SpySurface(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = SpySpacing.Unit * 4, vertical = SpySpacing.Unit * 2),
+                    ) {
+                        CollapsibleSection(
+                            title = pluralStringResource(R.plurals.info_sources_summary, sourceCount, sourceCount),
+                            initiallyExpanded = sourcesSectionExpanded,
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(SpySpacing.Unit * 3)) {
+                                sourceGroups.forEach { group ->
+                                    SourceGroupBlock(group)
+                                }
+                                Text(
+                                    stringResource(R.string.info_sources_notice),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = SpyColors.IvoryMuted,
+                                )
+                            }
+                        }
                     }
-                    Text(
-                        stringResource(R.string.info_sources_notice),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SpyColors.IvoryMuted,
-                    )
                 }
             }
 
-            // 6: Specialist help
+            // Specialist help
             Column(modifier = Modifier.fillMaxWidth().then(staggeredAppear(7))) {
                 SectionHeader(
                     label = stringResource(R.string.info_section_help),

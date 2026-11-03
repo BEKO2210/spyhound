@@ -86,14 +86,20 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             listOf("de", "en").flatMap { l -> Device.entries.map { d -> arrayOf<Any>(l, d) } }
     }
 
-    private fun shot(name: String, scrollToEnd: Boolean = false, twoColumn: Boolean = false, content: @Composable () -> Unit) {
+    private fun shot(
+        name: String,
+        scrollToEnd: Boolean = false,
+        scrollSwipes: Int = 6,
+        twoColumn: Boolean = false,
+        content: @Composable () -> Unit,
+    ) {
         RuntimeEnvironment.setQualifiers("+$language-${device.qualifiers}")
         runComposeUiTest {
             mainClock.autoAdvance = false
             setContent { SpyhoundTheme { SpyhoundScaffold(maxContentWidth = if (twoColumn) SpySpacing.TwoColumnMaxWidth else 640.dp) { content() } } }
             mainClock.advanceTimeBy(2_000)
             if (scrollToEnd) {
-                repeat(6) { onAllNodes(hasScrollAction()).onFirst().performTouchInput { swipeUp() } }
+                repeat(scrollSwipes) { onAllNodes(hasScrollAction()).onFirst().performTouchInput { swipeUp() } }
                 mainClock.advanceTimeBy(2_000)
             }
             onRoot().captureRoboImage("src/test/screenshots/${name}_${language}_${device.name.lowercase()}.png")
@@ -230,7 +236,23 @@ class ScreenshotTest(private val language: String, private val device: Device) {
 
     @Test
     fun info() = shot("info") {
-        InfoScreen(onBack = {}, onReplayIntro = {}, displayVersion = "0.0.0")
+        InfoScreen(
+            onBack = {},
+            onReplayIntro = {},
+            displayVersion = "0.0.0",
+            testInitialScrollPx = if (device == Device.PHONE) 2_800 else 2_200,
+        )
+    }
+
+    @Test
+    fun infoExpanded() = shot("info_expanded") {
+        InfoScreen(
+            onBack = {},
+            onReplayIntro = {},
+            displayVersion = "0.0.0",
+            sourcesSectionExpanded = true,
+            testInitialScrollPx = if (device == Device.PHONE) 2_800 else 2_200,
+        )
     }
 
     private fun auditResult(): AuditResult {

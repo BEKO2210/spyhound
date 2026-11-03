@@ -20,4 +20,8 @@
         <item quantity="one">No traces · %d lead</item>
         <item quantity="other">No traces · %d leads</item>
     </plurals>
+    <plurals name="info_sources_summary">
+        <item quantity="one">%d source</item>
+        <item quantity="other">%d sources</item>
+    </plurals>
 </resources>
