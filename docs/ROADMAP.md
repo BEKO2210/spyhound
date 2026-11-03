@@ -12,8 +12,7 @@ Spyware-/Stalkerware-Spuren; danach weitere Schutzfunktionen (Antivirus u. a., s
 ## Rückmeldung zur Bildschirmaufnahme 0.3.5 (2026-11-02)
 - [x] „Wer darf was“ zeigte ~12 s nur „Apps werden gelesen …“. Ursache: hashte jede APK (GB). Behoben in a1751f2: ohne
       APK-Hashes, Fortschritt „n von m“. Beleg: ~2 s auf dem Pixel 11 (Belkis, Test-Build 4753783, 2026-11-03).
-- [ ] „Wer darf was“ unter 1 s: Ziel verfehlt (~2 s). Erst messen, wo die 2 s liegen (PackageManager-Abfragen?), dann
-      ggf. Zwischenspeicher. Abnahme: < 1 s auf dem Pixel, Liste nie veraltet (neue App sofort sichtbar).
+      Kein Zwischenspeicher: ~2 s reichen (Belkis, 2026-11-03); dafür bleibt die Liste nie veraltet.
 - [x] „Wer darf was“: auffällige Kombinationen oben unter „Genauer ansehen“ (Regeltabelle `LookRule`, Amber, Text nennt
       harmlose Träger wie Uhr-/Auto-Apps), normale Rechte darunter ohne Warnfarbe; alles an einer Textkante.
       Beleg: 44a0aad, 5418521, PermissionAuditTest, audit_*.png.
