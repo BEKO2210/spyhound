@@ -1,26 +1,34 @@
 Categories:
   - Security
 License: Apache-2.0
+AuthorName: Belkis Aslani
 SourceCode: https://github.com/BEKO2210/spyhound
 IssueTracker: https://github.com/BEKO2210/spyhound/issues
 Changelog: https://github.com/BEKO2210/spyhound/releases
 Donate: https://github.com/sponsors/BEKO2210
+
+AutoName: Spyhound
 
 RepoType: git
 Repo: https://github.com/BEKO2210/spyhound.git
 Binaries: https://github.com/BEKO2210/spyhound/releases/download/v%v/spyhound-%v.apk
 
 Builds:
-  - versionName: 0.3.7
-    versionCode: 12
-    commit: v0.3.7
+  - versionName: 0.3.8
+    versionCode: 13
+    commit: 4c6a91bf4b2e091067f530588c61a81c2d0f7776
     subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-21-jdk-headless
+      - update-java-alternatives -a
     gradle:
       - yes
+    output: build/outputs/apk/release/app-release-unsigned.apk
 
 AllowedAPKSigningKeys: 2ae3bd1b9201739c330197c300706bedb8005147010642026752f9298426bd4a
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.3.7
-CurrentVersionCode: 12
+CurrentVersion: 0.3.8
+CurrentVersionCode: 13
