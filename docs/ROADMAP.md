@@ -219,7 +219,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       YARA-Regeln prüfen; Lizenz jeder Quelle prüfen. Abnahme: EICAR-ähnliche Test-APK wird erkannt, 0 Falschtreffer
       auf Pixel.
 - [x] Rechte-Prüfer „Wer darf was“: 11 Rechte-Gruppen, Systemapps ausblendbar, Verlauf lokal, „neu seit letzter Prüfung“.
-      Beleg: PermissionAuditTest, Screenshots audit_*. Offen: Abnahme auf dem Pixel.
+      Beleg: PermissionAuditTest, Screenshots audit_*; auf dem Pixel abgenommen (0.3.6, ~2 s).
 - [x] Netzwerk-Wächter ausbauen – gebaut und geprüft (Emulator: Auflösen/NXDOMAIN/Aus; Release 0.3.1/0.3.4 von Belkis abgenommen). War: DNS an, Phishing-Testdomain → Warnung; Blockieren → NXDOMAIN; Aus → normales DNS (Lehre vom 2026-11-01!). Erst danach Release.
 - [x] Geräte-Härtung: Checkliste mit Direkt-Knöpfen (491530d) (Bildschirmsperre, Play Protect, unbekannte Quellen, Updates).
 - [x] Zeitgesteuerte Prüfung im Hintergrund (WorkManager) mit Benachrichtigung bei neuem Fund (295ff6d).
