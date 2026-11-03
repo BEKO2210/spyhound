@@ -187,6 +187,8 @@
     <string name="info_section_privacy">Datenschutz</string>
     <string name="info_privacy_body">Scans laufen offline. Keine Analytics, keine Werbung. Updates laden nur festgepinnte Dateien aus erlaubten Quellen; Hashes müssen passen.</string>
     <string name="info_section_sources">Quellen der Spuren</string>
+    <string name="info_section_licences">Open-Source-Lizenzen</string>
+    <string name="info_hint_licences">Drittanbieter-Komponenten und Indikatordaten – vollständige Lizenztexte.</string>
     <string name="info_sources_notice">Kuratierte Toolkit-Listen (CC0) aus dem Zero Breach Toolkit werden in die mitgelieferten Sets eingerechnet. Amnesty- und Citizen-Lab-Feeds haben keine Weitergabe-Lizenz und werden nur auf dem Gerät geladen.</string>
     <string name="info_malware_coverage">Die Schadsoftware-Hashliste deckt nur ausgewählte Android-Kampagnen ab, die ESET und Meta veröffentlicht haben. Nur exakte Fingerabdruck-Treffer zählen. Sie ist kein Virenscanner und kein Ersatz für Play Protect.</string>
     <string name="info_sources_bundled">in der App enthalten</string>
@@ -202,6 +204,18 @@
     <string name="info_repo_meta">Meta Threat Research (meta/threat-research)</string>
     <string name="source_license_cc_by">CC BY 4.0</string>
     <string name="source_license_device_only">keine Weitergabe-Lizenz – nur Download auf dem Gerät</string>
+    <string name="info_licence_body_mit">Diese Indikatordaten stehen unter der MIT-Lizenz. Du darfst sie nutzen, kopieren und weitergeben, wenn Urheber- und Erlaubnishinweis erhalten bleiben. Es gibt keine Garantie.</string>
+    <string name="info_licence_body_cc_by">Diese Indikatordaten stehen unter Creative Commons Attribution 4.0. Du darfst sie teilen und anpassen, wenn du die Quelle nennst und Änderungen markierst. Den vollständigen Text findest du unter creativecommons.org/licenses/by/4.0/.</string>
+    <string name="info_licence_body_bsd2">Diese Indikatordaten stehen unter der BSD-2-Clause-Lizenz. Weitergaben müssen Urheberhinweis und Haftungsausschluss enthalten. Es gibt keine Garantie.</string>
+    <string name="info_licence_body_device_only">Dieses Repository liegt nicht in Spyhound. Die App lädt festgelegte Dateien nur auf deinem Gerät. Es gibt hier keine Lizenz, diese Feeds im App-Paket weiterzugeben.</string>
+    <string name="info_licence_domain_body">Diese DNS-Listen stehen unter der MIT-Lizenz. Du darfst sie nutzen und weitergeben, wenn der Urheberhinweis erhalten bleibt. Es gibt keine Garantie.</string>
+    <string name="info_licence_spyhound_body">Spyhound steht unter der Apache License, Version 2.0. Die Erkennungslogik baut auch auf dem Zero Breach Toolkit (Apache-2.0) auf. Den vollständigen Lizenztext findest du im Projekt-Repository.</string>
+    <string name="info_licence_title_domain">DNS-Wächter-Domainlisten</string>
+    <string name="info_licence_title_font_inter">Inter (Schrift)</string>
+    <string name="info_licence_title_font_space_grotesk">Space Grotesk (Schrift)</string>
+    <string name="info_licence_title_font_other">Mitgelieferte Schrift</string>
+    <string name="info_licence_title_other">Anderes Indikator-Repository</string>
+    <string name="info_licence_title_spyhound">Spyhound</string>
     <string name="info_section_help">Hilfe</string>
     <string name="info_help_body">Wenn du Zielperson sein könntest, wende dich an Fachleute – nicht nur an eine App.</string>
     <string name="info_help_access_now">Access Now Digital Security Helpline</string>

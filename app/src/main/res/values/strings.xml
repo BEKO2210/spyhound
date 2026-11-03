@@ -187,6 +187,8 @@
     <string name="info_section_privacy">Privacy</string>
     <string name="info_privacy_body">Scans are offline. No analytics or ads. Indicator updates download pinned files from allowed repositories only; hashes must match before use.</string>
     <string name="info_section_sources">Indicator sources</string>
+    <string name="info_section_licences">Open-source licences</string>
+    <string name="info_hint_licences">Third-party components and indicator data – full licence texts.</string>
     <string name="info_sources_notice">Toolkit-curated lists (CC0) from the Zero Breach Toolkit are merged into the bundled sets. Amnesty and Citizen Lab feeds have no redistribution licence and load on the device only.</string>
     <string name="info_malware_coverage">The malware hash list only covers selected Android campaigns published by ESET and Meta. Only exact fingerprint matches count. It is not a virus scanner and no replacement for Play Protect.</string>
     <string name="info_sources_bundled">shipped in the app</string>
@@ -202,6 +204,18 @@
     <string name="info_repo_meta">Meta threat research (meta/threat-research)</string>
     <string name="source_license_cc_by">CC BY 4.0</string>
     <string name="source_license_device_only">no licence for redistribution – device download only</string>
+    <string name="info_licence_body_mit">This indicator data is offered under the MIT License. You may use, copy, and share it if the copyright notice and permission notice stay intact. There is no warranty.</string>
+    <string name="info_licence_body_cc_by">This indicator data is offered under Creative Commons Attribution 4.0. You may share and adapt it if you credit the source and note changes. The full licence text is at creativecommons.org/licenses/by/4.0/.</string>
+    <string name="info_licence_body_bsd2">This indicator data is offered under the BSD 2-Clause License. Redistributions must keep the copyright notice and disclaimer. There is no warranty.</string>
+    <string name="info_licence_body_device_only">This repository is not shipped inside Spyhound. The app downloads pinned files on your device only. There is no licence here for redistributing those feeds inside the app package.</string>
+    <string name="info_licence_domain_body">These DNS lists are offered under the MIT License. You may use and share them if the copyright notice stays intact. There is no warranty.</string>
+    <string name="info_licence_spyhound_body">Spyhound is licensed under the Apache License, Version 2.0. Detection logic also builds on the Zero Breach Toolkit (Apache-2.0). The full licence text is in the project repository.</string>
+    <string name="info_licence_title_domain">DNS watcher domain lists</string>
+    <string name="info_licence_title_font_inter">Inter (font)</string>
+    <string name="info_licence_title_font_space_grotesk">Space Grotesk (font)</string>
+    <string name="info_licence_title_font_other">Bundled font</string>
+    <string name="info_licence_title_other">Other indicator repository</string>
+    <string name="info_licence_title_spyhound">Spyhound</string>
     <string name="info_section_help">Help</string>
     <string name="info_help_body">If you may be targeted, contact specialists rather than relying on an app alone.</string>
     <string name="info_help_access_now">Access Now Digital Security Helpline</string>
