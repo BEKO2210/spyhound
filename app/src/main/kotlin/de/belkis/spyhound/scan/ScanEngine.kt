@@ -52,7 +52,7 @@ class ScanEngine(
             emit("Apps", label, 0.45f * done / total.coerceAtLeast(1), RadarSector.APPS)
         }
         val appCheck = AppAnalyzer.analyze(apps, set, ownPackage)
-        apps.map { it.firstInstall }.filter { it > 0L }.minOrNull()?.let { oldestEvidence[TimeRange.APPS] = it }
+        TimeRange.oldestAppInstall(apps)?.let { oldestEvidence[TimeRange.APPS] = it }
         checks += appCheck
         tracker.replaceSector(RadarSector.APPS, RadarMath.appStatuses(apps, appCheck, ownPackage))
         emit("Apps", "${appCheck.examined} Apps ausgewertet", 0.45f, RadarSector.APPS)

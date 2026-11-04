@@ -13,6 +13,13 @@ object TimeRange {
     const val APPS = "apps"
     const val LOG_WARNING_HOURS = 48L
 
+    /**
+     * Oldest install among apps the user installed. Preinstalled apps carry a placeholder date from the
+     * firmware (Samsung: 31.12.2008), which would claim a history the device does not have.
+     */
+    fun oldestAppInstall(apps: List<AppRecord>): Long? =
+        apps.filter { !it.isSystem }.map { it.firstInstall }.filter { it > 0L }.minOrNull()
+
     /** Parses Android logcat brief timestamps (MM-DD HH:mm:ss.mmm), using current year. */
     fun logcatTimestamp(line: String, now: Long): Long? {
         val match = Regex("^\\s*(\\d{2})-(\\d{2})\\s+(\\d{2}:\\d{2}:\\d{2}\\.\\d{3})").find(line) ?: return null

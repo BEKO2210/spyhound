@@ -1,5 +1,6 @@
 package de.belkis.spyhound
 
+import de.belkis.spyhound.scan.AppRecord
 import de.belkis.spyhound.scan.TimeRange
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -31,5 +32,16 @@ class TimeRangeTest {
     @Test fun parsesBriefLogcatTimestamp() {
         val timestamp = TimeRange.logcatTimestamp("11-02 09:15:10.123  123  456 I Tag: text", now)
         assertTrue(timestamp != null && timestamp < now)
+    }
+
+    @Test fun appRangeIgnoresFirmwarePlaceholderDatesOfSystemApps() {
+        val samsungPlaceholder = 1_230_739_200_000L // 2008-12-31 16:00 UTC, set on every preinstalled app
+        val apps = listOf(
+            AppRecord("com.samsung.android.app.watchmanager", isSystem = true, firstInstall = samsungPlaceholder),
+            AppRecord("com.example.user", firstInstall = now - 30L * 86_400_000),
+            AppRecord("com.example.unknown", firstInstall = 0L),
+        )
+        assertEquals(now - 30L * 86_400_000, TimeRange.oldestAppInstall(apps))
+        assertEquals(null, TimeRange.oldestAppInstall(apps.take(1)))
     }
 }
