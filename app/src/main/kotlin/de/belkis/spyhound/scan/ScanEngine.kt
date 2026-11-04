@@ -52,7 +52,7 @@ class ScanEngine(
             emit("Apps", label, 0.45f * done / total.coerceAtLeast(1), RadarSector.APPS)
         }
         val appCheck = AppAnalyzer.analyze(apps, set, ownPackage)
-        TimeRange.oldestAppInstall(apps)?.let { oldestEvidence[TimeRange.APPS] = it }
+        TimeRange.oldestAppInstall(apps, initialSdk())?.let { oldestEvidence[TimeRange.APPS] = it }
         checks += appCheck
         tracker.replaceSector(RadarSector.APPS, RadarMath.appStatuses(apps, appCheck, ownPackage))
         emit("Apps", "${appCheck.examined} Apps ausgewertet", 0.45f, RadarSector.APPS)
@@ -130,6 +130,12 @@ class ScanEngine(
             oldestEvidence = oldestEvidence,
         )
     }
+
+    /** Android version the device shipped with, from the build properties; 0 when unreadable (unknown). */
+    private fun initialSdk(): Int = runCatching {
+        val p = ProcessBuilder("getprop", "ro.product.first_api_level").redirectErrorStream(true).start()
+        p.inputStream.bufferedReader().use { it.readText() }.trim().toIntOrNull().also { p.waitFor() }
+    }.getOrNull() ?: 0
 
     private fun storageCheck(
         tracker: RadarTracker,

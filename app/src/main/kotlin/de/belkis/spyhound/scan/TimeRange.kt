@@ -14,11 +14,29 @@ object TimeRange {
     const val LOG_WARNING_HOURS = 48L
 
     /**
-     * Oldest install among apps the user installed. Preinstalled apps carry a placeholder date from the
-     * firmware (Samsung: 31.12.2008), which would claim a history the device does not have.
+     * Oldest real app install. Firmware stamps preinstalled apps with a placeholder (Samsung: 31.12.2008) and
+     * first-boot installs happen before the clock is set (Pixel: 01.01.2020); both survive later Play updates.
+     * No install can predate the Android version the device shipped with, so anything earlier is dropped.
      */
-    fun oldestAppInstall(apps: List<AppRecord>): Long? =
-        apps.filter { !it.isSystem }.map { it.firstInstall }.filter { it > 0L }.minOrNull()
+    fun oldestAppInstall(apps: List<AppRecord>, initialSdk: Int): Long? {
+        val floor = shippedNoEarlierThan(initialSdk)
+        return apps.map { it.firstInstall }.filter { it >= floor }.minOrNull()
+    }
+
+    /** Six months before the release of [sdk], to allow for pre-release builds; 2010 when unknown. */
+    internal fun shippedNoEarlierThan(sdk: Int): Long {
+        val released = ANDROID_RELEASES.entries.lastOrNull { it.key <= sdk }?.value ?: return FLOOR_UNKNOWN
+        val (year, month) = released
+        return Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC")).apply {
+            clear(); set(year, month - 1, 1); add(Calendar.MONTH, -6)
+        }.timeInMillis
+    }
+
+    private const val FLOOR_UNKNOWN = 1_262_304_000_000L // 2010-01-01 UTC
+    private val ANDROID_RELEASES = sortedMapOf(
+        29 to (2019 to 9), 30 to (2020 to 9), 31 to (2021 to 10), 32 to (2022 to 3), 33 to (2022 to 8),
+        34 to (2023 to 10), 35 to (2024 to 9), 36 to (2025 to 6),
+    )
 
     /** Parses Android logcat brief timestamps (MM-DD HH:mm:ss.mmm), using current year. */
     fun logcatTimestamp(line: String, now: Long): Long? {

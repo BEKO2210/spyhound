@@ -34,14 +34,16 @@ class TimeRangeTest {
         assertTrue(timestamp != null && timestamp < now)
     }
 
-    @Test fun appRangeIgnoresFirmwarePlaceholderDatesOfSystemApps() {
-        val samsungPlaceholder = 1_230_739_200_000L // 2008-12-31 16:00 UTC, set on every preinstalled app
-        val apps = listOf(
-            AppRecord("com.samsung.android.app.watchmanager", isSystem = true, firstInstall = samsungPlaceholder),
-            AppRecord("com.example.user", firstInstall = now - 30L * 86_400_000),
-            AppRecord("com.example.unknown", firstInstall = 0L),
-        )
-        assertEquals(now - 30L * 86_400_000, TimeRange.oldestAppInstall(apps))
-        assertEquals(null, TimeRange.oldestAppInstall(apps.take(1)))
+    @Test fun appRangeDropsInstallsOlderThanTheShippedAndroidVersion() {
+        val samsungPlaceholder = 1_230_735_600_000L // 2008-12-31 15:00 UTC, preinstalled apps on a Galaxy S21
+        val pixelFirstBoot = 1_577_836_807_000L // 2020-01-01 00:00:07 UTC, clock not yet set at setup
+        val real = 1_729_000_000_000L // 2024-10-15
+        val galaxy = listOf(AppRecord("a", isSystem = true, firstInstall = samsungPlaceholder),
+            AppRecord("b", firstInstall = samsungPlaceholder), AppRecord("c", firstInstall = real), AppRecord("d"))
+        assertEquals(real, TimeRange.oldestAppInstall(galaxy, initialSdk = 30))
+        val pixel = listOf(AppRecord("e", firstInstall = pixelFirstBoot), AppRecord("f", firstInstall = now))
+        assertEquals(now, TimeRange.oldestAppInstall(pixel, initialSdk = 36))
+        // Unknown shipped version: only the pre-2010 firmware placeholder is dropped.
+        assertEquals(pixelFirstBoot, TimeRange.oldestAppInstall(pixel + galaxy.take(1), initialSdk = 0))
     }
 }
