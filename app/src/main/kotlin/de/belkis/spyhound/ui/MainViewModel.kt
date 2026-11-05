@@ -46,8 +46,10 @@ import de.belkis.spyhound.shell.ShellPreferences
 import de.belkis.spyhound.setup.isDeveloperOptionsEnabled
 import de.belkis.spyhound.setup.isShizukuInstalled
 import de.belkis.spyhound.shell.ShizukuShell
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -342,17 +344,25 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun startScan() {
         val iocs = _state.value.iocs ?: return
+        val previous = scanJob
         scanJob = viewModelScope.launch {
+            // A cancelled scan may still be closing its shell command; let it finish its cleanup first.
+            previous?.cancelAndJoin()
             shellGate.scanStarted()
             _state.update { it.copy(progress = Progress(s(R.string.vm_start), "", 0f), report = null) }
             var lastRadar: RadarProgress? = null
             val merged = try {
-                val report = runCatching {
+                val report = try {
                     ScanEngine(getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication())).run { p ->
                         lastRadar = p.radar ?: lastRadar
                         _state.update { s -> s.copy(progress = p) }
                     }
-                }.getOrNull()
+                } catch (e: CancellationException) {
+                    // Cancelled: leave the state to cancelScan() and to a scan started right after.
+                    throw e
+                } catch (_: Exception) {
+                    null
+                }
                 report?.let { mergePendingBugreport(it) }
             } finally {
                 applyDeferredShellWork()

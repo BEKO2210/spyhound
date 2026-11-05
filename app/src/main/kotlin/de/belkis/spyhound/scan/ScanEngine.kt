@@ -8,10 +8,12 @@ import de.belkis.spyhound.collect.SmsCollector
 import de.belkis.spyhound.collect.StorageCollector
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.shell.ProbeOutcome
+import de.belkis.spyhound.shell.CancellableShell
 import de.belkis.spyhound.shell.Shell
 import de.belkis.spyhound.shell.probeWithReconnect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
@@ -33,6 +35,8 @@ class ScanEngine(
     private val level = shell?.level ?: AccessLevel.APP
 
     suspend fun run(onProgress: (Progress) -> Unit): Report = withContext(Dispatchers.IO) {
+        // Cancel must stop a command that is running right now, not only the next one.
+        val shell = this@ScanEngine.shell?.let { CancellableShell(it, coroutineContext.job) }
         val started = System.currentTimeMillis()
         val set = iocs.set
         val checks = ArrayList<CheckResult>()
