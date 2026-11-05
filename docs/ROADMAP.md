@@ -50,6 +50,13 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
       (lokal 9.900 reproduziert; drei weitere Zuordnungen ohne heruntergeladene Quellen nicht belegt).
       Details und Prüfbefehle: `docs/handoff/malware-coverage.md`.
 
+## Lokaler Prüfverlauf (2026-11-05)
+- [~] Höchstens 30 manuelle/Hintergrund-Prüfungen, neueste zuerst, app-privat und von Backups ausgeschlossen.
+      Liste DE/EN, historische Ergebnisansicht, Löschbestätigung und Rückgängig; persönliche Fundstellen entfernt.
+      Speicher-, Bedien- und Screenshot-Testfälle ergänzt. Abnahme offen: Unit-Tests, Debug-Build,
+      Screenshot-Aufzeichnung/Verifikation und Sichtprüfung der PNGs; hier ausdrücklich nicht ausgeführt.
+      Übergabe: [history.md](handoff/history.md).
+
 ## Zeitraum „App-Installationen“ (2026-11-05)
 - [~] S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen
       der Auslieferungs-Android-Version (`ro.product.first_api_level`, −6 Monate) fallen weg; Unit-Test mit beiden Daten

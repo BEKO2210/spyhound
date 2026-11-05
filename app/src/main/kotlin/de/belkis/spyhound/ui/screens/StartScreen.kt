@@ -135,6 +135,7 @@ fun StartScreen(
     onDeepCheckSetup: () -> Unit,
     onOpenInfo: () -> Unit,
     onOpenPermissionAudit: () -> Unit = {},
+    onOpenHistory: () -> Unit = {},
     radarModifier: Modifier = Modifier,
 ) {
     var showBugreportSteps by remember { mutableStateOf(false) }
@@ -475,6 +476,7 @@ fun StartScreen(
                 )
             }
             PermissionAuditEntryCard(onOpenPermissionAudit, Modifier.then(staggeredAppear(staggerIndex++)))
+            HistoryEntryCard(onOpenHistory, Modifier.then(staggeredAppear(staggerIndex++)))
             BackgroundWeeklyCard(
                 enabled = state.weeklyBackgroundEnabled,
                 onToggle = onWeeklyBackgroundToggle,

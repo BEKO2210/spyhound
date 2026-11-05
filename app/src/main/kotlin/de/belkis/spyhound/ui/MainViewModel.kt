@@ -367,6 +367,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             } finally {
                 applyDeferredShellWork()
             }
+            if (merged != null) {
+                withContext(Dispatchers.IO) { BackgroundReportStore.record(getApplication(), merged) }
+            }
             _state.update {
                 it.copy(progress = null, report = merged, lastRadar = lastRadar ?: it.lastRadar)
             }
@@ -420,7 +423,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             pendingBugreportChecks = (pendingBugreportChecks.orEmpty() + checks)
             _state.update { it.copy(bannerMessage = s(R.string.vm_bugreport_queued)) }
         } else {
-            _state.update { it.copy(report = bugreportReport(checks, loaded)) }
+            val report = bugreportReport(checks, loaded)
+            withContext(Dispatchers.IO) { BackgroundReportStore.record(ctx, report) }
+            _state.update { it.copy(report = report) }
         }
     }
 

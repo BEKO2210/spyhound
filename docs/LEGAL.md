@@ -1,6 +1,6 @@
 # Rechtliches / Legal
 
-Stand / Date: 2026-11-02
+Stand / Date: 2026-11-05
 
 Die deutsche Fassung ist maßgeblich. Die englische Fassung ist eine Übersetzung.
 The German version is authoritative. The English version is a translation.
@@ -45,8 +45,12 @@ nicht und kann sie nicht einsehen.
 - Es gibt keine Konten und keine Registrierung.
 - Es gibt keine Telemetrie, keine Analyse- oder Tracking-Dienste, keine Werbung und keine Absturzberichte an Dritte.
 - Es erfolgt keine Weitergabe von Daten an Dritte.
-- Prüfergebnisse, DNS-Treffer, der Verlauf von „Wer darf was“ und die Einstellungen werden nur lokal im App-Speicher
-  abgelegt. Sie bleiben dort, bis Du die App deinstallierst oder ihre Daten löschst.
+- Prüfergebnisse, der lokale Prüfverlauf („Verlauf“), DNS-Treffer, der Verlauf von „Wer darf was“ und die Einstellungen
+  werden ausschließlich lokal auf dem Gerät im App-Speicher abgelegt und niemals versendet. Einträge im Prüfverlauf
+  lassen sich in der App einzeln oder komplett löschen; beim Deinstallieren der App oder beim Löschen des App-Speichers
+  werden sie vollständig entfernt. Der Verlauf enthält höchstens 30 Prüfungen, keine SMS-Absender, SMS-Inhalte
+  oder privaten Treffer-URLs und keine Dateiinhalte. Veröffentlichte Indikatoren bleiben erhalten. Der Verlauf
+  ist von Cloud-Sicherungen und Geräteübertragungen ausgeschlossen.
 - Spyhound liest Informationen auf Deinem Gerät nur aus, soweit das für die von Dir ausgelöste Prüfung unbedingt
   erforderlich ist (§ 25 Abs. 2 Nr. 2 TDDDG). Es gibt keine automatisierte Entscheidung oder Profilbildung im Sinne von
   Art. 22 DSGVO; das Prüfergebnis ist eine technische Einschätzung, die nur Du siehst.
@@ -219,8 +223,11 @@ receive this data and cannot see it.
 - There are no accounts and no registration.
 - There is no telemetry, no analytics or tracking service, no advertising and no crash reporting to third parties.
 - No data is passed on to third parties.
-- Results, DNS hits, the "Who can do what" history and settings are stored only in the app's local storage. They stay
-  there until you uninstall the app or clear its data.
+- Results, the local scan history ("History"), DNS hits, the "Who can do what" history and settings are stored only on
+  the device in the app's local storage and are never sent anywhere. Scan history entries can be deleted in the app
+  individually or all at once, and are removed completely when you uninstall the app or clear its storage. History
+  keeps at most 30 checks, without SMS senders, message bodies, private matched URLs or file contents. Published
+  indicators are retained. History is excluded from cloud backups and device transfers.
 - Spyhound reads information on your device only as far as strictly necessary for the check you start (§ 25(2) no. 2
   TDDDG). There is no automated decision-making or profiling within the meaning of Art. 22 GDPR; the result is a
   technical assessment that only you see.
