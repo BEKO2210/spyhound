@@ -19,6 +19,8 @@ data class IocStatus(
     val available: Int,
     val missing: List<FeedSource>,
     val corrupt: List<FeedSource>,
+    /** The catalog feeds that were read and verified, so the start screen only names sources that are really in use. */
+    val active: List<FeedSource> = emptyList(),
 )
 
 class LoadedIocs(val set: IocSet, val status: IocStatus)
@@ -81,7 +83,7 @@ class IocStore(private val context: Context) {
         // The curated lists belong to the toolkit, not to the catalog count shown as "45/45"; a broken one is still
         // listed in [corrupt] so the start screen reports it.
         val catalogBroken = corrupt.count { it in sources }
-        LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt))
+        LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt, sources.filter { it !in missing && it !in corrupt }))
     }
 
     fun domainCatalog(): List<FeedSource> =
