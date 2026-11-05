@@ -204,7 +204,8 @@ class ScreenshotTest(private val language: String, private val device: Device) {
     @Test
     fun result() = shot("result", twoColumn = true) {
         ResultScreen(
-            report = DemoReport.withFinding(LocalContext.current),
+            // Fixed time: the time-range box shows dates, a moving clock would change the picture daily.
+            report = DemoReport.withFinding(LocalContext.current, java.time.Instant.parse("2026-11-02T12:00:00Z").toEpochMilli()),
             onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {},
         )
     }

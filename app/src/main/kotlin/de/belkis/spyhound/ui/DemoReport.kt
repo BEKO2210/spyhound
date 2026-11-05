@@ -22,11 +22,10 @@ import de.belkis.spyhound.scan.TimeRange
 
 /** Fixed demo report for debug UI screenshots (no real device data). */
 object DemoReport {
-    fun withFinding(context: Context): Report {
+    fun withFinding(context: Context, now: Long = System.currentTimeMillis()): Report {
         fun text(id: Int) = context.getString(id)
         // Real check ids, so the result screen reads the demo exactly like a real scan in either language.
         val texts = if (context.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
-        val now = System.currentTimeMillis()
         val ind = Indicator(
             value = "evil.example",
             type = IocType.DOMAIN,
