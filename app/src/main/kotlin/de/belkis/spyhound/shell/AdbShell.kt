@@ -28,7 +28,7 @@ private class EofOnClose(private val inner: InputStream) : InputStream() {
 
 /** libadb connection manager backed by the app's own [AdbKeys]. */
 private class OwnAdbConnection(context: Context) : AbsAdbConnectionManager() {
-    private val keys = AdbKeys.loadOrCreate(context)
+    private val keys = checkNotNull(AdbKeys.loadOrCreate(context)) { "no protected ADB key available" }
 
     init {
         api = Build.VERSION.SDK_INT
@@ -105,8 +105,7 @@ class AdbShell private constructor(private val context: Context) : Shell {
 
         private fun connectToPort(context: Context, port: Int): Boolean {
             require(isLocalAdbHost(ADB_LOOPBACK))
-            val m = manager(context)
-            return runCatching { m.isConnected || m.connect(ADB_LOOPBACK, port) }.getOrDefault(false)
+            return runCatching { val m = manager(context); m.isConnected || m.connect(ADB_LOOPBACK, port) }.getOrDefault(false)
         }
 
         /** Pairs with the open "Pair device with pairing code" dialog. The code is used once and not kept. */
@@ -128,6 +127,9 @@ class AdbShell private constructor(private val context: Context) : Shell {
                 runCatching { mdns.start() }.onFailure { if (cont.isActive) cont.resume(null) }
             }
         }
+
+        /** False when the Android Keystore cannot protect the key; the built-in deep check is then unavailable. */
+        fun keystoreUsable(): Boolean = AdbKeys.keystoreUsable()
 
         /** Forgets the key and the connection. The phone then needs a new pairing. */
         fun forget(context: Context) {

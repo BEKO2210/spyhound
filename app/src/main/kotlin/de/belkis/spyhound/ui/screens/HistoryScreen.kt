@@ -179,7 +179,7 @@ fun HistoryResultScreen(
     onHelp: () -> Unit,
     zoneId: ZoneId = ZoneId.systemDefault(),
 ) {
-    val locale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+    val locale = LocalConfiguration.current.locales[0]
     val texts = if (locale.language == Locale.GERMAN.language) TextsDe else TextsEn
     val omitted = stringResource(R.string.history_details_omitted)
     val localizedReport = remember(entry.report, texts, omitted) {
@@ -429,7 +429,7 @@ private fun HistoryEntryItem(
     onDelete: () -> Unit,
 ) {
     val context = LocalContext.current
-    val locale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+    val locale = LocalConfiguration.current.locales[0]
     val dateText = remember(entry.timestamp, locale, zoneId) {
         formatHistoryTimestamp(entry.timestamp, locale, zoneId)
     }

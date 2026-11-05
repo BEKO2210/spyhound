@@ -92,6 +92,10 @@ object BuiltinAdb {
     }
 
     private suspend fun run(app: Context) {
+        if (!AdbShell.keystoreUsable()) {
+            synchronized(lock) { send(AdbSetupEvent.NoKeystore) }
+            return
+        }
         val deadline = System.currentTimeMillis() + MAX_WAIT_MS
         try {
             startMdns(app)

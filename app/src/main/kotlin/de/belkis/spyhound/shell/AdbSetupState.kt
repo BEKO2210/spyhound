@@ -1,7 +1,7 @@
 package de.belkis.spyhound.shell
 
 /** Why the built-in ADB setup stopped. It never retries on its own; the user restarts it. */
-enum class AdbFailure { UNSUPPORTED, TOO_MANY_INVALID_CODES, PAIRING_REJECTED, CONNECT_FAILED, TIMEOUT, INTERNAL }
+enum class AdbFailure { UNSUPPORTED, TOO_MANY_INVALID_CODES, PAIRING_REJECTED, CONNECT_FAILED, TIMEOUT, INTERNAL, NO_KEYSTORE }
 
 /** Where the pairing with the phone's own wireless-debugging service stands. */
 sealed interface AdbSetupState {
@@ -25,6 +25,7 @@ sealed interface AdbSetupEvent {
     data object WaitTimedOut : AdbSetupEvent
     /** An unexpected error in the background work; never leave the user on a stale screen. */
     data object InternalError : AdbSetupEvent
+    data object NoKeystore : AdbSetupEvent
     data object Restart : AdbSetupEvent
 }
 
@@ -74,6 +75,7 @@ class AdbSetup(private val sdkInt: Int) {
                 state = AdbSetupState.Failed(AdbFailure.TIMEOUT)
             }
             AdbSetupEvent.InternalError -> state = AdbSetupState.Failed(AdbFailure.INTERNAL)
+            AdbSetupEvent.NoKeystore -> state = AdbSetupState.Failed(AdbFailure.NO_KEYSTORE)
         }
         return state
     }

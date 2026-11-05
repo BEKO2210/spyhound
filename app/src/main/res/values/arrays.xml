@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
-        <item>Detects about 10,000 known Android malware samples (abuse.ch MalwareBazaar), offline</item>
+        <item>Detects about 10,000 known Android malware samples (abuse.ch MalwareBazaar) – list arrives with “Update sources”, the check runs offline</item>
         <item>History: reopen and delete earlier checks, stored only on this phone</item>
         <item>Cancel stops a running check at once</item>
         <item>Calmer start screen: rotating status line and a softer fold when scrolling</item>

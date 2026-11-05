@@ -101,12 +101,11 @@ class IocStore(private val context: Context) {
         DomainLists(byCategory, missing)
     }
 
-    private fun readSource(s: FeedSource): ByteArray? {
-        val local = File(dir, s.fileName)
-        if (local.isFile) return local.readBytes()
-        if (!s.bundled) return null
-        return runCatching { context.assets.open("iocs/${s.fileName}").use { it.readBytes() } }.getOrNull()
-    }
+    private fun readSource(s: FeedSource): ByteArray? = selectSource(
+        s.sha256,
+        local = File(dir, s.fileName).takeIf { it.isFile }?.readBytes(),
+        bundled = if (s.bundled) { { runCatching { context.assets.open("iocs/${s.fileName}").use { it.readBytes() } }.getOrNull() } } else null,
+    )
 
     /** Downloads every source not shipped in the app. Returns (ok, failed) counts. Network only here. */
     suspend fun update(onProgress: (String) -> Unit = {}): Pair<Int, List<String>> = withContext(Dispatchers.IO) {
@@ -154,6 +153,17 @@ class IocStore(private val context: Context) {
     }
 
     companion object {
+        /**
+         * Prefers a copy that matches the pin: a damaged local file must not shadow a good bundled one.
+         * If nothing matches, the first available copy is returned so the caller reports it as altered, not missing.
+         */
+        internal fun selectSource(pin: String, local: ByteArray?, bundled: (() -> ByteArray?)?): ByteArray? {
+            if (local != null && sha256(local) == pin) return local
+            val asset = bundled?.invoke()
+            if (asset != null && sha256(asset) == pin) return asset
+            return local ?: asset
+        }
+
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
         private val CURATED_SHA256 = mapOf(
             "adfection_iocs.txt" to "42bff7164687f1faf6ab5691738e156f72684cadbf63e403150e02acc65ad518",

@@ -223,7 +223,7 @@
     <string name="info_toolkit_origin">Die Erkennungslogik stammt vom Zero Breach Toolkit (Apache-2.0, interplains/Zero-Breach-Toolkit).</string>
     <string name="info_replay_intro">Einführung erneut ansehen</string>
     <string name="start_help_indicators">Veröffentlichte Domains, Apps und Dateien, an denen bekannte Spyware- und Stalkerware-Spuren erkannt werden.</string>
-    <string name="start_help_dns">Beobachtet DNS solange aktiv und warnt bei Anfragen zu Domains aus den Spuren-Listen.</string>
+    <string name="start_help_dns">Beobachtet DNS solange aktiv und warnt bei Anfragen zu Domains aus den Spuren-Listen. Apps mit verschlüsseltem DNS (DoH/DoT) oder direkter Verbindung zu IP-Adressen sieht er nicht.</string>
     <string name="start_help_bugreport">Importiert eine Android-Fehlerbericht-ZIP für zusätzliche Offline-Prüfungen – kein Upload.</string>
     <string name="start_help_access">Basis braucht nichts. Die tiefe Prüfung (ohne PC) und Root schalten schrittweise mehr frei.</string>
     <string name="start_card_depth">Prüftiefe</string>
@@ -407,6 +407,7 @@
     <string name="adb_failed_connect">Die Verbindung hat nicht geklappt. Starte neu.</string>
     <string name="adb_failed_timeout">Das hat zu lange gedauert. Starte neu.</string>
     <string name="adb_failed_internal">In Spyhound ist etwas schiefgelaufen. Starte neu.</string>
+    <string name="adb_failed_no_keystore">Dieses Telefon kann den Verbindungsschlüssel nicht geschützt speichern, deshalb ist die eingebaute tiefere Prüfung aus. Shizuku oder Root gehen weiterhin.</string>
     <string name="adb_wizard_intro">Drei kurze Schritte auf diesem Telefon – ohne Computer und ohne Extra-App.</string>
     <string name="adb_wizard_step1_title">Debugging über WLAN einschalten</string>
     <string name="adb_wizard_step1_body">Schalte in den „Entwickleroptionen“ den Schalter „Debugging über WLAN“ ein. WLAN muss verbunden sein.</string>

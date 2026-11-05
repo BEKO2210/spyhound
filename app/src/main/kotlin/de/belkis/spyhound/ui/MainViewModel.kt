@@ -26,6 +26,7 @@ import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.collect.HardeningCollector
+import de.belkis.spyhound.collect.StorageCollector
 import de.belkis.spyhound.scan.HardeningItem
 import de.belkis.spyhound.scan.Progress
 import de.belkis.spyhound.scan.evaluateHardening
@@ -179,8 +180,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update {
             it.copy(
                 smsGranted = ctx.checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED,
-                filesGranted = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
-                    Environment.isExternalStorageManager(),
+                filesGranted = StorageCollector.hasAccess(ctx),
                 shizuku = ShizukuShell.status(),
                 shizukuInstalled = isShizukuInstalled(ctx.packageManager),
                 devOptionsEnabled = isDeveloperOptionsEnabled(ctx),
@@ -353,7 +353,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             var lastRadar: RadarProgress? = null
             val merged = try {
                 val report = try {
-                    ScanEngine(getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication())).run { p ->
+                    ScanEngine(
+                        getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication()),
+                        builtinAdbKeyAvailable = AdbShell.keystoreUsable(),
+                    ).run { p ->
                         lastRadar = p.radar ?: lastRadar
                         _state.update { s -> s.copy(progress = p) }
                     }
