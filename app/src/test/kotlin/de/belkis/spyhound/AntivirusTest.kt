@@ -160,13 +160,13 @@ class AntivirusTest {
         assertTrue("PromptSpy" in f.detail && "Schadsoftware" in f.detail, f.detail)
     }
 
-    // Honest gap
-    @Test fun coverageGapNamesTheLimit() {
+    @Test fun coverageDescribesScopeWithoutAddingAnUnperformedCheck() {
         val r = AppAnalyzer.analyze(emptyList(), esetIocs, "de.belkis.spyhound")
-        val gap = r.gaps.single { it.kind == GapKind.MALWARE_COVERAGE }
-        assertTrue("166" in gap.detail && "ausgewählten Kampagnen" in gap.detail && "Play Protect" in gap.detail, gap.detail)
-        assertEquals("guide_gap_malware_coverage_meaning", guidanceFor(gap).meaningKey)
-        assertTrue(AppAnalyzer.analyze(emptyList(), IocSet(emptyList()), "x").gaps.none { it.kind == GapKind.MALWARE_COVERAGE })
+        val coverage = assertNotNull(r.malwareCoverage)
+        assertEquals(166, coverage.fingerprints)
+        assertTrue("Play Protect" in coverage.reportLine(java.util.Locale.GERMAN))
+        assertTrue(r.gaps.none { it.kind == GapKind.MALWARE_COVERAGE })
+        assertNull(AppAnalyzer.analyze(emptyList(), IocSet(emptyList()), "x").malwareCoverage)
     }
 
     @Test fun englishTextsExist() {
@@ -174,8 +174,8 @@ class AntivirusTest {
         val f = r.findings.single()
         val en = TextsEn.text(f.detail)
         assertTrue("known malware sample" in en && "AridSpy" in en, en)
-        val gap = TextsEn.text(r.gaps.single { it.kind == GapKind.MALWARE_COVERAGE }.detail)
-        assertTrue("selected campaigns" in gap && "Play Protect" in gap, gap)
+        val coverage = assertNotNull(r.malwareCoverage).reportLine(java.util.Locale.ENGLISH)
+        assertTrue("Exact matches only" in coverage && "Play Protect" in coverage, coverage)
         assertFalse(en.contains("Schadsoftware"))
         assertNotNull(f.indicator.sourceId)
     }

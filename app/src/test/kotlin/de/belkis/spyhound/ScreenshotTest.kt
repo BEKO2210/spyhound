@@ -2,6 +2,10 @@ package de.belkis.spyhound
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.onFirst
@@ -232,6 +236,49 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             report = Report(now - 30_000, now, AccessLevel.APP, set.size, 1, 0, listOf(apps), "Pixel"),
             onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {},
         )
+    }
+
+    @Test
+    fun coverageCollapsed() = coverageShot(expanded = false)
+
+    @Test
+    fun coverageExpanded() = coverageShot(expanded = true)
+
+    private fun coverageShot(expanded: Boolean) {
+        if (device != Device.PHONE) return
+        RuntimeEnvironment.setQualifiers("+$language-${device.qualifiers}")
+        val dir = java.io.File("src/main/assets/iocs")
+        val sources = FeedCatalog.parse(java.io.File(dir, "sources.json").readText())
+            .filter { it.category == Category.MALWARE }
+        val set = IocSet(sources.flatMap { source ->
+            val file = if (source.id == "malwarebazaar-android") java.io.File("../data/malwarebazaar/android.tsv")
+                else java.io.File(dir, source.fileName)
+            Parsers.parse(source.format, file.readText(), SourceContext(source.id, source.category, source.family, true))
+        })
+        val check = AppAnalyzer.analyze(emptyList(), set, "own")
+        val now = java.time.Instant.parse("2026-11-05T12:00:00Z").toEpochMilli()
+        val report = Report(now - 30_000, now, AccessLevel.APP, set.size, sources.size, 0, listOf(check), "Pixel")
+        runComposeUiTest {
+            mainClock.autoAdvance = false
+            setContent {
+                SpyhoundTheme {
+                    SpyhoundScaffold {
+                        ResultScreen(report, onShare = {}, onRescan = {}, onGapFix = {}, onBugreport = {}, onHelp = {})
+                    }
+                }
+            }
+            mainClock.advanceTimeBy(2_000)
+            onNodeWithTag("malware_coverage").performScrollTo()
+            if (expanded) {
+                val count = check.malwareCoverage!!.families.size
+                onNodeWithText(if (language == "de") "Familien anzeigen ($count)" else "Show families ($count)")
+                    .performScrollTo().performClick()
+                onNodeWithTag("malware_coverage").performScrollTo()
+            }
+            mainClock.advanceTimeBy(2_000)
+            val state = if (expanded) "expanded" else "collapsed"
+            onRoot().captureRoboImage("src/test/screenshots/result_coverage_${state}_${language}_phone.png")
+        }
     }
 
     @Test

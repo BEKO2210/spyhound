@@ -55,6 +55,7 @@ class CheckResult(sourceName: String, private val texts: Texts = TextsDe) {
     val findings = ArrayList<Finding>()
     val leads = ArrayList<Lead>()
     val gaps = ArrayList<Gap>()
+    var malwareCoverage: MalwareCoverage? = null
     var examined = 0
     var ran = false
 

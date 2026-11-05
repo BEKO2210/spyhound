@@ -66,7 +66,7 @@ class TextsEnCoverageTest {
         ind("203.0.113.9", IocType.IP),
         ind("fservernetd", IocType.PROCESS),
         ind("https://evil.example/landing", IocType.URL),
-        // malware list: coverage gap with families
+        // Malware findings; coverage is structured separately from untranslated check details.
         ind(sha('1'), IocType.SHA256, Category.MALWARE, "Zeta", "eset-x"),
     ))
 

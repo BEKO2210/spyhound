@@ -188,7 +188,7 @@
     <string name="info_privacy_body">Scans laufen offline. Keine Nutzungsstatistik, keine Werbung. Updates laden nur fest vorgegebene Dateien aus erlaubten Quellen und prüfen jede auf Veränderung.</string>
     <string name="info_section_sources">Quellen der Spuren</string>
     <string name="info_sources_notice">Kuratierte Toolkit-Listen (CC0) aus dem Zero Breach Toolkit werden in die mitgelieferten Sets eingerechnet. Amnesty- und Citizen-Lab-Feeds haben keine Weitergabe-Lizenz und werden nur auf dem Gerät geladen.</string>
-    <string name="info_malware_coverage">Die Schadsoftware-Hashliste deckt nur ausgewählte Android-Kampagnen ab, die ESET und Meta veröffentlicht haben. Nur exakte Fingerabdruck-Treffer zählen. Sie ist kein Virenscanner und kein Ersatz für Play Protect.</string>
+    <string name="info_malware_coverage">Die Schadsoftware-Liste enthält Fingerabdrücke bekannter Android-Schadsoftware aus den geladenen Quellen. Es zählen nur exakte Treffer – kein Virenscanner, kein Ersatz für Play Protect.</string>
     <string name="info_sources_bundled">in der App enthalten</string>
     <string name="info_sources_on_device">auf dem Gerät geladen</string>
     <string name="info_sources_cite">Zitat: %1$s</string>
@@ -268,7 +268,7 @@
 
     <string name="guide_finding_malware_meaning">Der Fingerabdruck (SHA-256) einer App oder Datei auf deinem Handy stimmt exakt mit einer Probe überein, die Sicherheitsforscher (ESET, Meta) als bekannte Schadsoftware veröffentlicht haben. Solche Apps können dich ausspähen, Zugangsdaten stehlen oder Online-Banking übernehmen. Der Treffer ist exakt, die Liste deckt aber nur wenige benannte Kampagnen ab.</string>
     <string name="guide_finding_malware_steps">1. Deinstalliere die App: Einstellungen > „Apps“ > die App > „Deinstallieren“. Lässt sie sich nicht entfernen, entziehe ihr zuerst Geräteadministrator und Bedienungshilfe. Eine selbst heruntergeladene Datei löschst du.\n2. Ändere von einem anderen Gerät die Passwörter deiner wichtigen Konten (E-Mail, Bank, Messenger) und aktiviere die Zwei-Faktor-Anmeldung.\n3. Hast du währenddessen Banking- oder Bezahl-Apps benutzt, melde dich bei deiner Bank.\n4. Prüfe danach noch einmal. Befürchtest du gezielte Überwachung, wende dich an eine Beratungsstelle.</string>
-    <string name="guide_gap_malware_coverage_meaning">Die Schadsoftware-Liste enthält nur ausgewählte Kampagnen (veröffentlicht von ESET und Meta). Sie ist kein allgemeiner Virenscanner und ersetzt Play Protect nicht.</string>
+    <string name="guide_gap_malware_coverage_meaning">Die Schadsoftware-Liste enthält Fingerabdrücke bekannter Android-Schadsoftware aus den geladenen Quellen. Es zählen nur exakte Treffer – kein Virenscanner, kein Ersatz für Play Protect.</string>
     <string name="guide_gap_malware_coverage_steps">1. Du musst nichts tun.\n2. Lass Play Protect eingeschaltet und installiere Apps nur aus vertrauenswürdigen Stores.</string>
     <string name="guide_lead_sideloaded_app_meaning">Diese App stammt nicht aus einem App-Store und hat weitreichende Rechte. Das ist nur ein Hinweis, kein Fund: Viele harmlose Apps kommen so aufs Handy.</string>
     <string name="guide_lead_sideloaded_app_steps">1. Erkennst du die App und hast du sie selbst installiert? Dann ist alles in Ordnung.\n2. Wenn nicht: Öffne „App-Info“ und prüfe, was sie darf.\n3. Du brauchst sie nicht? Deinstalliere sie. Fühlst du dich überwacht, hol dir vorher Hilfe – das Entfernen kann auffallen.</string>
@@ -524,4 +524,32 @@
     <string name="deep_step_dev_options">Entwickleroptionen einschalten</string>
     <string name="deep_step_start_shizuku">Shizuku starten</string>
     <string name="deep_step_allow_spyhound">Spyhound erlauben</string>
+
+    <string name="coverage_title">SCHADSOFTWARE · PRÜFUMFANG</string>
+    <string name="coverage_and">und</string>
+    <string name="coverage_summary">%1$s bekannter Android-Schadsoftware aus %2$s, %3$s.</string>
+    <string name="coverage_limit">Es zählen nur exakte Treffer – kein Virenscanner, kein Ersatz für Play Protect.</string>
+    <string name="coverage_family_note">Nach Anzahl der Fingerabdrücke. Quellen können denselben Fingerabdruck verschiedenen Familien zuordnen.</string>
+    <string name="coverage_show_all">Alle anzeigen</string>
+    <string name="coverage_show_less">Weniger anzeigen</string>
+    <plurals name="coverage_fingerprints">
+        <item quantity="one">%1$s Fingerabdruck</item>
+        <item quantity="other">%1$s Fingerabdrücke</item>
+    </plurals>
+    <plurals name="coverage_families">
+        <item quantity="one">%1$s Familie</item>
+        <item quantity="other">%1$s Familien</item>
+    </plurals>
+    <plurals name="coverage_show_families">
+        <item quantity="one">Familie anzeigen (%1$s)</item>
+        <item quantity="other">Familien anzeigen (%1$s)</item>
+    </plurals>
+    <plurals name="coverage_hide_families">
+        <item quantity="one">Familie ausblenden (%1$s)</item>
+        <item quantity="other">Familien ausblenden (%1$s)</item>
+    </plurals>
+    <plurals name="coverage_unnamed">
+        <item quantity="one">%1$s Fingerabdruck ohne Familiennamen.</item>
+        <item quantity="other">%1$s Fingerabdrücke ohne Familiennamen.</item>
+    </plurals>
 </resources>

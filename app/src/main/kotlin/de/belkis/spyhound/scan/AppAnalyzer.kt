@@ -114,7 +114,7 @@ object AppAnalyzer {
                 r.lead(where, "Hat " + what.joinToString(" und ") + ".", WHY_POWER, LeadKind.APP_POWERS)
             }
         }
-        malwareCoverage(iocs)?.let { r.gap(it, kind = GapKind.MALWARE_COVERAGE) }
+        r.malwareCoverage = MalwareCoverage.from(iocs)
         if (unhashed > 0) r.gap("$unhashed App-Datei(en) konnten nicht gelesen und daher nicht mit den Fingerabdrücken verglichen werden.", kind = GapKind.APP_FILES)
         if (noCert > 0) r.gap("Bei $noCert App(s) war das Signatur-Zertifikat nicht lesbar.", kind = GapKind.CERTIFICATES)
         r.ran = true
@@ -144,11 +144,7 @@ object AppAnalyzer {
 
     /** Honest limit of the malware hash list, shown whenever it is loaded. */
     fun malwareCoverage(iocs: IocSet): String? {
-        val malware = iocs.all(IocType.SHA256).filter { it.category == Category.MALWARE }
-        if (malware.isEmpty()) return null
-        val families = malware.map { it.family }.filter { it.isNotBlank() }.distinct().sorted()
-        return "Die Schadsoftware-Liste enthält ${malware.size} Fingerabdrücke aus ausgewählten Kampagnen (${families.joinToString(", ")}). " +
-            "Alles andere erkennt sie nicht. Kein Ersatz für Play Protect."
+        return MalwareCoverage.from(iocs)?.reportLine(java.util.Locale.GERMAN)
     }
 
     private fun family(f: String) = if (f.isBlank()) "" else " ($f)"
