@@ -61,6 +61,7 @@ import de.belkis.spyhound.ui.SpyTypographyExtras
 import de.belkis.spyhound.ui.components.CardRowIconBadge
 import de.belkis.spyhound.ui.components.ScrollEdge
 import de.belkis.spyhound.ui.components.SpyButton
+import de.belkis.spyhound.ui.components.NavigationCard
 import de.belkis.spyhound.ui.components.SpyCard
 import de.belkis.spyhound.ui.components.SpyNavigateBack
 import de.belkis.spyhound.ui.components.SpySurface
@@ -574,34 +575,12 @@ private fun HistoryBadge(
 
 @Composable
 fun HistoryEntryCard(onOpen: () -> Unit, modifier: Modifier = Modifier) {
-    val title = stringResource(R.string.history_entry_title)
-    SpyCard(
-        modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onOpen,
-            )
-            .semantics { contentDescription = title },
-    ) {
-        Row(verticalAlignment = Alignment.Top) {
-            CardRowIconBadge(iconRes = R.drawable.ic_history, active = false)
-            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp, top = 8.dp)) {
-                Text(title.uppercase(), style = SpyTypographyExtras.sectionLabel)
-                Spacer(Modifier.height(SpySpacing.Unit))
-                Text(
-                    stringResource(R.string.history_entry_body),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SpyColors.IvoryMuted,
-                )
-            }
-            Text(
-                stringResource(R.string.history_entry_open),
-                style = MaterialTheme.typography.labelLarge,
-                color = SpyColors.Amber,
-                maxLines = 1,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        }
-    }
+    NavigationCard(
+        iconRes = R.drawable.ic_history,
+        title = stringResource(R.string.history_entry_title),
+        text = stringResource(R.string.history_entry_body),
+        onClickLabel = stringResource(R.string.history_entry_open),
+        onClick = onOpen,
+        modifier = modifier,
+    )
 }

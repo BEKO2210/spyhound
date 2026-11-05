@@ -53,6 +53,7 @@ import de.belkis.spyhound.scan.PermissionAudit
 import de.belkis.spyhound.scan.RightGroup
 import de.belkis.spyhound.ui.components.CardRowIconBadge
 import de.belkis.spyhound.ui.components.ScrollEdge
+import de.belkis.spyhound.ui.components.NavigationCard
 import de.belkis.spyhound.ui.components.SpyCard
 import de.belkis.spyhound.ui.components.SpyNavigateBack
 import de.belkis.spyhound.ui.components.TextActionLink
@@ -391,30 +392,12 @@ private fun NewBadge(modifier: Modifier = Modifier) {
 /** Start-screen card that opens the audit. */
 @Composable
 fun PermissionAuditEntryCard(onOpen: () -> Unit, modifier: Modifier = Modifier) {
-    val title = stringResource(R.string.audit_entry_title)
-    SpyCard(
-        modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onOpen,
-            )
-            .semantics { contentDescription = title },
-    ) {
-        Row(verticalAlignment = Alignment.Top) {
-            CardRowIconBadge(iconRes = R.drawable.ic_right_audit, active = false)
-            Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp, top = TitleInset)) {
-                Text(title.uppercase(), style = SpyTypographyExtras.sectionLabel)
-                Spacer(Modifier.height(SpySpacing.Unit))
-                Text(stringResource(R.string.audit_entry_body), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
-            }
-            Text(
-                stringResource(R.string.audit_entry_open),
-                style = MaterialTheme.typography.labelLarge,
-                color = SpyColors.Amber,
-                maxLines = 1,
-                modifier = Modifier.padding(top = TitleInset),
-            )
-        }
-    }
+    NavigationCard(
+        iconRes = R.drawable.ic_right_audit,
+        title = stringResource(R.string.audit_entry_title),
+        text = stringResource(R.string.audit_entry_body),
+        onClickLabel = stringResource(R.string.audit_entry_open),
+        onClick = onOpen,
+        modifier = modifier,
+    )
 }
