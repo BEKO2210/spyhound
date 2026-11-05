@@ -147,7 +147,7 @@ class ScanEngine(
         oldestEvidence: MutableMap<String, Long>,
     ): List<CheckResult> {
         val storage = StorageCollector()
-        if (!storage.canRead()) {
+        if (!StorageCollector.hasAccess(context)) {
             tracker.replaceSector(RadarSector.FILES, emptyList())
             emit("Dateien", "Keine Berechtigung", 0.55f, RadarSector.FILES)
             return listOf(CheckResult(ShellAnalyzer.FILES).apply {

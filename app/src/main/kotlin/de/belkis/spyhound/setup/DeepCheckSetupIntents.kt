@@ -1,5 +1,6 @@
 package de.belkis.spyhound.setup
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,9 +27,22 @@ fun openShizukuApp(context: Context) {
 }
 
 fun openDeviceInfoSettings(context: Context) {
-    context.startActivity(Intent(Settings.ACTION_DEVICE_INFO_SETTINGS))
+    startSettingsSafely(context, Intent(Settings.ACTION_DEVICE_INFO_SETTINGS))
 }
 
 fun openDeveloperSettings(context: Context) {
-    context.startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+    startSettingsSafely(context, Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+}
+
+/** Not every device ships every settings screen; fall back to this app's details page instead of crashing. */
+fun startSettingsSafely(context: Context, intent: Intent) {
+    try {
+        context.startActivity(intent)
+    } catch (_: ActivityNotFoundException) {
+        runCatching {
+            context.startActivity(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)),
+            )
+        }
+    }
 }

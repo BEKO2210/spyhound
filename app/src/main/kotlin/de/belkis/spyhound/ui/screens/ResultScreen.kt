@@ -60,6 +60,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.belkis.spyhound.setup.startSettingsSafely
 import de.belkis.spyhound.R
 import de.belkis.spyhound.scan.AccessLevel
 import de.belkis.spyhound.scan.Finding
@@ -528,12 +529,12 @@ private fun performGuidanceAction(
     when (action) {
         GuidanceAction.APP_INFO -> {
             val packageName = Regex("[a-zA-Z][a-zA-Z0-9_]*(?:\\.[a-zA-Z][a-zA-Z0-9_]*)+").find(entry.actionTarget.orEmpty())?.value
-            if (packageName != null) context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+            if (packageName != null) startSettingsSafely(context, Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
         }
-        GuidanceAction.SETTINGS_SECURITY -> context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
-        GuidanceAction.SETTINGS_DEVELOPER -> context.startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
-        GuidanceAction.SETTINGS_ACCESSIBILITY -> context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        GuidanceAction.SETTINGS_UNKNOWN_SOURCES -> context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES))
+        GuidanceAction.SETTINGS_SECURITY -> startSettingsSafely(context, Intent(Settings.ACTION_SECURITY_SETTINGS))
+        GuidanceAction.SETTINGS_DEVELOPER -> startSettingsSafely(context, Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+        GuidanceAction.SETTINGS_ACCESSIBILITY -> startSettingsSafely(context, Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        GuidanceAction.SETTINGS_UNKNOWN_SOURCES -> startSettingsSafely(context, Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES))
         GuidanceAction.PERMISSION_SMS -> onGapFix(GapFix.PERMISSION_SMS)
         GuidanceAction.PERMISSION_FILES -> onGapFix(GapFix.PERMISSION_FILES)
         GuidanceAction.SETUP_DEEP_CHECK -> onGapFix(GapFix.SHIZUKU)

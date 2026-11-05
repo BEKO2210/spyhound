@@ -77,6 +77,7 @@ import de.belkis.spyhound.ui.screens.HistoryRoute
 import de.belkis.spyhound.ui.screens.PermissionAuditRoute
 import de.belkis.spyhound.ui.screens.IntroScreen
 import de.belkis.spyhound.ui.screens.StartScreen
+import de.belkis.spyhound.setup.startSettingsSafely
 import de.belkis.spyhound.ui.components.SmsBlockedDialog
 import de.belkis.spyhound.scan.SmsRequestOutcome
 import de.belkis.spyhound.scan.smsRequestOutcome
@@ -93,6 +94,10 @@ class MainActivity : AppCompatActivity() {
             granted,
             shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS),
         ) == SmsRequestOutcome.BLOCKED_BY_ANDROID
+    }
+
+    private val filesPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        vm.refreshPermissions()
     }
 
     private val notificationsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -498,18 +503,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openAppInfo() {
-        startActivity(
-            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
-            },
-        )
+        startSettingsSafely(this, appDetailsIntent())
+    }
+
+    private fun appDetailsIntent() = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = Uri.fromParts("package", packageName, null)
     }
 
     private fun openAllFilesAccess() {
-        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
-            data = Uri.parse("package:$packageName")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            startSettingsSafely(
+                this,
+                Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                    data = Uri.parse("package:$packageName")
+                },
+            )
+        } else {
+            // API 29 has no "All files access" screen; the normal runtime permission is the equivalent.
+            filesPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
-        startActivity(intent)
     }
 
     private fun shareReport(report: de.belkis.spyhound.scan.Report) {

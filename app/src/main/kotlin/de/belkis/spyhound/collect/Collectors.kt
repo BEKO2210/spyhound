@@ -184,9 +184,6 @@ class SmsCollector(private val context: Context) {
 class StorageCollector {
     data class Result(val listing: String, val hashes: String, val skippedLarge: Int, val unreadable: Int)
 
-    fun canRead(): Boolean =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
-
     fun collect(onProgress: (String) -> Unit): Result {
         val root = Environment.getExternalStorageDirectory()
         val listing = StringBuilder()
@@ -206,6 +203,10 @@ class StorageCollector {
     }
 
     companion object {
+        /** Android 11+: "All files access"; Android 10 has no such setting, there READ_EXTERNAL_STORAGE decides. */
+        fun hasAccess(context: Context): Boolean =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Environment.isExternalStorageManager()
+            else context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         /** Installers, executables and archives: what a spyware sample is shipped as. */
         val CANDIDATES = setOf("apk", "apks", "xapk", "apkm", "dex", "odex", "vdex", "jar", "so", "zip", "bin", "elf", "sh", "exe", "dll", "ipa")
         const val MAX_HASH_BYTES = 120L shl 20
