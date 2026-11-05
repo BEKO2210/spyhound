@@ -8,4 +8,12 @@
         <item>Weniger Fehlalarme: Spuren-Listen, Links und DNS-Namen werden strenger gelesen</item>
         <item>Die Liste unbedenklicher Systemdateien kennt jetzt auch Xiaomi, Redmi und POCO</item>
     </string-array>
+    <string-array name="start_statements">
+        <item>Offline-Analyse auf bekannte Spyware</item>
+        <item>Scan-Ergebnisse bleiben auf deinem Gerät</item>
+        <item>%1$s Spuren aus %2$d Quellen</item>
+        <item>Erkennung nach %1$s</item>
+        <item>Quellen: %1$s</item>
+        <item>Quelloffen und reproduzierbar gebaut</item>
+    </string-array>
 </resources>

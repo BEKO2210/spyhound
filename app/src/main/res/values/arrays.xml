@@ -8,4 +8,14 @@
         <item>Fewer false alarms: stricter reading of trace lists, URLs and DNS names</item>
         <item>Known-good list now also covers Xiaomi, Redmi and POCO system files</item>
     </string-array>
+    <!-- Start screen banner. Order is fixed: offline, stays on device, count (%1$s indicators, %2$d sources),
+         sources (%1$s names), short sources variant, open source. -->
+    <string-array name="start_statements">
+        <item>Offline analysis for known spyware</item>
+        <item>Scan results stay on your device</item>
+        <item>%1$s indicators from %2$d sources</item>
+        <item>Detection based on %1$s</item>
+        <item>Sources: %1$s</item>
+        <item>Open source, built reproducibly</item>
+    </string-array>
 </resources>

@@ -384,5 +384,8 @@ fun SmsBlockedDialog(onOpenAppInfo: () -> Unit, onDismiss: () -> Unit) {
 /** Height of the status strip when only the icons show: top padding, icon and the same space below. */
 private val StatusIconsOnlyHeight = 56.dp
 
-/** The labels are gone before the strip has shrunk half way, so they never get cut through the middle. */
-private fun textAlpha(collapse: Float): Float = (1f - collapse * 2f).coerceIn(0f, 1f)
+/** The labels fade out gently over most of the fold, smoothed at both ends, and are gone before the strip gets too low to hold them. */
+private fun textAlpha(collapse: Float): Float {
+    val t = (1f - collapse / 0.7f).coerceIn(0f, 1f)
+    return t * t * (3f - 2f * t)
+}

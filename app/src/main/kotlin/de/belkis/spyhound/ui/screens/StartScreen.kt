@@ -12,7 +12,18 @@ import androidx.compose.foundation.border
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.res.stringArrayResource
+import de.belkis.spyhound.ui.buildStartStatements
+import de.belkis.spyhound.ui.activeSourceNames
+import de.belkis.spyhound.ui.components.StatementBanner
+import de.belkis.spyhound.ui.design.rememberReducedMotion
+import kotlinx.coroutines.delay
 import androidx.compose.animation.Crossfade
 import android.Manifest
 import android.content.pm.PackageManager
@@ -291,11 +302,21 @@ fun StartScreen(
     val defaultRadarDiameter = 176.dp
     val cardsBody: @Composable ColumnScope.() -> Unit = {
         var staggerIndex = 0
-            Text(
-                stringResource(R.string.t_061),
-                style = MaterialTheme.typography.bodyMedium,
-                color = SpyColors.IvoryMuted,
+            val statementLocale = LocalConfiguration.current.locales[0]
+            val statementTexts = stringArrayResource(R.array.start_statements).toList()
+            val statements = remember(statementTexts, state.iocs, statementLocale) {
+                buildStartStatements(
+                    statementTexts,
+                    indicatorCount = state.iocs?.set?.size ?: 0,
+                    activeSources = state.iocs?.status?.available ?: 0,
+                    sourceNames = activeSourceNames(state.iocs?.status?.active.orEmpty()),
+                    locale = statementLocale,
+                )
+            }
+            StatementBanner(
+                statements,
                 modifier = Modifier.then(staggeredAppear(staggerIndex++)),
+                paused = scroll.isScrollInProgress,
             )
             if (state.access != AccessLevel.ROOT) {
                 SpyCard(Modifier.then(staggeredAppear(staggerIndex++))) {
@@ -518,9 +539,24 @@ fun StartScreen(
                     }
                 } else {
                     // Scrolling the cards folds the status strip down to its icons; scrolling back up unfolds it.
-                    val collapseDistance = with(LocalDensity.current) { 120.dp.toPx() }
+                    val collapseDistance = with(LocalDensity.current) { StripCollapseDistance.toPx() }
+                    val reducedMotion = rememberReducedMotion()
+                    // When the finger lets go between folded and unfolded, settle softly to the nearer state. A new
+                    // touch interrupts the animation, so it never fights the finger.
+                    LaunchedEffect(collapseDistance, reducedMotion) {
+                        if (reducedMotion) return@LaunchedEffect
+                        snapshotFlow { scroll.isScrollInProgress }.collect { moving ->
+                            if (moving) return@collect
+                            delay(SettleDelayMs)
+                            val folded = minOf(collapseDistance, scroll.maxValue.toFloat())
+                            val at = scroll.value.toFloat()
+                            if (scroll.isScrollInProgress || folded <= 0f || at <= 0f || at >= folded) return@collect
+                            val target = if (at < folded / 2f) 0 else folded.roundToInt()
+                            scroll.animateScrollTo(target, spring(Spring.DampingRatioNoBouncy, Spring.StiffnessLow))
+                        }
+                    }
                     Column(Modifier.fillMaxSize()) {
-                        headerContent(radarDiameter) { scroll.value / collapseDistance }
+                        headerContent(radarDiameter) { FastOutSlowInEasing.transform((scroll.value / collapseDistance).coerceIn(0f, 1f)) }
                         cardsContent()
                     }
                 }
@@ -950,3 +986,9 @@ private val CompactHeight = 700.dp
 
 /** How much of its size the radar gives up when the cards are scrolled (0.45 = shrinks to 55 %). */
 private const val RadarScrollShrink = 0.45f
+
+/** Scroll distance over which the radar shrinks and the status strip folds; long enough to follow the finger calmly. */
+private val StripCollapseDistance = 220.dp
+
+/** Pause after the scroll stops before the fold settles, so a finger that only rests does not trigger it. */
+private const val SettleDelayMs = 80L
