@@ -353,7 +353,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             var lastRadar: RadarProgress? = null
             val merged = try {
                 val report = try {
-                    ScanEngine(getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication())).run { p ->
+                    ScanEngine(
+                        getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication()),
+                        builtinAdbKeyAvailable = AdbShell.keystoreUsable(),
+                    ).run { p ->
                         lastRadar = p.radar ?: lastRadar
                         _state.update { s -> s.copy(progress = p) }
                     }

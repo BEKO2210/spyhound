@@ -407,6 +407,7 @@
     <string name="adb_failed_connect">Die Verbindung hat nicht geklappt. Starte neu.</string>
     <string name="adb_failed_timeout">Das hat zu lange gedauert. Starte neu.</string>
     <string name="adb_failed_internal">In Spyhound ist etwas schiefgelaufen. Starte neu.</string>
+    <string name="adb_failed_no_keystore">Dieses Telefon kann den Verbindungsschlüssel nicht geschützt speichern, deshalb ist die eingebaute tiefere Prüfung aus. Shizuku oder Root gehen weiterhin.</string>
     <string name="adb_wizard_intro">Drei kurze Schritte auf diesem Telefon – ohne Computer und ohne Extra-App.</string>
     <string name="adb_wizard_step1_title">Debugging über WLAN einschalten</string>
     <string name="adb_wizard_step1_body">Schalte in den „Entwickleroptionen“ den Schalter „Debugging über WLAN“ ein. WLAN muss verbunden sein.</string>

@@ -66,6 +66,7 @@ private fun adbFailureMessage(reason: AdbFailure): Int = when (reason) {
     AdbFailure.CONNECT_FAILED -> R.string.adb_failed_connect
     AdbFailure.TIMEOUT -> R.string.adb_failed_timeout
     AdbFailure.INTERNAL -> R.string.adb_failed_internal
+    AdbFailure.NO_KEYSTORE -> R.string.adb_failed_no_keystore
 }
 
 @Composable

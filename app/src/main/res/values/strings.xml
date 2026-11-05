@@ -407,6 +407,7 @@
     <string name="adb_failed_connect">The connection did not work. Start again.</string>
     <string name="adb_failed_timeout">That took too long. Start again.</string>
     <string name="adb_failed_internal">Something went wrong inside Spyhound. Start again.</string>
+    <string name="adb_failed_no_keystore">This phone cannot protect the connection key, so the built-in deep check is switched off. Shizuku or root still work.</string>
     <string name="adb_wizard_intro">Three short steps on this phone – no computer and no extra app.</string>
     <string name="adb_wizard_step1_title">Turn on wireless debugging</string>
     <string name="adb_wizard_step1_body">In “Developer options”, switch on “Wireless debugging”. Wi‑Fi must be connected.</string>

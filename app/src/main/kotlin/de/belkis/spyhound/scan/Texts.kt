@@ -40,6 +40,8 @@ object TextsEn : Texts {
         "Debugging über WLAN ist eingeschaltet." to "Wireless debugging is on.",
         ScanEngine.BUILTIN_ADB_RESTART to "The deep check did not run: wireless debugging is off (for example after a restart of the phone). " +
             "Restart the deep check: turn wireless debugging on and scan once more.",
+        ScanEngine.BUILTIN_ADB_NO_KEYSTORE to "The built-in deep check is not available on this phone: the Android keystore cannot protect the connection key, and Spyhound does not store it unprotected. " +
+            "Running processes, system logs and app data were not checked. Shizuku or root still work.",
         ScanEngine.SHELL_DEAD to "The deep check did not run: Shizuku or root is connected but does not respond. " +
             "Restart Shizuku (or allow root again) and scan once more.",
         "USB-Debugging ist eingeschaltet." to "USB debugging is on.",

@@ -31,6 +31,8 @@ class ScanEngine(
     private val shell: Shell?,
     /** The built-in ADB connection was set up before, so a missing shell most likely means wireless debugging is off. */
     private val builtinAdbPaired: Boolean = false,
+    /** False when the Android Keystore cannot protect the built-in ADB key, so that route does not exist. */
+    private val builtinAdbKeyAvailable: Boolean = true,
 ) {
     private val level = shell?.level ?: AccessLevel.APP
 
@@ -104,6 +106,7 @@ class ScanEngine(
             checks += storageCheck(tracker, ::emit, oldestEvidence)
             checks += CheckResult("Tiefenprüfung").apply {
                 if (builtinAdbPaired) gap(BUILTIN_ADB_RESTART, GapFix.RESTART_BUILTIN_ADB)
+                else if (!builtinAdbKeyAvailable) gap(BUILTIN_ADB_NO_KEYSTORE, GapFix.SHIZUKU)
                 else gap(
                     "Laufende Prozesse, Systemprotokolle (logcat, dumpsys), gelöschte Apps und Dateien außerhalb des " +
                         "gemeinsamen Speichers wurden nicht geprüft. Dafür braucht es Shizuku (ohne Root) oder Root.",
@@ -258,6 +261,8 @@ class ScanEngine(
     companion object {
         const val BUILTIN_ADB_RESTART = "Die Tiefenprüfung lief nicht: Das Debugging über WLAN ist aus (z. B. nach einem Neustart des Telefons). " +
             "Tiefe Prüfung wieder starten: „Debugging über WLAN“ einschalten und noch einmal prüfen."
+        const val BUILTIN_ADB_NO_KEYSTORE = "Die eingebaute Tiefenprüfung ist auf diesem Telefon nicht verfügbar: Der Android-Schlüsselspeicher kann den Verbindungsschlüssel nicht schützen, ungeschützt speichert Spyhound ihn nicht. " +
+            "Laufende Prozesse, Systemprotokolle und App-Daten wurden nicht geprüft. Shizuku oder Root gehen weiterhin."
         const val SHELL_DEAD = "Die Tiefenprüfung lief nicht: Shizuku bzw. Root ist verbunden, antwortet aber nicht. " +
             "Shizuku neu starten (oder Root erneut erlauben) und noch einmal prüfen."
 

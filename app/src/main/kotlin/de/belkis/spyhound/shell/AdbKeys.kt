@@ -24,7 +24,8 @@ import javax.crypto.spec.GCMParameterSpec
  * The key never leaves this class except to the connection library in memory. It is never exported or logged.
  *
  * libadb needs the raw key for TLS, so an Android Keystore key cannot be the ADB key itself. Instead the file is
- * encrypted with a non-exportable Keystore AES key; if the Keystore is unavailable the file stays app-private plain.
+ * encrypted with a non-exportable Keystore AES key. If the Keystore is unavailable no key is created or stored:
+ * the built-in deep check is then unavailable (Shizuku or root still work).
  */
 internal class AdbKeys private constructor(val privateKey: PrivateKey, val certificate: Certificate) {
 
@@ -32,19 +33,21 @@ internal class AdbKeys private constructor(val privateKey: PrivateKey, val certi
         private const val KEY_FILE = "adb_key.bin"
         private const val CERT_FILE = "adb_cert.der"
         private const val WRAP_ALIAS = "spyhound_adb_wrap"
-        private const val FORMAT_PLAIN: Byte = 0
-        private const val FORMAT_WRAPPED: Byte = 1
         private const val VALID_MS = 10L * 365 * 24 * 3600 * 1000
 
         fun exists(context: Context): Boolean =
             File(context.filesDir, KEY_FILE).isFile && File(context.filesDir, CERT_FILE).isFile
 
-        fun loadOrCreate(context: Context): AdbKeys = load(context) ?: create(context)
+        /** Null when the key cannot be stored protected (no usable Android Keystore). */
+        fun loadOrCreate(context: Context): AdbKeys? = load(context) ?: create(context)
+
+        fun keystoreUsable(): Boolean = wrapKey() != null
 
         /** Forgets the identity. The phone then needs a new pairing. */
         fun delete(context: Context) {
             File(context.filesDir, KEY_FILE).delete()
             File(context.filesDir, CERT_FILE).delete()
+            ShellPreferences.setBuiltinAdbPaired(context, false)
             runCatching { KeyStore.getInstance("AndroidKeyStore").apply { load(null) }.deleteEntry(WRAP_ALIAS) }
         }
 
@@ -52,13 +55,20 @@ internal class AdbKeys private constructor(val privateKey: PrivateKey, val certi
             val keyFile = File(context.filesDir, KEY_FILE)
             val certFile = File(context.filesDir, CERT_FILE)
             if (!keyFile.isFile || !certFile.isFile) return null
-            val pkcs8 = unwrap(keyFile.readBytes())
+            val pkcs8 = when (val s = readStoredKey(keyFile.readBytes(), ::wrap, ::unwrapWrapped)) {
+                is StoredKey.Ready -> {
+                    s.rewrite?.let { writePrivate(keyFile, it) }
+                    s.pkcs8
+                }
+                StoredKey.Discard -> { delete(context); return null }
+            }
             val key = KeyFactory.getInstance("RSA").generatePrivate(PKCS8EncodedKeySpec(pkcs8))
             val cert = certFile.inputStream().use { CertificateFactory.getInstance("X.509").generateCertificate(it) }
             AdbKeys(key, cert)
         }.getOrNull()
 
-        private fun create(context: Context): AdbKeys {
+        private fun create(context: Context): AdbKeys? {
+            if (!keystoreUsable()) return null
             val gen = KeyPairGenerator.getInstance("RSA")
             gen.initialize(2048, SecureRandom())
             val pair = gen.generateKeyPair()
@@ -67,7 +77,8 @@ internal class AdbKeys private constructor(val privateKey: PrivateKey, val certi
                 pair.public, pair.private, "Spyhound", now, Date(now.time + VALID_MS), BigInteger(63, SecureRandom()).add(BigInteger.ONE),
             )
             // Private mode and no backup (allowBackup=false); the files are replaced as a whole.
-            writePrivate(File(context.filesDir, KEY_FILE), wrap(pair.private.encoded))
+            val wrapped = wrap(pair.private.encoded) ?: return null
+            writePrivate(File(context.filesDir, KEY_FILE), wrapped)
             writePrivate(File(context.filesDir, CERT_FILE), cert.encoded)
             return AdbKeys(pair.private, cert)
         }
@@ -94,24 +105,20 @@ internal class AdbKeys private constructor(val privateKey: PrivateKey, val certi
                 }.generateKey()
         }.getOrNull()
 
-        private fun wrap(plain: ByteArray): ByteArray {
-            val key = wrapKey() ?: return byteArrayOf(FORMAT_PLAIN) + plain
+        private fun wrap(plain: ByteArray): ByteArray? {
+            val key = wrapKey() ?: return null
             return runCatching {
                 val cipher = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key) }
                 byteArrayOf(FORMAT_WRAPPED, cipher.iv.size.toByte()) + cipher.iv + cipher.doFinal(plain)
-            }.getOrElse { byteArrayOf(FORMAT_PLAIN) + plain }
+            }.getOrNull()
         }
 
-        private fun unwrap(stored: ByteArray): ByteArray = when (stored[0]) {
-            FORMAT_PLAIN -> stored.copyOfRange(1, stored.size)
-            FORMAT_WRAPPED -> {
-                val ivLen = stored[1].toInt()
-                val iv = stored.copyOfRange(2, 2 + ivLen)
-                val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-                cipher.init(Cipher.DECRYPT_MODE, checkNotNull(wrapKey()), GCMParameterSpec(128, iv))
-                cipher.doFinal(stored, 2 + ivLen, stored.size - 2 - ivLen)
-            }
-            else -> error("unknown key format")
+        private fun unwrapWrapped(stored: ByteArray): ByteArray {
+            val ivLen = stored[1].toInt()
+            val iv = stored.copyOfRange(2, 2 + ivLen)
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, checkNotNull(wrapKey()), GCMParameterSpec(128, iv))
+            return cipher.doFinal(stored, 2 + ivLen, stored.size - 2 - ivLen)
         }
     }
 }
