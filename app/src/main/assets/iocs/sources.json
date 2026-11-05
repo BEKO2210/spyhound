@@ -526,5 +526,19 @@
   "category": "malware",
   "family": "",
   "sha256": "f7cd9556fe5d91e18e648135a1b86768a395776ba87781b9d1f3b240aefd9c84"
+ },
+ {
+  "id": "malwarebazaar-android",
+  "name": "abuse.ch MalwareBazaar Android",
+  "repo": "BEKO2210/spyhound",
+  "commit": "",
+  "path": "data/malwarebazaar/android.tsv",
+  "format": "malwarebazaar-tsv",
+  "cite": "abuse.ch MalwareBazaar, in collaboration with Spamhaus Technology",
+  "category": "malware",
+  "family": "",
+  "sha256": "",
+  "enabled": false,
+  "status": "Not yet pinned: awaiting first real fetch and review; device download only"
  }
 ]

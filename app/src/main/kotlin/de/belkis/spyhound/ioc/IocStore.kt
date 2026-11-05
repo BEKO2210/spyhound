@@ -128,7 +128,7 @@ class IocStore(private val context: Context) {
     private fun download(s: FeedSource): ByteArray {
         val url = URL(s.pinnedUrl)
         require(url.protocol == "https" && url.host == "raw.githubusercontent.com" &&
-            FeedCatalog.ALLOWED_REPOS.any { url.path.startsWith("/$it/") } && ".." !in url.path) { "nicht erlaubte Quelle" }
+            FeedCatalog.isAllowedPath(s.repo, s.path) && Regex("[0-9a-f]{40}").matches(s.commit)) { "nicht erlaubte Quelle" }
         val conn = url.openConnection() as HttpURLConnection
         conn.instanceFollowRedirects = false // a redirect could leave the allow-list
         conn.connectTimeout = 20_000

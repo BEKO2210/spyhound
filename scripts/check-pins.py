@@ -70,6 +70,9 @@ def main():
         indent = 1 if text.startswith("[\n {") else 2
         changed = False
         for s in sources:
+            if s.get("enabled") is False:
+                print(f'disabled {s["id"]}: not yet pinned')
+                continue
             sha, date = latest_commit(s["repo"], s["path"])
             if sha is None:
                 print(f'GONE     {s["id"]}: {s["path"]} no longer in {s["repo"]}')

@@ -52,6 +52,7 @@ object Parsers {
         "csv-domain-ip" -> csvDomainIp(text, ctx)
         "curated-tsv" -> curatedTsv(text, ctx)
         "hashlist" -> hashlist(text, ctx)
+        "malwarebazaar-tsv" -> malwareBazaarTsv(text, ctx)
         "typed-csv-android-sha256" -> typedCsvAndroidSha256(text, ctx)
         else -> throw IocFormatException("unknown indicator format: $format")
     }
@@ -170,6 +171,16 @@ object Parsers {
             if (value.isEmpty() || cols.size < 3) return@mapNotNull null
             val family = cols.getOrNull(4)?.trim().orEmpty().ifEmpty { ctx.family }
             Indicator(value, inferType(value), ctx.category, family, cols.getOrNull(3)?.trim().orEmpty().ifEmpty { ctx.sourceId })
+        }.boundedList()
+
+    /** APK-only MalwareBazaar subset: SHA-256, family, canonical sample link. */
+    fun malwareBazaarTsv(text: String, ctx: SourceContext): List<Indicator> =
+        tsvRows(text).mapNotNull { cols ->
+            if (cols.size != 3) return@mapNotNull null
+            val hash = cols[0].trim().lowercase()
+            val link = cols[2].trim()
+            if (!SHA256_LOWER_RE.matches(hash) || link != "https://bazaar.abuse.ch/sample/$hash/") return@mapNotNull null
+            Indicator(hash, IocType.SHA256, ctx.category, cols[1].trim(), "abuse.ch MalwareBazaar ($link)", ctx.androidArtifacts)
         }.boundedList()
 
     /** One SHA-256 per line, `#` comments allowed. Lines that are not exactly 64 hex digits are dropped. */
@@ -310,7 +321,7 @@ object FeedCatalog {
     val ALLOWED_REPOS = setOf(
         "mvt-project/mvt-indicators", "AmnestyTech/investigations",
         "AssoEchap/stalkerware-indicators", "citizenlab/malware-indicators",
-        "eset/malware-ioc", "meta/threat-research",
+        "eset/malware-ioc", "meta/threat-research", "BEKO2210/spyhound",
         // Plain domain lists for the DNS watcher (tracker, phishing); see assets/iocs/domainlists.json.
         "Perflyst/PiHoleBlocklist", "StevenBlack/hosts", "Phishing-Database/Phishing.Database",
     )
@@ -330,12 +341,24 @@ object FeedCatalog {
         "mvt-darksword", "mvt-coruna",
     )
 
-    fun parse(json: String): List<FeedSource> = Json.parseToJsonElement(json).jsonArray.map { e ->
+    fun isAllowedPath(repo: String, path: String): Boolean =
+        repo in ALLOWED_REPOS && !path.startsWith('/') &&
+            path.split('/').none { it == ".." || it == "." || it.isEmpty() } &&
+            path.none { it in "%?#\\" || it.isWhitespace() } &&
+            (repo != "BEKO2210/spyhound" || path.startsWith("data/malwarebazaar/"))
+
+    fun parse(json: String): List<FeedSource> = Json.parseToJsonElement(json).jsonArray.mapNotNull { e ->
         val o = e.jsonObject
         fun s(k: String) = o[k]?.jsonPrimitive?.content.orEmpty()
+        require(o["enabled"] == null || o["enabled"].toString() in setOf("true", "false")) { "enabled must be a boolean" }
+        if (o["enabled"].toString() == "false") return@mapNotNull null
         val repo = s("repo")
         require(repo in ALLOWED_REPOS) { "source outside the allow-list: $repo" }
         require(Regex("[0-9a-f]{40}").matches(s("commit"))) { "source commit must be 40 lowercase hex characters" }
+        require(isAllowedPath(repo, s("path"))) { "source path outside the allow-list" }
+        if (repo == "BEKO2210/spyhound") {
+            require(Regex("[0-9a-fA-F]{64}").matches(s("sha256"))) { "source SHA-256 must be 64 hex characters" }
+        }
         FeedSource(
             id = s("id"), name = s("name"), repo = repo, commit = s("commit"), path = s("path"),
             format = s("format"), cite = s("cite"),
