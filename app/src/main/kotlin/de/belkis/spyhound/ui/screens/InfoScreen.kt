@@ -470,26 +470,11 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
 
 @Composable
 private fun MalwareBazaarAttributionNotice(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val before = stringResource(R.string.info_malwarebazaar_notice_before)
+    // abuse.ch's notice word for word (URL included), the link on its own line so the sentence stays whole.
     val link = stringResource(R.string.info_malwarebazaar_notice_link)
-    val after = stringResource(R.string.info_malwarebazaar_notice_after)
-    val bodyStyle = MaterialTheme.typography.bodyMedium
-    val openLink = {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
-    }
-    FlowRow(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Text(before, style = bodyStyle, color = SpyColors.IvoryMuted)
-        Text(
-            link,
-            style = bodyStyle.copy(color = SpyColors.Amber, textDecoration = TextDecoration.Underline),
-            modifier = Modifier
-                .clickable(role = Role.Button, onClick = openLink)
-                .semantics { contentDescription = link },
-        )
-        Text(after, style = bodyStyle, color = SpyColors.IvoryMuted)
+    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(stringResource(R.string.info_malwarebazaar_notice), style = MaterialTheme.typography.bodyMedium, color = SpyColors.IvoryMuted)
+        HelpLink(link, link)
     }
 }
 

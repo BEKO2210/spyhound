@@ -204,9 +204,8 @@
     <string name="source_license_cc_by">CC BY 4.0</string>
     <string name="source_license_device_only">no licence for redistribution – device download only</string>
     <string name="source_license_abusech">abuse.ch Terms of Use – included with permission, not CC0</string>
-    <string name="info_malwarebazaar_notice_before">Malware hash data courtesy of abuse.ch MalwareBazaar (</string>
+    <string name="info_malwarebazaar_notice">Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.</string>
     <string name="info_malwarebazaar_notice_link">https://bazaar.abuse.ch</string>
-    <string name="info_malwarebazaar_notice_after">), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.</string>
     <string name="info_section_help">Help</string>
     <string name="info_help_body">If you may be targeted, contact specialists rather than relying on an app alone.</string>
     <string name="info_help_access_now">Access Now Digital Security Helpline</string>
