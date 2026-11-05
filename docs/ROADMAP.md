@@ -38,9 +38,14 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Weitere Sprachen nach Bedarf der Nutzer (Rückmeldungen aus dem Feldtest).
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-03)
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-05)
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
-2. **Virenschutz-Quellen** – Antwort abuse.ch (Ticket ST7319719) abwarten; Positivliste wächst mit jedem Gerät.
+2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
+
+## Zeitraum „App-Installationen“ (2026-11-05)
+- [~] S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen
+      der Auslieferungs-Android-Version (`ro.product.first_api_level`, −6 Monate) fallen weg; Unit-Test mit beiden Daten
+      grün. Abnahme offen: S21 zeigt ein reales Datum (Sperrbildschirm unterbrach den Gerätetest).
 
 ## Ergebnis auf kleinen Handys (2026-11-03)
 - [x] Zusammenfassung scrollt als erstes Listenelement mit; Kopfbereich blendet leicht aus, Fußbuttons bleiben fest.
@@ -330,16 +335,26 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       nur auf Tipp (Code geprüft). Restrisiko: keine anwaltliche Prüfung – optional, wenn die App gewerblich wird.
 - [ ] DPF: Entscheidung des EuGH zu C-703/25 P beobachten; fällt das DPF, Abschnitt 2.3 auf Art. 49 Abs. 1 lit. a/b DSGVO
       bzw. GitHub B.V. (EU) umstellen. Abnahme: LEGAL.md binnen einer Woche nach dem Urteil angepasst.
-- [ ] abuse.ch (MalwareBazaar): Weitergabe in Open-Source-App braucht Zustimmung (Nutzungsbedingungen § 7.3, Stand
-      21.10.2026). Anfrage gesendet 2026-11-02, Ticket ST7319719 (Antwort abwarten). YARAify ist CC0 (§ 3.4), geprüft
-      2026-11-02: Hash-Abfragen (`get_yara`, max. 1000 je Regel) brauchen einen Auth-Key → Konto nötig (legt nur Belkis an);
-      kein Dateityp-Filter. Frei ladbar ist nur das Regel-Paket `yaraify-rules.zip` – Lizenz je Regel prüfen, und YARA auf
-      Android wäre ein eigener großer Schritt (Engine + Leistung). Abnahme: Antwort bzw. Lizenz-Beleg in ANTIVIRUS.md.
+- [x] abuse.ch (MalwareBazaar): Zustimmung erteilt am 2026-11-05 (Ticket ST7319719, abuse.ch-Team), mit Bedingungen –
+      Wortlaut und Umsetzung in `docs/ANTIVIRUS.md` Abschnitt 6.
+- [ ] **MalwareBazaar-Android-Hashes einbauen** (Bedingungen aus ANTIVIRUS.md § 6 sind Pflicht):
+      1. Belkis legt das Konto auf auth.abuse.ch an und legt den Auth-Key im Vault ab (`ABUSECH_AUTH_KEY`); nie im Repo.
+      2. Skript `scripts/fetch-malwarebazaar.py`: offizieller Export/API mit Auth-Key, nur Dateityp APK, je Eintrag nur
+         SHA-256, Familie/Tag, Link; höchstens 1×/Woche (Zeitstempel-Sperre im Skript); Positivliste muss leer schneiden.
+      3. Liste liegt im Spyhound-Repo außerhalb von `app/` (nicht in der APK → keine NonFreeAssets für F-Droid), wird nur
+         auf dem Gerät über „Quellen aktualisieren“ geladen, gepinnt per Commit + SHA-256 wie die anderen Quellen.
+      4. Hinweis (Wortlaut abuse.ch) in App (Info → Quellen/Lizenzen), README DE/EN und NOTICE; nicht als CC0
+         bezeichnet, „subject to the abuse.ch Terms of Use, included with permission“; Fork-Bedingung im NOTICE.
+      5. Löschweg: Eintrag auf Zuruf von abuse.ch per Sperrliste im Skript entfernen, nächstes Release.
+      Abnahme: Liste ≥ 1000 APK-Hashes, 0 Falschtreffer auf Pixel 11/9 + S21 Ultra, Fund einer Test-Datei offline belegt,
+      Hinweis in App/README/NOTICE sichtbar, F-Droid-Pipeline weiter grün.
 - [x] Ursprünglicher Prüfauftrag, abgearbeitet am 2026-11-02 (Liste aus 33939df: § 18 MStV, DPF-Status GitHub,
       Rolle als Verantwortlicher, § 25 TDDDG, Haftung/Apache-2.0, Aufsichtsbehörde-Adresse, § 202a StGB-Hinweis, Art. 13
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Installationsdaten lügen: Samsung stempelt vorinstallierte Apps mit 31.12.2008, Pixel installiert bei der Einrichtung vor dem Stellen der Uhr (01.01.2020) – auch Store-Apps behalten das. Zeitangaben nie ungeprüft als „reicht bis“ zeigen, gegen ein plausibles Mindestdatum (Auslieferungs-Android) prüfen (2026-11-05, S21 Ultra).
+- Fragen kostet nichts: eine höfliche, konkrete Anfrage (Zweck, Umfang, Bedingungen) brachte abuse.ch-Daten, die nach den Nutzungsbedingungen tabu waren (2026-11-05).
 - Das Matrix-Skript baute die Debug-APK nicht selbst; ein Lauf hätte fast einen alten Stand getestet (2026-11-03). Jetzt baut `main` vor jedem Lauf. Ein Testbeleg gilt nur für den Stand, der wirklich installiert war.
 - Bibliotheken ohne targetSdk im Manifest bringen über den Manifest-Merger alte Rechte mit (libadb → READ_PHONE_STATE, Speicher). Nach jeder neuen Abhängigkeit `aapt2 dump permissions` der Release-APK lesen.
 - F-Droid-Probe vor jedem Antrag lokal: frischer Klon des Tags, leerer Gradle-Home (`-g`), ohne gradle-wrapper.jar und ohne Schlüssel bauen, dann `apksigcopier compare`. Ein warmer Cache verdeckt fehlende Einträge in verification-metadata.xml (0.3.9).

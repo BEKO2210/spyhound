@@ -99,8 +99,7 @@ Schritt 1 = Hashlisten-Parser + ESET-Android-Quellen + Treffer-Anzeige für inst
 - **Haftung/Image:** Falsch-Alarm bei Stalkerware-Opfern kann gefährlich sein (Täter bemerkt Entfernung) → Hinweise zur sicheren Reihenfolge.
 
 ## 5. Offene Fragen
-1. Anfrage an abuse.ch/Spamhaus: Erlaubnis, eine Android-Teilmenge aus MalwareBazaar als gepinntes Derivat (eigenes Repo) zu
-   veröffentlichen? Ohne schriftliche Zusage bleibt MalwareBazaar draußen.
+1. ~~Anfrage an abuse.ch/Spamhaus~~ – beantwortet: Zustimmung mit Bedingungen, siehe Abschnitt 6.
 2. Gibt es von YARAify (CC0) stabile, versionierte Android-Hashlisten, die sich in einem eigenen Repo spiegeln und pinnen lassen?
 3. Koodous: Bedingungen im Browser mit eingeloggtem Konto lesen (hier nicht möglich); Weitergabe der Hashes?
 4. Weitere Forscher-Repos mit klarer Lizenz (Kandidaten sichten: Lookout, Zimperium, Kaspersky-IOC-Repos, Google TAG) – je Repo Lizenzdatei öffnen.
@@ -200,3 +199,27 @@ Aufbau: Emulator API 34, Debug-Build, Dateizugriff erteilt; die harmlose Test-Ap
 | A5 – Prüfung offline | ✅ kompletter Scan im Flugmodus, 0 Abstürze |
 | A6 – Leistung | Emulator: Basis-Scan inkl. Datei-Fingerabdrücken 25 s (768 geprüft). Pixel 9 (Release, tiefe Prüfung): 58 s gesamt; der Hash-Abgleich selbst ist eine Binärsuche und fällt nicht ins Gewicht. |
 | A4 nach Schritt 2 | ✅ Pixel 9: 703 APK-Dateien gegen 161 eindeutige Malware-SHA-256 (ESET 14 Kampagnen + Meta), 0 Treffer; alle 15 Quellen-Pins an der Quelle nachgerechnet |
+
+## 6. Zustimmung abuse.ch für MalwareBazaar (2026-11-05)
+
+Ticket ST7319719 (Spamhaus/abuse.ch), Anfrage 2026-11-02, Antwort des abuse.ch-Teams 2026-11-05. Die Zustimmung gilt nach
+Ermessen von abuse.ch und kann schriftlich widerrufen werden. Bedingungen (sinngemäß, verbindlich):
+
+| # | Bedingung | Umsetzung in Spyhound |
+|---|---|---|
+| 1 | Nur Android-/APK-Samples: SHA-256, Familie/Tag, Link zum MalwareBazaar-Eintrag. Keine Samples, keine weiteren Metadaten | Skript filtert Dateityp APK und schreibt nur diese drei Felder |
+| 2 | Spyhound bleibt kostenlos, nicht-kommerziell, quelloffen; keine Bezahlstufe, Werbung, Monetarisierung. Sonst vorher fragen | Spenden ohne Funktionsfreischaltung bleiben so; jede Änderung daran erst nach Rückfrage bei abuse.ch |
+| 3 | Bezug über authentifiziertes Konto (auth.abuse.ch) und offizielle API/Export, höchstens 1×/Woche, kein Scrapen | Auth-Key nur im Vault; Skript verweigert einen zweiten Abruf innerhalb von 7 Tagen |
+| 4 | Kein Training/Anpassen von KI-Modellen mit den Daten | Daten nur für den Hash-Abgleich auf dem Gerät |
+| 5 | Nicht als eigene Liste ausgeben, nicht verkaufen; Weitergabe nur als Teil von Spyhound, nicht als eigenständiger Datensatz. Forks nur unter denselben Bedingungen | Hinweis in NOTICE und README; Liste liegt im Spyhound-Repo, nicht in einem eigenen Daten-Repo |
+| 6 | Einträge auf Zuruf (z. B. Falschtreffer, Takedown) in angemessener Zeit entfernen | Sperrliste im Skript + nächstes Release |
+
+Pflicht-Hinweis (App und Repository), Wortlaut von abuse.ch:
+
+> Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus
+> Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false
+> positives.
+
+Kein offene Lizenz: die Liste **nicht** als CC0 kennzeichnen, sondern „subject to the abuse.ch Terms of Use, included with
+permission“. Weil die Daten nicht frei lizenziert sind, kommen sie nicht in die APK (F-Droid: NonFreeAssets), sondern werden
+wie Amnesty/Citizen Lab nur auf dem Gerät geladen.
