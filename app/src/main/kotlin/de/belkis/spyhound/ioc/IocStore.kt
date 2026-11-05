@@ -78,7 +78,7 @@ class IocStore(private val context: Context) {
             }.onFailure { corrupt += s }
         }
         IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
-        // The curated lists belong to the toolkit, not to the catalog count shown as "44/44"; a broken one is still
+        // The curated lists belong to the toolkit, not to the catalog count shown as "45/45"; a broken one is still
         // listed in [corrupt] so the start screen reports it.
         val catalogBroken = corrupt.count { it in sources }
         LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt))
