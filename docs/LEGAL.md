@@ -60,7 +60,8 @@ aktualisierter Listen auslöst (Indikatoren, Tracker- und Phishing-Domains), ver
 `raw.githubusercontent.com` (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA; für Nutzer im
 EWR auch GitHub B.V., Prins Bernhardplein 200, 1097 JB Amsterdam, Niederlande; ein Unternehmen der Microsoft-Gruppe). Es werden nur Dateien aus einer festgelegten
 Liste von Quell-Repositories, von festgelegten Commits geladen. Jede Datei muss ihrer SHA-256-Prüfsumme entsprechen,
-Weiterleitungen werden nicht verfolgt. Die App sendet dabei keine Daten über Dich oder Dein Gerät, Cookies werden nicht
+Weiterleitungen werden nicht verfolgt. Dabei wird auch die MalwareBazaar-Hashliste von abuse.ch geladen, und zwar aus
+dem Spyhound-Repository auf GitHub, nicht von abuse.ch selbst. Die App sendet dabei keine Daten über Dich oder Dein Gerät, Cookies werden nicht
 gesetzt.
 
 Technisch bedingt erhält GitHub bei jeder Verbindung Deine IP-Adresse sowie Standard-HTTP-Angaben (zum Beispiel
@@ -232,7 +233,8 @@ The scan itself uses no network, and neither does the background check. Only whe
 updated lists (indicators, tracker and phishing domains) does the app connect over HTTPS to `raw.githubusercontent.com`
 (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA; for users in the EEA also GitHub B.V.,
 Prins Bernhardplein 200, 1097 JB Amsterdam, Netherlands; part of the Microsoft group). Only files from a fixed list of source repositories, at fixed commits,
-are loaded. Every file must match its SHA-256 checksum; redirects are not followed. The app sends no data about you or
+are loaded. Every file must match its SHA-256 checksum; redirects are not followed. This includes the MalwareBazaar hash list from abuse.ch, which is loaded from the
+Spyhound repository on GitHub, not from abuse.ch itself. The app sends no data about you or
 your device and sets no cookies.
 
 For technical reasons GitHub receives your IP address and standard HTTP information (for example time, requested
