@@ -223,3 +223,12 @@ Bibliotheken sind in [NOTICE](NOTICE) genannt.
 
 Spyhound ist kostenlos und bleibt es – jede Prüfung, für alle, ohne Konto, Werbung oder Bezahlschranke. Wenn es dir
 geholfen hat, kannst du die Entwicklung unterstützen: **[Auf GitHub sponsern](https://github.com/sponsors/BEKO2210)**.
+
+### MalwareBazaar
+
+MalwareBazaar ist vorbereitet, bleibt bis zum ersten geprüften und gepinnten Abruf deaktiviert. Hashdaten bleiben außerhalb der APK und werden nur über die Quellenaktualisierung geladen. Siehe [Datenvorbereitung](data/malwarebazaar/README.md).
+
+Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.
+
+Data is subject to the abuse.ch Terms of Use, included with permission.
+See [NOTICE](NOTICE) for redistribution and fork conditions.

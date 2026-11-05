@@ -216,3 +216,12 @@ are credited in [NOTICE](NOTICE).
 
 Spyhound is free and stays free – every scan, for everyone, without accounts, ads or a paywall. If it helped you, you
 can support its development: **[Become a sponsor on GitHub](https://github.com/sponsors/BEKO2210)**.
+
+### MalwareBazaar
+
+MalwareBazaar support is prepared but disabled until the first real fetch is reviewed and pinned. Hash data stays outside the APK and will load only through source updates. See [data preparation](data/malwarebazaar/README.md).
+
+Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.
+
+Data is subject to the abuse.ch Terms of Use, included with permission.
+See [NOTICE](NOTICE) for redistribution and fork conditions.

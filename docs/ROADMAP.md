@@ -346,6 +346,11 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       4. Hinweis (Wortlaut abuse.ch) in App (Info → Quellen/Lizenzen), README DE/EN und NOTICE; nicht als CC0
          bezeichnet, „subject to the abuse.ch Terms of Use, included with permission“; Fork-Bedingung im NOTICE.
       5. Löschweg: Eintrag auf Zuruf von abuse.ch per Sperrliste im Skript entfernen, nächstes Release.
+      Vorbereitung (2026-11-05, ohne echten Abruf): APK-Filter mit Wochensperre, Positiv-/Sperrliste,
+      TSV-Parser und deaktivierter Katalogeintrag; 44 aktive Quellen unverändert. Hinweise in NOTICE,
+      App-Lizenzansicht und README DE/EN. Ablauf: `data/malwarebazaar/README.md`.
+      Beleg: 46cd1b6, e800102; 8 Offline-Skripttests grün. Gezielte JVM-Tests durch schreibgeschützten Cache blockiert.
+      API-Dateitypabfrage liefert höchstens 1000 aktuelle Einträge, nach Filterung ggf. weniger.
       Abnahme: Liste ≥ 1000 APK-Hashes, 0 Falschtreffer auf Pixel 11/9 + S21 Ultra, Fund einer Test-Datei offline belegt,
       Hinweis in App/README/NOTICE sichtbar, F-Droid-Pipeline weiter grün.
 - [x] Ursprünglicher Prüfauftrag, abgearbeitet am 2026-11-02 (Liste aus 33939df: § 18 MStV, DPF-Status GitHub,

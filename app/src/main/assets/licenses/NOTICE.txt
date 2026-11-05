@@ -137,6 +137,20 @@ therefore leaves both out of the APK.
      12a20bf8dd2b7e78d9d38fc12b3e5c970f79d1a7 (downloaded on the device only)
      Copyright (c) 2018-2025 Mitchell Krog, Nissar Chababy, Phishing.Database Contributors
 
+8. MalwareBazaar Android hash subset (not bundled; first fetch and pin pending)
+
+Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.
+
+Data is subject to the abuse.ch Terms of Use, included with permission:
+https://abuse.ch/terms-of-use/
+Permission: ticket ST7319719, 2026-11-05; revocable in writing by abuse.ch.
+Only APK SHA-256, family/tag and sample link may be redistributed, only as part
+of Spyhound, never as a standalone dataset or for sale. Spyhound must remain
+free, non-commercial and open source, without paid tiers, advertising or
+monetization. Forks must comply with the same conditions. Entries must be
+removed on abuse.ch request. This permission does not grant a CC0 license.
+Authenticated official API/export access is limited to once per week.
+
 == Libraries ==
 
 Shizuku API and provider (Apache License 2.0)
