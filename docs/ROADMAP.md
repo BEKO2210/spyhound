@@ -42,6 +42,30 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
 
+## Audit 0.3.13 (2026-11-05) – offene Punkte mit Abnahmekriterium
+Status nach RULES: „bestätigt“ = Datei:Zeile plus reproduzierbarer Befehl/Test; Wirkung ohne Gerätemessung = **Verdacht**.
+- [ ] **R1 – IOC-Asset-Fallback (DA-08/CA-F5)**: Eine lokale Datei überschattet das mitgelieferte Asset; passt sie
+      nicht, landet die Quelle in `corrupt` ohne Rückfall aufs Asset (`IocStore.kt:104–108`, bestätigt per Test
+      `readsource-prefers-local`). Abnahme: Unit-Test – korrupte lokale Datei einer gebündelten Quelle → Asset wird
+      geladen, Quelle steht nicht in `corrupt`, lokale Datei ist gelöscht.
+- [ ] **R2 – API-29-Absicherung (CA-F1)**: `openAllFilesAccess` startet `ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION`
+      (erst ab API 30) ohne `SDK_INT`-Prüfung (`MainActivity.kt:508`, Pfad bestätigt); Absturz auf echtem API-29-Gerät
+      **Verdacht**. Abnahme: Auf einem API-29-Emulator stürzt die App beim Tippen auf „Erlauben“ nicht ab, die UI zeigt
+      den Hinweis „ab Android 11“.
+- [ ] **R3 – Kein Klartext-ADB-Schlüssel (DA-03)**: Bei Keystore-Fehler schreibt `AdbKeys` den Schlüssel als
+      `FORMAT_PLAIN` (`AdbKeys.kt:97–106`, bestätigt); wie oft das vorkommt: **Verdacht** (ungemessen). Abnahme:
+      `FORMAT_PLAIN` wird nicht mehr geschrieben; ein Test mit simuliertem Keystore-Fehler erzeugt eine Fehlermeldung,
+      und es wird keine Schlüsseldatei angelegt.
+- [ ] **R4 – CI-Pipeline (DA-22)**: Kein Workflow unter `.github/workflows/`; `lintDebug` scheitert mit 10 Errors
+      (128 Warnungen, Audit-Kopie). Abnahme: `.github/workflows/` führt bei jedem PR assemble, testDebugUnitTest und
+      lint aus; CI grün, Lint mit 0 Errors (Baseline nur mit Begründung).
+- [ ] **R5 – Doku/Compliance-Sync (DA-23/28/29/30/31/32)**: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben
+      MalwareBazaar unterschiedlich; UI nennt „~10.000 … offline“, obwohl die Hashes nicht in der APK liegen (Text
+      bestätigt, Täuschungswirkung **Verdacht**); Original der Zustimmung ST7319719 nicht im Repo (Gültigkeit
+      **Verdacht**). Abnahme: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben MB einheitlich; UI-Texte nennen
+      „nach Listen-Update“; OFL-Fonts stehen in NOTICE; F-Droid-YAML steht auf 0.3.13/18; ein Beleg für ST7319719
+      liegt intern vor.
+
 ## Release 0.3.13 (2026-11-05) – Wünsche Belkis 2026-11-05
 - [x] **MalwareBazaar**: 9.919 Android-APK-Hashes (offizieller Gesamt-Export, Zustimmung abuse.ch ST7319719), nur auf
       dem Gerät geladen, gepinnt 3199eb1/SHA-256; 0 Treffer gegen 1.143 APKs (Pixel 11 + Pixel 9) und Positivliste.
