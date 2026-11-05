@@ -73,6 +73,7 @@ import de.belkis.spyhound.ui.navigation.rootTransitionPlan
 import de.belkis.spyhound.ui.screens.ResultScreen
 import de.belkis.spyhound.ui.screens.ScanScreen
 import de.belkis.spyhound.ui.screens.InfoScreen
+import de.belkis.spyhound.ui.screens.HistoryRoute
 import de.belkis.spyhound.ui.screens.PermissionAuditRoute
 import de.belkis.spyhound.ui.screens.IntroScreen
 import de.belkis.spyhound.ui.screens.StartScreen
@@ -184,6 +185,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 var showInfo by remember { mutableStateOf(false) }
                 var showAudit by remember { mutableStateOf(false) }
+                var showHistory by remember { mutableStateOf(false) }
                 val finishIntro = {
                     IntroPreferences.markCompleted(context)
                     showIntro = false
@@ -194,7 +196,7 @@ class MainActivity : AppCompatActivity() {
                 val setupSnapshot = screenshotKey?.let { debugDeepCheckSnapshot(it) } ?: state.deepCheckSnapshot()
                 LaunchedEffect(Unit) { vm.refreshDnsGuard() }
                 Box(Modifier.fillMaxSize()) {
-                    val overlayOpen = showIntro || showInfo || showAudit || showDeepCheckSetup
+                    val overlayOpen = showIntro || showInfo || showAudit || showHistory || showDeepCheckSetup
                     SpyhoundScaffold(maxContentWidth = SpySpacing.TwoColumnMaxWidth) {
                         // Under an open page the main screen stays composed; screen readers must not reach it there.
                         Box(Modifier.fillMaxSize().then(if (overlayOpen) Modifier.clearAndSetSemantics {} else Modifier)) {
@@ -203,6 +205,7 @@ class MainActivity : AppCompatActivity() {
                                 onOpenDeepCheckSetup = { showDeepCheckSetup = true },
                                 onOpenInfo = { showInfo = true },
                                 onOpenPermissionAudit = { showAudit = true },
+                                onOpenHistory = { showHistory = true },
                             )
                         }
                     }
@@ -233,6 +236,30 @@ class MainActivity : AppCompatActivity() {
                     SpyhoundOverlay(visible = showAudit && !showDeepCheckSetup, onBack = { showAudit = false }) {
                         SpyhoundScaffold {
                             PermissionAuditRoute(onBack = { showAudit = false }, modifier = Modifier.fillMaxSize())
+                        }
+                    }
+                    SpyhoundOverlay(visible = showHistory && !showDeepCheckSetup, onBack = { showHistory = false }) {
+                        SpyhoundScaffold(maxContentWidth = SpySpacing.TwoColumnMaxWidth) {
+                            HistoryRoute(
+                                onBack = { showHistory = false },
+                                onShareReport = { report -> shareReport(report) },
+                                onRescan = {
+                                    showHistory = false
+                                    vm.closeReport()
+                                    vm.startScan()
+                                },
+                                onGapFix = { fix ->
+                                    showHistory = false
+                                    handleGapFix(fix, { showDeepCheckSetup = true })
+                                },
+                                onBugreport = {
+                                    showHistory = false
+                                    openBugreportPicker()
+                                },
+                                onHelp = {
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
+                                },
+                            )
                         }
                     }
                     SpyhoundOverlay(visible = showDeepCheckSetup, onBack = null) {
@@ -298,6 +325,7 @@ class MainActivity : AppCompatActivity() {
         onOpenDeepCheckSetup: () -> Unit,
         onOpenInfo: () -> Unit,
         onOpenPermissionAudit: () -> Unit,
+        onOpenHistory: () -> Unit,
     ) {
         val motionEnabled = LocalMotionEnabled.current
         val shift = with(LocalDensity.current) { 16.dp.roundToPx() }
@@ -379,6 +407,7 @@ class MainActivity : AppCompatActivity() {
                         onDeepCheckSetup = onOpenDeepCheckSetup,
                         onOpenInfo = onOpenInfo,
                         onOpenPermissionAudit = onOpenPermissionAudit,
+                        onOpenHistory = onOpenHistory,
                         radarModifier = sharedRadar,
                     )
                 }

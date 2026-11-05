@@ -103,7 +103,9 @@ fun ResultScreen(
     onBugreport: () -> Unit,
     onHelp: () -> Unit,
     heroSymbolModifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
 ) {
+    val readOnly = LocalHistoricalResult.current
     val tablet = LocalConfiguration.current.screenWidthDp >= 600
     val listState = rememberLazyListState()
     val scrolled by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 } }
@@ -112,9 +114,10 @@ fun ResultScreen(
     val view = LocalView.current
     val haptics = remember(context) { SpyHaptics(context) }
     LaunchedEffect(report.startedAt, report.finishedAt) {
-        if (report.findings.isNotEmpty()) haptics.alert(view)
+        if (!readOnly && report.findings.isNotEmpty()) haptics.alert(view)
     }
     Column(Modifier.fillMaxSize()) {
+        header?.invoke()
         if (tablet) {
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(SpySpacing.Section)) {
                 ResultSummary(report, examined, Modifier.weight(1f), onGapFix, heroSymbolModifier)
@@ -151,6 +154,8 @@ fun ResultScreen(
         }
     }
 }
+
+internal val LocalHistoricalResult = androidx.compose.runtime.staticCompositionLocalOf { false }
 
 @Composable
 private fun ResultSummary(
@@ -194,24 +199,24 @@ private fun ResultSummary(
                 label = stringResource(R.string.status_sms),
                 explanation = stringResource(if (sms) R.string.status_sms_on else R.string.status_sms_off),
                 state = if (sms) StatusState.ACTIVE else StatusState.OFF,
-                actionLabel = if (sms) null else stringResource(R.string.t_055),
-                action = if (sms) null else ({ onGapFix(GapFix.PERMISSION_SMS) }),
+                actionLabel = if (sms || LocalHistoricalResult.current) null else stringResource(R.string.t_055),
+                action = if (sms || LocalHistoricalResult.current) null else ({ onGapFix(GapFix.PERMISSION_SMS) }),
             ),
             StatusItem(
                 kind = StatusKind.FILES,
                 label = stringResource(R.string.status_files),
                 explanation = stringResource(if (files) R.string.status_files_on else R.string.status_files_off),
                 state = if (files) StatusState.ACTIVE else StatusState.OFF,
-                actionLabel = if (files) null else stringResource(R.string.t_056),
-                action = if (files) null else ({ onGapFix(GapFix.PERMISSION_FILES) }),
+                actionLabel = if (files || LocalHistoricalResult.current) null else stringResource(R.string.t_056),
+                action = if (files || LocalHistoricalResult.current) null else ({ onGapFix(GapFix.PERMISSION_FILES) }),
             ),
             StatusItem(
                 kind = StatusKind.SOURCES,
                 label = stringResource(R.string.status_sources_ratio, sources, total),
                 explanation = stringResource(R.string.status_sources_explain, sources, total),
                 state = if (report.indicatorSourcesMissing == 0) StatusState.ACTIVE else StatusState.PARTIAL,
-                actionLabel = if (report.indicatorSourcesMissing == 0) null else stringResource(R.string.t_057),
-                action = if (report.indicatorSourcesMissing == 0) null else ({ onGapFix(GapFix.UPDATE_INDICATORS) }),
+                actionLabel = if (report.indicatorSourcesMissing == 0 || LocalHistoricalResult.current) null else stringResource(R.string.t_057),
+                action = if (report.indicatorSourcesMissing == 0 || LocalHistoricalResult.current) null else ({ onGapFix(GapFix.UPDATE_INDICATORS) }),
             ),
         ))
         // The app language, not the system default: German UI must get German lines.
@@ -478,7 +483,7 @@ private fun GuidanceCard(entry: ResultEntry.Card, onGapFix: (GapFix) -> Unit, on
                     Text(meaning, style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
                     Text(stringResource(R.string.result_steps), style = SpyTypographyExtras.sectionLabel)
                     Text(emphasizeLabels(steps), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
-                    entry.guidance.action?.let { action ->
+                    (if (LocalHistoricalResult.current) null else entry.guidance.action)?.let { action ->
                         SpyButton(
                             stringResource(
                                 if (action == GuidanceAction.GET_HELP && entry.guidance.meaningKey.contains("stalkerware")) R.string.result_call_help
