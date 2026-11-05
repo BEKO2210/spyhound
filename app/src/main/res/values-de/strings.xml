@@ -200,8 +200,13 @@
     <string name="source_license_bsd2">BSD-2-Clause-Lizenz</string>
     <string name="info_repo_eset">ESET-Malware-Spurenliste (eset/malware-ioc)</string>
     <string name="info_repo_meta">Meta Threat Research (meta/threat-research)</string>
+    <string name="info_repo_malwarebazaar">abuse.ch MalwareBazaar (Android)</string>
     <string name="source_license_cc_by">CC BY 4.0</string>
     <string name="source_license_device_only">keine Weitergabe-Lizenz – nur Download auf dem Gerät</string>
+    <string name="source_license_abusech">Nutzungsbedingungen von abuse.ch – mit Erlaubnis enthalten, nicht CC0</string>
+    <string name="info_malwarebazaar_notice_before">Malware-Hashdaten mit freundlicher Genehmigung von abuse.ch MalwareBazaar (</string>
+    <string name="info_malwarebazaar_notice_link">https://bazaar.abuse.ch</string>
+    <string name="info_malwarebazaar_notice_after">), bereitgestellt in Zusammenarbeit mit Spamhaus Technology. Mit Erlaubnis verwendet. Die Daten werden ohne Gewähr für Richtigkeit bereitgestellt; Erkennungen können Falschtreffer enthalten.</string>
     <string name="info_section_help">Hilfe</string>
     <string name="info_help_body">Wenn du Zielperson sein könntest, wende dich an Fachleute – nicht nur an eine App.</string>
     <string name="info_help_access_now">Access Now Digital Security Helpline</string>

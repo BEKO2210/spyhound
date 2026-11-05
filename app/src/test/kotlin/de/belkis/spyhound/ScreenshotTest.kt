@@ -49,6 +49,8 @@ import de.belkis.spyhound.scan.AppAnalyzer
 import de.belkis.spyhound.scan.Report
 import de.belkis.spyhound.scan.TextsDe
 import de.belkis.spyhound.scan.TextsEn
+import de.belkis.spyhound.ioc.FeedCatalog
+import de.belkis.spyhound.ioc.FeedSource
 import de.belkis.spyhound.ioc.Parsers
 import de.belkis.spyhound.ioc.SourceContext
 import de.belkis.spyhound.scan.PermissionAudit
@@ -284,6 +286,32 @@ class ScreenshotTest(private val language: String, private val device: Device) {
             licencesSectionExpanded = true,
             testInitialScrollPx = if (device == Device.PHONE) 3_400 else 2_800,
         )
+    }
+
+    @Test
+    fun infoMalwareBazaar() {
+        if (device != Device.PHONE) return
+        shot("info_malwarebazaar") {
+            InfoScreen(
+                onBack = {},
+                onReplayIntro = {},
+                displayVersion = "0.0.0",
+                sourcesSectionExpanded = true,
+                testIndicatorFeeds = listOf(enabledMalwareBazaarFeed()),
+                testInitialScrollPx = 3_450,
+            )
+        }
+    }
+
+    private fun enabledMalwareBazaarFeed(): FeedSource {
+        val commit = "a".repeat(40)
+        val sha = "b".repeat(64)
+        val json = """
+            [{"id":"malwarebazaar-android","name":"abuse.ch MalwareBazaar Android","repo":"BEKO2210/spyhound",
+              "commit":"$commit","path":"data/malwarebazaar/android.tsv","format":"malwarebazaar-tsv",
+              "category":"malware","sha256":"$sha","cite":"abuse.ch MalwareBazaar, in collaboration with Spamhaus Technology"}]
+        """
+        return FeedCatalog.parse(json).single()
     }
 
     private fun auditResult(): AuditResult {

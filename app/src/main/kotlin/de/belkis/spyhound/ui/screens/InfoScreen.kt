@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +48,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.R
+import androidx.compose.ui.text.style.TextDecoration
+import de.belkis.spyhound.ioc.FeedSource
 import de.belkis.spyhound.ioc.FeedCatalog
 import de.belkis.spyhound.ui.components.CollapsibleSection
 import de.belkis.spyhound.ui.components.LanguagePicker
@@ -68,6 +71,8 @@ import de.belkis.spyhound.ui.info.LicenceText
 import de.belkis.spyhound.ui.info.licenceTexts
 import de.belkis.spyhound.ui.info.SourceLicenseKind
 import de.belkis.spyhound.ui.info.infoSourceGroups
+import de.belkis.spyhound.ui.info.MALWAREBAZAAR_REPO
+import de.belkis.spyhound.ui.info.sourceGroupTitleRes
 
 @Composable
 fun InfoScreen(
@@ -78,6 +83,7 @@ fun InfoScreen(
     sourcesSectionExpanded: Boolean = false,
     licencesSectionExpanded: Boolean = false,
     testInitialScrollPx: Int = 0,
+    testIndicatorFeeds: List<FeedSource>? = null,
 ) {
     val context = LocalContext.current
     val scroll = rememberScrollState()
@@ -85,9 +91,11 @@ fun InfoScreen(
         if (testInitialScrollPx > 0) scroll.scrollTo(testInitialScrollPx)
     }
     val scrolled by remember { derivedStateOf { scroll.value > 0 } }
-    val indicatorFeeds = remember {
-        val json = context.assets.open("iocs/sources.json").bufferedReader().use { it.readText() }
-        FeedCatalog.parse(json)
+    val indicatorFeeds = remember(testIndicatorFeeds) {
+        testIndicatorFeeds ?: run {
+            val json = context.assets.open("iocs/sources.json").bufferedReader().use { it.readText() }
+            FeedCatalog.parse(json)
+        }
     }
     val sourceGroups = remember(indicatorFeeds) { infoSourceGroups(indicatorFeeds) }
     val sourceCount = indicatorFeeds.size
@@ -406,20 +414,13 @@ private fun InfoSection(title: Int, body: Int, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SourceGroupBlock(group: InfoSourceGroup) {
-    val repoTitle = when (group.repo) {
-        "mvt-project/mvt-indicators" -> stringResource(R.string.info_repo_mvt)
-        "AssoEchap/stalkerware-indicators" -> stringResource(R.string.info_repo_echap)
-        "eset/malware-ioc" -> stringResource(R.string.info_repo_eset)
-        "meta/threat-research" -> stringResource(R.string.info_repo_meta)
-        "AmnestyTech/investigations" -> stringResource(R.string.info_repo_amnesty)
-        "citizenlab/malware-indicators" -> stringResource(R.string.info_repo_citizenlab)
-        else -> group.repo
-    }
+    val repoTitle = sourceGroupTitleRes(group.repo)?.let { stringResource(it) } ?: group.repo
     val license = when (group.license) {
         SourceLicenseKind.MIT -> stringResource(R.string.source_license_mit)
         SourceLicenseKind.CC_BY_4 -> stringResource(R.string.source_license_cc_by)
         SourceLicenseKind.BSD_2 -> stringResource(R.string.source_license_bsd2)
         SourceLicenseKind.DEVICE_ONLY -> stringResource(R.string.source_license_device_only)
+        SourceLicenseKind.ABUSECH_TERMS -> stringResource(R.string.source_license_abusech)
     }
     val bundled = if (group.bundled) {
         stringResource(R.string.info_sources_bundled)
@@ -458,7 +459,37 @@ private fun SourceGroupBlock(group: InfoSourceGroup) {
                     modifier = Modifier.padding(top = SpySpacing.Unit),
                 )
             }
+            if (group.repo == MALWAREBAZAAR_REPO) {
+                MalwareBazaarAttributionNotice(
+                    modifier = Modifier.padding(top = SpySpacing.Unit),
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun MalwareBazaarAttributionNotice(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val before = stringResource(R.string.info_malwarebazaar_notice_before)
+    val link = stringResource(R.string.info_malwarebazaar_notice_link)
+    val after = stringResource(R.string.info_malwarebazaar_notice_after)
+    val bodyStyle = MaterialTheme.typography.bodyMedium
+    val openLink = {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
+    }
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Text(before, style = bodyStyle, color = SpyColors.IvoryMuted)
+        Text(
+            link,
+            style = bodyStyle.copy(color = SpyColors.Amber, textDecoration = TextDecoration.Underline),
+            modifier = Modifier
+                .clickable(role = Role.Button, onClick = openLink)
+                .semantics { contentDescription = link },
+        )
+        Text(after, style = bodyStyle, color = SpyColors.IvoryMuted)
     }
 }
 
