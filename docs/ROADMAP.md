@@ -399,6 +399,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Ein Unit-Test belegt nur den Pfad, den er abdeckt: 0.3.13 machte Shell-Befehle abbrechbar, doch die App-Schleife und das Fortschritts-Callback holten den Prüfbildschirm zurück – erst das S21 zeigte es (Basis-Prüfung lief nach „Abbrechen“ von 4 % auf 16 % weiter). Abbruch-Fixes immer auf einem Gerät mit Bildern im Halbsekundentakt belegen (2026-11-05).
+- `pkill`/`pgrep -f <muster>` trifft auch die eigene Shell, deren Kommandozeile das Muster enthält – zweimal passiert. Prozesse nur per gespeicherter PID beenden.
 - Installationsdaten lügen: Samsung stempelt vorinstallierte Apps mit 31.12.2008, Pixel installiert bei der Einrichtung vor dem Stellen der Uhr (01.01.2020) – auch Store-Apps behalten das. Zeitangaben nie ungeprüft als „reicht bis“ zeigen, gegen ein plausibles Mindestdatum (Auslieferungs-Android) prüfen (2026-11-05, S21 Ultra).
 - Fragen kostet nichts: eine höfliche, konkrete Anfrage (Zweck, Umfang, Bedingungen) brachte abuse.ch-Daten, die nach den Nutzungsbedingungen tabu waren (2026-11-05).
 - Das Matrix-Skript baute die Debug-APK nicht selbst; ein Lauf hätte fast einen alten Stand getestet (2026-11-03). Jetzt baut `main` vor jedem Lauf. Ein Testbeleg gilt nur für den Stand, der wirklich installiert war.

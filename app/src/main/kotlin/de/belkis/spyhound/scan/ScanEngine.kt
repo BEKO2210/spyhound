@@ -38,7 +38,8 @@ class ScanEngine(
 
     suspend fun run(onProgress: (Progress) -> Unit): Report = withContext(Dispatchers.IO) {
         // Cancel must stop a command that is running right now, not only the next one.
-        val shell = this@ScanEngine.shell?.let { CancellableShell(it, coroutineContext.job) }
+        val scanJob = coroutineContext.job
+        val shell = this@ScanEngine.shell?.let { CancellableShell(it, scanJob) }
         val started = System.currentTimeMillis()
         val set = iocs.set
         val checks = ArrayList<CheckResult>()
@@ -47,6 +48,8 @@ class ScanEngine(
         val ownPackage = context.packageName
 
         fun emit(step: String, detail: String, fraction: Float, sector: RadarSector) {
+            // Every progress step is a cancellation point, also inside the blocking app and file loops.
+            scanJob.ensureActive()
             tracker.setActive(sector)
             onProgress(tracker.progress(step, detail, fraction))
         }
