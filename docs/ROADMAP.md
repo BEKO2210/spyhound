@@ -42,6 +42,16 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
 
+## Wünsche Belkis 2026-11-05
+- [ ] **Malware-Hinweis schöner**: Lücken-Karte nannte ~150 Familien als Textwand, Dubletten (AhMyth/Ahmyth …), „ausgewählte
+      Kampagnen“ stimmt mit MalwareBazaar nicht mehr. Abnahme: kurze Zusammenfassung (Anzahl, Quellen, Familienzahl, ehrliche
+      Grenze), Familien aufklappbar, ohne Groß/Klein-Dubletten; Screenshot DE/EN zu und offen; Belkis auf dem Pixel: „passt“.
+- [ ] **Verlauf**: frühere Prüfungen wieder ansehen. Abnahme: jede Prüfung (auch Hintergrund) lokal gespeichert (max. 30,
+      nicht im Backup), Liste mit Datum/Tiefe/Zählern, altes Ergebnis lesbar, Einzeln/Alles löschen, LEGAL DE/EN nennt es;
+      Tests + Screenshots; Gerätetest Pixel.
+- [ ] **abuse.ch: Spenden klären** – Bedingung „no monetisation“; GitHub Sponsors (freiwillig, ohne Freischaltung) im Ticket
+      offenlegen. Abnahme: schriftliche Antwort; erst danach ein Release mit MalwareBazaar.
+
 ## Zeitraum „App-Installationen“ (2026-11-05)
 - [~] S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen
       der Auslieferungs-Android-Version (`ro.product.first_api_level`, −6 Monate) fallen weg; Unit-Test mit beiden Daten
