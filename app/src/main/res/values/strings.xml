@@ -95,7 +95,10 @@
     <string name="status_indicators">%1$d trace entries</string>
     <string name="status_level"> · level %1$s</string>
     <string name="indicators_summary">%1$d entries from %2$d of %3$d sources</string>
-    <string name="sources_missing">%1$d sources missing. You can load them.</string>
+    <plurals name="sources_missing">
+        <item quantity="one">%1$d source missing. You can load it.</item>
+        <item quantity="other">%1$d sources missing. You can load them.</item>
+    </plurals>
     <string name="source_named">Source %1$s</string>
     <string name="result_subtitle">%1$s · %2$d s · %3$d checked</string>
     <string name="section_count">%1$s (%2$d)</string>

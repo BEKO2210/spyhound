@@ -95,7 +95,10 @@
     <string name="status_indicators">%1$d Spuren-Einträge</string>
     <string name="status_level"> · Stufe %1$s</string>
     <string name="indicators_summary">%1$d Einträge aus %2$d von %3$d Quellen</string>
-    <string name="sources_missing">%1$d Quellen fehlen – optional nachladen.</string>
+    <plurals name="sources_missing">
+        <item quantity="one">%1$d Quelle fehlt – optional nachladen.</item>
+        <item quantity="other">%1$d Quellen fehlen – optional nachladen.</item>
+    </plurals>
     <string name="source_named">Quelle %1$s</string>
     <string name="result_subtitle">%1$s · %2$d s · %3$d geprüft</string>
     <string name="section_count">%1$s (%2$d)</string>

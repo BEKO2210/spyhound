@@ -378,7 +378,7 @@ fun StartScreen(
                     )
                     if (loaded.status.missing.isNotEmpty()) {
                         Text(
-                            stringResource(R.string.sources_missing, loaded.status.missing.size),
+                            pluralStringResource(R.plurals.sources_missing, loaded.status.missing.size, loaded.status.missing.size),
                             style = MaterialTheme.typography.bodyMedium,
                             color = SpyColors.IvoryMuted,
                         )

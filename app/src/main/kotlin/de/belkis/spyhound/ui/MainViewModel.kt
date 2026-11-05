@@ -53,6 +53,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import rikka.shizuku.Shizuku
@@ -348,14 +349,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         scanJob = viewModelScope.launch {
             // A cancelled scan may still be closing its shell command; let it finish its cleanup first.
             previous?.cancelAndJoin()
+            val job = coroutineContext.job
             shellGate.scanStarted()
             _state.update { it.copy(progress = Progress(s(R.string.vm_start), "", 0f), report = null) }
             var lastRadar: RadarProgress? = null
             val merged = try {
                 val report = try {
                     ScanEngine(getApplication(), iocs, shell, ShellPreferences.wasBuiltinAdbPaired(getApplication())).run { p ->
-                        lastRadar = p.radar ?: lastRadar
-                        _state.update { s -> s.copy(progress = p) }
+                        // A cancelled scan must not bring its progress screen back.
+                        if (job.isActive) {
+                            lastRadar = p.radar ?: lastRadar
+                            _state.update { s -> s.copy(progress = p) }
+                        }
                     }
                 } catch (e: CancellationException) {
                     // Cancelled: leave the state to cancelScan() and to a scan started right after.
