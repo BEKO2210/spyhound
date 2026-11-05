@@ -43,20 +43,20 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
 
 ## Audit 0.3.13 (2026-11-05) – offene Punkte mit Abnahmekriterium
-In Arbeit (Branch team/audit-fixes): R1, R2, R3, Lint aus R4, UI-Text aus R5. Status nach RULES: „bestätigt“ = Datei:Zeile plus reproduzierbarer Befehl/Test; Wirkung ohne Gerätemessung = **Verdacht**.
-- [~] **R1 – IOC-Asset-Fallback (DA-08/CA-F5)**: Eine lokale Datei überschattet das mitgelieferte Asset; passt sie
+Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f, API-29-Emulator: Dialog statt Absturz, Dateien werden gelesen), R3 (e824e2c, AdbKeyFormatTest), Lint aus R4, UI-Text aus R5. Status nach RULES: „bestätigt“ = Datei:Zeile plus reproduzierbarer Befehl/Test; Wirkung ohne Gerätemessung = **Verdacht**.
+- [x] **R1 – IOC-Asset-Fallback (DA-08/CA-F5)**: Eine lokale Datei überschattet das mitgelieferte Asset; passt sie
       nicht, landet die Quelle in `corrupt` ohne Rückfall aufs Asset (`IocStore.kt:104–108`, bestätigt per Test
       `readsource-prefers-local`). Abnahme: Unit-Test – korrupte lokale Datei einer gebündelten Quelle → Asset wird
       geladen, Quelle steht nicht in `corrupt`, lokale Datei ist gelöscht.
-- [~] **R2 – API-29-Absicherung (CA-F1)**: `openAllFilesAccess` startet `ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION`
+- [x] **R2 – API-29-Absicherung (CA-F1)**: `openAllFilesAccess` startet `ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION`
       (erst ab API 30) ohne `SDK_INT`-Prüfung (`MainActivity.kt:508`, Pfad bestätigt); Absturz auf echtem API-29-Gerät
       **Verdacht**. Abnahme: Auf einem API-29-Emulator stürzt die App beim Tippen auf „Erlauben“ nicht ab, die UI zeigt
       den Hinweis „ab Android 11“.
-- [~] **R3 – Kein Klartext-ADB-Schlüssel (DA-03)**: Bei Keystore-Fehler schreibt `AdbKeys` den Schlüssel als
+- [x] **R3 – Kein Klartext-ADB-Schlüssel (DA-03)**: Bei Keystore-Fehler schreibt `AdbKeys` den Schlüssel als
       `FORMAT_PLAIN` (`AdbKeys.kt:97–106`, bestätigt); wie oft das vorkommt: **Verdacht** (ungemessen). Abnahme:
       `FORMAT_PLAIN` wird nicht mehr geschrieben; ein Test mit simuliertem Keystore-Fehler erzeugt eine Fehlermeldung,
       und es wird keine Schlüsseldatei angelegt.
-- [~] **R4 – CI-Pipeline (DA-22)** (Lint-Fehler in Arbeit; Workflow folgt): Kein Workflow unter `.github/workflows/`; `lintDebug` scheitert mit 10 Errors
+- [~] **R4 – CI-Pipeline (DA-22)** (Lint 0 Errors seit e425916; Workflow offen): Kein Workflow unter `.github/workflows/`; `lintDebug` scheitert mit 10 Errors
       (128 Warnungen, Audit-Kopie). Abnahme: `.github/workflows/` führt bei jedem PR assemble, testDebugUnitTest und
       lint aus; CI grün, Lint mit 0 Errors (Baseline nur mit Begründung).
 - [~] **R5 – Doku/Compliance-Sync (DA-23/28/29/30/31/32)**: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben
@@ -65,6 +65,13 @@ In Arbeit (Branch team/audit-fixes): R1, R2, R3, Lint aus R4, UI-Text aus R5. St
       **Verdacht**). Abnahme: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben MB einheitlich; UI-Texte nennen
       „nach Listen-Update“; OFL-Fonts stehen in NOTICE; F-Droid-YAML steht auf 0.3.13/18 (erledigt 1b09255, Pipeline grün); ein Beleg für ST7319719
       liegt intern vor.
+
+## Release 0.3.14 (2026-11-05) – Abbrechen repariert, Audit-Korrekturen
+- [x] Abbrechen stoppt den ganzen Scan (f5cf076): auf dem S21 nach ≤ 0,5 s wieder Startbildschirm (Bilder), 0.3.13 lief weiter.
+- [x] Audit R1–R3, Lint 0 Errors, DNS-Wächter nennt DoH/IP-Grenzen, MalwareBazaar-Text „Liste per Quellen aktualisieren“.
+- [x] Android 10: Dateizugriff per Laufzeit-Dialog, Dateiprüfung liest den Speicher (requestLegacyExternalStorage, c9a783f).
+- [x] Start: „Wer darf was“ und „Verlauf“ als ganze antippbare Karten mit Pfeil (8eed304); „1 Quelle fehlt“ (Plural).
+- Geräte: Pixel 11 (Belkis: „läuft“), Galaxy S21 Ultra (Scan, Zeitraum, Abbrechen), API-29-Emulator. Belkis: „Go“.
 
 ## Release 0.3.13 (2026-11-05) – Wünsche Belkis 2026-11-05
 - [x] **MalwareBazaar**: 9.919 Android-APK-Hashes (offizieller Gesamt-Export, Zustimmung abuse.ch ST7319719), nur auf

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>Cancel now stops the whole check at once</item>
+        <item>Android 10: file check works, permission asked the normal way</item>
+        <item>A damaged downloaded list no longer hides the bundled one; the ADB key is never stored unencrypted</item>
+        <item>Start screen: whole cards open "Who can do what" and "History"</item>
+        <item>DNS watcher says what it cannot see (encrypted DNS, direct IP connections)</item>
         <item>Detects about 10,000 known Android malware samples (abuse.ch MalwareBazaar) – list arrives with “Update sources”, the check runs offline</item>
-        <item>History: reopen and delete earlier checks, stored only on this phone</item>
-        <item>Cancel stops a running check at once</item>
-        <item>Calmer start screen: rotating status line and a softer fold when scrolling</item>
-        <item>Malware coverage shown as a short summary with the families to expand</item>
-        <item>Results on phones: the summary scrolls away so the guidance gets the whole screen</item>
     </string-array>
     <!-- Start screen banner. Order is fixed: offline, stays on device, count (%1$s indicators, %2$d sources),
          sources (%1$s names), short sources variant, open source. -->

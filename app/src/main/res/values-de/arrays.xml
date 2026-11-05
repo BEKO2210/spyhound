@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>Abbrechen stoppt jetzt die ganze Prüfung sofort</item>
+        <item>Android 10: Dateiprüfung funktioniert, Berechtigung wird normal erfragt</item>
+        <item>Eine beschädigte geladene Liste verdrängt die mitgelieferte nicht mehr; der ADB-Schlüssel wird nie unverschlüsselt gespeichert</item>
+        <item>Startbildschirm: ganze Karten öffnen „Wer darf was“ und „Verlauf“</item>
+        <item>Der DNS-Wächter sagt, was er nicht sieht (verschlüsseltes DNS, direkte IP-Verbindungen)</item>
         <item>Erkennt rund 10.000 bekannte Android-Schadprogramme (abuse.ch MalwareBazaar) – Liste per „Quellen aktualisieren“, Prüfung offline</item>
-        <item>Verlauf: frühere Prüfungen wieder öffnen und löschen – nur auf diesem Handy gespeichert</item>
-        <item>Abbrechen beendet eine laufende Prüfung sofort</item>
-        <item>Ruhigerer Startbildschirm: wechselnde Statuszeile und sanfteres Einklappen beim Scrollen</item>
-        <item>Malware-Prüfumfang als kurze Übersicht mit aufklappbaren Familien</item>
-        <item>Ergebnis auf dem Handy: Zusammenfassung scrollt mit, die Hinweise bekommen den ganzen Bildschirm</item>
     </string-array>
     <string-array name="start_statements">
         <item>Offline-Analyse auf bekannte Spyware</item>
