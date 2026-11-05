@@ -64,6 +64,7 @@ import de.belkis.spyhound.scan.RadarMath
 import de.belkis.spyhound.scan.RadarProgress
 import de.belkis.spyhound.scan.RadarSector
 import de.belkis.spyhound.scan.TextsEn
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import de.belkis.spyhound.ui.LocalMotionEnabled
 import de.belkis.spyhound.ui.SpyColors
@@ -329,7 +330,7 @@ fun RadarCanvas(
     blipFlash: Boolean = false,
     quietClean: Boolean = false,
 ) {
-    val english = LocalContext.current.resources.configuration.locales[0].language != "de"
+    val english = LocalConfiguration.current.locales[0].language != "de"
     val sectorLabels = RadarSector.entries.map { if (english) TextsEn.text(it.label) else it.label }
     val motion = LocalMotionEnabled.current
     val blips = remember(radar) { blipsForDraw(radar) }

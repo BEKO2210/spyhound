@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import de.belkis.spyhound.AppLanguage
@@ -59,8 +60,9 @@ fun LanguagePicker(modifier: Modifier = Modifier) {
 @Composable
 fun LanguageToggle(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val chosen = AppLanguage.selected(context).substringBefore(',').substringBefore('-')
-    val effective = chosen.ifEmpty { context.resources.configuration.locales[0].language }
+    val effective = chosen.ifEmpty { configuration.locales[0].language }
     val isGerman = effective == "de"
     val currentName = stringResource(if (isGerman) R.string.language_german else R.string.language_english)
     val toggleCd = stringResource(R.string.cd_language_toggle, currentName)

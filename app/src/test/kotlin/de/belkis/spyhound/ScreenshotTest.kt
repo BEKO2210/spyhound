@@ -12,7 +12,8 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.runComposeUiTest
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import com.github.takahirom.roborazzi.captureRoboImage
 import de.belkis.spyhound.ioc.Category
 import de.belkis.spyhound.ioc.Indicator
@@ -196,7 +197,7 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         )
         ScanScreen(
             progress = Progress(
-                step = LocalContext.current.getString(R.string.vm_start),
+                step = stringResource(R.string.vm_start),
                 detail = "com.example.app",
                 fraction = 0.45f,
                 radar = radar,
@@ -268,7 +269,7 @@ class ScreenshotTest(private val language: String, private val device: Device) {
                     apks = listOf(ApkFile("/data/app/x/base.apk", "0cb41557841ff6f314c398250a165706e0b18f93674a7c12f4489018a1661673")),
                 ),
             ),
-            set, "de.belkis.spyhound", if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn,
+            set, "de.belkis.spyhound", if (LocalConfiguration.current.locales[0].language == "de") TextsDe else TextsEn,
         )
         // Fixed time: the report shows dates relative to its end, so a moving clock would change the picture daily.
         val now = java.time.Instant.parse("2026-11-02T12:00:00Z").toEpochMilli()

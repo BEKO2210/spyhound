@@ -103,7 +103,7 @@ fun ScanScreen(
     onCancel: () -> Unit,
     radarModifier: Modifier = Modifier,
 ) {
-    val texts = if (LocalContext.current.resources.configuration.locales[0].language == "de") TextsDe else TextsEn
+    val texts = if (LocalConfiguration.current.locales[0].language == "de") TextsDe else TextsEn
     val motion = LocalMotionEnabled.current
     val wide = LocalConfiguration.current.screenWidthDp >= 600
     val current = completedAreas(progress.fraction, progress.radar?.activeSector?.ordinal)
