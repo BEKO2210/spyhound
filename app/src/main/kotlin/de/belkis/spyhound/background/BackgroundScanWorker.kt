@@ -26,6 +26,7 @@ class BackgroundScanWorker(
         if (!BackgroundScanPreferences.isWeeklyEnabled(applicationContext)) return Result.success()
         val report = runCatching { BackgroundScanRuntime.scanner(applicationContext) }.getOrNull()
             ?: return Result.retry()
+        BackgroundReportStore.record(applicationContext, report, background = true)
         val previous = BackgroundScanPreferences.getLastFindingKeys(applicationContext)
         val current = report.findings.map(BackgroundFindingDiff::keyOf).toSet()
         val newFindings = BackgroundFindingDiff.newFindings(previous, report.findings)
