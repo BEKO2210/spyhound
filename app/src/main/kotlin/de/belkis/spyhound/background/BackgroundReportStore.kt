@@ -9,6 +9,8 @@ import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.GapKind
 import de.belkis.spyhound.scan.LeadKind
+import de.belkis.spyhound.scan.MalwareCoverage
+import de.belkis.spyhound.scan.MalwareFamily
 import de.belkis.spyhound.scan.Report
 import de.belkis.spyhound.scan.TextsDe
 import org.json.JSONArray
@@ -43,6 +45,21 @@ object BackgroundReportStore {
                     put("id", check.id)
                     put("examined", check.examined)
                     put("ran", check.ran)
+                    check.malwareCoverage?.let { coverage ->
+                        put("malwareCoverage", JSONObject().apply {
+                            put("fingerprints", coverage.fingerprints)
+                            put("sources", JSONArray(coverage.sources))
+                            put("unnamedFingerprints", coverage.unnamedFingerprints)
+                            put("families", JSONArray().apply {
+                                coverage.families.forEach { family ->
+                                    put(JSONObject().apply {
+                                        put("name", family.name)
+                                        put("fingerprints", family.fingerprints)
+                                    })
+                                }
+                            })
+                        })
+                    }
                     put("findings", JSONArray().apply {
                         check.findings.forEach { finding ->
                             put(JSONObject().apply {
@@ -94,6 +111,19 @@ object BackgroundReportStore {
             val check = CheckResult(checkObj.getString("id"), TextsDe).apply {
                 examined = checkObj.optInt("examined", 0)
                 ran = checkObj.optBoolean("ran", false)
+                checkObj.optJSONObject("malwareCoverage")?.let { coverage ->
+                    val sources = coverage.getJSONArray("sources")
+                    val families = coverage.getJSONArray("families")
+                    malwareCoverage = MalwareCoverage(
+                        coverage.getInt("fingerprints"),
+                        List(sources.length()) { sources.getString(it) },
+                        List(families.length()) {
+                            val family = families.getJSONObject(it)
+                            MalwareFamily(family.getString("name"), family.getInt("fingerprints"))
+                        },
+                        coverage.getInt("unnamedFingerprints"),
+                    )
+                }
             }
             val findingsArray = checkObj.optJSONArray("findings") ?: JSONArray()
             repeat(findingsArray.length()) { i ->

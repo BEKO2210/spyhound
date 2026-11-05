@@ -42,6 +42,14 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
 
+## Schadsoftware-Prüfumfang (2026-11-05)
+- [~] Kurze Umfangskarte mit geladenen Quellen, lokalisierten Zahlen und aufklappbaren Familien; keine zusätzliche
+      Lücke für einen tatsächlich gelaufenen Hashvergleich. Groß-/Kleinschreibung vereinheitlicht, Trefferzuordnung
+      unverändert. 10.052 eindeutige Malware-Hashes bleiben auch bei vorrangiger Spyware-Zuordnung im Umfang sichtbar.
+      Abnahme offen: vollständige Tests, vier Telefonbilder DE/EN zu-/aufgeklappt, Pixel-Abgleich der alten 9.897
+      (lokal 9.900 reproduziert; drei weitere Zuordnungen ohne heruntergeladene Quellen nicht belegt).
+      Details und Prüfbefehle: `docs/handoff/malware-coverage.md`.
+
 ## Zeitraum „App-Installationen“ (2026-11-05)
 - [~] S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen
       der Auslieferungs-Android-Version (`ro.product.first_api_level`, −6 Monate) fallen weg; Unit-Test mit beiden Daten

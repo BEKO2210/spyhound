@@ -40,6 +40,7 @@ object ReportText {
         r.gaps.forEach { appendLine("- [${it.check}] ${it.detail}") }
         appendLine()
         appendLine("UMFANG")
+        r.checks.mapNotNull { it.malwareCoverage }.forEach { appendLine(it.reportLine(Locale.GERMAN)) }
         r.checks.filter { it.ran }.forEach { appendLine("- ${it.name}: ${it.examined} geprüft") }
         appendLine()
         appendLine("Ein Ergebnis ohne Funde ist keine Unbedenklichkeitsbescheinigung. Spyhound erkennt nur")
@@ -77,6 +78,7 @@ object ReportText {
         r.gaps.forEach { appendLine("- [${it.check}] ${it.detail}") }
         appendLine()
         appendLine("SCOPE")
+        r.checks.mapNotNull { it.malwareCoverage }.forEach { appendLine(it.reportLine(Locale.ENGLISH)) }
         r.checks.filter { it.ran }.forEach { appendLine("- ${it.name}: ${it.examined} checked") }
         appendLine()
         appendLine("No findings does not mean your phone is safe. Spyhound detects only published traces")

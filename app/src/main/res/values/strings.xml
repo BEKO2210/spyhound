@@ -188,7 +188,7 @@
     <string name="info_privacy_body">Scans stay offline. No usage statistics, no ads. Updates only fetch fixed files from allowed sources and check each one for changes.</string>
     <string name="info_section_sources">Trace list sources</string>
     <string name="info_sources_notice">Toolkit-curated lists (CC0) from the Zero Breach Toolkit are merged into the bundled sets. Amnesty and Citizen Lab feeds have no redistribution licence and load on the device only.</string>
-    <string name="info_malware_coverage">The malware hash list only covers selected Android campaigns published by ESET and Meta. Only exact fingerprint matches count. It is not a virus scanner and no replacement for Play Protect.</string>
+    <string name="info_malware_coverage">The malware list contains fingerprints of known Android malware from loaded sources. Only exact fingerprint matches count. Not a virus scanner, no replacement for Play Protect.</string>
     <string name="info_sources_bundled">shipped in the app</string>
     <string name="info_sources_on_device">loaded on your device</string>
     <string name="info_sources_cite">Cite: %1$s</string>
@@ -268,7 +268,7 @@
 
     <string name="guide_finding_malware_meaning">The fingerprint (SHA-256) of an app or file on your phone exactly matches a sample that security researchers (ESET, Meta) published as known malware. Such apps can spy on you, steal logins or take over banking. A match of this kind is exact, but the list only covers a few named campaigns.</string>
     <string name="guide_finding_malware_steps">1. Uninstall the app: Settings > “Apps” > the app > “Uninstall”. If it cannot be removed, first turn off device admin and accessibility access for it. Delete a file you downloaded yourself.\n2. Change the passwords of your important accounts (email, bank, messengers) from another device, and turn on two-factor sign-in.\n3. If you used banking or payment apps while it was installed, contact your bank.\n4. Scan again afterwards. If you fear targeted surveillance, contact a specialist helpline.</string>
-    <string name="guide_gap_malware_coverage_meaning">The malware list only contains selected campaigns (published by ESET and Meta). It is not a general virus scanner and does not replace Play Protect.</string>
+    <string name="guide_gap_malware_coverage_meaning">The malware list contains fingerprints of known Android malware from loaded sources. Only exact fingerprint matches count. Not a virus scanner, no replacement for Play Protect.</string>
     <string name="guide_gap_malware_coverage_steps">1. You do not need to do anything.\n2. Keep Play Protect on and install apps from trusted stores only.</string>
     <string name="guide_lead_sideloaded_app_meaning">This app did not come from an app store and has far-reaching permissions. It is only a hint, not a finding: many harmless apps are installed this way.</string>
     <string name="guide_lead_sideloaded_app_steps">1. Do you recognise the app and did you install it yourself? Then all is well.\n2. If not, open “App info” and check what it is allowed to do.\n3. Do not need it? Uninstall it. If you feel watched, get help first: removing it can be noticed.</string>
@@ -524,4 +524,32 @@
     <string name="deep_step_dev_options">Turn on developer options</string>
     <string name="deep_step_start_shizuku">Start Shizuku</string>
     <string name="deep_step_allow_spyhound">Allow Spyhound</string>
+
+    <string name="coverage_title">MALWARE · COVERAGE</string>
+    <string name="coverage_and">and</string>
+    <string name="coverage_summary">%1$s of known Android malware from %2$s, %3$s.</string>
+    <string name="coverage_limit">Only exact fingerprint matches count. Not a virus scanner, no replacement for Play Protect.</string>
+    <string name="coverage_family_note">By fingerprint count. Sources may assign the same fingerprint to different families.</string>
+    <string name="coverage_show_all">Show all</string>
+    <string name="coverage_show_less">Show less</string>
+    <plurals name="coverage_fingerprints">
+        <item quantity="one">%1$s fingerprint</item>
+        <item quantity="other">%1$s fingerprints</item>
+    </plurals>
+    <plurals name="coverage_families">
+        <item quantity="one">%1$s family</item>
+        <item quantity="other">%1$s families</item>
+    </plurals>
+    <plurals name="coverage_show_families">
+        <item quantity="one">Show family (%1$s)</item>
+        <item quantity="other">Show families (%1$s)</item>
+    </plurals>
+    <plurals name="coverage_hide_families">
+        <item quantity="one">Hide family (%1$s)</item>
+        <item quantity="other">Hide families (%1$s)</item>
+    </plurals>
+    <plurals name="coverage_unnamed">
+        <item quantity="one">%1$s fingerprint without a family name.</item>
+        <item quantity="other">%1$s fingerprints without a family name.</item>
+    </plurals>
 </resources>

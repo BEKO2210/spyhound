@@ -31,14 +31,18 @@ data class Indicator(
 class IocSet(indicators: Iterable<Indicator>) {
     private val byType: Map<IocType, Map<String, Indicator>>
     val size: Int
+    /** Accepted malware hashes retain all source labels independently of lookup precedence. */
+    val malwareIndicators: List<Indicator>
 
     init {
         val maps = IocType.entries.associateWith { HashMap<String, Indicator>() }
+        val malware = ArrayList<Indicator>()
         var n = 0
         for (ind in indicators) {
             val key = normalise(ind.type, ind.value) ?: continue
             if (ind.type == IocType.DOMAIN && SharedServices.isShared(key)) continue
             if (ind.type == IocType.SHA256 && KnownGood.contains(key)) continue
+            if (ind.type == IocType.SHA256 && ind.category == Category.MALWARE) malware += ind.copy(value = key)
             // First source wins, so the curated lists (loaded first) keep their attribution,
             // except that an Android-relevant duplicate must replace an iPhone-only one, or lookup() would drop it.
             val map = maps.getValue(ind.type)
@@ -46,6 +50,7 @@ class IocSet(indicators: Iterable<Indicator>) {
             if (old == null) { map[key] = ind.copy(value = key); n++ }
             else if (!old.androidArtifacts && ind.androidArtifacts) map[key] = ind.copy(value = key)
         }
+        malwareIndicators = malware.distinct()
         byType = maps
         size = n
     }

@@ -389,6 +389,11 @@ private fun ResultList(
                 )
             }
         }
+        report.checks.forEachIndexed { index, check ->
+            check.malwareCoverage?.let { coverage ->
+                item(key = "coverage_$index") { MalwareCoverageCard(coverage) }
+            }
+        }
         item { Spacer(Modifier.height(12.dp)) }
     }
 }
