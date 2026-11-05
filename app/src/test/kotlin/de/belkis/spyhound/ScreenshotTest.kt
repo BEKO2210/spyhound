@@ -201,6 +201,46 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         )
     }
 
+    @Composable
+    private fun historyEntries(): List<de.belkis.spyhound.background.ScanHistoryEntry> {
+        val timestamp = java.time.Instant.parse("2026-11-05T15:20:00Z").toEpochMilli()
+        val report = de.belkis.spyhound.background.BackgroundReportStore.sanitize(
+            DemoReport.withFinding(LocalContext.current, timestamp),
+        )
+        return AccessLevel.entries.mapIndexed { index, access ->
+            val end = timestamp - index * 86_400_000L
+            de.belkis.spyhound.background.ScanHistoryEntry(
+                id = end,
+                report = report.copy(startedAt = end - 30_000, finishedAt = end, access = access),
+                background = index == 0,
+            )
+        }
+    }
+
+    @Test
+    fun historyList() = shot("history_list") {
+        de.belkis.spyhound.ui.screens.HistoryScreen(
+            entries = historyEntries(), onBack = {}, onOpenEntry = {}, onDeleteEntry = {}, onClearAll = {},
+            zoneId = java.time.ZoneId.of("Europe/Berlin"),
+        )
+    }
+
+    @Test
+    fun historyEmpty() = shot("history_empty") {
+        de.belkis.spyhound.ui.screens.HistoryScreen(
+            entries = emptyList(), onBack = {}, onOpenEntry = {}, onDeleteEntry = {}, onClearAll = {},
+            zoneId = java.time.ZoneId.of("Europe/Berlin"),
+        )
+    }
+
+    @Test
+    fun historyResult() = shot("history_result", twoColumn = true) {
+        de.belkis.spyhound.ui.screens.HistoryResultScreen(
+            entry = historyEntries().last(), onBack = {}, onShare = {}, onRescan = {},
+            onGapFix = {}, onBugreport = {}, onHelp = {}, zoneId = java.time.ZoneId.of("Europe/Berlin"),
+        )
+    }
+
     @Test
     fun result() = shot("result", twoColumn = true) {
         ResultScreen(
