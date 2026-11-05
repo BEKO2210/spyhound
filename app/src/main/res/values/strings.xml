@@ -223,7 +223,7 @@
     <string name="info_toolkit_origin">Detection logic derives from the Zero Breach Toolkit (Apache-2.0, interplains/Zero-Breach-Toolkit).</string>
     <string name="info_replay_intro">Show introduction again</string>
     <string name="start_help_indicators">Published domains, apps, and files used to spot known spyware and stalkerware traces.</string>
-    <string name="start_help_dns">Watches DNS while active and warns if a domain from the trace lists is requested.</string>
+    <string name="start_help_dns">Watches DNS while active and warns if a domain from the trace lists is requested. It cannot see apps that use encrypted DNS (DoH/DoT) or connect to IP addresses directly.</string>
     <string name="start_help_bugreport">Imports an Android bug report ZIP for extra offline checks – no upload.</string>
     <string name="start_help_access">Basic needs nothing. The deep check (no PC) and root unlock more step by step.</string>
     <string name="start_card_depth">Check depth</string>

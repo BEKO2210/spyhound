@@ -223,7 +223,7 @@
     <string name="info_toolkit_origin">Die Erkennungslogik stammt vom Zero Breach Toolkit (Apache-2.0, interplains/Zero-Breach-Toolkit).</string>
     <string name="info_replay_intro">Einführung erneut ansehen</string>
     <string name="start_help_indicators">Veröffentlichte Domains, Apps und Dateien, an denen bekannte Spyware- und Stalkerware-Spuren erkannt werden.</string>
-    <string name="start_help_dns">Beobachtet DNS solange aktiv und warnt bei Anfragen zu Domains aus den Spuren-Listen.</string>
+    <string name="start_help_dns">Beobachtet DNS solange aktiv und warnt bei Anfragen zu Domains aus den Spuren-Listen. Apps mit verschlüsseltem DNS (DoH/DoT) oder direkter Verbindung zu IP-Adressen sieht er nicht.</string>
     <string name="start_help_bugreport">Importiert eine Android-Fehlerbericht-ZIP für zusätzliche Offline-Prüfungen – kein Upload.</string>
     <string name="start_help_access">Basis braucht nichts. Die tiefe Prüfung (ohne PC) und Root schalten schrittweise mehr frei.</string>
     <string name="start_card_depth">Prüftiefe</string>
