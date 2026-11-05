@@ -56,7 +56,7 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       `FORMAT_PLAIN` (`AdbKeys.kt:97–106`, bestätigt); wie oft das vorkommt: **Verdacht** (ungemessen). Abnahme:
       `FORMAT_PLAIN` wird nicht mehr geschrieben; ein Test mit simuliertem Keystore-Fehler erzeugt eine Fehlermeldung,
       und es wird keine Schlüsseldatei angelegt.
-- [~] **R4 – CI-Pipeline (DA-22)** (Lint 0 Errors seit e425916; Workflow offen): Kein Workflow unter `.github/workflows/`; `lintDebug` scheitert mit 10 Errors
+- [~] **R4 – CI-Pipeline (DA-22)** (Lint 0 Errors seit e425916; Workflow `.github/workflows/ci.yml` per PR, Abnahme: erster grüner Lauf): Kein Workflow unter `.github/workflows/`; `lintDebug` scheitert mit 10 Errors
       (128 Warnungen, Audit-Kopie). Abnahme: `.github/workflows/` führt bei jedem PR assemble, testDebugUnitTest und
       lint aus; CI grün, Lint mit 0 Errors (Baseline nur mit Begründung).
 - [~] **R5 – Doku/Compliance-Sync (DA-23/28/29/30/31/32)**: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben
