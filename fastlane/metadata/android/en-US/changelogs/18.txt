@@ -1,0 +1,1 @@
+Spyhound now detects about 10,000 known Android malware samples from abuse.ch MalwareBazaar, offline and with abuse.ch's permission. New history: reopen and delete earlier checks, stored only on the phone. Cancel stops a check at once. The start screen shows a calm rotating status line and folds more softly when scrolling; malware coverage is a short summary.

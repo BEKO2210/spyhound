@@ -42,20 +42,22 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
 2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
 
-## Schadsoftware-Prüfumfang (2026-11-05)
-- [~] Kurze Umfangskarte mit geladenen Quellen, lokalisierten Zahlen und aufklappbaren Familien; keine zusätzliche
-      Lücke für einen tatsächlich gelaufenen Hashvergleich. Groß-/Kleinschreibung vereinheitlicht, Trefferzuordnung
-      unverändert. 10.052 eindeutige Malware-Hashes bleiben auch bei vorrangiger Spyware-Zuordnung im Umfang sichtbar.
-      Abnahme offen: vollständige Tests, vier Telefonbilder DE/EN zu-/aufgeklappt, Pixel-Abgleich der alten 9.897
-      (lokal 9.900 reproduziert; drei weitere Zuordnungen ohne heruntergeladene Quellen nicht belegt).
-      Details und Prüfbefehle: `docs/handoff/malware-coverage.md`.
-
-## Lokaler Prüfverlauf (2026-11-05)
-- [~] Höchstens 30 manuelle/Hintergrund-Prüfungen, neueste zuerst, app-privat und von Backups ausgeschlossen.
-      Liste DE/EN, historische Ergebnisansicht, Löschbestätigung und Rückgängig; persönliche Fundstellen entfernt.
-      Speicher-, Bedien- und Screenshot-Testfälle ergänzt. Abnahme offen: Unit-Tests, Debug-Build,
-      Screenshot-Aufzeichnung/Verifikation und Sichtprüfung der PNGs; hier ausdrücklich nicht ausgeführt.
-      Übergabe: [history.md](handoff/history.md).
+## Release 0.3.13 (2026-11-05) – Wünsche Belkis 2026-11-05
+- [x] **MalwareBazaar**: 9.919 Android-APK-Hashes (offizieller Gesamt-Export, Zustimmung abuse.ch ST7319719), nur auf
+      dem Gerät geladen, gepinnt 3199eb1/SHA-256; 0 Treffer gegen 1.143 APKs (Pixel 11 + Pixel 9) und Positivliste.
+- [x] **abuse.ch: Spenden geklärt** – GitHub Sponsors (freiwillig, ohne Freischaltung) offengelegt, abuse.ch hat es
+      bestätigt (Belkis, 2026-11-05).
+- [x] **Malware-Hinweis schöner**: Umfangskarte statt Textwand (Anzahl, geladene Quellen, Familienzahl, ehrliche
+      Grenze), Familien aufklappbar ohne Groß/Klein-Dubletten; keine „Lücke“ mehr, denn der Abgleich lief. Screenshots
+      DE/EN zu/offen angesehen. Details: `docs/handoff/malware-coverage.md`.
+- [x] **Verlauf**: bis 30 Prüfungen (auch Hintergrund) nur auf dem Gerät, nicht im Backup, persönliche Fundstellen
+      entfernt; Liste, altes Ergebnis, Einzel-/Gesamtlöschen mit Rückgängig; LEGAL DE/EN. Tests + Screenshots angesehen.
+      Merge-Fund: Verlauf verlor die Umfangskarte (behoben, Test). Übergabe: [history.md](handoff/history.md).
+- [x] **Startbildschirm**: Laufband mit belegbaren Aussagen (live Zahlen, nur aktive Quellen), sanfteres Einklappen
+      (220 dp, weiche Kurve, Einrasten), Bewegung-reduzieren respektiert.
+- [x] **Abbrechen** wirkt sofort: laufende Shell-Befehle werden unterbrochen, Neustart wartet auf den alten Scan
+      (6d8f599, 3 Unit-Tests). Auf dem Pixel vorher: Scan lief nach „Abbrechen“ bei 79 % weiter.
+- Belkis hat die Test-APK unterwegs getestet: „Go mit allem“.
 
 ## Zeitraum „App-Installationen“ (2026-11-05)
 - [~] S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen

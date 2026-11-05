@@ -223,3 +223,6 @@ Pflicht-Hinweis (App und Repository), Wortlaut von abuse.ch:
 Kein offene Lizenz: die Liste **nicht** als CC0 kennzeichnen, sondern „subject to the abuse.ch Terms of Use, included with
 permission“. Weil die Daten nicht frei lizenziert sind, kommen sie nicht in die APK (F-Droid: NonFreeAssets), sondern werden
 wie Amnesty/Citizen Lab nur auf dem Gerät geladen.
+
+Nachtrag 2026-11-05: Der GitHub-Sponsors-Link (freiwillige Spenden, keine Gegenleistung, keine freigeschalteten
+Funktionen) wurde abuse.ch im Ticket offengelegt; abuse.ch hat bestätigt, dass das mit Bedingung 2 vereinbar ist.
