@@ -137,7 +137,12 @@ therefore leaves both out of the APK.
      12a20bf8dd2b7e78d9d38fc12b3e5c970f79d1a7 (downloaded on the device only)
      Copyright (c) 2018-2025 Mitchell Krog, Nissar Chababy, Phishing.Database Contributors
 
-8. MalwareBazaar Android hash subset (not bundled; first fetch and pin pending)
+8. abuse.ch MalwareBazaar, Android hash subset (loaded on source update, not bundled)
+   Android subset of abuse.ch MalwareBazaar: only APK SHA-256, family and sample link (about 9,900
+   hashes). Kept in the Spyhound repository under data/malwarebazaar/ and pinned there by commit and
+   SHA-256 like every other source. Not bundled in the APK: the phone downloads it only when the user
+   taps "Update sources". Refreshed at most once a week from the authenticated official export.
+   https://github.com/BEKO2210/spyhound/tree/main/data/malwarebazaar
 
 Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.
 
@@ -150,6 +155,14 @@ free, non-commercial and open source, without paid tiers, advertising or
 monetization. Forks must comply with the same conditions. Entries must be
 removed on abuse.ch request. This permission does not grant a CC0 license.
 Authenticated official API/export access is limited to once per week.
+
+== Fonts ==
+
+Inter (Copyright 2020 The Inter Project Authors, https://github.com/rsms/inter)
+and Space Grotesk (Copyright 2020 The Space Grotesk Project Authors,
+https://github.com/floriankarsten/space-grotesk) are bundled under the
+SIL Open Font License, Version 1.1. Full texts: assets/licenses/OFL-Inter.txt
+and assets/licenses/OFL-SpaceGrotesk.txt.
 
 == Libraries ==
 

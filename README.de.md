@@ -226,7 +226,7 @@ geholfen hat, kannst du die Entwicklung unterstützen: **[Auf GitHub sponsern](h
 
 ### MalwareBazaar
 
-MalwareBazaar ist vorbereitet, bleibt bis zum ersten geprüften und gepinnten Abruf deaktiviert. Hashdaten bleiben außerhalb der APK und werden nur über die Quellenaktualisierung geladen. Siehe [Datenvorbereitung](data/malwarebazaar/README.md).
+Spyhound vergleicht App-Hashes mit dem Android-Ausschnitt von abuse.ch MalwareBazaar: nur APK-SHA-256, Familie und Link zum Eintrag (rund 9.900 Hashes). Die Liste liegt in diesem Repository unter [`data/malwarebazaar/`](data/malwarebazaar/README.md) und ist wie jede Quelle per Commit und SHA-256 gepinnt. Sie steckt nicht in der APK: Das Handy lädt sie erst, wenn du „Quellen aktualisieren“ tippst. Aktualisiert wird höchstens einmal pro Woche aus dem offiziellen, authentifizierten Export.
 
 Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.
 

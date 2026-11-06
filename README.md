@@ -219,7 +219,7 @@ can support its development: **[Become a sponsor on GitHub](https://github.com/s
 
 ### MalwareBazaar
 
-MalwareBazaar support is prepared but disabled until the first real fetch is reviewed and pinned. Hash data stays outside the APK and will load only through source updates. See [data preparation](data/malwarebazaar/README.md).
+Spyhound checks app hashes against the Android subset of abuse.ch MalwareBazaar: only APK SHA-256, family and sample link (about 9,900 hashes). The list lives in this repository under [`data/malwarebazaar/`](data/malwarebazaar/README.md) and is pinned by commit and SHA-256 like every other source. It is not bundled in the APK: the phone downloads it only when you tap "Update sources". It is refreshed at most once a week from the authenticated official export.
 
 Malware hash data courtesy of abuse.ch MalwareBazaar (https://bazaar.abuse.ch), provided in collaboration with Spamhaus Technology. Used with permission. Data is provided as-is, without guarantee of accuracy; detections may include false positives.
 

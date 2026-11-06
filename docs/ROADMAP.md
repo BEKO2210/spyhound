@@ -59,7 +59,7 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 - [x] **R4 – CI-Pipeline (DA-22)** (erledigt: Lint 0 Errors seit e425916; `.github/workflows/ci.yml` via PR #2 = 4edbd54, CI grün auf PR 04c2090 und auf main, Lauf 42177966355; erster PR-Lauf rot nur wegen Zeitzonen-Drift der audit*-Goldens, Tests jetzt fest auf Europe/Berlin): Kein Workflow unter `.github/workflows/`; `lintDebug` scheitert mit 10 Errors
       (128 Warnungen, Audit-Kopie). Abnahme: `.github/workflows/` führt bei jedem PR assemble, testDebugUnitTest und
       lint aus; CI grün, Lint mit 0 Errors (Baseline nur mit Begründung).
-- [~] **R5 – Doku/Compliance-Sync (DA-23/28/29/30/31/32)**: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben
+- [x] **R5 – Doku/Compliance-Sync (DA-23/28/29/30/31/32)** (erledigt 2026-11-06: eine MB-Beschreibung in NOTICE, Asset-NOTICE, README, README.de, data-README, ANTIVIRUS §1 – „~9.900 Hashes, im Repo gepinnt, nicht in der APK, erst bei Quellen aktualisieren, max. wöchentlich“; Abschnitt „Fonts“ (Inter, Space Grotesk, OFL 1.1) im NOTICE; UI-Text seit 0.3.14; Original ST7319719 intern unter `~/.config/spyhound/abusech-consent-ST7319719.txt`, SHA-256 b7f63abe…; LicenceAssets-/Antivirus-/MalwareBazaarTest 30/30 grün): NOTICE, README, data-README und ANTIVIRUS §1 beschreiben
       MalwareBazaar unterschiedlich; UI nennt „~10.000 … offline“, obwohl die Hashes nicht in der APK liegen (Text
       bestätigt, Täuschungswirkung **Verdacht**); Original der Zustimmung ST7319719 nicht im Repo (Gültigkeit
       **Verdacht**). Abnahme: NOTICE, README, data-README und ANTIVIRUS §1 beschreiben MB einheitlich; UI-Texte nennen
