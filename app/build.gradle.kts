@@ -76,6 +76,8 @@ android {
 tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
     // Screenshot capture keeps large bitmaps in memory; 512m regularly crashes the worker.
     maxHeapSize = "2048m"
+    // Screenshots show local times; a fixed zone keeps them identical on this machine and in CI (UTC).
+    systemProperty("user.timezone", "Europe/Berlin")
     // Keep one JVM fork for deterministic binary test result writing.
     maxParallelForks = 1
     // Isolates parameterized screenshot cases to avoid classloader leakage between methods.
