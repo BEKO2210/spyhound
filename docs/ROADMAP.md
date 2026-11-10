@@ -18,7 +18,7 @@ verbreiteten Geräten, ohne Falschalarm, und jeder kann nachprüfen, dass die AP
       Startbildschirm blieb unter offenen Seiten im Bedienbaum („Jetzt prüfen“ erreichbar) → clearAndSetSemantics.
       Offen: echter TalkBack-Durchgang (TalkBack darf ich nicht einschalten; Belkis ~5 Min). Abnahme: jeder Knopf
       vorgelesen, keine Sackgasse.
-- [~] Verteilung: F-Droid-Antrag offen: fdroiddata!55616 (2026-11-03, Fork BEKO2210/fdroiddata), Version 0.3.8,
+- [~] Verteilung: F-Droid-Antrag fdroiddata!55616 am 2026-11-06 geschlossen (linsui: App muss „maintained for more than 3 months“ sein; Repo seit 2026-11-01). **Neu einreichen ab 2027-02-01** mit derselben Metadatei (`docs/fdroid/de.belkis.spyhound.yml`, 0.3.14 grün in Pipeline 3033637425), Abnahme: neuer MR offen, Pipeline grün. Bis dahin Verteilung über GitHub-Releases. Historie: Antrag 2026-11-03, Version 0.3.8,
       reproduzierbar mit unserer Signatur (lokal: sauberer Klon von v0.3.8 ohne Schlüssel gebaut, `apksigcopier compare`
       gegen die veröffentlichte APK bestanden). fastlane/ DE/EN, README-Installation. Offen: Pipeline/Review-Fragen
       beantworten. IzzyOnDroid nimmt Anträge nur auf Codeberg an (Konto legt nur Belkis an). Google Play nicht
@@ -39,8 +39,8 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-05)
-1. **Weg zu 1.0** – TalkBack-Durchgang, F-Droid-Metadaten + README-Installation, Feldtest mit 3 Personen.
-2. **Virenschutz-Quellen** – abuse.ch hat zugestimmt (2026-11-05): MalwareBazaar-Android-Hashes einbauen, erst nach Belkis’ Konto + Auth-Key im Vault; Positivliste wächst mit jedem Gerät.
+1. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
+2. **Virenschutz-Quellen** – MalwareBazaar läuft (9.919 Hashes, 45 Quellen); wöchentliches Update ab 2026-11-12 (nur Export, 7-Tage-Sperre); Positivliste wächst mit jedem Gerät.
 
 ## Audit 0.3.13 (2026-11-05) – offene Punkte mit Abnahmekriterium
 Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f, API-29-Emulator: Dialog statt Absturz, Dateien werden gelesen), R3 (e824e2c, AdbKeyFormatTest), Lint aus R4, UI-Text aus R5. Status nach RULES: „bestätigt“ = Datei:Zeile plus reproduzierbarer Befehl/Test; Wirkung ohne Gerätemessung = **Verdacht**.
@@ -409,6 +409,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 - Ein Unit-Test belegt nur den Pfad, den er abdeckt: 0.3.13 machte Shell-Befehle abbrechbar, doch die App-Schleife und das Fortschritts-Callback holten den Prüfbildschirm zurück – erst das S21 zeigte es (Basis-Prüfung lief nach „Abbrechen“ von 4 % auf 16 % weiter). Abbruch-Fixes immer auf einem Gerät mit Bildern im Halbsekundentakt belegen (2026-11-05).
 - `pkill`/`pgrep -f <muster>` trifft auch die eigene Shell, deren Kommandozeile das Muster enthält – zweimal passiert. Prozesse nur per gespeicherter PID beenden.
 - Installationsdaten lügen: Samsung stempelt vorinstallierte Apps mit 31.12.2008, Pixel installiert bei der Einrichtung vor dem Stellen der Uhr (01.01.2020) – auch Store-Apps behalten das. Zeitangaben nie ungeprüft als „reicht bis“ zeigen, gegen ein plausibles Mindestdatum (Auslieferungs-Android) prüfen (2026-11-05, S21 Ultra).
+- Aufnahmeregeln vor dem Antrag ganz lesen: F-Droid verlangt, dass eine App über 3 Monate gepflegt wird. Der Antrag nach 2 Tagen Repo-Alter kostete Arbeit an 7 Metadaten-Updates (2026-11-06 geschlossen).
 - Fragen kostet nichts: eine höfliche, konkrete Anfrage (Zweck, Umfang, Bedingungen) brachte abuse.ch-Daten, die nach den Nutzungsbedingungen tabu waren (2026-11-05).
 - Das Matrix-Skript baute die Debug-APK nicht selbst; ein Lauf hätte fast einen alten Stand getestet (2026-11-03). Jetzt baut `main` vor jedem Lauf. Ein Testbeleg gilt nur für den Stand, der wirklich installiert war.
 - Bibliotheken ohne targetSdk im Manifest bringen über den Manifest-Merger alte Rechte mit (libadb → READ_PHONE_STATE, Speicher). Nach jeder neuen Abhängigkeit `aapt2 dump permissions` der Release-APK lesen.
