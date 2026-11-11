@@ -43,6 +43,9 @@ object AppAnalyzer {
         // Samsung's own update paths: the preinstalled app updater (Clock, Calendar …) and the Galaxy Buds plugin
         // installer. Both are system apps, so no other app can carry their names.
         "com.samsung.android.app.updatecenter", "com.samsung.accessory.budsunitemgr",
+        // Honor's own store since the 2020 split from Huawei; com.huawei.appmarket does not exist on these phones
+        // (reported on a BKQ-AN20 in interplains/Zero-Breach-Toolkit#43).
+        "com.hihonor.appmarket", "com.honor.appmarket",
     )
 
     val POWERS = linkedMapOf(

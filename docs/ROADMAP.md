@@ -66,6 +66,10 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       „nach Listen-Update“; OFL-Fonts stehen in NOTICE; F-Droid-YAML steht auf 0.3.13/18 (erledigt 1b09255, Pipeline grün); ein Beleg für ST7319719
       liegt intern vor.
 
+## Funde 2026-11-11
+- [x] Honor-Store fehlte in `AppAnalyzer.STORES` (`com.hihonor.appmarket`, `com.honor.appmarket`): Store-Apps mit Rechten galten auf Honor-Handys als „außerhalb eines Stores installiert“. Gefunden in interplains/Zero-Breach-Toolkit#43 (gleicher Fehler im Desktop-Toolkit). Beleg: `honorStoreIsNotSideloading`, ScanIocEdgeCasesTest 13/13. Geht mit 0.3.15 raus.
+- [ ] Quellen-Update aus Festland-China: raw.githubusercontent.com dort nicht erreichbar (ZBT#43). Abnahme: Ausweich-URL über `api.github.com/repos/{repo}/contents/{path}?ref={commit}` mit `Accept: application/vnd.github.raw`, gleiche SHA-256-Prüfung; Unit-Test mit Fake-Fehler auf raw.
+
 ## Release 0.3.14 (2026-11-05) – Abbrechen repariert, Audit-Korrekturen
 - [x] Abbrechen stoppt den ganzen Scan (f5cf076): auf dem S21 nach ≤ 0,5 s wieder Startbildschirm (Bilder), 0.3.13 lief weiter.
 - [x] Audit R1–R3, Lint 0 Errors, DNS-Wächter nennt DoH/IP-Grenzen, MalwareBazaar-Text „Liste per Quellen aktualisieren“.

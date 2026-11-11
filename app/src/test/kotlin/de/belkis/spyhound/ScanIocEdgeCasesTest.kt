@@ -65,6 +65,17 @@ class ScanIocEdgeCasesTest {
         assertTrue(leads.single().detail.contains("sbrowser"))
     }
 
+    @Test fun honorStoreIsNotSideloading() {
+        val apps = listOf(
+            AppRecord("com.tencent.mm", installer = "com.hihonor.appmarket", notificationAccess = true),
+            AppRecord("com.example.old", installer = "com.honor.appmarket", notificationAccess = true),
+            AppRecord("sideloaded", installer = "com.honor.browser", notificationAccess = true),
+        )
+        val leads = AppAnalyzer.analyze(apps, IocSet(emptyList()), "self").leads
+        assertEquals(listOf(LeadKind.SIDELOADED_APP), leads.map { it.kind })
+        assertTrue(leads.single().detail.contains("com.honor.browser"))
+    }
+
     @Test fun devicePatchBoundaryAndMalformedValues() {
         fun check(patch: String) = DeviceAnalyzer.analyze(
             DeviceState(emptyMap(), patch, 35, null, null, null, emptyList(), emptyList(), null),
