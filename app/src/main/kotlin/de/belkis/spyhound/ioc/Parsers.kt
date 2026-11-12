@@ -310,6 +310,8 @@ data class FeedSource(
     val androidArtifacts: Boolean,
 ) {
     val pinnedUrl: String get() = "https://raw.githubusercontent.com/$repo/$commit/$path"
+    /** Same file at the same commit through the GitHub API, for networks that block raw.githubusercontent.com. */
+    val mirrorUrl: String get() = "https://api.github.com/repos/$repo/contents/$path?ref=$commit"
     val fileName: String get() = id + "." + path.substringAfterLast('.', "dat")
 }
 

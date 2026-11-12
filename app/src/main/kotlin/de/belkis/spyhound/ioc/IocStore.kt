@@ -127,11 +127,16 @@ class IocStore(private val context: Context) {
     }
 
     private fun download(s: FeedSource): ByteArray {
-        val url = URL(s.pinnedUrl)
-        require(url.protocol == "https" && url.host == "raw.githubusercontent.com" &&
-            FeedCatalog.isAllowedPath(s.repo, s.path) && Regex("[0-9a-f]{40}").matches(s.commit)) { "nicht erlaubte Quelle" }
+        require(FeedCatalog.isAllowedPath(s.repo, s.path) && Regex("[0-9a-f]{40}").matches(s.commit)) { "nicht erlaubte Quelle" }
+        return withMirror(s.pinnedUrl, s.mirrorUrl, ::fetch)
+    }
+
+    private fun fetch(address: String): ByteArray {
+        val url = URL(address)
+        require(url.protocol == "https" && url.host in DOWNLOAD_HOSTS) { "nicht erlaubte Quelle" }
         val conn = url.openConnection() as HttpURLConnection
         conn.instanceFollowRedirects = false // a redirect could leave the allow-list
+        if (url.host == "api.github.com") conn.setRequestProperty("Accept", "application/vnd.github.raw")
         conn.connectTimeout = 20_000
         conn.readTimeout = 60_000
         try {
@@ -171,6 +176,23 @@ class IocStore(private val context: Context) {
         )
         const val KNOWN_GOOD = "knowngood-system.sha256"
         private const val MAX_DOWNLOAD = 64 shl 20
+        private val DOWNLOAD_HOSTS = setOf("raw.githubusercontent.com", "api.github.com")
+
+        /**
+         * Tries the raw host first and the GitHub API second (raw.githubusercontent.com is blocked in some countries).
+         * Both serve the file at the pinned commit; the caller checks the SHA-256 either way, so the host does not matter.
+         */
+        internal fun withMirror(primary: String, mirror: String, fetch: (String) -> ByteArray): ByteArray =
+            try {
+                fetch(primary)
+            } catch (first: IOException) {
+                try {
+                    fetch(mirror)
+                } catch (second: IOException) {
+                    second.addSuppressed(first)
+                    throw IOException("${first.message}; Ersatzweg: ${second.message}", second)
+                }
+            }
         internal const val DEBUG_TEST_FILE = "debug-test.tsv"
 
         internal fun appendCuratedIndicators(

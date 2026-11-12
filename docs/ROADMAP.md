@@ -68,7 +68,7 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 
 ## Funde 2026-11-11
 - [x] Honor-Store fehlte in `AppAnalyzer.STORES` (`com.hihonor.appmarket`, `com.honor.appmarket`): Store-Apps mit Rechten galten auf Honor-Handys als „außerhalb eines Stores installiert“. Gefunden in interplains/Zero-Breach-Toolkit#43 (gleicher Fehler im Desktop-Toolkit). Beleg: `honorStoreIsNotSideloading`, ScanIocEdgeCasesTest 13/13. Geht mit 0.3.15 raus.
-- [ ] Quellen-Update aus Festland-China: raw.githubusercontent.com dort nicht erreichbar (ZBT#43). Abnahme: Ausweich-URL über `api.github.com/repos/{repo}/contents/{path}?ref={commit}` mit `Accept: application/vnd.github.raw`, gleiche SHA-256-Prüfung; Unit-Test mit Fake-Fehler auf raw.
+- [x] Quellen-Update aus Festland-China (erledigt 2026-11-12: `IocStore.withMirror`, DownloadMirrorTest 4/4; live alle 48 gepinnten Dateien über api.github.com geladen, 48/48 SHA-256 gleich; Grenze: ohne Anmeldung 60 API-Abrufe/Stunde je IP, also ein volles Ersatz-Update pro Stunde; nicht aus China selbst getestet): raw.githubusercontent.com dort nicht erreichbar (ZBT#43). Abnahme: Ausweich-URL über `api.github.com/repos/{repo}/contents/{path}?ref={commit}` mit `Accept: application/vnd.github.raw`, gleiche SHA-256-Prüfung; Unit-Test mit Fake-Fehler auf raw.
 
 ## Release 0.3.14 (2026-11-05) – Abbrechen repariert, Audit-Korrekturen
 - [x] Abbrechen stoppt den ganzen Scan (f5cf076): auf dem S21 nach ≤ 0,5 s wieder Startbildschirm (Bilder), 0.3.13 lief weiter.
