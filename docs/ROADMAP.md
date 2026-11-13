@@ -38,9 +38,9 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Weitere Sprachen nach Bedarf der Nutzer (Rückmeldungen aus dem Feldtest).
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-05)
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-13)
 1. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
-2. **Virenschutz-Quellen** – MalwareBazaar läuft (9.919 Hashes, 45 Quellen); wöchentliches Update ab 2026-11-12 (nur Export, 7-Tage-Sperre); Positivliste wächst mit jedem Gerät.
+2. **Virenschutz-Quellen** – MalwareBazaar läuft (9.949 Hashes, 45 Quellen); nächstes Wochen-Update ab 2026-11-20 (nur Export, 7-Tage-Sperre); Positivliste wächst mit jedem Gerät.
 
 ## Audit 0.3.13 (2026-11-05) – offene Punkte mit Abnahmekriterium
 Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f, API-29-Emulator: Dialog statt Absturz, Dateien werden gelesen), R3 (e824e2c, AdbKeyFormatTest), Lint aus R4, UI-Text aus R5. Status nach RULES: „bestätigt“ = Datei:Zeile plus reproduzierbarer Befehl/Test; Wirkung ohne Gerätemessung = **Verdacht**.
@@ -73,6 +73,13 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 ## Funde 2026-11-11
 - [x] Honor-Store fehlte in `AppAnalyzer.STORES` (`com.hihonor.appmarket`, `com.honor.appmarket`): Store-Apps mit Rechten galten auf Honor-Handys als „außerhalb eines Stores installiert“. Gefunden in interplains/Zero-Breach-Toolkit#43 (gleicher Fehler im Desktop-Toolkit). Beleg: `honorStoreIsNotSideloading`, ScanIocEdgeCasesTest 13/13. Geht mit 0.3.15 raus.
 - [x] Quellen-Update aus Festland-China (erledigt 2026-11-12: `IocStore.withMirror`, DownloadMirrorTest 4/4; live alle 48 gepinnten Dateien über api.github.com geladen, 48/48 SHA-256 gleich; Grenze: ohne Anmeldung 60 API-Abrufe/Stunde je IP, also ein volles Ersatz-Update pro Stunde; nicht aus China selbst getestet): raw.githubusercontent.com dort nicht erreichbar (ZBT#43). Abnahme: Ausweich-URL über `api.github.com/repos/{repo}/contents/{path}?ref={commit}` mit `Accept: application/vnd.github.raw`, gleiche SHA-256-Prüfung; Unit-Test mit Fake-Fehler auf raw.
+
+## Release 0.3.15 (2026-11-13) – Android 17: Kopplung + Absichern-Karte
+- [x] Kopplungs-Benachrichtigung auf Android 17 (b8e09b8): Pixel 11, Benachrichtigung ~1 s nach Öffnen des Dialogs.
+- [x] Versteckte Debug-Schalter „nicht prüfbar“ statt „Aus ✓“ (87afad8). Belkis: „Jap funktioniert“.
+- [x] Honor-Store (6a69eda), GitHub-API-Ersatzweg (bd5c2a7), MalwareBazaar 9.949 (addc230), StevenBlack-Pin.
+- Beleg: CI 43352343942 grün, verify-reproducible 470 gleich, Signatur 2ae3bd1b…, Download per `sha256sum -c` OK. Belkis: „Go“.
+  github.com/BEKO2210/spyhound/releases/tag/v0.3.15
 
 ## Release 0.3.14 (2026-11-05) – Abbrechen repariert, Audit-Korrekturen
 - [x] Abbrechen stoppt den ganzen Scan (f5cf076): auf dem S21 nach ≤ 0,5 s wieder Startbildschirm (Bilder), 0.3.13 lief weiter.

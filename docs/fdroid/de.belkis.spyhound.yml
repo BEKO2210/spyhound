@@ -25,10 +25,21 @@ Builds:
     gradle:
       - yes
     output: build/outputs/apk/release/app-release-unsigned.apk
+  - versionName: 0.3.15
+    versionCode: 20
+    commit: 3c322e5f024936c8b321c07e815fe8690e1eae85
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-21-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+    output: build/outputs/apk/release/app-release-unsigned.apk
 
 AllowedAPKSigningKeys: 2ae3bd1b9201739c330197c300706bedb8005147010642026752f9298426bd4a
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.3.14
-CurrentVersionCode: 19
+CurrentVersion: 0.3.15
+CurrentVersionCode: 20
