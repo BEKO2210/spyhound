@@ -173,6 +173,19 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         Box(Modifier.padding(20.dp)) { HardeningCard(sampleHardening()) }
     }
 
+    @Test
+    fun hardeningAndroid17() = shot("hardening_android17") {
+        Box(Modifier.padding(20.dp)) {
+            HardeningCard(evaluateHardening(
+                HardeningInput(
+                    screenLockSet = true, usbDebuggingOn = null, wifiDebuggingOn = true, developerOptionsOn = true,
+                    securityPatch = LocalDate.of(2026, 11, 2).minusDays(8), unknownInstallerApps = emptyList(),
+                ),
+                LocalDate.of(2026, 11, 2),
+            ))
+        }
+    }
+
     private fun sampleHardening() = evaluateHardening(
         HardeningInput(
             screenLockSet = true, usbDebuggingOn = false, wifiDebuggingOn = true, developerOptionsOn = true,

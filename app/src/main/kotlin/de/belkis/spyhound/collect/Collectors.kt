@@ -115,17 +115,14 @@ class DeviceCollector(private val context: Context) {
             props = getprop(),
             securityPatch = Build.VERSION.SECURITY_PATCH,
             sdk = Build.VERSION.SDK_INT,
-            adbEnabled = global(Settings.Global.ADB_ENABLED),
-            adbWifiEnabled = global("adb_wifi_enabled"),
-            developerOptions = global(Settings.Global.DEVELOPMENT_SETTINGS_ENABLED),
+            adbEnabled = DebugSwitches.read(context, Settings.Global.ADB_ENABLED),
+            adbWifiEnabled = DebugSwitches.read(context, "adb_wifi_enabled"),
+            developerOptions = DebugSwitches.read(context, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED),
             installSources = installSources(apps),
             rootTraces = rootTraces(apps),
             selinux = runCatching { if (File("/sys/fs/selinux/enforce").readText().trim() == "0") "Permissive" else "Enforcing" }.getOrNull(),
         )
     }
-
-    private fun global(key: String): Boolean? =
-        runCatching { Settings.Global.getInt(context.contentResolver, key) == 1 }.getOrNull()
 
     /** `getprop` works for ordinary apps; SELinux hides some properties, Shizuku sees more. */
     fun getprop(): Map<String, String> = parseGetprop(runCatching {

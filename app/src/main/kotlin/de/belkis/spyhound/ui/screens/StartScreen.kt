@@ -827,7 +827,7 @@ private fun HardeningCardRow(item: HardeningItem) {
         HardeningId.SECURITY_PATCH -> R.drawable.ic_hardening_patch to R.string.harden_patch_title
         HardeningId.UNKNOWN_APP_INSTALLERS -> R.drawable.ic_hardening_install to R.string.harden_install_title
     }
-    val subtitle = when (item.id) {
+    val subtitle = if (item.state == HardeningState.UNKNOWN) stringResource(R.string.harden_switch_unknown) else when (item.id) {
         HardeningId.SCREEN_LOCK -> stringResource(if (ok) R.string.harden_lock_ok else R.string.harden_lock_bad)
         HardeningId.USB_DEBUGGING -> stringResource(if (ok) R.string.harden_usb_ok else R.string.harden_usb_bad)
         HardeningId.WIFI_DEBUGGING -> stringResource(if (ok) R.string.harden_wifi_ok else R.string.harden_wifi_bad)
@@ -845,6 +845,7 @@ private fun HardeningCardRow(item: HardeningItem) {
         HardeningState.OK -> okLabel
         HardeningState.RECOMMENDED -> stringResource(R.string.harden_recommended)
         HardeningState.IMPORTANT -> stringResource(R.string.harden_important)
+        HardeningState.UNKNOWN -> stringResource(R.string.harden_unknown)
     }
     val open = { openHardeningAction(context, item.action) }
     Row(

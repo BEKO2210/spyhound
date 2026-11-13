@@ -38,7 +38,9 @@ import de.belkis.spyhound.scan.ScanEngine
 import de.belkis.spyhound.ui.DemoReport
 import de.belkis.spyhound.shell.RootShell
 import de.belkis.spyhound.shell.AdbSetupState
+import de.belkis.spyhound.collect.DebugSwitches
 import de.belkis.spyhound.shell.AdbShell
+import io.github.muntashirakon.adb.android.AdbMdns
 import de.belkis.spyhound.shell.BuiltinAdb
 import de.belkis.spyhound.shell.SHIZUKU_STOPPED_BANNER
 import de.belkis.spyhound.shell.ScanGatedShellChanges
@@ -200,7 +202,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val ctx = getApplication<Application>()
         viewModelScope.launch {
             val items = withContext(Dispatchers.IO) {
-                evaluateHardening(HardeningCollector(ctx).collect(), LocalDate.now())
+                // Android 17 hides wireless debugging from apps; this phone's own mDNS service proves it is on.
+                val seen = BuiltinAdb.wirelessDebuggingOn(ctx) ||
+                    (Build.VERSION.SDK_INT >= DebugSwitches.UNRELIABLE_FROM_SDK &&
+                        AdbShell.discoverPort(ctx, AdbMdns.SERVICE_TYPE_TLS_CONNECT, 1_500L) != null)
+                evaluateHardening(HardeningCollector(ctx).collect(shell, seen), LocalDate.now())
             }
             _state.update { it.copy(hardening = items) }
         }

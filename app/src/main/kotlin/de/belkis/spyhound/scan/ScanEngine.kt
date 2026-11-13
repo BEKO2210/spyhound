@@ -3,6 +3,7 @@ package de.belkis.spyhound.scan
 import android.content.Context
 import android.os.Build
 import de.belkis.spyhound.collect.AppCollector
+import de.belkis.spyhound.collect.DebugSwitches
 import de.belkis.spyhound.collect.DeviceCollector
 import de.belkis.spyhound.collect.SmsCollector
 import de.belkis.spyhound.collect.StorageCollector
@@ -72,6 +73,12 @@ class ScanEngine(
         shell?.read("getprop", 4 shl 20, 30)?.let { full ->
             device = device.copy(props = device.props + DeviceCollector.parseGetprop(full))
         }
+        // The deep-check shell sees the debug switches Android 17 hides from apps.
+        if (shell != null) device = device.copy(
+            adbEnabled = DebugSwitches.fromShell(shell, "adb_enabled") ?: device.adbEnabled,
+            adbWifiEnabled = DebugSwitches.fromShell(shell, "adb_wifi_enabled") ?: device.adbWifiEnabled,
+            developerOptions = DebugSwitches.fromShell(shell, "development_settings_enabled") ?: device.developerOptions,
+        )
         val deviceCheck = DeviceAnalyzer.analyze(device, set, shellExpected = level == AccessLevel.SHELL)
         checks += deviceCheck
         tracker.replaceSector(RadarSector.DEVICE, RadarMath.statusesFromCheck(deviceCheck))

@@ -436,6 +436,8 @@
     <string name="harden_hint">Eine kurze Liste von Einstellungen, die Angriffe erschweren. Spyhound liest sie nur; ändern kannst du sie in den Systemeinstellungen.</string>
     <string name="harden_open">Öffnen</string>
     <string name="harden_important">wichtig</string>
+    <string name="harden_unknown">nicht prüfbar</string>
+    <string name="harden_switch_unknown">Android verrät das Apps nicht. Sieh in den Entwickleroptionen nach</string>
     <string name="harden_recommended">empfohlen</string>
     <string name="harden_lock_title">Bildschirmsperre</string>
     <string name="harden_lock_ok">Eine PIN, ein Muster oder ein Passwort schützt dein Handy</string>

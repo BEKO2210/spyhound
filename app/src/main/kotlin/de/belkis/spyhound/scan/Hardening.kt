@@ -5,16 +5,18 @@ import java.time.temporal.ChronoUnit
 
 enum class HardeningId { SCREEN_LOCK, USB_DEBUGGING, WIFI_DEBUGGING, DEVELOPER_OPTIONS, SECURITY_PATCH, UNKNOWN_APP_INSTALLERS }
 
-enum class HardeningState { OK, RECOMMENDED, IMPORTANT }
+/** [UNKNOWN]: Android hides the setting from apps (see DebugSwitches); shown without a check mark. */
+enum class HardeningState { OK, RECOMMENDED, IMPORTANT, UNKNOWN }
 
 /** Where the "Open" button leads; the UI turns each target into the matching system settings intent. */
 enum class HardeningAction { SECURITY_SETTINGS, DEVELOPER_SETTINGS, SYSTEM_UPDATE, UNKNOWN_APPS }
 
 data class HardeningInput(
     val screenLockSet: Boolean,
-    val usbDebuggingOn: Boolean,
-    val wifiDebuggingOn: Boolean,
-    val developerOptionsOn: Boolean,
+    /** Null for the three debug switches: Android does not tell apps (see DebugSwitches). */
+    val usbDebuggingOn: Boolean?,
+    val wifiDebuggingOn: Boolean?,
+    val developerOptionsOn: Boolean?,
     /** Null when the system does not report a patch date. */
     val securityPatch: LocalDate?,
     /** Labels of non-system apps that may install other apps. */
@@ -33,6 +35,12 @@ data class HardeningItem(
     val note: Boolean = false,
 )
 
+private fun switchState(on: Boolean?) = when (on) {
+    true -> HardeningState.RECOMMENDED
+    false -> HardeningState.OK
+    null -> HardeningState.UNKNOWN
+}
+
 const val PATCH_RECOMMENDED_DAYS = 90L
 const val PATCH_IMPORTANT_DAYS = 365L
 
@@ -46,19 +54,19 @@ fun evaluateHardening(input: HardeningInput, today: LocalDate): List<HardeningIt
     )
     items += HardeningItem(
         HardeningId.USB_DEBUGGING,
-        if (input.usbDebuggingOn) HardeningState.RECOMMENDED else HardeningState.OK,
+        switchState(input.usbDebuggingOn),
         HardeningAction.DEVELOPER_SETTINGS,
     )
     // Wireless debugging is how the deep check works, so it is a reminder, not a fault.
     items += HardeningItem(
         HardeningId.WIFI_DEBUGGING,
-        if (input.wifiDebuggingOn) HardeningState.RECOMMENDED else HardeningState.OK,
+        switchState(input.wifiDebuggingOn),
         HardeningAction.DEVELOPER_SETTINGS,
-        note = input.wifiDebuggingOn,
+        note = input.wifiDebuggingOn == true,
     )
     items += HardeningItem(
         HardeningId.DEVELOPER_OPTIONS,
-        if (input.developerOptionsOn) HardeningState.RECOMMENDED else HardeningState.OK,
+        switchState(input.developerOptionsOn),
         HardeningAction.DEVELOPER_SETTINGS,
     )
     input.securityPatch?.let { patch ->

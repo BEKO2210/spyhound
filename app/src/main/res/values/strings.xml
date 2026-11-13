@@ -436,6 +436,8 @@
     <string name="harden_hint">A short checklist of phone settings that make it harder to attack. Spyhound only reads them; you change them in the system settings.</string>
     <string name="harden_open">Open</string>
     <string name="harden_important">important</string>
+    <string name="harden_unknown">not checkable</string>
+    <string name="harden_switch_unknown">Android does not tell apps. Check in Developer options</string>
     <string name="harden_recommended">recommended</string>
     <string name="harden_lock_title">Screen lock</string>
     <string name="harden_lock_ok">A PIN, pattern or password protects your phone</string>

@@ -1,5 +1,6 @@
 package de.belkis.spyhound
 
+import de.belkis.spyhound.collect.DebugSwitches
 import de.belkis.spyhound.scan.HardeningAction
 import de.belkis.spyhound.scan.HardeningId
 import de.belkis.spyhound.scan.HardeningInput
@@ -93,5 +94,28 @@ class HardeningTest {
     fun orderIsStable() {
         val ids = evaluateHardening(safe, today).map { it.id }
         assertEquals(HardeningId.entries.toList(), ids)
+    }
+
+    @Test
+    fun hiddenDebugSwitchesAreNeverShownAsOff() {
+        // Android 17 reports all three as 0 to apps while they are on: no check mark then.
+        val items = evaluateHardening(safe.copy(usbDebuggingOn = null, wifiDebuggingOn = null, developerOptionsOn = null), today)
+        for (id in listOf(HardeningId.USB_DEBUGGING, HardeningId.WIFI_DEBUGGING, HardeningId.DEVELOPER_OPTIONS)) {
+            assertEquals(HardeningState.UNKNOWN, items.of(id).state)
+            assertEquals(HardeningAction.DEVELOPER_SETTINGS, items.of(id).action)
+        }
+        assertFalse(items.of(HardeningId.WIFI_DEBUGGING).note)
+    }
+
+    @Test
+    fun zeroMeansUnknownFromAndroid17AndProofWins() {
+        assertEquals(false, DebugSwitches.interpret(0, 36))
+        assertEquals(null, DebugSwitches.interpret(0, 37))
+        assertEquals(true, DebugSwitches.interpret(1, 37))
+        assertEquals(null, DebugSwitches.interpret(null, 30))
+        assertEquals(true, DebugSwitches.resolve(read = null, proven = true))
+        assertEquals(false, DebugSwitches.resolve(read = null, proven = false))
+        assertEquals(null, DebugSwitches.resolve(read = null, proven = null))
+        assertEquals(false, DebugSwitches.resolve(read = false, proven = null))
     }
 }

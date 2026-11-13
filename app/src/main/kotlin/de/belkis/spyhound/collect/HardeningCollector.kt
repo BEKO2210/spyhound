@@ -8,19 +8,27 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import de.belkis.spyhound.scan.HardeningInput
+import de.belkis.spyhound.shell.Shell
 import java.time.LocalDate
 
-/** Reads phone settings that any app may read. No extra permissions. */
+/**
+ * Reads phone settings that any app may read. No extra permissions. [shell] (deep check) sees the real debug switches;
+ * [wifiDebuggingSeen] is true when this phone's own wireless-debugging service showed up through mDNS.
+ */
 class HardeningCollector(private val context: Context) {
-    fun collect(): HardeningInput {
-        val resolver = context.contentResolver
-        fun flag(name: String) = runCatching { Settings.Global.getInt(resolver, name, 0) == 1 }.getOrDefault(false)
+    fun collect(shell: Shell? = null, wifiDebuggingSeen: Boolean = false): HardeningInput {
         val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+        val usb = DebugSwitches.resolve(DebugSwitches.read(context, Settings.Global.ADB_ENABLED),
+            DebugSwitches.fromShell(shell, Settings.Global.ADB_ENABLED))
+        val wifi = DebugSwitches.resolve(DebugSwitches.read(context, "adb_wifi_enabled"),
+            DebugSwitches.fromShell(shell, "adb_wifi_enabled") ?: true.takeIf { wifiDebuggingSeen })
+        val dev = DebugSwitches.resolve(DebugSwitches.read(context, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED),
+            DebugSwitches.fromShell(shell, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED) ?: true.takeIf { usb == true || wifi == true })
         return HardeningInput(
             screenLockSet = keyguard?.isDeviceSecure ?: false,
-            usbDebuggingOn = flag(Settings.Global.ADB_ENABLED),
-            wifiDebuggingOn = flag("adb_wifi_enabled"),
-            developerOptionsOn = flag(Settings.Global.DEVELOPMENT_SETTINGS_ENABLED),
+            usbDebuggingOn = usb,
+            wifiDebuggingOn = wifi,
+            developerOptionsOn = dev,
             securityPatch = runCatching { LocalDate.parse(Build.VERSION.SECURITY_PATCH) }.getOrNull(),
             unknownInstallerApps = installerApps(),
         )
