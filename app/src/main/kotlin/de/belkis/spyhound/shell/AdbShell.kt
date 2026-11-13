@@ -79,7 +79,7 @@ class AdbShell private constructor(private val context: Context) : Shell {
     private fun alive(): Boolean = read("echo spyhound-ok", 64, 15)?.contains("spyhound-ok") == true
 
     companion object {
-        private const val DISCOVERY_TIMEOUT_MS = 5_000L
+        const val DISCOVERY_TIMEOUT_MS = 5_000L
 
         @Volatile private var manager: OwnAdbConnection? = null
 

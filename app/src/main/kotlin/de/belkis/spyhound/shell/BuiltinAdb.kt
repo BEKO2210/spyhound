@@ -41,7 +41,10 @@ object BuiltinAdb {
 
     private var job: Job? = null
     private var mdns: AdbMdns? = null
-    private var lastPairingPort: Int? = null
+    private var connectMdns: AdbMdns? = null
+    @Volatile private var lastPairingPort: Int? = null
+    /** This phone advertises its wireless-debugging connect service, so wireless debugging is on. */
+    @Volatile private var connectServiceSeen = false
     private var wrongCode = false
     @Volatile private var onConnected: ((AdbShell) -> Unit)? = null
 
@@ -100,13 +103,7 @@ object BuiltinAdb {
         try {
             startMdns(app)
             while (true) {
-                val s = synchronized(lock) {
-                    send(AdbSetupEvent.EnvironmentChecked(
-                        devOptions = isDeveloperOptionsEnabled(app),
-                        wirelessDebugging = wirelessDebuggingOn(app),
-                        paired = AdbKeys.exists(app) && ShellPreferences.wasBuiltinAdbPaired(app),
-                    ))
-                }
+                val s = synchronized(lock) { recheck(app) }
                 when (s) {
                     AdbSetupState.WaitingForPairingCode -> AdbPairingNotification.show(app, wrongCode = wrongCode, onlyIfChanged = true)
                     AdbSetupState.Paired -> { connect(app); return }
@@ -155,21 +152,43 @@ object BuiltinAdb {
     private fun startMdns(app: Context) {
         stopMdns()
         lastPairingPort = null
+        connectServiceSeen = false
         mdns = AdbMdns(app, AdbMdns.SERVICE_TYPE_TLS_PAIRING) { _, port ->
-            synchronized(lock) {
+            val waiting = synchronized(lock) {
                 lastPairingPort = port.takeIf { it > 0 }
                 send(if (port > 0) AdbSetupEvent.PairingPortFound(port) else AdbSetupEvent.PairingPortLost)
+                // Re-check right away instead of at the next poll: the process may be frozen soon after the user
+                // switched to Settings, and then the notification would never come.
+                if (port > 0) recheck(app) == AdbSetupState.WaitingForPairingCode else false
             }
+            if (waiting) AdbPairingNotification.show(app, wrongCode = wrongCode, onlyIfChanged = true)
+        }.also { runCatching { it.start() } }
+        connectMdns = AdbMdns(app, AdbMdns.SERVICE_TYPE_TLS_CONNECT) { _, port ->
+            connectServiceSeen = port > 0
         }.also { runCatching { it.start() } }
     }
+
+    private fun recheck(app: Context): AdbSetupState = send(AdbSetupEvent.EnvironmentChecked(
+        devOptions = isDeveloperOptionsEnabled(app),
+        wirelessDebugging = wirelessDebuggingOn(app),
+        paired = AdbKeys.exists(app) && ShellPreferences.wasBuiltinAdbPaired(app),
+    ))
 
     private fun stopMdns() {
         mdns?.let { runCatching { it.stop() } }
         mdns = null
+        connectMdns?.let { runCatching { it.stop() } }
+        connectMdns = null
     }
 
-    /** Wireless debugging is a setting, readable without any permission. */
+    /**
+     * Whether wireless debugging is on. The setting is only a hint: Android 17 reports `adb_wifi_enabled` as 0 to
+     * apps while it is on. This phone's own wireless-debugging services seen through mDNS prove it.
+     */
     fun wirelessDebuggingOn(context: Context): Boolean =
+        wirelessDebuggingSetting(context) || connectServiceSeen || lastPairingPort != null
+
+    private fun wirelessDebuggingSetting(context: Context): Boolean =
         runCatching { Settings.Global.getInt(context.contentResolver, "adb_wifi_enabled", 0) == 1 }.getOrDefault(false)
 
     /** mDNS port of the open pairing dialog, if known. */

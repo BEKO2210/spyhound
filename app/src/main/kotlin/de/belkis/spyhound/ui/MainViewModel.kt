@@ -90,6 +90,9 @@ data class UiState(
     val weeklyBackgroundEnabled: Boolean = false,
 )
 
+/** Search for an already paired wireless-debugging service when the setting claims it is off (see [BuiltinAdb]). */
+private const val SHORT_DISCOVERY_MS = 2_000L
+
 class MainViewModel(app: Application) : AndroidViewModel(app) {
     private fun s(id: Int, vararg args: Any): String = AppLanguage.localizedContext(getApplication()).getString(id, *args)
     private val store = IocStore(app)
@@ -296,10 +299,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val builtinBusy = builtinAdbStarted && BuiltinAdb.state.value.let {
             it == AdbSetupState.WaitingForPairingCode || it == AdbSetupState.Pairing || it == AdbSetupState.Paired
         }
-        if (shell == null && pendingShell == null && !builtinBusy &&
-            ShellPreferences.wasBuiltinAdbPaired(ctx) && BuiltinAdb.wirelessDebuggingOn(ctx)
-        ) {
-            AdbShell.connect(ctx)?.let { adoptShell(it) }
+        if (shell == null && pendingShell == null && !builtinBusy && ShellPreferences.wasBuiltinAdbPaired(ctx)) {
+            // Android 17 reports wireless debugging as off to apps even while it is on, so a short search is the
+            // only reliable check; it costs a moment only when the setting says off.
+            val discovery = if (BuiltinAdb.wirelessDebuggingOn(ctx)) AdbShell.DISCOVERY_TIMEOUT_MS else SHORT_DISCOVERY_MS
+            AdbShell.connect(ctx, discovery)?.let { adoptShell(it) }
             refreshPermissions()
         }
     }
