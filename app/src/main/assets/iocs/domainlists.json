@@ -15,13 +15,13 @@
     "id": "stevenblack-adhoc",
     "name": "Werbung und zweifelhafte Domains",
     "repo": "StevenBlack/hosts",
-    "commit": "6d56ab44f2b3d27de062b5194eb51bcd8115a773",
+    "commit": "681b61eceef1cabaa434394a97babef5d57bdc78",
     "path": "data/StevenBlack/hosts",
     "format": "domain-list",
     "cite": "Steven Black, hosts, data/StevenBlack (MIT)",
     "category": "tracker",
     "family": "Werbung",
-    "sha256": "8e5bd5f7fb563f4707ce905a787428aca1797309845401075c1be2d545c3f89a"
+    "sha256": "ff23dae18957de81e4ea634ec7a9eccd9949cfb0eb50345b7aaf5d6172914fc3"
   },
   {
     "id": "phishing-database-domains",

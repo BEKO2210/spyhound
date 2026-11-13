@@ -2,10 +2,10 @@
 <resources>
     <string-array name="info_whats_new_items">
         <item>Android 17: Die Kopplungs-Benachrichtigung für die tiefe Prüfung kommt wieder</item>
+        <item>„Handy absichern“: versteckte Debug-Schalter erscheinen nicht mehr als aus</item>
         <item>Honor-Handys: Apps aus dem Honor-Store gelten nicht mehr als außerhalb eines Stores installiert</item>
         <item>Quellen aktualisieren nutzt die GitHub-API, wo raw.githubusercontent.com gesperrt ist</item>
         <item>MalwareBazaar-Liste aktualisiert: 9.949 Android-Hashes</item>
-        <item>Abbrechen stoppt jetzt die ganze Prüfung sofort</item>
     </string-array>
     <string-array name="start_statements">
         <item>Offline-Analyse auf bekannte Spyware</item>

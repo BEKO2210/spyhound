@@ -2,10 +2,10 @@
 <resources>
     <string-array name="info_whats_new_items">
         <item>Android 17: the pairing notification for the deep check appears again</item>
+        <item>"Secure your phone": hidden debug switches are no longer shown as off</item>
         <item>Honor phones: apps from the Honor store no longer count as installed outside a store</item>
         <item>Updating sources falls back to the GitHub API where raw.githubusercontent.com is blocked</item>
         <item>MalwareBazaar list updated: 9,949 Android hashes</item>
-        <item>Cancel now stops the whole check at once</item>
     </string-array>
     <!-- Start screen banner. Order is fixed: offline, stays on device, count (%1$s indicators, %2$d sources),
          sources (%1$s names), short sources variant, open source. -->
