@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>Android 17: Die Kopplungs-Benachrichtigung für die tiefe Prüfung kommt wieder</item>
+        <item>Honor-Handys: Apps aus dem Honor-Store gelten nicht mehr als außerhalb eines Stores installiert</item>
+        <item>Quellen aktualisieren nutzt die GitHub-API, wo raw.githubusercontent.com gesperrt ist</item>
+        <item>MalwareBazaar-Liste aktualisiert: 9.949 Android-Hashes</item>
         <item>Abbrechen stoppt jetzt die ganze Prüfung sofort</item>
-        <item>Android 10: Dateiprüfung funktioniert, Berechtigung wird normal erfragt</item>
-        <item>Eine beschädigte geladene Liste verdrängt die mitgelieferte nicht mehr; der ADB-Schlüssel wird nie unverschlüsselt gespeichert</item>
-        <item>Startbildschirm: ganze Karten öffnen „Wer darf was“ und „Verlauf“</item>
-        <item>Der DNS-Wächter sagt, was er nicht sieht (verschlüsseltes DNS, direkte IP-Verbindungen)</item>
-        <item>Erkennt rund 10.000 bekannte Android-Schadprogramme (abuse.ch MalwareBazaar) – Liste per „Quellen aktualisieren“, Prüfung offline</item>
     </string-array>
     <string-array name="start_statements">
         <item>Offline-Analyse auf bekannte Spyware</item>

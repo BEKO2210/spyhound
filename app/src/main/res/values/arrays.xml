@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
+        <item>Android 17: the pairing notification for the deep check appears again</item>
+        <item>Honor phones: apps from the Honor store no longer count as installed outside a store</item>
+        <item>Updating sources falls back to the GitHub API where raw.githubusercontent.com is blocked</item>
+        <item>MalwareBazaar list updated: 9,949 Android hashes</item>
         <item>Cancel now stops the whole check at once</item>
-        <item>Android 10: file check works, permission asked the normal way</item>
-        <item>A damaged downloaded list no longer hides the bundled one; the ADB key is never stored unencrypted</item>
-        <item>Start screen: whole cards open "Who can do what" and "History"</item>
-        <item>DNS watcher says what it cannot see (encrypted DNS, direct IP connections)</item>
-        <item>Detects about 10,000 known Android malware samples (abuse.ch MalwareBazaar) – list arrives with “Update sources”, the check runs offline</item>
     </string-array>
     <!-- Start screen banner. Order is fixed: offline, stays on device, count (%1$s indicators, %2$d sources),
          sources (%1$s names), short sources variant, open source. -->
