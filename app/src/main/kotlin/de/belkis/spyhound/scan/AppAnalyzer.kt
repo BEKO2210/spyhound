@@ -70,6 +70,11 @@ object AppAnalyzer {
         "Bedienungshilfe, Benachrichtigungszugriff und Geräteadministrator erlauben, " +
             "den Bildschirm mitzulesen oder das Löschen zu verhindern. Seriöse Apps wie Passwortmanager nutzen sie auch."
 
+    const val DUAL_USE_TEXT = "Kann zum Überwachen anderer benutzt werden. Prüfe, ob du sie selbst installiert hast."
+    private const val WHY_DUAL_USE =
+        "Forscher der Cornell University führen diese App als „dual-use“: Sie hat einen seriösen Zweck, " +
+            "lässt sich aber auch heimlich gegen jemanden einsetzen."
+
     fun analyze(apps: List<AppRecord>, iocs: IocSet, ownPackage: String, texts: Texts = TextsDe): CheckResult {
         val r = CheckResult(NAME, texts)
         var unhashed = 0
@@ -78,7 +83,8 @@ object AppAnalyzer {
             if (app.packageName == ownPackage) continue
             r.examined++
             val where = "App ${app.label} (${app.packageName})"
-            iocs.lookup(IocType.APP_ID, app.packageName)?.let { ind ->
+            val listed = iocs.lookup(IocType.APP_ID, app.packageName)
+            listed?.let { ind ->
                 val text = if (ind.category == Category.STALKERWARE) {
                     "Eine bekannte Überwachungs-App ist installiert${family(ind.family)}. " +
                         "Manche davon werden offen als Kinderschutz-App verkauft."
@@ -102,6 +108,13 @@ object AppAnalyzer {
             }
             if (app.isSystem) continue
             val powers = powersOf(app)
+            // Dual-use apps (ISDi) have legitimate uses: one neutral hint per app, which replaces the other app leads.
+            if (listed == null && app.packageName in iocs.dualUseApps) {
+                var text = DUAL_USE_TEXT
+                if (powers.isNotEmpty()) text += " Darf: " + powers.joinToString(", ") + "."
+                r.lead(where, text, WHY_DUAL_USE, LeadKind.DUAL_USE_APP)
+                continue
+            }
             val sideloaded = app.installer == null || app.installer !in STORES
             if (sideloaded) {
                 var text = "Nicht aus einem App-Store installiert (Installiert von: ${app.installer ?: "unbekannt"})"

@@ -538,5 +538,17 @@
   "category": "malware",
   "family": "",
   "sha256": "55e6a78e65ac4bb6203f3637c50de11a1ce60f093009379159a8d358ad7e97fa"
+ },
+ {
+  "id": "isdi-app-flags",
+  "name": "Stalkerware apps (Cornell ISDi)",
+  "repo": "stopipv/isdi",
+  "commit": "c9d366e01004b08bbd4e83418346a4898f3c9414",
+  "path": "src/isdi/data/app-flags.csv",
+  "format": "isdi-csv",
+  "cite": "Cornell ISDi",
+  "category": "stalkerware",
+  "family": "",
+  "sha256": "539410a7a8876b2f31588f0af89cd73abdc5746462111f7ba6bdf7760116ae40"
  }
 ]

@@ -47,7 +47,7 @@ that. Spyhound brings the same published indicators to the phone, in plain langu
 ## What it checks
 
 Spyhound compares what it can see on your phone with **published indicators of compromise** from security researchers
-– app package names, APK hashes, signing certificates, domains, IP addresses and file names – from 34 pinned sources
+– app package names, APK hashes, signing certificates, domains, IP addresses and file names – from 46 pinned sources
 (Amnesty Tech / MVT, Citizen Lab, ECHAP stalkerware list, ESET malware sample hashes and more). Installed APKs and
 files in shared storage are also checked against **ESET Research** lists (`eset/malware-ioc`, BSD-2-Clause): five
 Android campaigns, **exact SHA-256 matches only** – not a general virus scan. It also points out things worth a closer look,

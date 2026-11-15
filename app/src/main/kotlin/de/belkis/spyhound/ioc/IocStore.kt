@@ -62,6 +62,7 @@ class IocStore(private val context: Context) {
         val sources = catalog()
         KnownGood.useSystemList(context.assets.open("iocs/$KNOWN_GOOD").bufferedReader().use { it.readText() })
         val all = ArrayList<Indicator>()
+        val dualUse = HashSet<String>()
         val missing = ArrayList<FeedSource>()
         val corrupt = ArrayList<FeedSource>()
         // Curated files first, so their more precise attribution wins on duplicates.
@@ -73,17 +74,19 @@ class IocStore(private val context: Context) {
             if (bytes == null) { missing += s; continue }
             if (sha256(bytes) != s.sha256) { corrupt += s; continue }
             runCatching {
-                Parsers.parse(s.format, bytes.toString(Charsets.UTF_8), SourceContext(s.id, s.category, s.family, s.androidArtifacts))
-            }.onSuccess {
+                val text = bytes.toString(Charsets.UTF_8)
+                Parsers.parse(s.format, text, SourceContext(s.id, s.category, s.family, s.androidArtifacts)) to
+                    if (s.format == "isdi-csv") Parsers.isdiDualUse(text) else emptySet()
+            }.onSuccess { (indicators, hints) ->
                 // A source that lists a known-harmless fingerprint is treated as unreliable and left out entirely.
-                if (KnownGood.conflicts(it).isEmpty()) all += it else corrupt += s
+                if (KnownGood.conflicts(indicators).isEmpty()) { all += indicators; dualUse += hints } else corrupt += s
             }.onFailure { corrupt += s }
         }
         IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
-        // The curated lists belong to the toolkit, not to the catalog count shown as "45/45"; a broken one is still
+        // The curated lists belong to the toolkit, not to the catalog count shown as "46/46"; a broken one is still
         // listed in [corrupt] so the start screen reports it.
         val catalogBroken = corrupt.count { it in sources }
-        LoadedIocs(IocSet(all), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt, sources.filter { it !in missing && it !in corrupt }))
+        LoadedIocs(IocSet(all, dualUse), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt, sources.filter { it !in missing && it !in corrupt }))
     }
 
     fun domainCatalog(): List<FeedSource> =

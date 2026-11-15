@@ -49,6 +49,7 @@ fun guidanceFor(lead: Lead): Guidance = when (lead.kind) {
     LeadKind.ROOT -> guide("lead_root", null)
     LeadKind.UNKNOWN_SOURCES -> guide("lead_unknown_sources", GuidanceAction.SETTINGS_UNKNOWN_SOURCES)
     LeadKind.OLD_BUGREPORT -> guide("lead_old_bugreport", null)
+    LeadKind.DUAL_USE_APP -> guide("lead_dual_use_app", GuidanceAction.APP_INFO)
     LeadKind.OTHER -> guide("lead_other", null)
 }
 

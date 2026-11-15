@@ -57,6 +57,10 @@ object TextsEn : Texts {
             "Monitoring apps are often installed outside an app store. Many harmless apps are installed this way too.",
         "Bedienungshilfe, Benachrichtigungszugriff und Geräteadministrator erlauben, den Bildschirm mitzulesen oder das Löschen zu verhindern. Seriöse Apps wie Passwortmanager nutzen sie auch." to
             "Accessibility, notification access and device admin can read your screen or prevent removal. Trusted apps may use them too.",
+        "Kann zum Überwachen anderer benutzt werden. Prüfe, ob du sie selbst installiert hast." to
+            "Can be used to watch someone else. Check that you installed it yourself.",
+        "Forscher der Cornell University führen diese App als „dual-use“: Sie hat einen seriösen Zweck, lässt sich aber auch heimlich gegen jemanden einsetzen." to
+            "Cornell University researchers list this app as dual-use: it has a legitimate purpose but can also be used against someone in secret.",
         "Die Prozessliste war leer oder nicht lesbar." to "Process list was empty or unreadable.",
         "Die Datei hat den Fingerabdruck einer veröffentlichten Spyware-Probe." to
             "This file matches the fingerprint of a published spyware sample.",
@@ -158,6 +162,9 @@ object TextsEn : Texts {
             "Wireless debugging is on" + (if (m.groupValues[1].isEmpty()) "." else " (needed for Shizuku).") },
         Regex("^Diese Apps dürfen andere Apps installieren: (.*)$") to { m: MatchResult ->
             "These apps can install other apps: ${m.groupValues[1]}" },
+        Regex("^Kann zum Überwachen anderer benutzt werden\\. Prüfe, ob du sie selbst installiert hast\\. Darf: (.*)\\.$") to { m: MatchResult ->
+            "Can be used to watch someone else. Check that you installed it yourself. Can: " +
+                m.groupValues[1].split(", ").joinToString(", ") { text(it) } + "." },
         Regex("^Hat (.*)\\.$") to { m: MatchResult ->
             "Has " + m.groupValues[1].split(" und ").joinToString(" and ") { text(it) } + "." },
         Regex("^Die Nachricht enthält einen Link zu (.*), einer Adresse, die Forscher einer Spyware zuordnen\\. Wurde der Link geöffnet, kann das Gerät infiziert worden sein\\.$") to { m: MatchResult ->

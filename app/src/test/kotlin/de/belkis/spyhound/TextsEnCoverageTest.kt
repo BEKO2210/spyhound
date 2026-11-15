@@ -100,6 +100,11 @@ class TextsEnCoverageTest {
         return listOf(
             AppAnalyzer.analyze(apps, iocs, "de.belkis.spyhound"),
             AppAnalyzer.analyze(emptyList(), IocSet(emptyList()), "de.belkis.spyhound"),
+            AppAnalyzer.analyze(listOf(
+                AppRecord("com.dual.plain", "Dual", installer = store, certSha1 = listOf("x")),
+                AppRecord("com.dual.powers", "Dual2", installer = null, certSha1 = listOf("x"),
+                    grantedPermissions = setOf("android.permission.CAMERA"), accessibility = true),
+            ), IocSet(emptyList(), setOf("com.dual.plain", "com.dual.powers")), "de.belkis.spyhound"),
         )
     }
 

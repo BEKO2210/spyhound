@@ -108,6 +108,36 @@ Bundled with the app:
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
+   Cornell ISDi, stopipv/isdi (MIT License)
+   https://github.com/stopipv/isdi
+   One file, src/isdi/data/app-flags.csv, pinned to commit
+   c9d366e01004b08bbd4e83418346a4898f3c9414. Cite: Cornell ISDi. Copy in
+   app/src/main/assets/iocs/isdi-app-flags.csv, unmodified; only rows flagged
+   "stalkerware" or "spyware" become indicators. Rows flagged "dual-use" only
+   produce a hint to check the app, never a finding. Some entries originate
+   from ECHAP (Creative Commons Attribution 4.0, credited above).
+
+   MIT License
+   Copyright (c) 2018 Cornell University
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
 Not bundled, loaded onto the device only when the user updates indicators:
 
 5. Amnesty International, AmnestyTech/investigations

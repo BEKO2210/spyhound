@@ -31,6 +31,8 @@ internal fun guidanceStringId(key: String): Int = when (key) {
     "guide_lead_sideloaded_app_steps" -> R.string.guide_lead_sideloaded_app_steps
     "guide_lead_app_powers_meaning" -> R.string.guide_lead_app_powers_meaning
     "guide_lead_app_powers_steps" -> R.string.guide_lead_app_powers_steps
+    "guide_lead_dual_use_app_meaning" -> R.string.guide_lead_dual_use_app_meaning
+    "guide_lead_dual_use_app_steps" -> R.string.guide_lead_dual_use_app_steps
     "guide_lead_old_patch_meaning" -> R.string.guide_lead_old_patch_meaning
     "guide_lead_old_patch_steps" -> R.string.guide_lead_old_patch_steps
     "guide_lead_debugging_meaning" -> R.string.guide_lead_debugging_meaning

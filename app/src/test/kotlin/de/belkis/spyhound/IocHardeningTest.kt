@@ -140,7 +140,7 @@ class IocHardeningTest {
             "eset-aridspy" to 15, "eset-vajraspy" to 13, "eset-spyloan" to 17, "eset-ngate" to 25,
             "eset-promptspy" to 9, "eset-callphantom" to 28, "eset-evilvideo" to 1, "eset-ghostchat" to 2,
             "eset-gravityrat" to 3, "eset-gref" to 5, "eset-kamran" to 1, "eset-prospytospy" to 12,
-            "eset-pwa-phishing" to 2, "eset-virtual-invaders" to 20, "meta-pss-android-2021" to 13,
+            "eset-pwa-phishing" to 2, "eset-virtual-invaders" to 20, "meta-pss-android-2021" to 13, "isdi-app-flags" to 628,
             "adfection_iocs.txt" to 405, "curated_mercenary.txt" to 23, "curated_targeted.txt" to 921,
         )
         val actual = FeedCatalog.parse(File(dir, "sources.json").readText()).filter { it.bundled }.associate { s ->

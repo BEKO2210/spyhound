@@ -28,7 +28,7 @@ data class Indicator(
 )
 
 /** The loaded indicators, indexed per kind for exact lookups. */
-class IocSet(indicators: Iterable<Indicator>) {
+class IocSet(indicators: Iterable<Indicator>, val dualUseApps: Set<String> = emptySet()) {
     private val byType: Map<IocType, Map<String, Indicator>>
     val size: Int
     /** Accepted malware hashes retain all source labels independently of lookup precedence. */

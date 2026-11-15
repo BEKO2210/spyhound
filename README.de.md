@@ -49,7 +49,7 @@ einfacher Sprache, auf Deutsch und Englisch.
 
 Spyhound vergleicht, was es auf deinem Handy sehen kann, mit **veröffentlichten Indikatoren** von
 Sicherheitsforschern – App-Namen, APK-Fingerabdrücke, Signaturzertifikate, Domains, IP-Adressen und Dateinamen – aus
-34 fest gepinnten Quellen (Amnesty Tech / MVT, Citizen Lab, ECHAP-Stalkerware-Liste, ESET-Schadsoftware-Hashes und
+46 fest gepinnten Quellen (Amnesty Tech / MVT, Citizen Lab, ECHAP-Stalkerware-Liste, ESET-Schadsoftware-Hashes und
 weitere). Installierte APKs und Dateien im Speicher werden zusätzlich gegen **ESET Research**-Listen
 (`eset/malware-ioc`, BSD-2-Clause) geprüft: fünf Android-Kampagnen, **nur exakte SHA-256-Treffer** – kein
 allgemeiner Virenscan. Außerdem weist es

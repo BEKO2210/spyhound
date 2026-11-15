@@ -54,6 +54,7 @@ object Parsers {
         "hashlist" -> hashlist(text, ctx)
         "malwarebazaar-tsv" -> malwareBazaarTsv(text, ctx)
         "typed-csv-android-sha256" -> typedCsvAndroidSha256(text, ctx)
+        "isdi-csv" -> isdiCsv(text, ctx)
         else -> throw IocFormatException("unknown indicator format: $format")
     }
 
@@ -206,6 +207,26 @@ object Parsers {
             Indicator(hash, IocType.SHA256, ctx.category, ctx.family, ctx.sourceId)
         }.boundedList()
 
+    /**
+     * Cornell ISDi `appId,store,flag,title`. Only `stalkerware` and `spyware` rows are indicators; `dual-use` rows
+     * (apps with legitimate uses) never are, see [isdiDualUse], and `safe` rows are ignored.
+     */
+    fun isdiCsv(text: String, ctx: SourceContext): List<Indicator> =
+        csvRecords(text).mapNotNull { cols ->
+            if (cols.size < 4 || cols[2].trim() !in ISDI_INDICATOR_FLAGS) return@mapNotNull null
+            val id = cols[0].trim().takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+            Indicator(id, IocType.APP_ID, ctx.category, cols[3].trim(), ctx.sourceId, ctx.androidArtifacts)
+        }.boundedList()
+
+    /** Package names ISDi flags `dual-use`: only ever a hint to check the app, never an indicator. */
+    fun isdiDualUse(text: String): Set<String> {
+        val flagged = csvRecords(text).filter { it.size >= 4 && it[2].trim() == "dual-use" }
+            .map { it[0].trim() }.filter { it.isNotEmpty() }.toSet()
+        // An app that is also listed as stalkerware stays a finding, never a hint.
+        return flagged - isdiCsv(text, SourceContext("", Category.STALKERWARE)).map { it.value }.toSet()
+    }
+
+    private val ISDI_INDICATOR_FLAGS = setOf("stalkerware", "spyware")
     private val SHA256_LOWER_RE = Regex("[0-9a-f]{64}")
     private val APP_ID_RE = Regex("""^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]+)+$""")
 
@@ -328,18 +349,18 @@ object FeedCatalog {
     /** Only these repositories are ever downloaded from, as in the desktop toolkit. */
     val ALLOWED_REPOS = setOf(
         "mvt-project/mvt-indicators", "AmnestyTech/investigations",
-        "AssoEchap/stalkerware-indicators", "citizenlab/malware-indicators",
+        "AssoEchap/stalkerware-indicators", "citizenlab/malware-indicators", "stopipv/isdi",
         "eset/malware-ioc", "meta/threat-research", "BEKO2210/spyhound",
         // Plain domain lists for the DNS watcher (tracker, phishing); see assets/iocs/domainlists.json.
         "Perflyst/PiHoleBlocklist", "StevenBlack/hosts", "Phishing-Database/Phishing.Database",
     )
 
-    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0), ESET (BSD-2-Clause), Meta (MIT) and the two small MIT tracker lists ship inside
+    // Redistribution: MVT (MIT), ECHAP (CC BY 4.0), ESET (BSD-2-Clause), Meta (MIT), Cornell ISDi (MIT) and the two small MIT tracker lists ship inside
     // the app; the others carry no licence (or are too large and too short-lived, as the phishing list) and are fetched
     // on the device from the pinned commit instead.
     private val BUNDLED_REPOS = setOf(
         "mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators", "eset/malware-ioc",
-        "meta/threat-research", "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
+        "meta/threat-research", "stopipv/isdi", "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
     )
 
     // Sources that document iPhone spyware only: their domains still count everywhere, their

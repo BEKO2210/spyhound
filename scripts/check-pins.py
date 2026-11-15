@@ -23,7 +23,7 @@ CATALOGS = ["sources.json", "domainlists.json"]
 # Must match FeedCatalog.BUNDLED_REPOS: these files ship inside the APK.
 BUNDLED = {
     "mvt-project/mvt-indicators", "AssoEchap/stalkerware-indicators", "eset/malware-ioc",
-    "meta/threat-research", "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
+    "meta/threat-research", "stopipv/isdi", "Perflyst/PiHoleBlocklist", "StevenBlack/hosts",
 }
 
 
