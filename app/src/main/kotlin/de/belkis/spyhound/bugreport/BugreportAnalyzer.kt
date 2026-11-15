@@ -93,11 +93,10 @@ object BugreportAnalyzer {
             if (report.logcat.isEmpty()) {
                 logs.gap("Der Abschnitt SYSTEM LOG (logcat) fehlt im Fehlerbericht.", kind = GapKind.BUGREPORT_PART)
             } else {
-                ForensicTraces.logcatCoverageGap(
-                    logs,
-                    ForensicTraces.oldestLogcatTimestamp(report.logcat, nowMs),
-                    nowMs,
-                )
+                // A bug report can be days old: measure the log against its own newest line, not against now.
+                ForensicTraces.logcatSpan(report.logcat, nowMs)?.let { (oldest, newest) ->
+                    ForensicTraces.logcatCoverageGap(logs, oldest, newest)
+                }
             }
             out += logs
         }

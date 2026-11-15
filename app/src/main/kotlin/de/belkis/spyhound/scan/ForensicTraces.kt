@@ -104,12 +104,14 @@ object ForensicTraces {
         result.hit(WHERE_VARISTON_PATH, DETAIL_VARISTON_PATH.format(path), varistonPathIndicator(path))
     }
 
-    fun oldestLogcatTimestamp(logcat: String, now: Long): Long? {
+    /** Oldest and newest timestamp in [logcat], or null when no line carries one. */
+    fun logcatSpan(logcat: String, now: Long): Pair<Long, Long>? {
         var oldest: Long? = null
+        var newest: Long? = null
         for (line in logcat.lineSequence()) {
-            TimeRange.logcatTimestamp(line, now)?.let { t -> oldest = minOf(oldest ?: t, t) }
+            TimeRange.logcatTimestamp(line, now)?.let { t -> oldest = minOf(oldest ?: t, t); newest = maxOf(newest ?: t, t) }
         }
-        return oldest
+        return oldest?.let { it to newest!! }
     }
 
     fun logcatCoverageGap(result: CheckResult, oldestLogMs: Long?, nowMs: Long) {

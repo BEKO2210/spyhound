@@ -278,7 +278,7 @@ class ScanEngine(
             "Shizuku neu starten (oder Root erneut erlauben) und noch einmal prüfen."
 
         val LOG_COMMANDS = listOf(
-            "logcat" to "logcat -d -b all -v brief",
+            "logcat" to "logcat -d -b all -v threadtime",
             "dumpsys package" to "dumpsys package",
             "dumpsys accessibility" to "dumpsys accessibility",
             "dumpsys notification" to "dumpsys notification --noredact",

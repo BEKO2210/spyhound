@@ -38,7 +38,7 @@ object TimeRange {
         34 to (2023 to 10), 35 to (2024 to 9), 36 to (2025 to 6),
     )
 
-    /** Parses Android logcat brief timestamps (MM-DD HH:mm:ss.mmm), using current year. */
+    /** Parses Android logcat threadtime timestamps (MM-DD HH:mm:ss.mmm), using current year. */
     fun logcatTimestamp(line: String, now: Long): Long? {
         val match = Regex("^\\s*(\\d{2})-(\\d{2})\\s+(\\d{2}:\\d{2}:\\d{2}\\.\\d{3})").find(line) ?: return null
         val (month, day, time) = match.destructured

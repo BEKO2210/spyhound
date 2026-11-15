@@ -67,4 +67,14 @@ class ForensicTracesTest {
         assertEquals(1, logs.findings.size)
         assertTrue(logs.gaps.any { it.kind == GapKind.SHORT_LOGCAT }, logs.gaps.toString())
     }
+
+    @Test fun oldBugreportIsMeasuredAgainstItsOwnLog() {
+        // Imported five days later: a log spanning two hours is still short, a log spanning two days is not.
+        val now = LocalDateTime.of(2026, 11, 20, 12, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+        fun gaps(logcat: String) = BugreportAnalyzer.analyze(
+            Bugreport(logcat = logcat, dumpsys = mapOf("x" to "y"), device = "d"), iocs, emptySet(), LocalDate.of(2026, 11, 20), now,
+        ).first { it.name == BUGREPORT_PREFIX + ShellAnalyzer.LOGS }.gaps.map { it.kind }
+        assertTrue(GapKind.SHORT_LOGCAT in gaps("11-15 09:00:00.000 I/A: a\n11-15 11:00:00.000 I/B: b"))
+        assertTrue(GapKind.SHORT_LOGCAT !in gaps("11-13 09:00:00.000 I/A: a\n11-15 11:00:00.000 I/B: b"))
+    }
 }

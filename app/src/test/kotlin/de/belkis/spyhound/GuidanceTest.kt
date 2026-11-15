@@ -12,6 +12,7 @@ import de.belkis.spyhound.scan.GuidanceAction
 import de.belkis.spyhound.scan.Lead
 import de.belkis.spyhound.scan.LeadKind
 import de.belkis.spyhound.scan.guidanceFor
+import de.belkis.spyhound.scan.ForensicTraces
 import java.io.File
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,11 @@ class GuidanceTest {
     private fun all(): List<Guidance> =
         IocType.entries.flatMap { t -> Category.entries.map { guidanceFor(finding(t, it)) } } +
             LeadKind.entries.map { guidanceFor(Lead("c", "w", "d", "why", it)) } +
-            GapFix.entries.flatMap { f -> GapKind.entries.map { guidanceFor(Gap("c", "d", f, it)) } }
+            GapFix.entries.flatMap { f -> GapKind.entries.map { guidanceFor(Gap("c", "d", f, it)) } } +
+            // Forensic traces carry their own guidance, chosen by source.
+            listOf(ForensicTraces.SOURCE_AMNESTY_CELLEBRITE, ForensicTraces.SOURCE_GOOGLE_VARISTON).map {
+                guidanceFor(Finding("Apps", "x", "y", Indicator("v", IocType.FILE_PATH, Category.MERCENARY, "fam", it)))
+            }
 
     private fun keys(path: String): Set<String> {
         val xml = File(path).readText()
