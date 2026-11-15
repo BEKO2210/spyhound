@@ -169,10 +169,11 @@ class IocStore(private val context: Context) {
             return local ?: asset
         }
 
-        val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt")
+        val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt", "curated_targeted.txt")
         private val CURATED_SHA256 = mapOf(
             "adfection_iocs.txt" to "42bff7164687f1faf6ab5691738e156f72684cadbf63e403150e02acc65ad518",
             "curated_mercenary.txt" to "2508f48565144b9b63d47f916379f7c829a5541cdd63cd42d8bd225b4cc29e21",
+            "curated_targeted.txt" to "ec4f889d31eff92249c59476a06e83d2d447409d54d0f46a36801c634e30f533",
         )
         const val KNOWN_GOOD = "knowngood-system.sha256"
         private const val MAX_DOWNLOAD = 64 shl 20

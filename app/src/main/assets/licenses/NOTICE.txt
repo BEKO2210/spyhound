@@ -34,6 +34,19 @@ Bundled with the app:
 
 3. Zero Breach Toolkit, curated lists (CC0 1.0)
    https://github.com/interplains/Zero-Breach-Toolkit
+   adfection_iocs.txt, curated_mercenary.txt and curated_targeted.txt
+   (commit 2525377, 2026-11-14), bundled unmodified in app/src/main/assets/iocs/.
+   The selection is CC0 1.0. The values in curated_targeted.txt were copied by
+   the Toolkit from the publishers named in its header, whose notices are kept
+   there and still apply:
+   - Volexity threat-intel: Copyright 2022 by Volexity, Inc.; BSD 2-Clause
+   - Palo Alto Networks Unit 42 iocs: Copyright (c) 2018 Palo Alto Networks; MIT
+   - Meta threat-research: Copyright (c) Meta Platforms, Inc. and its affiliates; MIT
+   - Lookout threat-intelligence: Apache License 2.0
+   - ESET malware-ioc: BSD 2-Clause (section 4)
+   - Cisco Talos IOCs: CC0 1.0
+   - Amnesty International: CC BY 2.0, https://creativecommons.org/licenses/by/2.0/
+     Cite: Amnesty International
 
 4. ESET, eset/malware-ioc (BSD 2-Clause License)
    https://github.com/eset/malware-ioc

@@ -141,6 +141,18 @@ class ScanIocEdgeCasesTest {
         assertEquals("source", tsv.single().sourceId)
     }
 
+    @Test fun curatedTsvReadsPackageNamesAndDropsSha1() {
+        val sha1 = "a".repeat(40)
+        val sha256 = "b".repeat(64)
+        val tsv = Parsers.curatedTsv(
+            "com.teleram.app\tartifact\tprimary\tsrc\tSpyC23\tapp-id\n" +
+                "Not A Package\tartifact\tprimary\tsrc\tX\tapp-id\n" +
+                "$sha1\tsample\tprimary\tsrc\tHermit\n$sha256\tsample\tprimary\tsrc\tKoSpy\n",
+            ctx,
+        )
+        assertEquals(listOf(IocType.APP_ID to "com.teleram.app", IocType.SHA256 to sha256), tsv.map { it.type to it.value })
+    }
+
     @Test fun csvDropsRowWithUnterminatedQuote() {
         // One malformed row must neither become an indicator nor take the whole feed down.
         assertEquals(listOf(listOf("type", "value")), Parsers.csvRows("type,value\ndomain,\"unterminated"))

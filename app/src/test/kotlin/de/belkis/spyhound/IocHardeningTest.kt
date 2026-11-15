@@ -103,7 +103,7 @@ class IocHardeningTest {
         val corrupt = ArrayList<FeedSource>()
         IocStore.appendCuratedIndicators(all, corrupt) { File(dir, it).readBytes() }
         assertTrue(corrupt.isEmpty())
-        assertEquals(428, all.size)
+        assertEquals(1_349, all.size)
         assertTrue(KnownGood.conflicts(all).isEmpty())
     }
 
@@ -124,7 +124,7 @@ class IocHardeningTest {
             val corrupt = ArrayList<FeedSource>()
             IocStore.appendCuratedIndicators(all, corrupt) { File(dir, it).readBytes() }
             assertEquals(listOf(IocStore.CURATED.first()), corrupt.map { it.fileName })
-            assertEquals(23, all.size)
+            assertEquals(944, all.size)
         } finally {
             KnownGood.useSystemList(File(dir, IocStore.KNOWN_GOOD).readText())
         }
@@ -141,7 +141,7 @@ class IocHardeningTest {
             "eset-promptspy" to 9, "eset-callphantom" to 28, "eset-evilvideo" to 1, "eset-ghostchat" to 2,
             "eset-gravityrat" to 3, "eset-gref" to 5, "eset-kamran" to 1, "eset-prospytospy" to 12,
             "eset-pwa-phishing" to 2, "eset-virtual-invaders" to 20, "meta-pss-android-2021" to 13,
-            "adfection_iocs.txt" to 405, "curated_mercenary.txt" to 23,
+            "adfection_iocs.txt" to 405, "curated_mercenary.txt" to 23, "curated_targeted.txt" to 921,
         )
         val actual = FeedCatalog.parse(File(dir, "sources.json").readText()).filter { it.bundled }.associate { s ->
             s.id to Parsers.parse(s.format, File(dir, s.fileName).readText(), SourceContext(s.id, s.category, s.family, s.androidArtifacts)).size

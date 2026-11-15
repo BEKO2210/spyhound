@@ -164,13 +164,18 @@ object Parsers {
             }
         }.boundedList()
 
-    /** The Zero Breach Toolkit's curated files: indicator TAB tier TAB confidence TAB source [TAB family]. */
+    /**
+     * The Zero Breach Toolkit's curated files: indicator TAB tier TAB confidence TAB source [TAB family [TAB kind]].
+     * Kind `app-id` marks a package name. SHA-1 file digests are dropped: they would only match whole-file SHA-1s.
+     */
     fun curatedTsv(text: String, ctx: SourceContext): List<Indicator> =
         tsvRows(text).mapNotNull { cols ->
             val value = cols[0].trim()
-            if (value.isEmpty() || cols.size < 3) return@mapNotNull null
+            if (value.isEmpty() || cols.size < 3 || SHA1_RE.matches(value)) return@mapNotNull null
             val family = cols.getOrNull(4)?.trim().orEmpty().ifEmpty { ctx.family }
-            Indicator(value, inferType(value), ctx.category, family, cols.getOrNull(3)?.trim().orEmpty().ifEmpty { ctx.sourceId })
+            val type = if (cols.getOrNull(5)?.trim() == "app-id") IocType.APP_ID else inferType(value)
+            if (type == IocType.APP_ID && !APP_ID_RE.matches(value)) return@mapNotNull null
+            Indicator(value, type, ctx.category, family, cols.getOrNull(3)?.trim().orEmpty().ifEmpty { ctx.sourceId })
         }.boundedList()
 
     /** APK-only MalwareBazaar subset: SHA-256, family, canonical sample link. */
@@ -219,6 +224,7 @@ object Parsers {
         }.boundedList()
 
     private val SHA256_RE = Regex("(?i)[0-9a-f]{64}")
+    private val SHA1_RE = Regex("(?i)[0-9a-f]{40}")
     private val IPV4_RE = Regex("""\d{1,3}(\.\d{1,3}){3}""")
 
     fun inferType(v: String): IocType = when {
