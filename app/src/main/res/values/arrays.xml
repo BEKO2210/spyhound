@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
-        <item>Android 17: the pairing notification for the deep check appears again</item>
-        <item>"Secure your phone": hidden debug switches are no longer shown as off</item>
-        <item>Honor phones: apps from the Honor store no longer count as installed outside a store</item>
-        <item>Updating sources falls back to the GitHub API where raw.githubusercontent.com is blocked</item>
-        <item>MalwareBazaar list updated: 9,949 Android hashes</item>
+        <item>New list of targeted spyware: 921 entries (Lookout, Volexity, Unit 42, Talos, Amnesty)</item>
+        <item>Cornell University stalkerware list: 628 apps; dual-use apps only as a hint</item>
+        <item>Deep check detects traces of phone-forensics devices (Cellebrite) in the system log</item>
+        <item>The time span covered by the system logs is now shown</item>
     </string-array>
     <!-- Start screen banner. Order is fixed: offline, stays on device, count (%1$s indicators, %2$d sources),
          sources (%1$s names), short sources variant, open source. -->

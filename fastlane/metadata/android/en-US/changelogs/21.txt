@@ -1,0 +1,1 @@
+New list of targeted spyware with 921 entries (Lookout, Volexity, Unit 42, Talos, Amnesty) and the Cornell University stalkerware list (628 apps). Dual-use apps, such as phone finders, appear only as a hint, never as a finding. The deep check detects traces of phone-forensics devices (Cellebrite) in the system log and shows how far back the logs reach.
