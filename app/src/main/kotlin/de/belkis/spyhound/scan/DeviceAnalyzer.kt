@@ -42,6 +42,7 @@ object DeviceAnalyzer {
                 r.hit("Systemeigenschaft $name", "Eine Systemeigenschaft, die Forscher einer Spyware zuordnen, ist gesetzt.", it)
             }
         }
+        ForensicTraces.onGetprop(r, state.props) { iocs.lookup(IocType.ANDROID_PROP, it) != null }
         if (state.props.isEmpty()) r.gap("Die Systemeigenschaften (getprop) konnten nicht gelesen werden.", GapFix.SHIZUKU)
 
         runCatching { LocalDate.parse(state.securityPatch) }.getOrNull()?.let { patch ->

@@ -129,6 +129,13 @@ object TextsEn : Texts {
         "Apps installieren" to "install apps", "Telefonstatus" to "phone state",
         "über anderen Apps zeichnen" to "draw over other apps", "alle Dateien" to "all files",
         "unbekannt" to "unknown",
+        ForensicTraces.WHERE_CELLEBRITE_USB to
+            "Sign of a phone-forensics device (Cellebrite) in system logs",
+        ForensicTraces.WHERE_VARISTON_PROP to "Suspicious system property (Variston Heliconia)",
+        ForensicTraces.WHERE_VARISTON_PATH to "Suspicious folder (Variston Heliconia)",
+        ForensicTraces.GAP_SHORT_LOGCAT to
+            "Stored system logs cover less than 24 hours. An older connection to a phone-forensics device " +
+                "(e.g. Cellebrite) may no longer appear there.",
 
     )
 
@@ -197,6 +204,16 @@ object TextsEn : Texts {
             "${text(m.groupValues[1])} was only partly read (timeout or cancellation)." },
         Regex("^(.+) war leer oder der Befehl ist fehlgeschlagen\\. Es wurde nichts geprüft\\.$") to { m: MatchResult ->
             "${text(m.groupValues[1])} was empty or command failed. Nothing was checked." },
+        Regex("^Im Systemprotokoll steht ein USB-Gerät, das Forscher dem Entsperr-Werkzeug von Cellebrite zuordnen \\(Herstellerkennung ([^,]+), Firmware-Version 12\\.34\\)\\. Das spricht dafür, dass das Telefon an ein Handy-Auslesegerät angeschlossen war\\. Fehlt der Eintrag, beweist das nichts\\.$") to { m: MatchResult ->
+            "System logs show a USB device that researchers link to Cellebrite unlock hardware " +
+                "(vendor id ${m.groupValues[1]}, firmware version 12.34). That suggests the phone was connected " +
+                "to a phone-forensics device. If the entry is missing, that proves nothing." },
+        Regex("^Die Systemeigenschaft (.*) ist gesetzt\\. Forscher ordnen sie der Heliconia-Angriffskette zu\\. Das ist kein normaler Android-Wert\\. Fehlt sie, beweist das nichts\\.$") to { m: MatchResult ->
+            "System property ${m.groupValues[1]} is set. Researchers tie it to the Heliconia attack chain. " +
+                "It is not a normal Android value. If it is missing, that proves nothing." },
+        Regex("^Der Ordner (.*) ist vorhanden\\. Forscher ordnen ihn der Heliconia-Angriffskette zu\\. Fehlt er, beweist das nichts\\.$") to { m: MatchResult ->
+            "Folder ${m.groupValues[1]} is present. Researchers tie it to the Heliconia attack chain. " +
+                "If it is missing, that proves nothing." },
     )
 
     override fun text(source: String): String {

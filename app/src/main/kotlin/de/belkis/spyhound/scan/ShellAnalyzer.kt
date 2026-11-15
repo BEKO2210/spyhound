@@ -75,10 +75,12 @@ object ShellAnalyzer {
         val r = CheckResult(LOGS, texts)
         val scanner = TextScanner(iocs)
         val reported = HashSet<String>()
+        val forensicUsb = HashSet<String>()
         for ((label, source) in sources) {
             var lines = 0
             val ok = source.feed { line ->
                 if (line.isNotBlank()) lines++
+                if (label == "logcat") ForensicTraces.onLogcatLine(r, line, forensicUsb)
                 val declaration = DECLARATION.containsMatchIn(line)
                 for (m in scanner.all(line)) {
                     if (m.indicator.type == IocType.APP_ID && (m.token in installed || declaration)) continue
@@ -120,6 +122,7 @@ object ShellAnalyzer {
                 val ind = iocs.lookup(IocType.FILE_PATH, path)
                     ?: iocs.lookup(IocType.FILE_NAME, path.substringAfterLast('/'))
                 if (ind != null) r.hit("Datei $path", "Eine Datei mit einem Namen oder Pfad, den Forscher einer Spyware zuordnen, liegt auf dem Gerät.", ind)
+                ForensicTraces.onFilePath(r, path, iocs)
             }
         }
         r.finish(ok, "Die Dateiliste")

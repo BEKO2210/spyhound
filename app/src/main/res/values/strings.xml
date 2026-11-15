@@ -271,6 +271,10 @@
 
     <string name="guide_finding_malware_meaning">The fingerprint (SHA-256) of an app or file on your phone exactly matches a sample that security researchers (ESET, Meta) published as known malware. Such apps can spy on you, steal logins or take over banking. A match of this kind is exact, but the list only covers a few named campaigns.</string>
     <string name="guide_finding_malware_steps">1. Uninstall the app: Settings > “Apps” > the app > “Uninstall”. If it cannot be removed, first turn off device admin and accessibility access for it. Delete a file you downloaded yourself.\n2. Change the passwords of your important accounts (email, bank, messengers) from another device, and turn on two-factor sign-in.\n3. If you used banking or payment apps while it was installed, contact your bank.\n4. Scan again afterwards. If you fear targeted surveillance, contact a specialist helpline.</string>
+    <string name="guide_finding_forensic_device_meaning">Your phone\'s logs show a USB device that researchers link to Cellebrite phone-forensics hardware. That suggests the phone was once connected to an unlocking or extraction device. This is serious, but not proof on its own.</string>
+    <string name="guide_finding_forensic_device_steps">1. Do not reset your phone or delete anything until an expert has looked at it. Otherwise evidence is lost.\n2. Contact the Access Now Digital Security Helpline (free): help@accessnow.org.\n3. Have private conversations from another device for now.</string>
+    <string name="guide_finding_forensic_variston_meaning">Your phone shows an artifact that researchers tie to the Heliconia spyware attack chain. This is serious, but not proof on its own.</string>
+    <string name="guide_finding_forensic_variston_steps">1. Do not reset your phone or delete anything until an expert has looked at it. Otherwise evidence is lost.\n2. Contact the Access Now Digital Security Helpline (free): help@accessnow.org.\n3. Have private conversations from another device for now.</string>
     <string name="guide_gap_malware_coverage_meaning">The malware list contains fingerprints of known Android malware from loaded sources. Only exact fingerprint matches count. Not a virus scanner, no replacement for Play Protect.</string>
     <string name="guide_gap_malware_coverage_steps">1. You do not need to do anything.\n2. Keep Play Protect on and install apps from trusted stores only.</string>
     <string name="guide_lead_sideloaded_app_meaning">This app did not come from an app store and has far-reaching permissions. It is only a hint, not a finding: many harmless apps are installed this way.</string>
@@ -318,6 +322,8 @@
     <string name="guide_gap_bugreport_part_steps">1. Create a new, complete bug report.\n2. Also scan your phone directly in Spyhound.</string>
     <string name="guide_gap_large_files_meaning">Very large files were not compared. This is a gap, not a result.</string>
     <string name="guide_gap_large_files_steps">1. You do not need to do anything.\n2. Check large files you do not recognise by hand.</string>
+    <string name="guide_gap_short_logcat_meaning">Stored system logs on your phone only reach back a short time. A connection to phone-forensics gear days or weeks ago may not appear there. This is a gap, not a result.</string>
+    <string name="guide_gap_short_logcat_steps">1. You do not need to do anything.\n2. Import a bug report if you have one. It can hold older logs.</string>
     <string name="guide_gap_other_meaning">One check could not run completely. This is neither a good nor a bad result, just a gap.</string>
     <string name="guide_gap_other_steps">1. Read the description of the gap.\n2. Scan again later.</string>
     <string name="depth_basic">Basic</string>

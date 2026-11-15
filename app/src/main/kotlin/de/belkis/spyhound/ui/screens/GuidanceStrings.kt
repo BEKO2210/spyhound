@@ -25,6 +25,10 @@ internal fun guidanceStringId(key: String): Int = when (key) {
     "guide_finding_link_stalkerware_steps" -> R.string.guide_finding_link_stalkerware_steps
     "guide_finding_malware_meaning" -> R.string.guide_finding_malware_meaning
     "guide_finding_malware_steps" -> R.string.guide_finding_malware_steps
+    "guide_finding_forensic_device_meaning" -> R.string.guide_finding_forensic_device_meaning
+    "guide_finding_forensic_device_steps" -> R.string.guide_finding_forensic_device_steps
+    "guide_finding_forensic_variston_meaning" -> R.string.guide_finding_forensic_variston_meaning
+    "guide_finding_forensic_variston_steps" -> R.string.guide_finding_forensic_variston_steps
     "guide_gap_malware_coverage_meaning" -> R.string.guide_gap_malware_coverage_meaning
     "guide_gap_malware_coverage_steps" -> R.string.guide_gap_malware_coverage_steps
     "guide_lead_sideloaded_app_meaning" -> R.string.guide_lead_sideloaded_app_meaning
@@ -71,6 +75,8 @@ internal fun guidanceStringId(key: String): Int = when (key) {
     "guide_gap_bugreport_part_steps" -> R.string.guide_gap_bugreport_part_steps
     "guide_gap_large_files_meaning" -> R.string.guide_gap_large_files_meaning
     "guide_gap_large_files_steps" -> R.string.guide_gap_large_files_steps
+    "guide_gap_short_logcat_meaning" -> R.string.guide_gap_short_logcat_meaning
+    "guide_gap_short_logcat_steps" -> R.string.guide_gap_short_logcat_steps
     "guide_gap_other_meaning" -> R.string.guide_gap_other_meaning
     "guide_gap_other_steps" -> R.string.guide_gap_other_steps
     else -> error("Unknown guidance key: $key")

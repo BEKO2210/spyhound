@@ -5,6 +5,7 @@ import de.belkis.spyhound.ioc.IocType
 import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.scan.GapKind
 import de.belkis.spyhound.scan.LeadKind
+import de.belkis.spyhound.scan.ForensicTraces
 import de.belkis.spyhound.scan.ShellAnalyzer
 import de.belkis.spyhound.scan.Texts
 import de.belkis.spyhound.scan.TextsDe
@@ -35,6 +36,7 @@ object BugreportAnalyzer {
         iocs: IocSet,
         installed: Set<String>,
         today: LocalDate = LocalDate.now(),
+        nowMs: Long = System.currentTimeMillis(),
         texts: Texts = TextsDe,
     ): List<CheckResult> {
         val out = ArrayList<CheckResult>()
@@ -90,6 +92,12 @@ object BugreportAnalyzer {
             val logs = named(ShellAnalyzer.logs(sources, iocs, installed, texts), BUGREPORT_PREFIX + ShellAnalyzer.LOGS, texts)
             if (report.logcat.isEmpty()) {
                 logs.gap("Der Abschnitt SYSTEM LOG (logcat) fehlt im Fehlerbericht.", kind = GapKind.BUGREPORT_PART)
+            } else {
+                ForensicTraces.logcatCoverageGap(
+                    logs,
+                    ForensicTraces.oldestLogcatTimestamp(report.logcat, nowMs),
+                    nowMs,
+                )
             }
             out += logs
         }
@@ -108,6 +116,7 @@ object BugreportAnalyzer {
                     )
                 }
             }
+            ForensicTraces.onGetprop(props, report.props) { iocs.lookup(IocType.ANDROID_PROP, it) != null }
             props.ran = true
         }
         out += props

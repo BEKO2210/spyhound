@@ -13,6 +13,7 @@ import de.belkis.spyhound.scan.AppRecord
 import de.belkis.spyhound.scan.ApkFile
 import de.belkis.spyhound.scan.CheckResult
 import de.belkis.spyhound.scan.DeviceAnalyzer
+import de.belkis.spyhound.scan.ForensicTraces
 import de.belkis.spyhound.scan.DeviceState
 import de.belkis.spyhound.scan.GapFix
 import de.belkis.spyhound.scan.LogSource
@@ -160,8 +161,11 @@ class TextsEnCoverageTest {
         )
         out += ShellAnalyzer.hashes(ShellAnalyzer.LineSource { it("${sha('2')}  /sdcard/q.bin"); false }, iocs)
         val logs = mapOf(
-            "logcat" to lines("12-01 10:00:00.000 I x: cdn.evil.example", "com.merc.app", "/data/local/tmp/spy", "ping 203.0.113.9",
-                "http://evil.example/landing/q"),
+            "logcat" to lines(
+                "12-01 10:00:00.000 I x: cdn.evil.example", "com.merc.app", "/data/local/tmp/spy", "ping 203.0.113.9",
+                "http://evil.example/landing/q",
+                "USB device attached: vidpid 04f2:b071 mfg/product/ver/serial Video/Video Device/12.34/00001",
+            ),
             "dumpsys package" to "",
             "dumpsys dbinfo" to "all fine",
         )
@@ -170,6 +174,10 @@ class TextsEnCoverageTest {
         out += ShellAnalyzer.logs(emptyMap(), iocs)
         out += ShellAnalyzer.logs(listOf("logcat" to ShellAnalyzer.LineSource { it("a line"); false }), iocs)
         out += ShellAnalyzer.logs(listOf("logcat" to ShellAnalyzer.LineSource { false }), iocs)
+        val shortLog = CheckResult(ShellAnalyzer.LOGS).apply {
+            ForensicTraces.logcatCoverageGap(this, System.currentTimeMillis() - 3_600_000L, System.currentTimeMillis())
+        }
+        out += shortLog
         return out
     }
 

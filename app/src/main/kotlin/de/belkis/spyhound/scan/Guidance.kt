@@ -27,6 +27,12 @@ private fun guide(id: String, action: GuidanceAction?) = Guidance("guide_${id}_m
 
 fun guidanceFor(finding: Finding): Guidance {
     if (finding.indicator.category == Category.MALWARE) return guide("finding_malware", GuidanceAction.GET_HELP)
+    if (finding.indicator.sourceId == ForensicTraces.SOURCE_AMNESTY_CELLEBRITE) {
+        return guide("finding_forensic_device", GuidanceAction.GET_HELP)
+    }
+    if (finding.indicator.sourceId == ForensicTraces.SOURCE_GOOGLE_VARISTON) {
+        return guide("finding_forensic_variston", GuidanceAction.GET_HELP)
+    }
     val who = if (finding.indicator.category == Category.STALKERWARE) "stalkerware" else "mercenary"
     val what = when (finding.indicator.type) {
         IocType.APP_ID, IocType.APP_CERT -> "app"
@@ -67,6 +73,7 @@ fun guidanceFor(gap: Gap): Guidance = when (gap.fix) {
         GapKind.BUGREPORT_PART -> guide("gap_bugreport_part", null)
         GapKind.LARGE_FILES -> guide("gap_large_files", null)
         GapKind.MALWARE_COVERAGE -> guide("gap_malware_coverage", null)
+        GapKind.SHORT_LOGCAT -> guide("gap_short_logcat", null)
         GapKind.OTHER -> guide("gap_other", null)
     }
 }
