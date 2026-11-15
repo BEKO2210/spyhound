@@ -67,12 +67,12 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       liegt intern vor.
 
 ## Funde 2026-11-15 (ZBT 3.0, Apache-2.0, Klon 2525377)
-- [ ] `iocs/curated_targeted.txt` übernehmen (1.231 Zeilen: Hashes + 17 Paketnamen gezielter Spyware; Lookout, Volexity, Unit42, Talos, Amnesty). Abnahme: als gepinnte Quelle mit Lizenz/Herkunft je Publisher in NOTICE (Amnesty CC BY 2.0), SHA-1-Zeilen nur gegen ganze Datei, 0 Falschtreffer auf Positivliste.
-- [ ] Cornell-ISDi-Paketliste (MIT, stopipv/isdi): Stalkerware als Fund, Dual-Use nur als Hinweis. Abnahme: Test mit Beispielpaketen, keine Store-App mit Dual-Use als Fund.
-- [ ] Cellebrite-USB-Spuren (5 VID:PID, logcat „USB device attached“) in der Tiefenprüfung. Abnahme: Parser-Test mit Beispielzeile; Lücke nennen, wenn logcat zu kurz zurückreicht.
+- [x] `iocs/curated_targeted.txt` übernehmen (1.231 Zeilen: Hashes + 17 Paketnamen gezielter Spyware; Lookout, Volexity, Unit42, Talos, Amnesty). Abnahme: als gepinnte Quelle mit Lizenz/Herkunft je Publisher in NOTICE (Amnesty CC BY 2.0), SHA-1-Zeilen nur gegen ganze Datei, 0 Falschtreffer auf Positivliste. Erledigt: c97c43a, 921 Einträge, 383/383 Tests.
+- [x] Cornell-ISDi-Paketliste (MIT, stopipv/isdi): Stalkerware als Fund, Dual-Use nur als Hinweis. Abnahme: Test mit Beispielpaketen, keine Store-App mit Dual-Use als Fund. Erledigt: 161bd16, 628 App-IDs als Fund, Dual-Use als ein Hinweis je App (DUAL_USE_APP), 389/389 Tests.
+- [x] Cellebrite-USB-Spuren (5 VID:PID, logcat „USB device attached“) in der Tiefenprüfung. Abnahme: Parser-Test mit Beispielzeile; Lücke nennen, wenn logcat zu kurz zurückreicht. Erledigt: ed1dbe3 + 17d1f71, 397/397 Tests; Tiefenprüfung liest logcat jetzt mit `-v threadtime` (Pixel 9: 33162/33168 Zeilen mit Zeitstempel, Spanne 2 h 18 min, 0 Treffer).
 - [ ] Device-Owner, Always-on-VPN, abgeschaltete Restricted Settings als Hinweis mit „Entfernen kann den Täter warnen“. Abnahme: Pixel-Test, kein Hinweis auf sauberem Gerät.
 - [ ] Offline-Linkprüfung (Signal-/WhatsApp-Kopplungsköder, Doppelgänger-Domains) für SMS. Abnahme: Testsätze, 0 Treffer auf normalen Links.
-- [ ] Zurück an ZBT (nur nach Belkis' OK): fehlende Stores in `_AN_STORES` (Droid-ify, Neo Store, Obtainium, Samsung updatecenter), doppelte hihonor-Zeile; ESET-Android-Listen, die ZBT fehlen (vorher Abgleich: BadBazaar hat ZBT schon über Volexity).
+- [~] Zurück an ZBT (nur nach Belkis' OK): fehlende Stores in `_AN_STORES` (Droid-ify, Neo Store, Obtainium, Samsung updatecenter), doppelte hihonor-Zeile; ESET-Android-Listen, die ZBT fehlen (vorher Abgleich: BadBazaar hat ZBT schon über Volexity). Stores + hihonor: PR interplains/Zero-Breach-Toolkit#50 (offen). ESET-Abgleich offen.
 
 ## Funde 2026-11-13
 - [x] „Handy absichern“ zeigte auf Android 17 USB-Debugging, WLAN-Debugging und Entwickleroptionen als „Aus“ mit Haken, obwohl alle drei an waren (Pixel 11, Screenshot Belkis 03:05; `settings get` = 1/1/1). Sicherheitsrelevant: falsche Entwarnung. Jetzt `DebugSwitches`: ab SDK 37 gilt eine gemeldete 0 als „nicht prüfbar“ (kein Haken, „Öffnen“), Beweise schlagen die Einstellung (eigener mDNS-Dienst ⇒ WLAN-Debugging an; Shell der tiefen Prüfung liest `settings get global …`; ein Debug-Schalter an ⇒ Entwickleroptionen an). Der Scan nutzt dieselbe Logik, damit Hinweise wie „WLAN-Debugging an“ nicht verschwinden. Beleg: HardeningTest (+2), Screenshot `hardening_android17`, 382/382 Tests.
@@ -429,6 +429,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Zeitlogik braucht Zeitstempel im Eingabeformat: Die Tiefenprüfung las logcat mit `-v brief`, darum blieben Logalter (`oldestLog`) und jede Zeitlücke seit dem ersten Commit stumm, obwohl die Tests (mit `threadtime`-Fehlerberichten) grün waren. Ein Fehlerbericht ist ein alter Schnappschuss: Spannen gegen seinen jüngsten Eintrag messen, nie gegen jetzt.
 - Ein Unit-Test belegt nur den Pfad, den er abdeckt: 0.3.13 machte Shell-Befehle abbrechbar, doch die App-Schleife und das Fortschritts-Callback holten den Prüfbildschirm zurück – erst das S21 zeigte es (Basis-Prüfung lief nach „Abbrechen“ von 4 % auf 16 % weiter). Abbruch-Fixes immer auf einem Gerät mit Bildern im Halbsekundentakt belegen (2026-11-05).
 - `pkill`/`pgrep -f <muster>` trifft auch die eigene Shell, deren Kommandozeile das Muster enthält – zweimal passiert. Prozesse nur per gespeicherter PID beenden.
 - Installationsdaten lügen: Samsung stempelt vorinstallierte Apps mit 31.12.2008, Pixel installiert bei der Einrichtung vor dem Stellen der Uhr (01.01.2020) – auch Store-Apps behalten das. Zeitangaben nie ungeprüft als „reicht bis“ zeigen, gegen ein plausibles Mindestdatum (Auslieferungs-Android) prüfen (2026-11-05, S21 Ultra).
