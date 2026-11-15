@@ -365,7 +365,7 @@
     <string name="result_checked">Geprüft</string>
     <string name="result_checked_with">Geprüft mit</string>
     <string name="result_time_range">Geprüfter Zeitraum</string>
-    <string name="result_time_range_warning">Systemprotokolle reichen weniger als 48 Stunden zurück. Ältere Infektionen sind dort möglicherweise nicht sichtbar.</string>
+    <string name="result_time_range_warning">Systemprotokolle reichen weniger als 48 Stunden zurück. Ältere Infektionen oder eine frühere Verbindung mit einem Handy-Auslesegerät (z. B. Cellebrite) sind dort möglicherweise nicht sichtbar.</string>
     <string name="result_verdict_clean">Keine bekannten Spuren</string>
     <string name="result_context_areas">Geprüfte Bereiche</string>
     <string name="result_context_line">%1$s · %2$s</string>

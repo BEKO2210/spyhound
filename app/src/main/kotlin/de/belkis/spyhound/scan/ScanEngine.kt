@@ -255,7 +255,7 @@ class ScanEngine(
             }
         }
         val logs = ShellAnalyzer.logs(logSources, iocs.set, installed)
-        ForensicTraces.logcatCoverageGap(logs, oldestLog, System.currentTimeMillis())
+        // No extra gap here: the time-range warning on the result already covers short logs.
         out += logs
         oldestLog?.let { oldestEvidence[TimeRange.LOGS] = it }
         tracker.appendSector(RadarSector.DEEP, RadarMath.statusesFromCheck(logs))

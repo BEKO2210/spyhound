@@ -365,7 +365,7 @@
     <string name="result_checked">Checked</string>
     <string name="result_checked_with">Checked with</string>
     <string name="result_time_range">Checked time range</string>
-    <string name="result_time_range_warning">System logs cover less than 48 hours. Older infections may not appear there.</string>
+    <string name="result_time_range_warning">System logs cover less than 48 hours. Older infections or an earlier connection to a phone-forensics device (such as Cellebrite) may not appear there.</string>
     <string name="result_verdict_clean">No known traces</string>
     <string name="result_context_areas">Checked areas</string>
     <string name="result_context_line">%1$s · %2$s</string>

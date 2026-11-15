@@ -93,8 +93,8 @@ object ReportText {
         appendLine(if (locale.language == "en") "CHECKED TIME RANGE" else "GEPRÜFTER ZEITRAUM")
         range.sources.forEach { appendLine("- ${it.text}") }
         if (range.warning) appendLine(if (locale.language == "en")
-            "Warning: System logs cover less than 48 hours; older infections may not appear there."
-        else "Warnung: Systemprotokolle reichen weniger als 48 Stunden zurück; ältere Infektionen sind dort möglicherweise nicht sichtbar.")
+            "Warning: System logs cover less than 48 hours; older infections or an earlier connection to a phone-forensics device may not appear there."
+        else "Warnung: Systemprotokolle reichen weniger als 48 Stunden zurück; ältere Infektionen oder eine frühere Verbindung mit einem Handy-Auslesegerät sind dort möglicherweise nicht sichtbar.")
     }
 
     fun levelName(l: AccessLevel, texts: Texts = TextsDe) = if (texts === TextsEn) when (l) {
