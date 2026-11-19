@@ -118,6 +118,7 @@ private fun AccessLevel.shortLabelRes(): Int = when (this) {
 fun HistoryRoute(
     onBack: () -> Unit,
     onShareReport: (Report) -> Unit,
+    onShareSummary: ((Report) -> Unit)? = null,
     onRescan: () -> Unit,
     onGapFix: (GapFix) -> Unit,
     onBugreport: () -> Unit,
@@ -135,6 +136,7 @@ fun HistoryRoute(
             entry = selectedEntry,
             onBack = { selectedId = null },
             onShare = { onShareReport(selectedEntry.report) },
+            onShareSummary = onShareSummary?.let { f -> { f(selectedEntry.report) } },
             onRescan = onRescan,
             onGapFix = onGapFix,
             onBugreport = onBugreport,
@@ -179,6 +181,7 @@ fun HistoryResultScreen(
     onBugreport: () -> Unit,
     onHelp: () -> Unit,
     zoneId: ZoneId = ZoneId.systemDefault(),
+    onShareSummary: (() -> Unit)? = null,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val texts = if (locale.language == Locale.GERMAN.language) TextsDe else TextsEn
@@ -199,6 +202,7 @@ fun HistoryResultScreen(
         ResultScreen(
             report = localizedReport,
             onShare = onShare,
+            onShareSummary = onShareSummary,
             onRescan = onRescan,
             onGapFix = onGapFix,
             onBugreport = onBugreport,

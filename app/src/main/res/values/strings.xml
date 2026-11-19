@@ -585,4 +585,10 @@
     <string name="history_delete_confirm_title">Delete check?</string>
     <string name="history_delete_confirm_action">Delete</string>
     <string name="history_details_omitted">Personal details were omitted from the saved result.</string>
+    <string name="share_choice_title">What do you want to share?</string>
+    <string name="share_choice_full">Full report</string>
+    <string name="share_choice_full_body">The full report: findings with the matched app or address, hints, gaps and your device model. For a person you trust or a helpline.</string>
+    <string name="share_choice_summary">Short summary</string>
+    <string name="share_choice_summary_body">Only counts, the names of matched indicators and what was not checked. No apps, no device details. For another app that wants to warn you, e.g. before restoring keys. It is unsigned: no findings never means your phone is safe.</string>
+    <string name="share_summary_subject">Spyhound summary</string>
 </resources>

@@ -102,6 +102,8 @@ sources, DNS watch).
 - **Bug report analysis** – read an Android bug report ZIP offline, for checks that need system data you cannot grant
   otherwise.
 - **Share report** – a plain-text report you can hand to a helpline. You decide whether and with whom.
+- **Short summary** – a small JSON hand-off for another app, e.g. one that warns you before restoring keys: counts,
+  names of matched indicators and what was not checked, never your apps or device details. See [docs/HANDOFF.md](docs/HANDOFF.md).
 
 ## What Spyhound does not do
 
@@ -210,7 +212,8 @@ The debug APK is written to `app/build/outputs/apk/debug/`. Documentation (Germa
 
 Apache License 2.0, see [LICENSE](LICENSE). Spyhound reimplements the logic of the
 [Zero Breach Toolkit](https://github.com/interplains/Zero-Breach-Toolkit) in Kotlin. Indicator sources and libraries
-are credited in [NOTICE](NOTICE).
+are credited in [NOTICE](NOTICE). The short-summary format was proposed by Damadori
+([@IA-DAMA](https://github.com/IA-DAMA)) in [#3](https://github.com/BEKO2210/spyhound/issues/3).
 
 ## Support
 

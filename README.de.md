@@ -104,6 +104,9 @@ Dateien, Quellen, DNS-Wächter).
   Domain kontaktiert, die von Spyware bekannt ist.
 - **Fehlerbericht-Analyse** – liest einen Android-Fehlerbericht (ZIP) offline, für Prüfungen, die Systemdaten brauchen.
 - **Bericht teilen** – ein Textbericht für eine Beratungsstelle. Du entscheidest, ob und mit wem.
+- **Kurzfassung** – eine kleine JSON-Übergabe für eine andere App, etwa eine, die vor einer Schlüssel-Wiederherstellung
+  warnt: Anzahlen, Namen gefundener Indikatoren und was nicht geprüft wurde, nie deine Apps oder Gerätedaten. Siehe
+  [docs/HANDOFF.md](docs/HANDOFF.md).
 
 ## Was Spyhound nicht kann
 
@@ -217,7 +220,8 @@ Die Debug-APK liegt danach in `app/build/outputs/apk/debug/`. Dokumentation: [Sp
 
 Apache License 2.0, siehe [LICENSE](LICENSE). Spyhound setzt die Logik des
 [Zero Breach Toolkit](https://github.com/interplains/Zero-Breach-Toolkit) in Kotlin neu um. Indikatorquellen und
-Bibliotheken sind in [NOTICE](NOTICE) genannt.
+Bibliotheken sind in [NOTICE](NOTICE) genannt. Das Format der Kurzfassung hat Damadori
+([@IA-DAMA](https://github.com/IA-DAMA)) in [#3](https://github.com/BEKO2210/spyhound/issues/3) vorgeschlagen.
 
 ## Unterstützen
 

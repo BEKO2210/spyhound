@@ -66,6 +66,18 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       „nach Listen-Update“; OFL-Fonts stehen in NOTICE; F-Droid-YAML steht auf 0.3.13/18 (erledigt 1b09255, Pipeline grün); ein Beleg für ST7319719
       liegt intern vor.
 
+## Funde 2026-11-19 (Issues #3, #4)
+- [x] Kurzfassung zum Teilen (`spyhound-local-handoff`, Format von Damadori/@IA-DAMA in #3): „Bericht teilen“ fragt
+  „Ganzer Bericht“ oder „Kurzfassung“; JSON nur mit Anzahlen, Indikatorname + Quelle, Lücken als Codes, nie Apps,
+  Gerät, Pfade oder Trefferwerte. `ReportHandoff.kt`, `docs/HANDOFF.md`, Credit in README/HANDOFF. Beleg: 5 neue Tests
+  (u. a. „nichts Persönliches verlässt das Handy“), 402/402 grün, verifyRoborazzi grün; Pixel 9 (Release-Test-Build):
+  Dialog ohne Überlappung (erster Entwurf: „Abbrechen“ lag über „Kurzfassung“, behoben), Teilen-Menü zeigt das JSON.
+  Offen: Abnahme auf dem Pixel 11 Pro XL; „Was ist neu“ beim nächsten Release ergänzen.
+- [x] #4 (Bauen ohne Gradle wie ytsave): geprüft, nicht übernommen – ytsave ist Java/XML ohne Compose, AARs, R8,
+  Prüfsummen; Spyhound braucht Compose-Plugin, AAR-Merge, R8, Robolectric und hat reproduzierbare/F-Droid-Builds.
+  Übernommen: `distributionSha256Sum` im Wrapper (offizieller Wert services.gradle.org), Beleg: `./gradlew --version`
+  mit leerem Gradle-Home → „Gradle 9.6.1“.
+
 ## Funde 2026-11-15 (ZBT 3.0, Apache-2.0, Klon 2525377)
 - [x] `iocs/curated_targeted.txt` übernehmen (1.231 Zeilen: Hashes + 17 Paketnamen gezielter Spyware; Lookout, Volexity, Unit42, Talos, Amnesty). Abnahme: als gepinnte Quelle mit Lizenz/Herkunft je Publisher in NOTICE (Amnesty CC BY 2.0), SHA-1-Zeilen nur gegen ganze Datei, 0 Falschtreffer auf Positivliste. Erledigt: c97c43a, 921 Einträge, 383/383 Tests.
 - [x] Cornell-ISDi-Paketliste (MIT, stopipv/isdi): Stalkerware als Fund, Dual-Use nur als Hinweis. Abnahme: Test mit Beispielpaketen, keine Store-App mit Dual-Use als Fund. Erledigt: 161bd16, 628 App-IDs als Fund, Dual-Use als ein Hinweis je App (DUAL_USE_APP), 389/389 Tests.

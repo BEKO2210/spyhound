@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -105,7 +106,15 @@ fun ResultScreen(
     onHelp: () -> Unit,
     heroSymbolModifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
+    /** When set, "Share report" first asks: the full report, or the short summary for another app. */
+    onShareSummary: (() -> Unit)? = null,
 ) {
+    var shareChoice by remember { mutableStateOf(false) }
+    if (shareChoice && onShareSummary != null) ShareChoiceDialog(
+        onFull = { shareChoice = false; onShare() },
+        onSummary = { shareChoice = false; onShareSummary() },
+        onDismiss = { shareChoice = false },
+    )
     val readOnly = LocalHistoricalResult.current
     val tablet = LocalConfiguration.current.screenWidthDp >= 600
     val listState = rememberLazyListState()
@@ -150,10 +159,37 @@ fun ResultScreen(
             Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SpyButton(stringResource(R.string.t_052), onShare, Modifier.weight(1f))
+            SpyButton(stringResource(R.string.t_052), { if (onShareSummary != null) shareChoice = true else onShare() }, Modifier.weight(1f))
             SpyButton(stringResource(R.string.t_051), onRescan, Modifier.weight(1f), accent = true)
         }
     }
+}
+
+/** The full report names apps and senders; the summary holds only counts, indicator names and gaps. */
+@Composable
+private fun ShareChoiceDialog(onFull: () -> Unit, onSummary: () -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.share_choice_title)) },
+        text = {
+            // Each explanation sits directly above its own button, so the choice reads as two options.
+            Column(
+                Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Text(stringResource(R.string.share_choice_full_body))
+                SpyButton(stringResource(R.string.share_choice_full), onFull, accent = true)
+                Text(stringResource(R.string.share_choice_summary_body), Modifier.padding(top = 14.dp))
+                SpyButton(stringResource(R.string.share_choice_summary), onSummary)
+            }
+        },
+        confirmButton = { de.belkis.spyhound.ui.components.TextActionLink(stringResource(R.string.scan_cancel), onDismiss) },
+        containerColor = SpyColors.SurfaceRaised,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(de.belkis.spyhound.ui.design.SpyRadii.Card),
+        tonalElevation = 0.dp,
+        titleContentColor = SpyColors.Ivory,
+        textContentColor = SpyColors.Ivory,
+    )
 }
 
 internal val LocalHistoricalResult = androidx.compose.runtime.staticCompositionLocalOf { false }

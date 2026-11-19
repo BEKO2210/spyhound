@@ -585,4 +585,10 @@
     <string name="history_delete_confirm_title">Prüfung löschen?</string>
     <string name="history_delete_confirm_action">Löschen</string>
     <string name="history_details_omitted">Persönliche Details wurden im gespeicherten Ergebnis weggelassen.</string>
+    <string name="share_choice_title">Was möchtest du teilen?</string>
+    <string name="share_choice_full">Ganzer Bericht</string>
+    <string name="share_choice_full_body">Der ganze Bericht: Funde mit der passenden App oder Adresse, Hinweise, Lücken und dein Gerätemodell. Für eine Vertrauensperson oder eine Beratungsstelle.</string>
+    <string name="share_choice_summary">Kurzfassung</string>
+    <string name="share_choice_summary_body">Nur Anzahlen, die Namen gefundener Indikatoren und was nicht geprüft wurde. Keine Apps, keine Gerätedaten. Für eine andere App, die dich warnen möchte, etwa vor einer Schlüssel-Wiederherstellung. Sie ist nicht signiert: Keine Funde heißt nie, dass dein Handy sicher ist.</string>
+    <string name="share_summary_subject">Spyhound Kurzfassung</string>
 </resources>

@@ -248,6 +248,7 @@ class MainActivity : AppCompatActivity() {
                             HistoryRoute(
                                 onBack = { showHistory = false },
                                 onShareReport = { report -> shareReport(report) },
+                                onShareSummary = { report -> shareSummary(report) },
                                 onRescan = {
                                     showHistory = false
                                     vm.closeReport()
@@ -368,6 +369,7 @@ class MainActivity : AppCompatActivity() {
                         ResultScreen(
                             report = report.localized(currentTexts()),
                             onShare = { shareReport(report) },
+                            onShareSummary = { shareSummary(report) },
                             onRescan = {
                                 vm.closeReport()
                                 vm.startScan()
@@ -532,6 +534,21 @@ class MainActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.report_subject))
                 putExtra(Intent.EXTRA_TEXT, text)
             },
+        )
+    }
+
+    /** The short hand-off for another app: counts, indicator names and gaps, no apps or device details. */
+    private fun shareSummary(report: de.belkis.spyhound.scan.Report) {
+        val text = de.belkis.spyhound.scan.ReportHandoff.render(report, BuildConfig.VERSION_NAME)
+        startActivity(
+            Intent.createChooser(
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_summary_subject))
+                    putExtra(Intent.EXTRA_TEXT, text)
+                },
+                getString(R.string.share_choice_summary),
+            ),
         )
     }
 
