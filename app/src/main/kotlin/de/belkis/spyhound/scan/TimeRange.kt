@@ -69,7 +69,12 @@ object TimeRange {
                 else -> if (locale.language == "en") "App installations" else "App-Installationen"
             }
             val text = if (logs) {
-                if (locale.language == "en") "$name: last $hours hours only" else "$name: nur letzte $hours Stunden"
+                val en = locale.language == "en"
+                when (hours) {
+                    0L -> if (en) "$name: less than 1 hour" else "$name: weniger als 1 Stunde"
+                    1L -> if (en) "$name: last hour only" else "$name: nur letzte Stunde"
+                    else -> if (en) "$name: last $hours hours only" else "$name: nur letzte $hours Stunden"
+                }
             } else {
                 val prefix = if (locale.language == "en") "$name: reaches back to " else "$name: reicht bis "
                 prefix + date.format(Date(timestamp))

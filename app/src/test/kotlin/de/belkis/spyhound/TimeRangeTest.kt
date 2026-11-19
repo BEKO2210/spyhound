@@ -29,6 +29,14 @@ class TimeRangeTest {
         assertEquals("System logs: last 48 hours only", result.sources.single().text)
     }
 
+    @Test fun logsUnderOneHourNeverSayZeroHours() {
+        val de = TimeRange.evaluate(mapOf(TimeRange.LOGS to now - 20L * 60_000), now)
+        assertEquals("Systemprotokolle: weniger als 1 Stunde", de.sources.single().text)
+        assertTrue(de.warning)
+        val en = TimeRange.evaluate(mapOf(TimeRange.LOGS to now - 90L * 60_000), now, Locale.ENGLISH)
+        assertEquals("System logs: last hour only", en.sources.single().text)
+    }
+
     @Test fun parsesBriefLogcatTimestamp() {
         val timestamp = TimeRange.logcatTimestamp("11-02 09:15:10.123  123  456 I Tag: text", now)
         assertTrue(timestamp != null && timestamp < now)
