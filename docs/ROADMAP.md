@@ -39,9 +39,9 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-21)
-1. **Release 0.3.17** – Kurzfassung zum Teilen + Stunden-Fix; vorbereitet, Veröffentlichung nur nach Belkis' OK.
+1. **Release 0.3.17** – Kurzfassung zum Teilen, Absturz-Fix (Lücke „WLAN-Debugging aus“), Stunden-Fix, MalwareBazaar 10.095. Tag v0.3.17 lokal, APK reproduzierbar (472 Dateien gleich); offen: Abnahme des Absturz-Fixes auf dem S21, dann Veröffentlichung nur nach Belkis' OK.
 2. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
-3. **Virenschutz-Quellen** – MalwareBazaar-Wochen-Update ist seit 2026-11-20 fällig (letzter Abruf 2026-11-13, 9.949 Hashes); braucht `ABUSECH_AUTH_KEY` von Belkis. Positivliste wächst mit jedem Gerät.
+3. **Virenschutz-Quellen** – MalwareBazaar 10.095 Hashes (Abruf 2026-11-21); nächstes Wochen-Update ab 2026-11-28. Positivliste wächst mit jedem Gerät.
 4. **Rückmeldungen** – Issue #3: Damadori hält Format v1 für ausreichend (2026-11-20); Antwort/Schließen nach Belkis' OK.
 
 ## Audit 0.3.13 (2026-11-05) – offene Punkte mit Abnahmekriterium
@@ -80,8 +80,17 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 - [ ] S21: „Galaxy Buds2 Pro“ (`com.samsung.accessory.zenithmgr`, Installer `com.samsung.android.app.watchmanager`)
   und „Galaxy Wearable“ stehen unter den 9 Hinweisen. Abnahme: Hinweistext lesen; ist es „nicht aus einem Store“,
   Galaxy Wearable als Installer aufnehmen (Test wie `samsungSystemUpdatersAreNotSideloading`).
-- [ ] Neue Geräte für die Gerätebreite: TABWEE W90 (Android 16), Galaxy Tab A8 SM-X200 (Android 14). Abnahme: 0.3.17
-  installiert, Start + Basis-Scan ohne Absturz, Hinweise auf Falschmeldungen geprüft.
+- [~] Neue Geräte für die Gerätebreite: TABWEE W90 (Android 16), Galaxy Tab A8 SM-X200 (Android 14). Abnahme: 0.3.17
+  installiert, Start + Basis-Scan ohne Absturz, Hinweise auf Falschmeldungen geprüft. Tab A8 erledigt 2026-11-21 mit
+  der veröffentlichungsfertigen APK (23f01fee…): Neuinstallation, Einführung, Basis-Scan 0 Funde · 3 Hinweise · 4
+  Lücken, 1.334 geprüft, alle Lücken bis „Prüfumfang“ durchgescrollt, Crash-Log leer. Hinweise plausibel (Family Link
+  als Doppelnutzen-Hinweis, Patch 2025-08, WLAN-Debugging). W90 offen (war von einer anderen Sitzung belegt).
+- [ ] Bedienhilfen-Text der Lückenkarten endet doppelt: „… fehlt.. Aufklappen“ (Bedienbaum Tab A8). Abnahme: ein
+  Satzzeichen, Test auf den zusammengesetzten Text.
+- [x] MalwareBazaar-Wochen-Update: 10.095 Hashes (+146, 0 entfernt, 0 Positivlisten-Treffer), e57e8f2; Pin e230838,
+  gepinnte Datei online geladen, SHA-256 aca34316… gleich. Prüfumfang jetzt 10.228 Fingerabdrücke, 150 Familien.
+  Nächster Abruf frühestens 2026-11-28. Der Schlüssel liegt im Vault (`infra/dev`), Abruf mit
+  `vault run ABUSECH_AUTH_KEY=ABUSECH_AUTH_KEY -- python3 scripts/fetch-malwarebazaar.py`.
 
 ## Funde 2026-11-19 (Issues #3, #4)
 - [x] Kurzfassung zum Teilen (`spyhound-local-handoff`, Format von Damadori/@IA-DAMA in #3): „Bericht teilen“ fragt
@@ -463,6 +472,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Eine Zuordnungstabelle von Hand (Schlüssel → Ressource) braucht einen Test, der jeden erzeugbaren Schlüssel durch genau diese Tabelle schickt. Bis 0.3.16 stürzte das Ergebnis ab, sobald die Lücke „WLAN-Debugging aus“ erschien; der Test prüfte nur, dass die Texte in den XML-Dateien stehen. Gefunden erst auf einem zweiten Gerät (S21), nie auf dem Haupt-Testgerät: Gerätebreite findet, was Tests und ein einzelnes Gerät nicht zeigen (2026-11-21).
+- Während ein Build läuft, keine Dateien ändern, die Tests lesen: Der MalwareBazaar-Abruf mitten im Lauf ließ 4 Bildtests rot werden (2026-11-21).
 - Zeitlogik braucht Zeitstempel im Eingabeformat: Die Tiefenprüfung las logcat mit `-v brief`, darum blieben Logalter (`oldestLog`) und jede Zeitlücke seit dem ersten Commit stumm, obwohl die Tests (mit `threadtime`-Fehlerberichten) grün waren. Ein Fehlerbericht ist ein alter Schnappschuss: Spannen gegen seinen jüngsten Eintrag messen, nie gegen jetzt.
 - Ein Unit-Test belegt nur den Pfad, den er abdeckt: 0.3.13 machte Shell-Befehle abbrechbar, doch die App-Schleife und das Fortschritts-Callback holten den Prüfbildschirm zurück – erst das S21 zeigte es (Basis-Prüfung lief nach „Abbrechen“ von 4 % auf 16 % weiter). Abbruch-Fixes immer auf einem Gerät mit Bildern im Halbsekundentakt belegen (2026-11-05).
 - `pkill`/`pgrep -f <muster>` trifft auch die eigene Shell, deren Kommandozeile das Muster enthält – zweimal passiert. Prozesse nur per gespeicherter PID beenden.
