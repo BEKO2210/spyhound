@@ -39,7 +39,7 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
 ## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-21)
-1. **Release 0.3.17** – Kurzfassung zum Teilen, Absturz-Fix (Lücke „WLAN-Debugging aus“), Stunden-Fix, MalwareBazaar 10.095. Tag v0.3.17 lokal, APK reproduzierbar (472 Dateien gleich); offen: Abnahme des Absturz-Fixes auf dem S21, dann Veröffentlichung nur nach Belkis' OK.
+1. **Release 0.3.17** – Kurzfassung zum Teilen, Absturz-Fix (Lücke „WLAN-Debugging aus“), Stunden-Fix, MalwareBazaar 10.095. Tag v0.3.17 lokal, APK reproduzierbar (472 Dateien gleich); dazu Update-Prüfer und Galaxy-Wearable-Fix. Belkis' OK zur Veröffentlichung nach dem S21-Test liegt vor (2026-11-21).
 2. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
 3. **Virenschutz-Quellen** – MalwareBazaar 10.095 Hashes (Abruf 2026-11-21); nächstes Wochen-Update ab 2026-11-28. Positivliste wächst mit jedem Gerät.
 4. **Rückmeldungen** – Issue #3: Damadori hält Format v1 für ausreichend (2026-11-20); Antwort/Schließen nach Belkis' OK.
@@ -69,17 +69,29 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       liegt intern vor.
 
 ## Funde 2026-11-21 (Gerätetest S21 Ultra, 0.3.16 als Update über 0.3.13)
-- [~] **Absturz im Ergebnis**: `IllegalStateException: Unknown guidance key: guide_gap_builtin_adb_meaning`, sobald die
-  Lücke „Debugging über WLAN ist aus“ ins Bild scrollt (S21 Ultra, Android 15, 15:58; Crash-Log). Trifft jedes Gerät,
-  das einmal eingebaut gekoppelt war und dessen WLAN-Debugging aus ist (z. B. nach Neustart) – seit 8cc3f73. Ursache:
-  Die handgeschriebene Tabelle `guidanceStringId` kannte den Schlüssel nicht; GuidanceTest prüfte nur die XML-Dateien.
-  Fix: Schlüssel ergänzt, Test `everyKeyResolvesInTheResultScreen` geht alle Funde/Hinweise/Lücken durch die Tabelle.
-  Abnahme: Test grün; 0.3.17 auf dem S21: Ergebnis bis ans Ende scrollen, Lücke aufklappen, kein Absturz.
+- [x] **Absturz im Ergebnis**: `IllegalStateException: Unknown guidance key: guide_gap_builtin_adb_meaning`, sobald die
+  Lücke „Debugging über WLAN ist aus“ ins Bild scrollt (S21 Ultra, Android 15, 0.3.16, Crash-Log 15:58). Trifft jedes
+  Gerät, das einmal eingebaut gekoppelt war und dessen WLAN-Debugging aus ist (z. B. nach Neustart). Ursache: Die
+  handgeschriebene Tabelle `guidanceStringId` kannte den Schlüssel nicht; GuidanceTest prüfte nur die XML-Dateien.
+  Fix 757873c mit Test `everyKeyResolvesInTheResultScreen`. Abnahme S21 mit 0.3.17: Ergebnis bis ans Ende gescrollt,
+  Lücke sichtbar und aufgeklappt („Was bedeutet das?“, „Was kann ich tun?“, Knopf), Crash-Log leer.
 - [x] Zeitraum „App-Installationen“ auf dem S21 Ultra zeigt ein reales Datum: „reicht bis 19.08.2024“ (0.3.16,
   Bedienbaum 2026-11-21), nicht mehr 31.12.2008.
-- [ ] S21: „Galaxy Buds2 Pro“ (`com.samsung.accessory.zenithmgr`, Installer `com.samsung.android.app.watchmanager`)
-  und „Galaxy Wearable“ stehen unter den 9 Hinweisen. Abnahme: Hinweistext lesen; ist es „nicht aus einem Store“,
-  Galaxy Wearable als Installer aufnehmen (Test wie `samsungSystemUpdatersAreNotSideloading`).
+- [x] S21: „Galaxy Buds2 Pro“ und „Galaxy Wearable“ standen als „Nicht aus einem App-Store installiert (Installiert
+  von: com.samsung.android.app.watchmanager)“ unter den Hinweisen. Galaxy Wearable aktualisiert sich selbst und
+  installiert die Plugins. Jetzt in `AppAnalyzer.STORES`, Test `samsungSystemUpdatersAreNotSideloading` erweitert.
+  Abnahme auf dem S21 mit dem Release-Build: beide Hinweise weg.
+- [x] **Update-Prüfer für die App** (Wunsch Belkis 2026-11-21): Nach „Quellen aktualisieren“ liest die App bei
+  `api.github.com` nur die Versionsnummer des neuesten Releases (`AppRelease`, `IocStore.latestAppVersion()`); ist sie
+  höher, erscheint „Spyhound x ist da. Du hast y.“ mit Knopf „Download-Seite öffnen“ (Browser, nur auf Tipp). Kein
+  Laden oder Installieren durch die App, kein neues Recht, kein Netzwerk ohne diesen Tipp. LEGAL DE/EN, README DE/EN,
+  SPEC, WORKFLOW und der Datenschutztext in der App nennen es. Beleg: AppReleaseTest (4 Fälle: nur glatte
+  Final-Releases, Zahlenvergleich, Unlesbares meldet nie ein Update), Bild `start_app_update_*`, 412 Tests grün.
+  Offen: Der Hinweis lässt sich erst mit dem nächsten Release nach 0.3.17 am echten Gerät sehen; er gilt nur bis zum
+  App-Neustart. F-Droid (ab 2027-02): prüfen, ob der Hinweis dort auf F-Droid statt GitHub zeigen soll.
+- [ ] Nach einem App-Update mit neuem Pin heißt eine früher geladene Liste „beschädigt“ („1 Indikator-Quellen sind
+  beschädigt und wurden nicht benutzt (abuse.ch MalwareBazaar Android)“, S21 nach Update 0.3.16 → 0.3.17). Sie ist
+  nur veraltet. Abnahme: eigener Text „veraltet – Quellen aktualisieren“, richtige Einzahl, Test.
 - [~] Neue Geräte für die Gerätebreite: TABWEE W90 (Android 16), Galaxy Tab A8 SM-X200 (Android 14). Abnahme: 0.3.17
   installiert, Start + Basis-Scan ohne Absturz, Hinweise auf Falschmeldungen geprüft. Tab A8 erledigt 2026-11-21 mit
   der veröffentlichungsfertigen APK (23f01fee…): Neuinstallation, Einführung, Basis-Scan 0 Funde · 3 Hinweise · 4
