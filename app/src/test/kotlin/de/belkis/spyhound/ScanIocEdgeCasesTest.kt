@@ -58,6 +58,8 @@ class ScanIocEdgeCasesTest {
         val apps = listOf(
             AppRecord("com.sec.android.app.clockpackage", installer = "com.samsung.android.app.updatecenter", notificationAccess = true),
             AppRecord("com.samsung.accessory.zenithmgr", installer = "com.samsung.accessory.budsunitemgr", notificationAccess = true),
+            AppRecord("com.samsung.android.app.watchmanager", installer = "com.samsung.android.app.watchmanager", notificationAccess = true),
+            AppRecord("com.samsung.accessory.berrymgr", installer = "com.samsung.android.app.watchmanager", notificationAccess = true),
             AppRecord("sideloaded", installer = "com.sec.android.app.sbrowser", notificationAccess = true),
         )
         val leads = AppAnalyzer.analyze(apps, IocSet(emptyList()), "self").leads
