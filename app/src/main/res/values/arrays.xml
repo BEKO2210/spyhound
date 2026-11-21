@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
-        <item>New list of targeted spyware: 921 entries (Lookout, Volexity, Unit 42, Talos, Amnesty)</item>
-        <item>Cornell University stalkerware list: 628 apps; dual-use apps only as a hint</item>
-        <item>Deep check detects traces of phone-forensics devices (Cellebrite) in the system log</item>
-        <item>The time span covered by the system logs is now shown</item>
+        <item>“Share report” now offers a short summary for other apps: only counts, indicator names and gaps, nothing personal</item>
+        <item>After “Update sources”, Spyhound tells you when a newer version is out</item>
+        <item>Galaxy Wearable and its earbud plugins are no longer reported as installed outside a store</item>
+        <item>Fixed: the result could close the app when wireless debugging was off after pairing</item>
+        <item>Very short system logs now read “less than 1 hour” instead of “last 0 hours”</item>
     </string-array>
     <!-- Start screen banner. Order is fixed: offline, stays on device, count (%1$s indicators, %2$d sources),
          sources (%1$s names), short sources variant, open source. -->

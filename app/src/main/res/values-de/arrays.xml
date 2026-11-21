@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="info_whats_new_items">
-        <item>Neue Liste gezielter Spyware: 921 Einträge (Lookout, Volexity, Unit 42, Talos, Amnesty)</item>
-        <item>Stalkerware-Liste der Cornell University: 628 Apps; Apps mit Doppelnutzen nur als Hinweis</item>
-        <item>Tiefenprüfung erkennt Spuren von Handy-Auslesegeräten (Cellebrite) im Systemprotokoll</item>
-        <item>Der geprüfte Zeitraum der Systemprotokolle wird jetzt angezeigt</item>
+        <item>„Bericht teilen“ bietet jetzt eine Kurzfassung für andere Apps: nur Anzahlen, Indikatornamen und Lücken, nichts Persönliches</item>
+        <item>Nach „Quellen aktualisieren“ sagt Spyhound, wenn es eine neuere Version gibt</item>
+        <item>Galaxy Wearable und seine Kopfhörer-Plugins gelten nicht mehr als „nicht aus einem App-Store“</item>
+        <item>Behoben: Das Ergebnis konnte die App schließen, wenn das Debugging über WLAN nach dem Koppeln aus war</item>
+        <item>Sehr kurze Systemprotokolle heißen jetzt „weniger als 1 Stunde“ statt „letzte 0 Stunden“</item>
     </string-array>
     <string-array name="start_statements">
         <item>Offline-Analyse auf bekannte Spyware</item>
