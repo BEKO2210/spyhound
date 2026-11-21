@@ -38,9 +38,11 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Weitere Sprachen nach Bedarf der Nutzer (Rückmeldungen aus dem Feldtest).
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-13)
-1. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
-2. **Virenschutz-Quellen** – MalwareBazaar läuft (9.949 Hashes, 45 Quellen); nächstes Wochen-Update ab 2026-11-20 (nur Export, 7-Tage-Sperre); Positivliste wächst mit jedem Gerät.
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-21)
+1. **Release 0.3.17** – Kurzfassung zum Teilen + Stunden-Fix; vorbereitet, Veröffentlichung nur nach Belkis' OK.
+2. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
+3. **Virenschutz-Quellen** – MalwareBazaar-Wochen-Update ist seit 2026-11-20 fällig (letzter Abruf 2026-11-13, 9.949 Hashes); braucht `ABUSECH_AUTH_KEY` von Belkis. Positivliste wächst mit jedem Gerät.
+4. **Rückmeldungen** – Issue #3: Damadori hält Format v1 für ausreichend (2026-11-20); Antwort/Schließen nach Belkis' OK.
 
 ## Audit 0.3.13 (2026-11-05) – offene Punkte mit Abnahmekriterium
 Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f, API-29-Emulator: Dialog statt Absturz, Dateien werden gelesen), R3 (e824e2c, AdbKeyFormatTest), Lint aus R4, UI-Text aus R5. Status nach RULES: „bestätigt“ = Datei:Zeile plus reproduzierbarer Befehl/Test; Wirkung ohne Gerätemessung = **Verdacht**.
@@ -66,13 +68,33 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       „nach Listen-Update“; OFL-Fonts stehen in NOTICE; F-Droid-YAML steht auf 0.3.13/18 (erledigt 1b09255, Pipeline grün); ein Beleg für ST7319719
       liegt intern vor.
 
+## Funde 2026-11-21 (Gerätetest S21 Ultra, 0.3.16 als Update über 0.3.13)
+- [~] **Absturz im Ergebnis**: `IllegalStateException: Unknown guidance key: guide_gap_builtin_adb_meaning`, sobald die
+  Lücke „Debugging über WLAN ist aus“ ins Bild scrollt (S21 Ultra, Android 15, 15:58; Crash-Log). Trifft jedes Gerät,
+  das einmal eingebaut gekoppelt war und dessen WLAN-Debugging aus ist (z. B. nach Neustart) – seit 8cc3f73. Ursache:
+  Die handgeschriebene Tabelle `guidanceStringId` kannte den Schlüssel nicht; GuidanceTest prüfte nur die XML-Dateien.
+  Fix: Schlüssel ergänzt, Test `everyKeyResolvesInTheResultScreen` geht alle Funde/Hinweise/Lücken durch die Tabelle.
+  Abnahme: Test grün; 0.3.17 auf dem S21: Ergebnis bis ans Ende scrollen, Lücke aufklappen, kein Absturz.
+- [x] Zeitraum „App-Installationen“ auf dem S21 Ultra zeigt ein reales Datum: „reicht bis 19.08.2024“ (0.3.16,
+  Bedienbaum 2026-11-21), nicht mehr 31.12.2008.
+- [ ] S21: „Galaxy Buds2 Pro“ (`com.samsung.accessory.zenithmgr`, Installer `com.samsung.android.app.watchmanager`)
+  und „Galaxy Wearable“ stehen unter den 9 Hinweisen. Abnahme: Hinweistext lesen; ist es „nicht aus einem Store“,
+  Galaxy Wearable als Installer aufnehmen (Test wie `samsungSystemUpdatersAreNotSideloading`).
+- [ ] Neue Geräte für die Gerätebreite: TABWEE W90 (Android 16), Galaxy Tab A8 SM-X200 (Android 14). Abnahme: 0.3.17
+  installiert, Start + Basis-Scan ohne Absturz, Hinweise auf Falschmeldungen geprüft.
+
 ## Funde 2026-11-19 (Issues #3, #4)
 - [x] Kurzfassung zum Teilen (`spyhound-local-handoff`, Format von Damadori/@IA-DAMA in #3): „Bericht teilen“ fragt
   „Ganzer Bericht“ oder „Kurzfassung“; JSON nur mit Anzahlen, Indikatorname + Quelle, Lücken als Codes, nie Apps,
   Gerät, Pfade oder Trefferwerte. `ReportHandoff.kt`, `docs/HANDOFF.md`, Credit in README/HANDOFF. Beleg: 5 neue Tests
   (u. a. „nichts Persönliches verlässt das Handy“), 402/402 grün, verifyRoborazzi grün; Pixel 9 (Release-Test-Build):
   Dialog ohne Überlappung (erster Entwurf: „Abbrechen“ lag über „Kurzfassung“, behoben), Teilen-Menü zeigt das JSON.
-  Offen: Abnahme auf dem Pixel 11 Pro XL; „Was ist neu“ beim nächsten Release ergänzen.
+  Commit 332e977. Abnahme Pixel 11 Pro XL 2026-11-19: Teilen-Dialog sauber, Scan 0 Funde, 10 harmlose Hinweise.
+  „Was ist neu“ steht in 0.3.17. Rückmeldung Damadori 2026-11-20: Empfänger-Prototyp mit v1 geprüft (37 Bench-Checks,
+  7 synthetische Kurzfassungen), v1 bleibt unverändert; der echte Teilen-Weg Spyhound → Empfänger-App ist dort noch
+  ungeprüft.
+- [x] Ergebnis zeigte „nur letzte 0 Stunden“, wenn das Systemprotokoll nur Minuten zurückreicht (Pixel 11 Pro XL hat
+  einen 256-KiB-Logpuffer). Jetzt „weniger als 1 Stunde“. Beleg: 0ca80ea, TimeRangeTest (+1 Fall), Pixel 11 Pro XL.
 - [x] #4 (Bauen ohne Gradle wie ytsave): geprüft, nicht übernommen – ytsave ist Java/XML ohne Compose, AARs, R8,
   Prüfsummen; Spyhound braucht Compose-Plugin, AAR-Merge, R8, Robolectric und hat reproduzierbare/F-Droid-Builds.
   Übernommen: `distributionSha256Sum` im Wrapper (offizieller Wert services.gradle.org), Beleg: `./gradlew --version`
@@ -126,7 +148,7 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 - Belkis hat die Test-APK unterwegs getestet: „Go mit allem“.
 
 ## Zeitraum „App-Installationen“ (2026-11-05)
-- [~] S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen
+- [x] (Abnahme 2026-11-21: S21 zeigt 19.08.2024) S21 Ultra zeigte „reicht bis 31.12.2008“, Pixel „01.01.2020“ – Platzhalter. Fix f3fdeeb: Daten vor dem Erscheinen
       der Auslieferungs-Android-Version (`ro.product.first_api_level`, −6 Monate) fallen weg; Unit-Test mit beiden Daten
       grün. Abnahme offen: S21 zeigt ein reales Datum (Sperrbildschirm unterbrach den Gerätetest).
 
