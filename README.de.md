@@ -167,8 +167,10 @@ scripts/verify-reproducible.sh v<version> spyhound-<version>.apk   # meldet REPR
 - **Die Prüfung ist offline.** Sie nutzt nie das Netzwerk.
 - **Keine Telemetrie**, keine Tracker, keine Analyse, keine Werbung.
 - **Netzwerk nur für Indikator-Updates**, und nur wenn du *Quellen aktualisieren* tippst: feste Quellen, feste
-  Commits, jede Datei muss zu ihrer SHA-256-Prüfsumme passen, keine Weiterleitungen. Diese Verbindung zu
-  `raw.githubusercontent.com` (GitHub, USA) überträgt deine IP-Adresse.
+  Commits, jede Datei muss zu ihrer SHA-256-Prüfsumme passen, keine Weiterleitungen. Derselbe Tipp fragt
+  `api.github.com` nach der neuesten Spyhound-Versionsnummer und zeigt einen Hinweis, wenn deine älter ist; die App
+  lädt oder installiert kein Update selbst. Diese Verbindungen zu `raw.githubusercontent.com` und `api.github.com`
+  (GitHub, USA) übertragen deine IP-Adresse.
 - Ergebnisse bleiben auf deinem Gerät, bis du sie teilst.
 
 Impressum, Datenschutzerklärung und Haftungsausschluss: [docs/LEGAL.md](docs/LEGAL.md) (auch in der App unter

@@ -65,7 +65,7 @@ aktualisierter Listen auslöst (Indikatoren, Tracker- und Phishing-Domains), ver
 EWR auch GitHub B.V., Prins Bernhardplein 200, 1097 JB Amsterdam, Niederlande; ein Unternehmen der Microsoft-Gruppe). Es werden nur Dateien aus einer festgelegten
 Liste von Quell-Repositories, von festgelegten Commits geladen. Jede Datei muss ihrer SHA-256-Prüfsumme entsprechen,
 Weiterleitungen werden nicht verfolgt. Dabei wird auch die MalwareBazaar-Hashliste von abuse.ch geladen, und zwar aus
-dem Spyhound-Repository auf GitHub, nicht von abuse.ch selbst. Die App sendet dabei keine Daten über Dich oder Dein Gerät, Cookies werden nicht
+dem Spyhound-Repository auf GitHub, nicht von abuse.ch selbst. Ist `raw.githubusercontent.com` nicht erreichbar, lädt die App dieselben Dateien über `api.github.com` (gleicher Anbieter, gleiche Prüfung). Mit demselben Tipp fragt die App bei `api.github.com` außerdem, welche Spyhound-Version die neueste ist. Gelesen wird nur die Versionsnummer; ist sie höher als die installierte, zeigt die App einen Hinweis mit einem Knopf zur Download-Seite, die erst auf Deinen Tipp im Browser öffnet. Die App lädt oder installiert kein Update selbst. Die App sendet dabei keine Daten über Dich oder Dein Gerät, Cookies werden nicht
 gesetzt.
 
 Technisch bedingt erhält GitHub bei jeder Verbindung Deine IP-Adresse sowie Standard-HTTP-Angaben (zum Beispiel
@@ -241,7 +241,7 @@ updated lists (indicators, tracker and phishing domains) does the app connect ov
 (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA; for users in the EEA also GitHub B.V.,
 Prins Bernhardplein 200, 1097 JB Amsterdam, Netherlands; part of the Microsoft group). Only files from a fixed list of source repositories, at fixed commits,
 are loaded. Every file must match its SHA-256 checksum; redirects are not followed. This includes the MalwareBazaar hash list from abuse.ch, which is loaded from the
-Spyhound repository on GitHub, not from abuse.ch itself. The app sends no data about you or
+Spyhound repository on GitHub, not from abuse.ch itself. If `raw.githubusercontent.com` cannot be reached, the app loads the same files through `api.github.com` (same provider, same checks). With the same tap the app also asks `api.github.com` which Spyhound version is the newest. Only the version number is read; if it is higher than the installed one, the app shows a note with a button to the download page, which opens in the browser only when you tap it. The app never downloads or installs an update itself. The app sends no data about you or
 your device and sets no cookies.
 
 For technical reasons GitHub receives your IP address and standard HTTP information (for example time, requested

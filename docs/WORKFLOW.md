@@ -13,7 +13,8 @@ Verteilung als APK, kein Play Store. Logik nach dem Zero Breach Toolkit (Apache-
 
 ## Grundsätze (nicht verhandelbar)
 - **Offline.** Der Scan macht keinen Netzwerkzugriff. Netzwerk nur in `IocStore.update()`: nur Allow-List-Repos
-  (`FeedCatalog.ALLOWED_REPOS`), nur vom festgelegten Commit, SHA-256 muss passen, keine Redirects.
+  (`FeedCatalog.ALLOWED_REPOS`), nur vom festgelegten Commit, SHA-256 muss passen, keine Redirects. Direkt danach
+  fragt `IocStore.latestAppVersion()` nur die neueste Versionsnummer ab; die App lädt nie selbst ein Update.
 - **Ehrlich.** Nie „sauber“, sondern „keine bekannten Spuren im geprüften Bereich“. Jede nicht gelaufene Prüfung ist
   ein `Gap` mit `GapFix`. Ein Falschtreffer ist schlimmer als eine Lücke.
 - **Funde vs. Hinweise:** `Finding` = veröffentlichter Indikator passt; `Lead` = prüfenswert, nie Alarm.

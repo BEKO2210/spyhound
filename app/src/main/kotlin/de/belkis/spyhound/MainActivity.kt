@@ -415,6 +415,10 @@ class MainActivity : AppCompatActivity() {
                         onOpenInfo = onOpenInfo,
                         onOpenPermissionAudit = onOpenPermissionAudit,
                         onOpenHistory = onOpenHistory,
+                        onOpenDownloadPage = {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(de.belkis.spyhound.ioc.AppRelease.DOWNLOAD_PAGE)))
+                        },
+                        appVersion = BuildConfig.VERSION_NAME,
                         radarModifier = sharedRadar,
                     )
                 }

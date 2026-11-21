@@ -21,6 +21,8 @@ import de.belkis.spyhound.dns.DnsGuard
 import de.belkis.spyhound.dns.DnsHit
 import de.belkis.spyhound.dns.DnsFilterPrefs
 import de.belkis.spyhound.dns.DnsFilterSettings
+import de.belkis.spyhound.ioc.AppRelease
+import de.belkis.spyhound.BuildConfig
 import de.belkis.spyhound.ioc.IocStore
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.scan.AccessLevel
@@ -74,6 +76,8 @@ data class UiState(
     val filesGranted: Boolean = false,
     val updating: String? = null,
     val updateMessage: String? = null,
+    /** Version of a newer Spyhound release, known only after a source update the user started. */
+    val appUpdate: String? = null,
     val progress: Progress? = null,
     val report: Report? = null,
     val lastRadar: RadarProgress? = null,
@@ -240,9 +244,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(updating = s(R.string.vm_connecting), updateMessage = null) }
         val (ok, failed) = store.update { name -> _state.update { s -> s.copy(updating = name) } }
         val loaded = store.load()
+        val newer = store.latestAppVersion()?.takeIf { AppRelease.isNewer(it, BuildConfig.VERSION_NAME) }
         _state.update {
             it.copy(
-                iocs = loaded, updating = null,
+                iocs = loaded, updating = null, appUpdate = newer,
                 // Lead with the total so the message matches the "x of y sources" line above it.
                 updateMessage = if (failed.isEmpty()) s(R.string.vm_sources_loaded, loaded.status.available, ok) else s(R.string.vm_sources_failed, ok, failed.size, failed.first()),
             )

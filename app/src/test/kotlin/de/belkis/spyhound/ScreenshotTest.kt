@@ -148,6 +148,21 @@ class ScreenshotTest(private val language: String, private val device: Device) {
         }
     }
 
+    /** After a source update that found a newer release: the note sits under the update button. */
+    @Test
+    fun startAppUpdate() {
+        if (device != Device.PHONE) return
+        // Tall enough to show the whole page: the card sits in the middle and no scroll position has to be guessed.
+        shot("start_app_update", twoColumn = true, qualifiers = "w411dp-h2600dp-420dpi") {
+            StartScreen(
+                state = UiState(iocs = iocs(), appUpdate = "0.3.18"),
+                onScan = {}, onUpdateIndicators = {}, onRequestRoot = {}, onRequestSms = {}, onRequestFiles = {},
+                onDnsToggle = {}, onWeeklyBackgroundToggle = {}, onPickBugreport = {}, onDismissBanner = {},
+                onDeepCheckSetup = {}, onOpenInfo = {}, appVersion = "0.3.17",
+            )
+        }
+    }
+
     @Test
     fun startBottom() = shot("start_bottom", scrollToEnd = true, twoColumn = true) {
         StartScreen(

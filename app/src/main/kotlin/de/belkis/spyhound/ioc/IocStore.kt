@@ -134,12 +134,24 @@ class IocStore(private val context: Context) {
         return withMirror(s.pinnedUrl, s.mirrorUrl, ::fetch)
     }
 
-    private fun fetch(address: String): ByteArray {
+    /**
+     * Asks GitHub for the version of the newest Spyhound release. Called only right after [update], so it adds no
+     * new moment of network use. Any failure means "unknown"; nothing is downloaded or installed.
+     */
+    suspend fun latestAppVersion(): String? = withContext(Dispatchers.IO) {
+        runCatching {
+            AppRelease.latestVersion(String(request(AppRelease.LATEST_URL, "application/vnd.github+json", MAX_RELEASE_INFO)))
+        }.getOrNull()
+    }
+
+    private fun fetch(address: String): ByteArray = request(address, "application/vnd.github.raw", MAX_DOWNLOAD)
+
+    private fun request(address: String, apiAccept: String, limit: Int): ByteArray {
         val url = URL(address)
         require(url.protocol == "https" && url.host in DOWNLOAD_HOSTS) { "nicht erlaubte Quelle" }
         val conn = url.openConnection() as HttpURLConnection
         conn.instanceFollowRedirects = false // a redirect could leave the allow-list
-        if (url.host == "api.github.com") conn.setRequestProperty("Accept", "application/vnd.github.raw")
+        if (url.host == "api.github.com") conn.setRequestProperty("Accept", apiAccept)
         conn.connectTimeout = 20_000
         conn.readTimeout = 60_000
         try {
@@ -151,7 +163,7 @@ class IocStore(private val context: Context) {
                     val n = input.read(buf)
                     if (n < 0) break
                     out.write(buf, 0, n)
-                    if (out.size() > MAX_DOWNLOAD) throw IOException("Datei zu groß")
+                    if (out.size() > limit) throw IOException("Datei zu groß")
                 }
                 out.toByteArray()
             }
@@ -180,6 +192,7 @@ class IocStore(private val context: Context) {
         )
         const val KNOWN_GOOD = "knowngood-system.sha256"
         private const val MAX_DOWNLOAD = 64 shl 20
+        private const val MAX_RELEASE_INFO = 1 shl 20
         private val DOWNLOAD_HOSTS = setOf("raw.githubusercontent.com", "api.github.com")
 
         /**

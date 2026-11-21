@@ -161,8 +161,9 @@ scripts/verify-reproducible.sh v<version> spyhound-<version>.apk   # prints REPR
 - **The scan is offline.** It never uses the network.
 - **No telemetry**, no trackers, no analytics, no ads.
 - **Network only for indicator updates**, and only when you tap *Update sources*: fixed sources, fixed commits, every
-  file must match its SHA-256 checksum, no redirects. This connection to `raw.githubusercontent.com` (GitHub, USA)
-  transmits your IP address.
+  file must match its SHA-256 checksum, no redirects. The same tap asks `api.github.com` for the newest Spyhound
+  version number and shows a note if yours is older; the app never downloads or installs an update itself. These
+  connections to `raw.githubusercontent.com` and `api.github.com` (GitHub, USA) transmit your IP address.
 - Results stay on your device until you share them.
 
 Legal notice, privacy policy and disclaimer: [docs/LEGAL.md](docs/LEGAL.md) (German version authoritative; also in the

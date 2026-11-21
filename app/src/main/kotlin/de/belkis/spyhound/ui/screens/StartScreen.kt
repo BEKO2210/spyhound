@@ -136,6 +136,8 @@ fun StartScreen(
     onOpenInfo: () -> Unit,
     onOpenPermissionAudit: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
+    onOpenDownloadPage: () -> Unit = {},
+    appVersion: String = "",
     radarModifier: Modifier = Modifier,
 ) {
     var showBugreportSteps by remember { mutableStateOf(false) }
@@ -401,6 +403,23 @@ fun StartScreen(
                         isError = updateFeedback?.isError == true,
                         contentDescription = state.updateMessage,
                     )
+                    state.appUpdate?.let { version ->
+                        Text(
+                            stringResource(R.string.app_update_available, version, appVersion),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = SpyColors.Amber,
+                        )
+                        Text(
+                            stringResource(R.string.app_update_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = SpyColors.IvoryMuted,
+                        )
+                        SpyButton(
+                            text = stringResource(R.string.app_update_open),
+                            onClick = onOpenDownloadPage,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
             SpyCard(Modifier.then(staggeredAppear(staggerIndex++))) {

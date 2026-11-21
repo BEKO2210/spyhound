@@ -7,6 +7,8 @@ Kotlin-Nachbau der Logik von github.com/interplains/Zero-Breach-Toolkit (Apache-
 ## Grundsätze (nicht verhandelbar)
 1. **Offline.** Der Scan macht keinen Netzwerkzugriff. Netzwerk nur in `IocStore.update()`; Quellen nur aus der Allow-List
    (`FeedCatalog.ALLOWED_REPOS`), nur vom festgelegten Commit, SHA-256 muss passen, keine Redirects.
+   Direkt nach `update()` fragt `IocStore.latestAppVersion()` bei `api.github.com` nur die Versionsnummer des neuesten
+   Releases ab (`AppRelease`); die App lädt und installiert kein Update, der Hinweis führt per Tipp in den Browser.
    Zusätzlich nur lokale Sockets zu `127.0.0.1` für die eingebaute ADB-Verbindung (`AdbShell`); die INTERNET-Permission
    wird dafür gebraucht (Loopback-Sockets) und im Manifest begründet. Nie ein Ziel außerhalb des eigenen Geräts.
    Ausnahme, nur auf Anweisung: Der optionale DNS-Wächter reicht nicht blockierte DNS-Anfragen unverändert an den
