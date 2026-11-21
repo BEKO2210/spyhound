@@ -77,6 +77,17 @@ class GuidanceTest {
         }
     }
 
+    /**
+     * The result screen resolves every key through a hand-written table and stops the app on an unknown one.
+     * 0.3.16 crashed on a Galaxy S21 as soon as the "wireless debugging is off" gap scrolled into view.
+     */
+    @Test fun everyKeyResolvesInTheResultScreen() {
+        for (g in all()) {
+            de.belkis.spyhound.ui.screens.guidanceStringId(g.meaningKey)
+            de.belkis.spyhound.ui.screens.guidanceStringId(g.stepsKey)
+        }
+    }
+
     @Test fun gapFixesMapToTheirAction() {
         val expected = mapOf(
             GapFix.PERMISSION_SMS to GuidanceAction.PERMISSION_SMS,

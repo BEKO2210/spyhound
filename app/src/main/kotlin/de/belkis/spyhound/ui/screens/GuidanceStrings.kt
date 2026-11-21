@@ -63,6 +63,8 @@ internal fun guidanceStringId(key: String): Int = when (key) {
     "guide_gap_shizuku_steps" -> R.string.guide_gap_shizuku_steps
     "guide_gap_root_meaning" -> R.string.guide_gap_root_meaning
     "guide_gap_root_steps" -> R.string.guide_gap_root_steps
+    "guide_gap_builtin_adb_meaning" -> R.string.guide_gap_builtin_adb_meaning
+    "guide_gap_builtin_adb_steps" -> R.string.guide_gap_builtin_adb_steps
     "guide_gap_update_indicators_meaning" -> R.string.guide_gap_update_indicators_meaning
     "guide_gap_update_indicators_steps" -> R.string.guide_gap_update_indicators_steps
     "guide_gap_app_files_meaning" -> R.string.guide_gap_app_files_meaning
