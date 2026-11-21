@@ -38,9 +38,9 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Weitere Sprachen nach Bedarf der Nutzer (Rückmeldungen aus dem Feldtest).
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-21)
-1. **Release 0.3.17** – Kurzfassung zum Teilen, Absturz-Fix (Lücke „WLAN-Debugging aus“), Stunden-Fix, MalwareBazaar 10.095. Tag v0.3.17 lokal, APK reproduzierbar (472 Dateien gleich); dazu Update-Prüfer und Galaxy-Wearable-Fix. Belkis' OK zur Veröffentlichung nach dem S21-Test liegt vor (2026-11-21).
-2. **Weg zu 1.0** – TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-21 nach Release 0.3.17)
+1. **Weg zu 1.0** – Gerätebreite läuft (S21 Ultra, Tab A8 neu; TABWEE W90 offen), TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
+2. **Funde vom 21.11. abarbeiten** – „beschädigt“ statt „veraltet“ nach Pin-Wechsel, doppelter Punkt im Bedienhilfen-Text, Wearable-Abnahme auf dem S21, Update-Hinweis am echten Gerät mit dem nächsten Release ansehen.
 3. **Virenschutz-Quellen** – MalwareBazaar 10.095 Hashes (Abruf 2026-11-21); nächstes Wochen-Update ab 2026-11-28. Positivliste wächst mit jedem Gerät.
 4. **Rückmeldungen** – Issue #3: Damadori hält Format v1 für ausreichend (2026-11-20); Antwort/Schließen nach Belkis' OK.
 
@@ -80,7 +80,7 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 - [x] S21: „Galaxy Buds2 Pro“ und „Galaxy Wearable“ standen als „Nicht aus einem App-Store installiert (Installiert
   von: com.samsung.android.app.watchmanager)“ unter den Hinweisen. Galaxy Wearable aktualisiert sich selbst und
   installiert die Plugins. Jetzt in `AppAnalyzer.STORES`, Test `samsungSystemUpdatersAreNotSideloading` erweitert.
-  Abnahme auf dem S21 mit dem Release-Build: beide Hinweise weg.
+  Offen: auf dem S21 mit 0.3.17 nachsehen, dass beide Hinweise weg sind (Gerät war gesperrt).
 - [x] **Update-Prüfer für die App** (Wunsch Belkis 2026-11-21): Nach „Quellen aktualisieren“ liest die App bei
   `api.github.com` nur die Versionsnummer des neuesten Releases (`AppRelease`, `IocStore.latestAppVersion()`); ist sie
   höher, erscheint „Spyhound x ist da. Du hast y.“ mit Knopf „Download-Seite öffnen“ (Browser, nur auf Tipp). Kein
@@ -136,6 +136,15 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 ## Funde 2026-11-11
 - [x] Honor-Store fehlte in `AppAnalyzer.STORES` (`com.hihonor.appmarket`, `com.honor.appmarket`): Store-Apps mit Rechten galten auf Honor-Handys als „außerhalb eines Stores installiert“. Gefunden in interplains/Zero-Breach-Toolkit#43 (gleicher Fehler im Desktop-Toolkit). Beleg: `honorStoreIsNotSideloading`, ScanIocEdgeCasesTest 13/13. Geht mit 0.3.15 raus.
 - [x] Quellen-Update aus Festland-China (erledigt 2026-11-12: `IocStore.withMirror`, DownloadMirrorTest 4/4; live alle 48 gepinnten Dateien über api.github.com geladen, 48/48 SHA-256 gleich; Grenze: ohne Anmeldung 60 API-Abrufe/Stunde je IP, also ein volles Ersatz-Update pro Stunde; nicht aus China selbst getestet): raw.githubusercontent.com dort nicht erreichbar (ZBT#43). Abnahme: Ausweich-URL über `api.github.com/repos/{repo}/contents/{path}?ref={commit}` mit `Accept: application/vnd.github.raw`, gleiche SHA-256-Prüfung; Unit-Test mit Fake-Fehler auf raw.
+
+## Release 0.3.17 (2026-11-21) – Kurzfassung, Absturz-Fix, Update-Prüfer
+- [x] Kurzfassung beim Teilen (332e977), „weniger als 1 Stunde“ (0ca80ea), Absturz der Lücke „WLAN-Debugging aus“
+  (757873c), Update-Prüfer (ae12578), Galaxy Wearable als Installer (9c84c70), MalwareBazaar 10.095 (e57e8f2, e230838).
+- Beleg: 412 Tests, Lint und Bildvergleich grün; `check-pins.py` 0 veraltet; APK aus Tag b6074f7 gebaut, SHA-256
+  8ec1d300…, CI 44920554215 grün, Signatur 2ae3bd1b…, Rechte wie 0.3.16, `verify-reproducible.sh`: 472 Dateien gleich; Download per
+  `sha256sum -c` OK. Geräte: S21 Ultra (Absturz-Fix abgenommen), Tab A8 (Neuinstallation, Basis-Scan, „Alle 46
+  Quellen aktuell – 16 neu geladen und geprüft“, Crash-Log leer). Belkis: „ja danach releasen“.
+  github.com/BEKO2210/spyhound/releases/tag/v0.3.17
 
 ## Release 0.3.15 (2026-11-13) – Android 17: Kopplung + Absichern-Karte
 - [x] Kopplungs-Benachrichtigung auf Android 17 (b8e09b8): Pixel 11, Benachrichtigung ~1 s nach Öffnen des Dialogs.
@@ -485,6 +494,7 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
 - Eine Zuordnungstabelle von Hand (Schlüssel → Ressource) braucht einen Test, der jeden erzeugbaren Schlüssel durch genau diese Tabelle schickt. Bis 0.3.16 stürzte das Ergebnis ab, sobald die Lücke „WLAN-Debugging aus“ erschien; der Test prüfte nur, dass die Texte in den XML-Dateien stehen. Gefunden erst auf einem zweiten Gerät (S21), nie auf dem Haupt-Testgerät: Gerätebreite findet, was Tests und ein einzelnes Gerät nicht zeigen (2026-11-21).
+- Die MalwareBazaar-Liste allein zu pushen macht CI rot (Lauf 44917577706: Pin- und Zähltests, Umfangsbilder), weil der Pin erst im Folge-Commit steht und dafür der Daten-Commit schon online sein muss. Das ist die Reihenfolge aus `data/malwarebazaar/README.md`; den roten Zwischenlauf erwarten, den Lauf des Pin-Commits prüfen (2026-11-21).
 - Während ein Build läuft, keine Dateien ändern, die Tests lesen: Der MalwareBazaar-Abruf mitten im Lauf ließ 4 Bildtests rot werden (2026-11-21).
 - Zeitlogik braucht Zeitstempel im Eingabeformat: Die Tiefenprüfung las logcat mit `-v brief`, darum blieben Logalter (`oldestLog`) und jede Zeitlücke seit dem ersten Commit stumm, obwohl die Tests (mit `threadtime`-Fehlerberichten) grün waren. Ein Fehlerbericht ist ein alter Schnappschuss: Spannen gegen seinen jüngsten Eintrag messen, nie gegen jetzt.
 - Ein Unit-Test belegt nur den Pfad, den er abdeckt: 0.3.13 machte Shell-Befehle abbrechbar, doch die App-Schleife und das Fortschritts-Callback holten den Prüfbildschirm zurück – erst das S21 zeigte es (Basis-Prüfung lief nach „Abbrechen“ von 4 % auf 16 % weiter). Abbruch-Fixes immer auf einem Gerät mit Bildern im Halbsekundentakt belegen (2026-11-05).
