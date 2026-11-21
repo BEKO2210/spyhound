@@ -181,7 +181,7 @@ therefore leaves both out of the APK.
      Copyright (c) 2018-2025 Mitchell Krog, Nissar Chababy, Phishing.Database Contributors
 
 8. abuse.ch MalwareBazaar, Android hash subset (loaded on source update, not bundled)
-   Android subset of abuse.ch MalwareBazaar: only APK SHA-256, family and sample link (about 9,900
+   Android subset of abuse.ch MalwareBazaar: only APK SHA-256, family and sample link (about 10,100
    hashes). Kept in the Spyhound repository under data/malwarebazaar/ and pinned there by commit and
    SHA-256 like every other source. Not bundled in the APK: the phone downloads it only when the user
    taps "Update sources". Refreshed at most once a week from the authenticated official export.

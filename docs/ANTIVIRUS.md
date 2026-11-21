@@ -28,7 +28,7 @@ Bewertung: **mitliefern** (Datei im APK-Asset), **nur Download** (Gerät lädt g
 
 **Ehrliches Fazit:** Ohne Erlaubnis sind die großen Massen-Hashlisten (MalwareBazaar, VirusShare, Koodous) für eine
 quelloffene, kontolose, gepinnte App **nicht nutzbar**. Für MalwareBazaar liegt seit 2026-11-05 eine schriftliche
-Zustimmung vor (Abschnitt 6); damit kommen rund 9.900 Android-Hashes hinzu, geladen erst nach dem Listen-Update, nie in
+Zustimmung vor (Abschnitt 6); damit kommen rund 10.100 Android-Hashes hinzu, geladen erst nach dem Listen-Update, nie in
 der APK. VirusShare und Koodous bleiben ausgeschlossen. Auch so prüft Spyhound nur **bekannte** Builds, keinen
 Massenmarkt. Das muss in der UI und in der Werbung so stehen („kein Ersatz für Play Protect“, SPEC-Grundsatz 2).
 Größen/Anzahlen der Android-Hashes je ESET-Ordner sind noch zu zählen (Abnahme A1).

@@ -531,13 +531,13 @@
   "id": "malwarebazaar-android",
   "name": "abuse.ch MalwareBazaar Android",
   "repo": "BEKO2210/spyhound",
-  "commit": "addc230fbfc24358f3a41ff4e03e1516452ae534",
+  "commit": "e57e8f2f5d170b972ebfca73cdfbe085f8d3ad1a",
   "path": "data/malwarebazaar/android.tsv",
   "format": "malwarebazaar-tsv",
   "cite": "abuse.ch MalwareBazaar, in collaboration with Spamhaus Technology",
   "category": "malware",
   "family": "",
-  "sha256": "55e6a78e65ac4bb6203f3637c50de11a1ce60f093009379159a8d358ad7e97fa"
+  "sha256": "aca34316e0ea7b11e4065b728ef0f01825fbea471d4fe1550ec44ce24ac8f7bb"
  },
  {
   "id": "isdi-app-flags",
