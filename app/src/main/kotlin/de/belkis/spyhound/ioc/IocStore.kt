@@ -164,6 +164,8 @@ class IocStore(private val context: Context) {
         val conn = url.openConnection() as HttpURLConnection
         conn.instanceFollowRedirects = false // a redirect could leave the allow-list
         if (url.host == "api.github.com") conn.setRequestProperty("Accept", apiAccept)
+        // Android's default agent names the phone model and build; the server needs neither.
+        conn.setRequestProperty("User-Agent", USER_AGENT)
         conn.connectTimeout = 20_000
         conn.readTimeout = 60_000
         try {
@@ -237,6 +239,7 @@ class IocStore(private val context: Context) {
             return local ?: asset
         }
 
+        const val USER_AGENT = "Spyhound"
         val CURATED = listOf("adfection_iocs.txt", "curated_mercenary.txt", "curated_targeted.txt")
         private val CURATED_SHA256 = mapOf(
             "adfection_iocs.txt" to "42bff7164687f1faf6ab5691738e156f72684cadbf63e403150e02acc65ad518",
