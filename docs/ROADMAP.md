@@ -99,6 +99,36 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
 - [ ] Verlauf: mehrere Karten mit demselben Platzhalter-Titel, wenn Texte beim Speichern geleert wurden
   (`BackgroundReportStore.sanitize`, `HistoryScreen.kt:190-195`). Noch nicht selbst nachgesehen. Abnahme: zwei
   `READ_FAILED`-Lücken im Verlauf sind unterscheidbar.
+- [x] **Urteil bei „nur Hinweise“ sagte „Keine Spuren · N Hinweise“**, das „bekannten“ fehlte (Ehrlichkeitsregel).
+  82cb411: „Keine bekannten Spuren · N Hinweis(e)“ / „No known traces · N lead(s)“. Offen: am kleinen Handy ansehen,
+  ob die längere Zeile in den Kopf passt (kein Bildtest rendert diesen Zustand).
+- [x] **Abrufe nannten Gerätemodell und Build** (Android-Standardkennung, weil die App keine eigene setzte); LEGAL.md
+  2.3 sagt „keine Daten über Dein Gerät“. 4272541: fester Wert „Spyhound“ in `IocStore.request`. Offen: am Gerät
+  belegen, dass GitHub den Wert annimmt („Quellen aktualisieren“ auf dem S21), und mit einem Mitschnitt prüfen.
+- [x] Info-Bildschirm zeigte für die mitgelieferte ISDi-Liste „keine Lizenz zur Weitergabe“; sie steht unter MIT
+  (NOTICE). 60273dc, Test `noBundledSourceIsShownAsDeviceOnly` über den echten Katalog.
+- [ ] **Indikatoren werden ohne App-Update nie neuer** und die App zeigt kein Datum: „Quellen aktualisieren“ lädt nur
+  fehlende Listen, der Katalog steckt mit festen Pins in der APK (so gewollt, `IocStore.kt:117-133`). Wer die App
+  nicht aktualisiert, prüft dauerhaft mit altem Stand. Abnahme: Start und Bericht zeigen das Datum des
+  Indikator-Stands aus dem Release; ab 90 Tagen ein ruhiger Hinweis, ohne Netz und ohne Tipp; eine einmal erkannte
+  neuere Version bleibt über den Neustart gespeichert und ein Netzfehler löscht sie nicht.
+- [ ] **Karte „Tiefenprüfung einrichten“ öffnet immer die Shizuku-Einrichtung** (`ResultScreen.kt:579`), auch bei
+  Lücken mit `GapFix.ROOT`, `RESTART_BUILTIN_ADB` und bei `READ_FAILED` (`Guidance.kt:65-72`). Abnahme: der Knopf
+  löst die Abhilfe der eigenen Lücke aus, Test je `GapFix`.
+- [ ] **mDNS-Suche ohne Tipp ab Android 17**: `MainViewModel.refreshHardening` (Z. 210-212) ruft bei jedem Start und
+  jeder Rückkehr `AdbShell.discoverPort` auf, auch ohne Kopplung. Geht nur ins lokale WLAN, nicht ins Internet; ob
+  wirklich Pakete gesendet werden, ist nicht gemessen. Abnahme: am Android-17-Gerät mitschneiden; wenn gesendet wird,
+  Suche erst auf Tipp oder in LEGAL und Datenschutztext nennen.
+- [ ] **Installer-Name lässt sich fälschen** (`adb install -i` mit dem Namen eines Stores): der Hinweis „nicht aus
+  einem App-Store“ entfällt. Nicht am Gerät geprüft. Abnahme: Installer zählt nur, wenn das Paket installiert und eine
+  System-App ist; eine Installation über die Shell (`initiatingPackageName`) wird als eigener Hinweis gezeigt; Test
+  mit gefälschtem Installer.
+- [ ] READMEs DE/EN nennen den DNS-Wächter nicht bei den Netzverbindungen. Abnahme: ein Satz in beiden, gleich wie
+  LEGAL.md.
+- [ ] Langsamer Server lässt „Verbinde …“ bis zu 60 s je Datei stehen (Lese-Timeout). Abnahme: Gesamtgrenze oder
+  kürzerer Timeout, gemessen gegen einen gedrosselten Testserver.
+- [ ] Verdacht: `EmojiCompat` könnte beim Start Schriftdaten nachladen. Abnahme: Mitschnitt beim ersten Start auf
+  einem frischen Gerät; falls ja, abschalten.
 - Geprüft und in Ordnung (Nachbau der Ausdrücke außerhalb des Builds): `AppRelease` meldet kein Update bei
   Vorabversion, Entwurf, zwei Tags, fünfteiligen oder überlangen Nummern; kein Hänger bei 1 MiB Eingabe; die
   Umstellung `fetch` → `request` ändert die gepinnten Downloads nicht; Versionsabfrage läuft nur nach Tipp; die
