@@ -38,9 +38,9 @@ Saat für danach (wird zum Punkt mit Abnahme, sobald es dran ist):
 - Weitere Sprachen nach Bedarf der Nutzer (Rückmeldungen aus dem Feldtest).
 - Rückmeldungen aus Issues und Fehlerberichten werden Roadmap-Punkte, nicht Liste im Kopf.
 
-## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-21 nach Release 0.3.17)
+## Kompass (aktuelle Schwerpunkte, neu geordnet 2026-11-22 nach der Prüfrunde zu 0.3.17)
 1. **Weg zu 1.0** – Gerätebreite läuft (S21 Ultra, Tab A8 neu; TABWEE W90 offen), TalkBack-Durchgang, Feldtest mit 3 Personen; F-Droid erst ab 2027-02-01 wieder einreichen (3-Monats-Regel).
-2. **Funde vom 21.11. abarbeiten** – „beschädigt“ statt „veraltet“ nach Pin-Wechsel, doppelter Punkt im Bedienhilfen-Text, Wearable-Abnahme auf dem S21, Update-Hinweis am echten Gerät mit dem nächsten Release ansehen.
+2. **Funde vom 22.11. abarbeiten** – zuerst die zwei, die echte Nutzer treffen: deutscher Fehlertext im englischen UI und `startActivity` ohne Absicherung; dann der Test, der jede Ergebnis-Art rendert. Vom 21.11. bleiben Wearable-Abnahme auf dem S21 und der Update-Hinweis am echten Gerät.
 3. **Virenschutz-Quellen** – MalwareBazaar 10.095 Hashes (Abruf 2026-11-21); nächstes Wochen-Update ab 2026-11-28. Positivliste wächst mit jedem Gerät.
 4. **Rückmeldungen** – Issue #3: Damadori hält Format v1 für ausreichend (2026-11-20); Antwort/Schließen nach Belkis' OK.
 
@@ -68,6 +68,43 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
       „nach Listen-Update“; OFL-Fonts stehen in NOTICE; F-Droid-YAML steht auf 0.3.13/18 (erledigt 1b09255, Pipeline grün); ein Beleg für ST7319719
       liegt intern vor.
 
+## Funde 2026-11-22 (Prüfrunde nach 0.3.17, jeder Fund vor dem Eintrag am Code nachgesehen)
+- [x] Datenschutztext in der App nannte den Ersatzweg `api.github.com` für die Listen nicht und sagte bei der
+  Versionsabfrage „nichts wird geladen“, obwohl die Antwort gelesen wird; Datum stand noch auf 2026-11-05. 570f103:
+  Wortlaut von LEGAL.md 2.3 in `legal_privacy_body` DE/EN und beiden READMEs, Daten nachgezogen. 424 Tests und
+  Bildvergleich grün.
+- [ ] **Fehlertext bei „Quellen aktualisieren“ ist im englischen UI deutsch** (`IocStore.kt:124/127`: „Prüfsumme
+  stimmt nicht …“, dazu rohe Ausnahmetexte, bei `message == null` steht „null“). Trifft jeden, der offline oder
+  hinter einem Anmelde-WLAN tippt. Abnahme: Fehlergrund als Aufzählung, je Grund ein Text in `values` und `values-de`,
+  Test je Grund; kein deutscher Text im englischen UI.
+- [ ] **`startActivity` ohne Absicherung**: `MainActivity.kt:266, 380, 419` (Browser), `:535, :547` (Teilen),
+  `InfoScreen.kt:487`, dazu laut Prüfung `DeepCheckSetupIntents.kt:19`, `DnsGuard.kt:32`, Fehlerbericht-Auswahl
+  `MainActivity.kt:498` (diese drei noch nicht selbst nachgesehen). Absturz auf Geräten ohne Browser oder mit
+  abgeschalteter Dateiauswahl. Abnahme: jeder Aufruf fängt `ActivityNotFoundException` und zeigt einen ruhigen
+  Hinweis; Robolectric-Test ohne passende App wirft nicht.
+- [ ] **`TextsEnCoverageTest` prüft handkopierte Texte** (`mirroredEngineTexts`, Z. 216–237) statt der echten aus
+  `ScanEngine`; `BUILTIN_ADB_NO_KEYSTORE` fehlt in der Liste. Gleiche Fehlerklasse wie der Absturz vom 21.11.
+  Abnahme: Texte als Konstanten wie `BUILTIN_ADB_RESTART`, der Test liest die Konstanten.
+- [ ] **Ein Test, der den Ergebnisbildschirm mit jeder Art rendert** (jeder Fundtyp, jede `LeadKind`, jede `GapFix`,
+  jede `GapKind`, alle Karten aufgeklappt, DE und EN, auch Verlauf, `ReportText`, `ReportHandoff`). Die Demo-Daten
+  zeigen nur einen Fund, einen Hinweis und zwei Lücken. Abnahme: Test läuft in der Suite und schlägt fehl, sobald ein
+  Schlüssel oder Text fehlt.
+- [ ] `IocStore.CURATED_SHA256.getValue` (`IocStore.kt:225`) wirft außerhalb von `runCatching`, wenn `CURATED` und die
+  Prüfsummen-Tabelle auseinanderlaufen. Abnahme: Test `CURATED.toSet() == CURATED_SHA256.keys`.
+- [ ] Stille Rückfälle ohne vollständigen Test: `RadarProgress.sectorForCheck`, `MalwareCoverage.sourceName`,
+  `sourceGroupTitleRes` und Lizenz-Zuordnung in `InfoSourceLines.kt` (neues Repo bekäme „nur auf dem Gerät“).
+  Abnahme: je ein Test über alle echten Werte (Check-Namen, Quellen-IDs, `ALLOWED_REPOS`).
+- [ ] Einzahl fehlt noch bei „1 Indikator-Quellen sind noch nicht geladen“. Abnahme: „1 Indikator-Quelle ist …“ DE/EN
+  mit Test.
+- [ ] Verlauf: mehrere Karten mit demselben Platzhalter-Titel, wenn Texte beim Speichern geleert wurden
+  (`BackgroundReportStore.sanitize`, `HistoryScreen.kt:190-195`). Noch nicht selbst nachgesehen. Abnahme: zwei
+  `READ_FAILED`-Lücken im Verlauf sind unterscheidbar.
+- Geprüft und in Ordnung (Nachbau der Ausdrücke außerhalb des Builds): `AppRelease` meldet kein Update bei
+  Vorabversion, Entwurf, zwei Tags, fünfteiligen oder überlangen Nummern; kein Hänger bei 1 MiB Eingabe; die
+  Umstellung `fetch` → `request` ändert die gepinnten Downloads nicht; Versionsabfrage läuft nur nach Tipp; die
+  Hintergrundprüfung nutzt kein Netz. Galaxy Wearable als Installer: gleiches Restrisiko wie jeder andere Eintrag in
+  `STORES` (Installer-Name lässt sich per adb setzen), Apps mit Bedienungshilfe oder Geräteadmin bleiben Hinweise.
+
 ## Funde 2026-11-21 (Gerätetest S21 Ultra, 0.3.16 als Update über 0.3.13)
 - [x] **Absturz im Ergebnis**: `IllegalStateException: Unknown guidance key: guide_gap_builtin_adb_meaning`, sobald die
   Lücke „Debugging über WLAN ist aus“ ins Bild scrollt (S21 Ultra, Android 15, 0.3.16, Crash-Log 15:58). Trifft jedes
@@ -89,16 +126,22 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
   Final-Releases, Zahlenvergleich, Unlesbares meldet nie ein Update), Bild `start_app_update_*`, 412 Tests grün.
   Offen: Der Hinweis lässt sich erst mit dem nächsten Release nach 0.3.17 am echten Gerät sehen; er gilt nur bis zum
   App-Neustart. F-Droid (ab 2027-02): prüfen, ob der Hinweis dort auf F-Droid statt GitHub zeigen soll.
-- [ ] Nach einem App-Update mit neuem Pin heißt eine früher geladene Liste „beschädigt“ („1 Indikator-Quellen sind
+- [x] Nach einem App-Update mit neuem Pin heißt eine früher geladene Liste „beschädigt“ („1 Indikator-Quellen sind
   beschädigt und wurden nicht benutzt (abuse.ch MalwareBazaar Android)“, S21 nach Update 0.3.16 → 0.3.17). Sie ist
-  nur veraltet. Abnahme: eigener Text „veraltet – Quellen aktualisieren“, richtige Einzahl, Test.
+  nur veraltet. Abnahme: eigener Text „veraltet – Quellen aktualisieren“, richtige Einzahl, Test. Erledigt e1cfe9b:
+  `IocStatus.outdated` für nicht mitgelieferte Quellen, deren Datei den Pin verfehlt (wird weiter nie geladen);
+  „1 Indikator-Quelle ist veraltet …“ / „N … sind veraltet …“ DE und EN, Einzahl auch bei „beschädigt“; Knopf
+  „Quellen aktualisieren“ bleibt. Tests IocSourceStatusTest, IndicatorSourceGapTest. Offen: am S21 nach dem nächsten
+  Pin-Wechsel ansehen.
 - [~] Neue Geräte für die Gerätebreite: TABWEE W90 (Android 16), Galaxy Tab A8 SM-X200 (Android 14). Abnahme: 0.3.17
   installiert, Start + Basis-Scan ohne Absturz, Hinweise auf Falschmeldungen geprüft. Tab A8 erledigt 2026-11-21 mit
   der veröffentlichungsfertigen APK (23f01fee…): Neuinstallation, Einführung, Basis-Scan 0 Funde · 3 Hinweise · 4
   Lücken, 1.334 geprüft, alle Lücken bis „Prüfumfang“ durchgescrollt, Crash-Log leer. Hinweise plausibel (Family Link
   als Doppelnutzen-Hinweis, Patch 2025-08, WLAN-Debugging). W90 offen (war von einer anderen Sitzung belegt).
-- [ ] Bedienhilfen-Text der Lückenkarten endet doppelt: „… fehlt.. Aufklappen“ (Bedienbaum Tab A8). Abnahme: ein
-  Satzzeichen, Test auf den zusammengesetzten Text.
+- [x] Bedienhilfen-Text der Lückenkarten endet doppelt: „… fehlt.. Aufklappen“ (Bedienbaum Tab A8). Abnahme: ein
+  Satzzeichen, Test auf den zusammengesetzten Text. Erledigt 73beb79: `joinAccessibilitySentenceParts` setzt „. “ nur,
+  wenn der Teil davor kein Satzende hat; JoinAccessibilitySentencePartsTest (7 Fälle, beide echten Texte). Offen:
+  Bedienbaum am Gerät mit dem nächsten Build auslesen.
 - [x] MalwareBazaar-Wochen-Update: 10.095 Hashes (+146, 0 entfernt, 0 Positivlisten-Treffer), e57e8f2; Pin e230838,
   gepinnte Datei online geladen, SHA-256 aca34316… gleich. Prüfumfang jetzt 10.228 Fingerabdrücke, 150 Familien.
   Nächster Abruf frühestens 2026-11-28. Der Schlüssel liegt im Vault (`infra/dev`), Abruf mit
