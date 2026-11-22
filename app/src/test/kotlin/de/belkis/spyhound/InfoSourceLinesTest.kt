@@ -24,6 +24,16 @@ class InfoSourceLinesTest {
     }
 
     @Test
+    fun noBundledSourceIsShownAsDeviceOnly() {
+        // "Loaded on the phone only" means there is no licence to ship the file; a bundled list must never say that.
+        val json = java.io.File("src/main/assets/iocs/sources.json").readText()
+        val wrong = infoSourceGroups(FeedCatalog.parse(json))
+            .filter { it.bundled && it.license == SourceLicenseKind.DEVICE_ONLY }
+            .map { it.repo }
+        assertEquals(emptyList(), wrong)
+    }
+
+    @Test
     fun malwareBazaarGroupWhenSourceEnabled() {
         val commit = "a".repeat(40)
         val sha = "b".repeat(64)
