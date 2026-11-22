@@ -238,7 +238,7 @@ fun StartScreen(
             }
             val sources = state.iocs?.status?.available ?: 0
             // The catalogue grows (29 spyware feeds, then the malware lists); count it instead of hard-coding.
-            val sourcesTotal = state.iocs?.status?.let { it.available + it.missing.size + it.corrupt.size } ?: 0
+            val sourcesTotal = state.iocs?.status?.let { it.available + it.unavailable } ?: 0
             val depthLevel = when (state.access) {
                 AccessLevel.APP -> 1
                 AccessLevel.SHELL -> 2
@@ -385,8 +385,7 @@ fun StartScreen(
                             color = SpyColors.IvoryMuted,
                         )
                     }
-                    val allSourcesReady = loaded.status.missing.isEmpty() &&
-                        loaded.status.corrupt.isEmpty() &&
+                    val allSourcesReady = loaded.status.unavailable == 0 &&
                         loaded.status.available >= loaded.status.sources
                     SpyButton(
                         text = when {

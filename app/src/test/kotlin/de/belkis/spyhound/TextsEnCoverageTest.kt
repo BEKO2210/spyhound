@@ -230,6 +230,9 @@ class TextsEnCoverageTest {
         "Laufende Prozesse, Systemprotokolle (logcat, dumpsys), gelöschte Apps und Dateien außerhalb des " +
             "gemeinsamen Speichers wurden nicht geprüft. Dafür braucht es Shizuku (ohne Root) oder Root.",
         "3 Indikator-Quellen sind noch nicht geladen (mvt, echap, toolkit).",
+        "1 Indikator-Quelle ist veraltet und wurde nicht benutzt (mvt).",
+        "2 Indikator-Quellen sind veraltet und wurden nicht benutzt (mvt, echap).",
+        "1 Indikator-Quelle ist beschädigt und wurde nicht benutzt (mvt).",
         "2 Indikator-Quellen sind beschädigt und wurden nicht benutzt (mvt, echap).",
         "Dateien im Speicher (Downloads, Messenger-Anhänge) wurden nicht geprüft: Die Berechtigung „Zugriff auf alle Dateien“ fehlt.",
         "5 Datei(en) über 120 MB wurden nicht mit den Fingerabdrücken verglichen.",

@@ -75,6 +75,19 @@ class ReportHandoffTest {
     }
 
     @Test
+    fun `outdated sources use the stable update code`() {
+        val indicators = CheckResult("Indikatoren").apply {
+            gap("1 Indikator-Quelle ist veraltet und wurde nicht benutzt (Quelle).", GapFix.UPDATE_INDICATORS)
+        }
+        val report = Report(0, 0, AccessLevel.APP, 0, 0, 1, listOf(indicators), "d")
+
+        val gaps = Json.parseToJsonElement(ReportHandoff.render(report, "x"))
+            .jsonObject["gaps"]!!.jsonArray.map { it.jsonPrimitive.content }
+
+        assertEquals(listOf("indicators.needs_update_indicators"), gaps)
+    }
+
+    @Test
     fun `no matched value, app, path, lead text or device leaves the phone`() {
         val text = ReportHandoff.render(report(), "x")
         for (secret in listOf(pkg, "ab:cd", "com.example.spy", "com.example.notes", "secret-folder",

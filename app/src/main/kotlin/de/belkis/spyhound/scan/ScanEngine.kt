@@ -7,6 +7,7 @@ import de.belkis.spyhound.collect.DebugSwitches
 import de.belkis.spyhound.collect.DeviceCollector
 import de.belkis.spyhound.collect.SmsCollector
 import de.belkis.spyhound.collect.StorageCollector
+import de.belkis.spyhound.ioc.IocStatus
 import de.belkis.spyhound.ioc.LoadedIocs
 import de.belkis.spyhound.shell.ProbeOutcome
 import de.belkis.spyhound.shell.CancellableShell
@@ -126,12 +127,7 @@ class ScanEngine(
             emit("Tiefenprüfung", "Nur mit Shizuku oder Root", 0.88f, RadarSector.DEEP)
         }
         val gapsForIocs = CheckResult("Indikatoren")
-        iocs.status.missing.takeIf { it.isNotEmpty() }?.let { m ->
-            gapsForIocs.gap("${m.size} Indikator-Quellen sind noch nicht geladen (${m.joinToString { it.name }}).", GapFix.UPDATE_INDICATORS)
-        }
-        iocs.status.corrupt.takeIf { it.isNotEmpty() }?.let { c ->
-            gapsForIocs.gap("${c.size} Indikator-Quellen sind beschädigt und wurden nicht benutzt (${c.joinToString { it.name }}).", GapFix.UPDATE_INDICATORS)
-        }
+        indicatorSourceGaps(iocs.status).forEach { gap -> gapsForIocs.gap(gap.detail, gap.fix, gap.kind) }
         if (gapsForIocs.gaps.isNotEmpty()) checks += gapsForIocs
 
         emit("Fertig", "", 1f, RadarSector.DEEP)
@@ -141,7 +137,7 @@ class ScanEngine(
             access = level,
             indicatorCount = set.size,
             indicatorSources = iocs.status.available,
-            indicatorSourcesMissing = iocs.status.missing.size + iocs.status.corrupt.size,
+            indicatorSourcesMissing = iocs.status.unavailable,
             checks = checks,
             device = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE} (Patch ${Build.VERSION.SECURITY_PATCH})",
             oldestEvidence = oldestEvidence,
@@ -270,6 +266,32 @@ class ScanEngine(
     }
 
     companion object {
+        internal fun indicatorSourceGaps(status: IocStatus): List<Gap> =
+            CheckResult("Indikatoren").apply {
+                status.missing.takeIf { it.isNotEmpty() }?.let { sources ->
+                    gap(
+                        "${sources.size} Indikator-Quellen sind noch nicht geladen (${sources.joinToString { it.name }}).",
+                        GapFix.UPDATE_INDICATORS,
+                    )
+                }
+                status.outdated.takeIf { it.isNotEmpty() }?.let { sources ->
+                    val detail = if (sources.size == 1) {
+                        "1 Indikator-Quelle ist veraltet und wurde nicht benutzt (${sources.single().name})."
+                    } else {
+                        "${sources.size} Indikator-Quellen sind veraltet und wurden nicht benutzt (${sources.joinToString { it.name }})."
+                    }
+                    gap(detail, GapFix.UPDATE_INDICATORS)
+                }
+                status.corrupt.takeIf { it.isNotEmpty() }?.let { sources ->
+                    val detail = if (sources.size == 1) {
+                        "1 Indikator-Quelle ist beschädigt und wurde nicht benutzt (${sources.single().name})."
+                    } else {
+                        "${sources.size} Indikator-Quellen sind beschädigt und wurden nicht benutzt (${sources.joinToString { it.name }})."
+                    }
+                    gap(detail, GapFix.UPDATE_INDICATORS)
+                }
+            }.gaps
+
         const val BUILTIN_ADB_RESTART = "Die Tiefenprüfung lief nicht: Das Debugging über WLAN ist aus (z. B. nach einem Neustart des Telefons). " +
             "Tiefe Prüfung wieder starten: „Debugging über WLAN“ einschalten und noch einmal prüfen."
         const val BUILTIN_ADB_NO_KEYSTORE = "Die eingebaute Tiefenprüfung ist auf diesem Telefon nicht verfügbar: Der Android-Schlüsselspeicher kann den Verbindungsschlüssel nicht schützen, ungeschützt speichert Spyhound ihn nicht. " +

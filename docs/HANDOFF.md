@@ -30,7 +30,7 @@ A small JSON summary of one check that a person can share with another app throu
 | `checked_at_utc` | Start of the check, from the phone's own clock (not trusted time) |
 | `counts` | Findings, leads and gaps, counted separately and before de-duplication |
 | `findings` | One entry per published label: the family name the source gives, and the source id from `sources.json`. Two matches of the same app (package name and certificate) are one entry |
-| `gaps` | Stable codes `<check>.<reason>`: `needs_…` names what would close the gap (`needs_shizuku`, `needs_root`, `needs_permission_files` …), otherwise the kind of gap (`large_files`, `read_failed` …) |
+| `gaps` | Stable codes `<check>.<reason>`: `needs_…` names what would close the gap (`needs_shizuku`, `needs_root`, `needs_permission_files` …). Missing, outdated or damaged indicator sources use `indicators.needs_update_indicators`. Without a fix, the reason names the gap kind (`large_files`, `read_failed` …) |
 
 ## What it never contains
 

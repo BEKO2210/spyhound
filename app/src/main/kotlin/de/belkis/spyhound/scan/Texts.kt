@@ -182,6 +182,12 @@ object TextsEn : Texts {
             m.value.replace("Der Bootloader ist entsperrt", "Bootloader is unlocked") },
         Regex("^(\\d+) Indikator-Quellen sind noch nicht geladen \\((.*)\\)\\.$") to { m: MatchResult ->
             "${m.groupValues[1]} indicator sources are not loaded (${m.groupValues[2]})." },
+        Regex("^1 Indikator-Quelle ist veraltet und wurde nicht benutzt \\((.*)\\)\\.$") to { m: MatchResult ->
+            "1 indicator source is outdated and was not used (${m.groupValues[1]})." },
+        Regex("^(\\d+) Indikator-Quellen sind veraltet und wurden nicht benutzt \\((.*)\\)\\.$") to { m: MatchResult ->
+            "${m.groupValues[1]} indicator sources are outdated and were not used (${m.groupValues[2]})." },
+        Regex("^1 Indikator-Quelle ist beschädigt und wurde nicht benutzt \\((.*)\\)\\.$") to { m: MatchResult ->
+            "1 indicator source is damaged and was not used (${m.groupValues[1]})." },
         Regex("^(\\d+) Indikator-Quellen sind beschädigt und wurden nicht benutzt \\((.*)\\)\\.$") to { m: MatchResult ->
             "${m.groupValues[1]} indicator sources are damaged and were not used (${m.groupValues[2]})." },
         Regex("^(\\d+) App-Datei\\(en\\) konnten nicht gelesen und daher nicht mit den Fingerabdrücken verglichen werden\\.$") to { m: MatchResult ->

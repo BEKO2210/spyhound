@@ -19,8 +19,21 @@ data class IocStatus(
     val available: Int,
     val missing: List<FeedSource>,
     val corrupt: List<FeedSource>,
+    val outdated: List<FeedSource> = emptyList(),
     /** The catalog feeds that were read and verified, so the start screen only names sources that are really in use. */
     val active: List<FeedSource> = emptyList(),
+) {
+    /** Sources excluded from scans, including downloaded copies that need reloading. */
+    val unavailable: Int get() = missing.size + corrupt.size + outdated.size
+}
+
+internal data class CatalogSources(
+    val indicators: List<Indicator>,
+    val dualUse: Set<String>,
+    val missing: List<FeedSource>,
+    val corrupt: List<FeedSource>,
+    val outdated: List<FeedSource>,
+    val active: List<FeedSource>,
 )
 
 class LoadedIocs(val set: IocSet, val status: IocStatus)
@@ -63,30 +76,29 @@ class IocStore(private val context: Context) {
         KnownGood.useSystemList(context.assets.open("iocs/$KNOWN_GOOD").bufferedReader().use { it.readText() })
         val all = ArrayList<Indicator>()
         val dualUse = HashSet<String>()
-        val missing = ArrayList<FeedSource>()
         val corrupt = ArrayList<FeedSource>()
         // Curated files first, so their more precise attribution wins on duplicates.
         appendCuratedIndicators(all, corrupt) { name ->
             context.assets.open("iocs/$name").use { it.readBytes() }
         }
-        for (s in sources) {
-            val bytes = readSource(s)
-            if (bytes == null) { missing += s; continue }
-            if (sha256(bytes) != s.sha256) { corrupt += s; continue }
-            runCatching {
-                val text = bytes.toString(Charsets.UTF_8)
-                Parsers.parse(s.format, text, SourceContext(s.id, s.category, s.family, s.androidArtifacts)) to
-                    if (s.format == "isdi-csv") Parsers.isdiDualUse(text) else emptySet()
-            }.onSuccess { (indicators, hints) ->
-                // A source that lists a known-harmless fingerprint is treated as unreliable and left out entirely.
-                if (KnownGood.conflicts(indicators).isEmpty()) { all += indicators; dualUse += hints } else corrupt += s
-            }.onFailure { corrupt += s }
-        }
+        val catalog = loadCatalogSources(sources, ::readSource)
+        all += catalog.indicators
+        dualUse += catalog.dualUse
+        corrupt += catalog.corrupt
         IocStore.appendDebugTestIndicators(all, dir, BuildConfig.DEBUG)
         // The curated lists belong to the toolkit, not to the catalog count shown as "46/46"; a broken one is still
         // listed in [corrupt] so the start screen reports it.
-        val catalogBroken = corrupt.count { it in sources }
-        LoadedIocs(IocSet(all, dualUse), IocStatus(sources.size, sources.size - missing.size - catalogBroken, missing, corrupt, sources.filter { it !in missing && it !in corrupt }))
+        LoadedIocs(
+            IocSet(all, dualUse),
+            IocStatus(
+                sources = sources.size,
+                available = catalog.active.size,
+                missing = catalog.missing,
+                corrupt = corrupt,
+                outdated = catalog.outdated,
+                active = catalog.active,
+            ),
+        )
     }
 
     fun domainCatalog(): List<FeedSource> =
@@ -173,6 +185,47 @@ class IocStore(private val context: Context) {
     }
 
     companion object {
+        internal fun loadCatalogSources(
+            sources: List<FeedSource>,
+            readSource: (FeedSource) -> ByteArray?,
+        ): CatalogSources {
+            val indicators = ArrayList<Indicator>()
+            val dualUse = HashSet<String>()
+            val missing = ArrayList<FeedSource>()
+            val corrupt = ArrayList<FeedSource>()
+            val outdated = ArrayList<FeedSource>()
+            val active = ArrayList<FeedSource>()
+            for (source in sources) {
+                val bytes = readSource(source)
+                if (bytes == null) {
+                    missing += source
+                    continue
+                }
+                if (sha256(bytes) != source.sha256) {
+                    if (source.bundled) corrupt += source else outdated += source
+                    continue
+                }
+                runCatching {
+                    val text = bytes.toString(Charsets.UTF_8)
+                    Parsers.parse(
+                        source.format,
+                        text,
+                        SourceContext(source.id, source.category, source.family, source.androidArtifacts),
+                    ) to if (source.format == "isdi-csv") Parsers.isdiDualUse(text) else emptySet()
+                }.onSuccess { (parsed, hints) ->
+                    // A source that lists a known-harmless fingerprint is treated as unreliable and left out entirely.
+                    if (KnownGood.conflicts(parsed).isEmpty()) {
+                        indicators += parsed
+                        dualUse += hints
+                        active += source
+                    } else {
+                        corrupt += source
+                    }
+                }.onFailure { corrupt += source }
+            }
+            return CatalogSources(indicators, dualUse, missing, corrupt, outdated, active)
+        }
+
         /**
          * Prefers a copy that matches the pin: a damaged local file must not shadow a good bundled one.
          * If nothing matches, the first available copy is returned so the caller reports it as altered, not missing.

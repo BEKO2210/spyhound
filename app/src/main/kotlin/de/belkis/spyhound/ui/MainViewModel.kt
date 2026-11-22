@@ -466,7 +466,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             access = _state.value.access,
             indicatorCount = iocs.set.size,
             indicatorSources = iocs.status.available,
-            indicatorSourcesMissing = iocs.status.missing.size + iocs.status.corrupt.size,
+            indicatorSourcesMissing = iocs.status.unavailable,
             checks = checks,
             device = "${Build.MANUFACTURER} ${Build.MODEL}, Android ${Build.VERSION.RELEASE} " +
                 "(Patch ${Build.VERSION.SECURITY_PATCH})",
