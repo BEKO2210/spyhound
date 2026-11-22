@@ -93,6 +93,7 @@ import de.belkis.spyhound.ui.design.SpySpacing
 import de.belkis.spyhound.ui.design.SpyTypeScale
 import de.belkis.spyhound.ui.design.countUp
 import de.belkis.spyhound.ui.formatCount
+import de.belkis.spyhound.ui.joinAccessibilitySentenceParts
 import de.belkis.spyhound.ui.design.rememberReducedMotion
 import de.belkis.spyhound.ui.design.staggeredAppear
 
@@ -484,7 +485,9 @@ private fun GuidanceCard(entry: ResultEntry.Card, onGapFix: (GapFix) -> Unit, on
                 Modifier.fillMaxWidth().defaultMinSize(minHeight = 64.dp)
                     .clickable(role = Role.Button) { open = !open }
                     .semantics {
-                        contentDescription = "${entry.area}. ${entry.headline}. $stateLabel"
+                        contentDescription = joinAccessibilitySentenceParts(
+                            listOf(entry.area, entry.headline, stateLabel),
+                        )
                         stateDescription = stateLabel
                     }
                     .padding(16.dp),
