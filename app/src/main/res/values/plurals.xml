@@ -17,8 +17,8 @@
         <item quantity="other">%d findings · please review</item>
     </plurals>
     <plurals name="result_verdict_leads">
-        <item quantity="one">No traces · %d lead</item>
-        <item quantity="other">No traces · %d leads</item>
+        <item quantity="one">No known traces · %d lead</item>
+        <item quantity="other">No known traces · %d leads</item>
     </plurals>
     <plurals name="info_sources_summary">
         <item quantity="one">%d source</item>

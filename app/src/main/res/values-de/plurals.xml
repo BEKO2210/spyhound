@@ -17,8 +17,8 @@
         <item quantity="other">%d Funde · bitte ansehen</item>
     </plurals>
     <plurals name="result_verdict_leads">
-        <item quantity="one">Keine Spuren · %d Hinweis</item>
-        <item quantity="other">Keine Spuren · %d Hinweise</item>
+        <item quantity="one">Keine bekannten Spuren · %d Hinweis</item>
+        <item quantity="other">Keine bekannten Spuren · %d Hinweise</item>
     </plurals>
     <plurals name="info_sources_summary">
         <item quantity="one">%d Quelle</item>
