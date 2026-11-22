@@ -1,6 +1,6 @@
 # Rechtliches / Legal
 
-Stand / Date: 2026-11-05
+Stand / Date: 2026-11-21
 
 Die deutsche Fassung ist maßgeblich. Die englische Fassung ist eine Übersetzung.
 The German version is authoritative. The English version is a translation.
