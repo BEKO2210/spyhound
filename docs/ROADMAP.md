@@ -135,6 +135,24 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
   Hintergrundprüfung nutzt kein Netz. Galaxy Wearable als Installer: gleiches Restrisiko wie jeder andere Eintrag in
   `STORES` (Installer-Name lässt sich per adb setzen), Apps mit Bedienungshilfe oder Geräteadmin bleiben Hinweise.
 
+## Gerätetest 2026-11-25 (S21 Ultra SM-G998B, Android 15; Build aus 68b3db6 als Update über 0.3.17)
+- [x] Abnahme der Korrekturen vom 22.11., alles aus dem Bedienbaum gelesen, Crash-Log leer:
+  Kopfzeile „Keine bekannten Spuren · 7 Hinweise“ passt in eine Zeile (Bild); Galaxy Wearable und Buds stehen nicht
+  mehr unter den Hinweisen; „Datei-Fingerabdrücke. 2 Datei(en) … (z. B. Android/data). Aufklappen“ mit einem Punkt;
+  „1 Indikator-Quelle ist veraltet und wurde nicht benutzt (abuse.ch MalwareBazaar Android).“; nach „Quellen laden“
+  46/46 statt 45/46 und 23.485 statt 13.589 Spuren, also nimmt GitHub den festen Client-Namen an; Info-Bildschirm
+  zeigt unter `stopipv/isdi` „MIT-Lizenz · in der App enthalten“. Basis-Scan: 0 Funde · 7 Hinweise · 3 Lücken,
+  20.007 geprüft.
+- [ ] **„Quellen laden“ im Ergebnis gibt keine Rückmeldung**: Der Knopf in der aufgeklappten Lücke lädt (belegt am
+  Startbildschirm), aber im Ergebnis ändert sich 32 s lang nichts, die Lücke bleibt stehen. Abnahme: sichtbarer
+  Zustand „lädt …“, danach „geladen – noch einmal prüfen“ oder ein Fehlertext, Test.
+- [ ] Erklärtext der Lücke sagt „weil einige Listen fehlen oder beschädigt sind“, auch wenn die Liste nur veraltet
+  ist (`guide_gap_update_indicators_meaning`). Abnahme: Text nennt auch „veraltet“, DE und EN.
+- [ ] Widerspruch in einem Bericht: Lücke „Die Tiefenprüfung lief nicht: Das Debugging über WLAN ist aus“ und
+  zugleich Hinweis „Debugging über WLAN“ (es war an). Ursache nicht untersucht; möglich ist, dass die eingebaute
+  Verbindung nur den Port nicht fand. Abnahme: Ursache am Gerät klären; der Text sagt nur „aus“, wenn es aus ist.
+- Offen bleibt: Kopfzeile auf einem schmalen Handy, Mitschnitt des tatsächlich gesendeten Client-Namens.
+
 ## Funde 2026-11-25 (CI)
 - [x] CI rot nach dem Push von 5cefd75, dreimal in Folge: Maven Central antwortet den Runner-Adressen mit HTTP 429,
   Robolectric bekam seine Android-15-Laufzeit nicht (10 Testklassen scheitern vor dem Start; Meldung nur im
@@ -170,8 +188,7 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
   nur veraltet. Abnahme: eigener Text „veraltet – Quellen aktualisieren“, richtige Einzahl, Test. Erledigt e1cfe9b:
   `IocStatus.outdated` für nicht mitgelieferte Quellen, deren Datei den Pin verfehlt (wird weiter nie geladen);
   „1 Indikator-Quelle ist veraltet …“ / „N … sind veraltet …“ DE und EN, Einzahl auch bei „beschädigt“; Knopf
-  „Quellen aktualisieren“ bleibt. Tests IocSourceStatusTest, IndicatorSourceGapTest. Offen: am S21 nach dem nächsten
-  Pin-Wechsel ansehen.
+  „Quellen aktualisieren“ bleibt. Tests IocSourceStatusTest, IndicatorSourceGapTest. Am S21 gesehen 2026-11-25.
 - [~] Neue Geräte für die Gerätebreite: TABWEE W90 (Android 16), Galaxy Tab A8 SM-X200 (Android 14). Abnahme: 0.3.17
   installiert, Start + Basis-Scan ohne Absturz, Hinweise auf Falschmeldungen geprüft. Tab A8 erledigt 2026-11-21 mit
   der veröffentlichungsfertigen APK (23f01fee…): Neuinstallation, Einführung, Basis-Scan 0 Funde · 3 Hinweise · 4
@@ -179,8 +196,8 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
   als Doppelnutzen-Hinweis, Patch 2025-08, WLAN-Debugging). W90 offen (war von einer anderen Sitzung belegt).
 - [x] Bedienhilfen-Text der Lückenkarten endet doppelt: „… fehlt.. Aufklappen“ (Bedienbaum Tab A8). Abnahme: ein
   Satzzeichen, Test auf den zusammengesetzten Text. Erledigt 73beb79: `joinAccessibilitySentenceParts` setzt „. “ nur,
-  wenn der Teil davor kein Satzende hat; JoinAccessibilitySentencePartsTest (7 Fälle, beide echten Texte). Offen:
-  Bedienbaum am Gerät mit dem nächsten Build auslesen.
+  wenn der Teil davor kein Satzende hat; JoinAccessibilitySentencePartsTest (7 Fälle, beide echten Texte). Am S21 im
+  Bedienbaum gelesen 2026-11-25.
 - [x] MalwareBazaar-Wochen-Update: 10.095 Hashes (+146, 0 entfernt, 0 Positivlisten-Treffer), e57e8f2; Pin e230838,
   gepinnte Datei online geladen, SHA-256 aca34316… gleich. Prüfumfang jetzt 10.228 Fingerabdrücke, 150 Familien.
   Nächster Abruf frühestens 2026-11-28. Der Schlüssel liegt im Vault (`infra/dev`), Abruf mit
