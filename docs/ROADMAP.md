@@ -135,6 +135,15 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
   Hintergrundprüfung nutzt kein Netz. Galaxy Wearable als Installer: gleiches Restrisiko wie jeder andere Eintrag in
   `STORES` (Installer-Name lässt sich per adb setzen), Apps mit Bedienungshilfe oder Geräteadmin bleiben Hinweise.
 
+## Funde 2026-11-25 (CI)
+- [x] CI rot nach dem Push von 5cefd75, dreimal in Folge: Maven Central antwortet den Runner-Adressen mit HTTP 429,
+  Robolectric bekam seine Android-15-Laufzeit nicht (10 Testklassen scheitern vor dem Start; Meldung nur im
+  hochgeladenen Bericht, nicht im Log). b300505: CI nennt Robolectric einen Spiegel über `ROBOLECTRIC_REPO_URL`,
+  SHA-512-Prüfung bleibt. Beleg: Datei vom Spiegel bytegleich zur früheren Kopie, Lauf 45523529144 grün (Versuch 2).
+- [ ] Derselbe 429 trifft auch Gradle-Abhängigkeiten im Schritt „Unsigned release build“ (erster Versuch rot, Neustart
+  grün). Die Repositories des Builds bleiben wegen der Reproduzierbarkeit unverändert. Abnahme: fünf Läufe in Folge
+  ohne Neustart grün, z. B. durch einen Abhängigkeits-Cache, der auch nach einem roten Lauf gespeichert wird.
+
 ## Funde 2026-11-21 (Gerätetest S21 Ultra, 0.3.16 als Update über 0.3.13)
 - [x] **Absturz im Ergebnis**: `IllegalStateException: Unknown guidance key: guide_gap_builtin_adb_meaning`, sobald die
   Lücke „Debugging über WLAN ist aus“ ins Bild scrollt (S21 Ultra, Android 15, 0.3.16, Crash-Log 15:58). Trifft jedes
@@ -566,6 +575,8 @@ Beleg Nachtrunde 1: 1186e7d, 114 Tests grün, Release-Build mit Prüfsummen grü
       Pflichtangaben) – plus: externe Links (Hilfe, GitHub Sponsors) öffnen nur auf Tipp den Browser.
 
 ## Genom (was wir gelernt haben – nie löschen, nur verfeinern)
+- Roter CI-Lauf: zuerst den hochgeladenen Bericht lesen, nicht das Log. Das Log zeigte nur „IOException“, der Bericht
+  die Ursache (HTTP 429 von Maven Central). Erst mit der echten Meldung ändern, nie auf Verdacht neu starten.
 - Eine Zuordnungstabelle von Hand (Schlüssel → Ressource) braucht einen Test, der jeden erzeugbaren Schlüssel durch genau diese Tabelle schickt. Bis 0.3.16 stürzte das Ergebnis ab, sobald die Lücke „WLAN-Debugging aus“ erschien; der Test prüfte nur, dass die Texte in den XML-Dateien stehen. Gefunden erst auf einem zweiten Gerät (S21), nie auf dem Haupt-Testgerät: Gerätebreite findet, was Tests und ein einzelnes Gerät nicht zeigen (2026-11-21).
 - Die MalwareBazaar-Liste allein zu pushen macht CI rot (Lauf 44917577706: Pin- und Zähltests, Umfangsbilder), weil der Pin erst im Folge-Commit steht und dafür der Daten-Commit schon online sein muss. Das ist die Reihenfolge aus `data/malwarebazaar/README.md`; den roten Zwischenlauf erwarten, den Lauf des Pin-Commits prüfen (2026-11-21).
 - Während ein Build läuft, keine Dateien ändern, die Tests lesen: Der MalwareBazaar-Abruf mitten im Lauf ließ 4 Bildtests rot werden (2026-11-21).
