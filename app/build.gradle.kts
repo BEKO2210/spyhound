@@ -82,6 +82,11 @@ tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
     maxParallelForks = 1
     // Isolates parameterized screenshot cases to avoid classloader leakage between methods.
     forkEvery = 1
+    // Robolectric downloads its Android runtime itself. CI points it at a mirror, because Maven Central
+    // answers shared runner addresses with HTTP 429.
+    System.getenv("ROBOLECTRIC_REPO_URL")?.takeIf { it.isNotBlank() }?.let {
+        systemProperty("robolectric.dependency.repo.url", it)
+    }
 }
 
 // Robolectric brings its own desktop Conscrypt; the Android build of it has no native library on the JVM.
