@@ -380,6 +380,8 @@ class MainActivity : AppCompatActivity() {
                                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.accessnow.org/help/")))
                             },
                             heroSymbolModifier = sharedRadar,
+                            sourcesUpdating = state.updating,
+                            sourcesMessage = state.updateMessage,
                         )
                     }
                     RootScreen.SCAN -> {

@@ -756,10 +756,10 @@ private fun DnsFilterRow(
     }
 }
 
-private data class UpdateFeedback(val display: String, val isError: Boolean)
+internal data class UpdateFeedback(val display: String, val isError: Boolean)
 
 @Composable
-private fun rememberUpdateFeedback(raw: String?): UpdateFeedback? {
+internal fun rememberUpdateFeedback(raw: String?): UpdateFeedback? {
     if (raw == null) return null
     val errorShort = stringResource(R.string.start_update_error)
     val isError = raw.contains("failed", ignoreCase = true) || raw.contains("fehlgeschlagen", ignoreCase = true)

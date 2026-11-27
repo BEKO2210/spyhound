@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -78,6 +79,7 @@ import de.belkis.spyhound.scan.Verdict
 import de.belkis.spyhound.scan.guidanceFor
 import de.belkis.spyhound.ui.SpyColors
 import de.belkis.spyhound.ui.SpyTypographyExtras
+import de.belkis.spyhound.ui.components.CardFeedbackLine
 import de.belkis.spyhound.ui.components.emphasizeLabels
 import de.belkis.spyhound.ui.components.ScrollEdge
 import de.belkis.spyhound.ui.components.SectionHeader
@@ -109,7 +111,10 @@ fun ResultScreen(
     header: (@Composable () -> Unit)? = null,
     /** When set, "Share report" first asks: the full report, or the short summary for another app. */
     onShareSummary: (() -> Unit)? = null,
-) {
+    /** Name of the list being loaded while "load sources" runs, and the outcome afterwards. */
+    sourcesUpdating: String? = null,
+    sourcesMessage: String? = null,
+) = CompositionLocalProvider(LocalSourcesUpdate provides SourcesUpdate(sourcesUpdating, sourcesMessage)) {
     var shareChoice by remember { mutableStateOf(false) }
     if (shareChoice && onShareSummary != null) ShareChoiceDialog(
         onFull = { shareChoice = false; onShare() },
@@ -194,6 +199,10 @@ private fun ShareChoiceDialog(onFull: () -> Unit, onSummary: () -> Unit, onDismi
 }
 
 internal val LocalHistoricalResult = androidx.compose.runtime.staticCompositionLocalOf { false }
+
+/** What "load sources" is doing, so the card that offers it can answer the tap where the user tapped. */
+internal data class SourcesUpdate(val updating: String? = null, val message: String? = null)
+internal val LocalSourcesUpdate = androidx.compose.runtime.compositionLocalOf { SourcesUpdate() }
 
 @Composable
 private fun ResultSummary(
@@ -529,15 +538,24 @@ private fun GuidanceCard(entry: ResultEntry.Card, onGapFix: (GapFix) -> Unit, on
                     Text(stringResource(R.string.result_steps), style = SpyTypographyExtras.sectionLabel)
                     Text(emphasizeLabels(steps), style = MaterialTheme.typography.bodyMedium, color = SpyColors.Ivory)
                     (if (LocalHistoricalResult.current) null else entry.guidance.action)?.let { action ->
+                        val loading = if (action == GuidanceAction.UPDATE_INDICATORS) LocalSourcesUpdate.current else null
                         SpyButton(
-                            stringResource(
+                            loading?.updating ?: stringResource(
                                 if (action == GuidanceAction.GET_HELP && entry.guidance.meaningKey.contains("stalkerware")) R.string.result_call_help
                                 else if (action == GuidanceAction.GET_HELP) R.string.result_email_help
                                 else action.label()
                             ),
                             onClick = { performGuidanceAction(action, entry, context, onGapFix, onHelp) },
                             modifier = Modifier.fillMaxWidth(),
+                            enabled = loading?.updating == null,
                         )
+                        if (loading != null) {
+                            // Fixed slot: the answer to the tap appears without moving the cards below.
+                            val feedback = rememberUpdateFeedback(loading.message)
+                            Box(Modifier.fillMaxWidth().height(20.dp)) {
+                                CardFeedbackLine(message = feedback?.display, isError = feedback?.isError == true)
+                            }
+                        }
                     }
                 }
             }
