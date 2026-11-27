@@ -143,11 +143,14 @@ Erledigt in 0.3.14: R1 (1439445, IocSourceSelectionTest), R2 (88faf04 + c9a783f,
   46/46 statt 45/46 und 23.485 statt 13.589 Spuren, also nimmt GitHub den festen Client-Namen an; Info-Bildschirm
   zeigt unter `stopipv/isdi` „MIT-Lizenz · in der App enthalten“. Basis-Scan: 0 Funde · 7 Hinweise · 3 Lücken,
   20.007 geprüft.
-- [ ] **„Quellen laden“ im Ergebnis gibt keine Rückmeldung**: Der Knopf in der aufgeklappten Lücke lädt (belegt am
+- [x] **„Quellen laden“ im Ergebnis gibt keine Rückmeldung**: Der Knopf in der aufgeklappten Lücke lädt (belegt am
   Startbildschirm), aber im Ergebnis ändert sich 32 s lang nichts, die Lücke bleibt stehen. Abnahme: sichtbarer
-  Zustand „lädt …“, danach „geladen – noch einmal prüfen“ oder ein Fehlertext, Test.
-- [ ] Erklärtext der Lücke sagt „weil einige Listen fehlen oder beschädigt sind“, auch wenn die Liste nur veraltet
-  ist (`guide_gap_update_indicators_meaning`). Abnahme: Text nennt auch „veraltet“, DE und EN.
+  Zustand „lädt …“, danach „geladen – noch einmal prüfen“ oder ein Fehlertext, Test. Erledigt 2026-11-28: Knopf zeigt
+  die gerade geladene Liste und ist so lange gesperrt, das Ergebnis steht in einer festen Zeile darunter
+  (ResultSourcesFeedbackTest, 2 Fälle). Offen: am Gerät ansehen, sobald wieder eine Liste veraltet ist (auf dem S21
+  sind seit dem Test alle 46 aktuell).
+- [x] Erklärtext der Lücke sagt „weil einige Listen fehlen oder beschädigt sind“, auch wenn die Liste nur veraltet
+  ist (`guide_gap_update_indicators_meaning`). Jetzt „fehlen, veraltet oder beschädigt sind“, DE und EN.
 - [ ] Widerspruch in einem Bericht: Lücke „Die Tiefenprüfung lief nicht: Das Debugging über WLAN ist aus“ und
   zugleich Hinweis „Debugging über WLAN“ (es war an). Ursache nicht untersucht; möglich ist, dass die eingebaute
   Verbindung nur den Port nicht fand. Abnahme: Ursache am Gerät klären; der Text sagt nur „aus“, wenn es aus ist.
