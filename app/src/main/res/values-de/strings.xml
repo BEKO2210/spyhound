@@ -310,7 +310,7 @@
     <string name="guide_gap_shizuku_steps">1. Richte die tiefere Prüfung ein. Der Assistent führt dich Schritt für Schritt.\n2. Prüfe danach noch einmal.</string>
     <string name="guide_gap_root_meaning">Der innerste Teil des Handys wurde nicht geprüft, weil dafür Root nötig ist. Das ist eine Lücke, kein Ergebnis.</string>
     <string name="guide_gap_root_steps">1. Du musst nichts tun. Die tiefere Prüfung deckt schon viel ab.\n2. Bei starkem Verdacht frag eine Fachstelle, die das Handy genauer ansehen kann.</string>
-    <string name="guide_gap_update_indicators_meaning">Spyhound kennt noch nicht alle Spuren, weil einige Listen fehlen oder beschädigt sind. Darum kann es weniger finden.</string>
+    <string name="guide_gap_update_indicators_meaning">Spyhound kennt noch nicht alle Spuren, weil einige Listen fehlen, veraltet oder beschädigt sind. Darum kann es weniger finden.</string>
     <string name="guide_gap_update_indicators_steps">1. Verbinde dich mit dem Internet und lade die Listen neu.\n2. Prüfe danach noch einmal.</string>
     <string name="guide_gap_app_files_meaning">Einige App-Dateien konnten nicht gelesen werden und wurden deshalb nicht verglichen. Das ist eine Lücke, kein Ergebnis.</string>
     <string name="guide_gap_app_files_steps">1. Du musst nichts tun.\n2. Starte den Scan bei Bedarf später erneut.</string>

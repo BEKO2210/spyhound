@@ -310,7 +310,7 @@
     <string name="guide_gap_shizuku_steps">1. Set up the deeper check. The guide leads you step by step.\n2. Scan again afterwards.</string>
     <string name="guide_gap_root_meaning">The innermost part of your phone was not checked because it needs root. This is a gap, not a result.</string>
     <string name="guide_gap_root_steps">1. You do not need to do anything. The deeper check already covers a lot.\n2. If you strongly suspect something, ask an expert who can examine the phone more closely.</string>
-    <string name="guide_gap_update_indicators_meaning">Spyhound does not know all traces yet because some lists are missing or damaged. It may therefore find less.</string>
+    <string name="guide_gap_update_indicators_meaning">Spyhound does not know all traces yet because some lists are missing, outdated or damaged. It may therefore find less.</string>
     <string name="guide_gap_update_indicators_steps">1. Connect to the internet and reload the lists.\n2. Scan again afterwards.</string>
     <string name="guide_gap_app_files_meaning">Some app files could not be read and so were not compared. This is a gap, not a result.</string>
     <string name="guide_gap_app_files_steps">1. You do not need to do anything.\n2. Scan again later if you like.</string>
